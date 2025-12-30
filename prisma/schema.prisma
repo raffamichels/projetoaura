@@ -1,0 +1,51 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PlanoUsuario {
+  FREE
+  PREMIUM
+}
+
+model User {
+  id            String        @id @default(cuid())
+  email         String        @unique
+  name          String?
+  password      String
+  emailVerified DateTime?
+  image         String?
+  plano         PlanoUsuario  @default(FREE)
+  planoExpiraEm DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  
+  compromissos  Compromisso[]
+  
+  @@map("users")
+}
+
+model Compromisso {
+  id          String    @id @default(cuid())
+  titulo      String
+  descricao   String?
+  data        DateTime
+  horaInicio  String
+  horaFim     String?
+  categoria   String?
+  cor         String    @default("#8B5CF6")
+  concluido   Boolean   @default(false)
+  
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  @@map("compromissos")
+  @@index([userId, data])
+}
