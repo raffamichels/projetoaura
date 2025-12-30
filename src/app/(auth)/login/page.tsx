@@ -18,27 +18,27 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
+        const { signIn } = await import('next-auth/react');
+    
+        const result = await signIn('credentials', {
+          email,
+          password,
+          redirect: false,
+        });
+        if (result?.error) {
+            setError('Email ou senha incorretos');
+            setLoading(false);
+            return;
+        }
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data.error || 'Erro ao fazer login');
-        setLoading(false);
-        return;
-      }
-
-      alert('Login realizado com sucesso!');
-      
+         // Login com sucesso - redireciona para dashboard
+        window.location.href = '/dashboard';
+    
     } catch {
-      setError('Erro ao conectar com o servidor');
-      setLoading(false);
+        setError('Erro ao conectar com o servidor');
+        setLoading(false);
     }
-  };
+};
 
   return (
     <div className="min-h-screen bg-black relative overflow-hidden flex items-center justify-center p-4">
