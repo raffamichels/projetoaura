@@ -25,6 +25,7 @@ model User {
   updatedAt     DateTime      @updatedAt
   
   compromissos  Compromisso[]
+  atividades    Atividade[]
   
   @@map("users")
 }
@@ -40,6 +41,13 @@ model Compromisso {
   cor         String    @default("#8B5CF6")
   concluido   Boolean   @default(false)
   
+  isRecorrente         Boolean   @default(false)
+  tipoRecorrencia      String?
+  intervaloRecorrencia Int?      @default(1)
+  dataFimRecorrencia   DateTime?
+  recorrenciaGrupoId   String?
+  recorrenciaInstancia Int?      @default(1)
+  
   userId      String
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   
@@ -48,4 +56,23 @@ model Compromisso {
   
   @@map("compromissos")
   @@index([userId, data])
+  @@index([recorrenciaGrupoId])
+}
+
+model Atividade {
+  id          String   @id @default(cuid())
+  tipo        String
+  titulo      String
+  descricao   String?
+  metadata    Json?
+  icone       String   @default("activity")
+  cor         String   @default("#8B5CF6")
+  
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime @default(now())
+  
+  @@map("atividades")
+  @@index([userId, createdAt(sort: Desc)])
 }

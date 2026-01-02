@@ -1,14 +1,18 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-//import { Calendar } from 'lucide-react';
+import { Compromisso, TipoRecorrencia } from '@/types/compromisso';
+import { RecorrenciaConfig } from '@/components/features/agenda/RecorrenciaConfig';
 
 interface CompromissoFormProps {
   onClose: () => void;
   onSave: (data: { id: string; titulo: string }) => void;
+  initialDate?: Date;
+  initialHour?: string;
+  initialData?: Compromisso | null;
 }
 
 const categorias = [
@@ -20,13 +24,34 @@ const categorias = [
   { value: 'outro', label: 'Outro', cor: '#6B7280' },
 ];
 
-export function CompromissoForm({ onClose, onSave }: CompromissoFormProps) {
-  const [titulo, setTitulo] = useState('');
-  const [descricao, setDescricao] = useState('');
-  const [data, setData] = useState('');
-  const [horaInicio, setHoraInicio] = useState('');
-  const [horaFim, setHoraFim] = useState('');
-  const [categoria, setCategoria] = useState('trabalho');
+export function CompromissoForm({ onClose, onSave, initialDate, initialHour, initialData }: CompromissoFormProps) {
+  const isEditMode = !!initialData;
+  
+  const [titulo, setTitulo] = useState(initialData?.titulo || '');
+  const [descricao, setDescricao] = useState(initialData?.descricao || '');
+  const [data, setData] = useState(
+    initialData 
+      ? initialData.data.split('T')[0] 
+      : initialDate 
+        ? initialDate.toISOString().split('T')[0] 
+        : ''
+  );
+  const [horaInicio, setHoraInicio] = useState(initialData?.horaInicio || initialHour || '');
+  const [horaFim, setHoraFim] = useState(initialData?.horaFim || '');
+  const [categoria, setCategoria] = useState(initialData?.categoria || 'trabalho');
+  
+  // Estados de recorrência
+  const [isRecorrente, setIsRecorrente] = useState(initialData?.isRecorrente || false);
+  const [tipoRecorrencia, setTipoRecorrencia] = useState<TipoRecorrencia>(
+    initialData?.tipoRecorrencia || 'semanal'
+  );
+  const [intervaloRecorrencia, setIntervaloRecorrencia] = useState(
+    initialData?.intervaloRecorrencia || 1
+  );
+  const [dataFimRecorrencia, setDataFimRecorrencia] = useState(
+    initialData?.dataFimRecorrencia?.split('T')[0] || ''
+  );
+  
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -34,18 +59,33 @@ export function CompromissoForm({ onClose, onSave }: CompromissoFormProps) {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/v1/agenda/compromissos', {
-        method: 'POST',
+      const url = isEditMode 
+        ? `/api/v1/agenda/compromissos/${initialData.id}`
+        : '/api/v1/agenda/compromissos';
+      
+      const method = isEditMode ? 'PUT' : 'POST';
+
+      const payload = {
+        titulo,
+        descricao,
+        data: `${data}T${horaInicio}:00`,
+        horaInicio,
+        horaFim,
+        categoria,
+        cor: categorias.find(c => c.value === categoria)?.cor,
+        // Dados de recorrência
+        isRecorrente,
+        tipoRecorrencia: isRecorrente ? tipoRecorrencia : null,
+        intervaloRecorrencia: isRecorrente ? intervaloRecorrencia : null,
+        dataFimRecorrencia: isRecorrente && dataFimRecorrencia 
+          ? `${dataFimRecorrencia}T23:59:59` 
+          : null,
+      };
+
+      const response = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          titulo,
-          descricao,
-          data: new Date(data).toISOString(),
-          horaInicio,
-          horaFim,
-          categoria,
-          cor: categorias.find(c => c.value === categoria)?.cor,
-        }),
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
@@ -53,9 +93,11 @@ export function CompromissoForm({ onClose, onSave }: CompromissoFormProps) {
         onSave(result.data);
         onClose();
       } else {
-        alert('Erro ao criar compromisso');
+        const error = await response.json();
+        alert(`Erro ao ${isEditMode ? 'atualizar' : 'criar'} compromisso: ${error.error || 'Erro desconhecido'}`);
       }
-    } catch {
+    } catch (error) {
+      console.error('Erro:', error);
       alert('Erro ao conectar com o servidor');
     } finally {
       setLoading(false);
@@ -63,7 +105,7 @@ export function CompromissoForm({ onClose, onSave }: CompromissoFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-5 max-h-[70vh] overflow-y-auto pr-2">
       {/* Título */}
       <div className="space-y-2">
         <Label htmlFor="titulo" className="text-gray-300">
@@ -97,7 +139,7 @@ export function CompromissoForm({ onClose, onSave }: CompromissoFormProps) {
       {/* Data */}
       <div className="space-y-2">
         <Label htmlFor="data" className="text-gray-300">
-          Data *
+          Data {isRecorrente && '(data inicial)'}*
         </Label>
         <Input
           id="data"
@@ -166,8 +208,30 @@ export function CompromissoForm({ onClose, onSave }: CompromissoFormProps) {
         </div>
       </div>
 
+      {/* Configuração de Recorrência */}
+      <RecorrenciaConfig
+        isRecorrente={isRecorrente}
+        tipoRecorrencia={tipoRecorrencia}
+        intervaloRecorrencia={intervaloRecorrencia}
+        dataFimRecorrencia={dataFimRecorrencia}
+        onRecorrenteChange={setIsRecorrente}
+        onTipoChange={setTipoRecorrencia}
+        onIntervaloChange={setIntervaloRecorrencia}
+        onDataFimChange={setDataFimRecorrencia}
+      />
+
+      {/* Aviso sobre recorrência ao editar */}
+      {isEditMode && initialData?.isRecorrente && (
+        <div className="p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+          <p className="text-xs text-yellow-400">
+            ⚠️ Este compromisso faz parte de uma série recorrente. 
+            Ao salvar, você será perguntado se deseja atualizar apenas este ou todos os futuros.
+          </p>
+        </div>
+      )}
+
       {/* Botões */}
-      <div className="flex gap-3 pt-4">
+      <div className="flex gap-3 pt-4 sticky bottom-0 bg-zinc-900 pb-2">
         <Button
           type="button"
           variant="outline"
@@ -182,7 +246,9 @@ export function CompromissoForm({ onClose, onSave }: CompromissoFormProps) {
           className="flex-1 bg-aura-500 hover:bg-aura-600"
           disabled={loading}
         >
-          {loading ? 'Salvando...' : 'Salvar Compromisso'}
+          {loading 
+            ? (isEditMode ? 'Atualizando...' : 'Salvando...') 
+            : (isEditMode ? 'Atualizar' : 'Salvar Compromisso')}
         </Button>
       </div>
     </form>
