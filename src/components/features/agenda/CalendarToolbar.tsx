@@ -72,25 +72,26 @@ export function CalendarToolbar({ currentDate, view, onDateChange, onViewChange,
   };
 
   return (
-    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 bg-zinc-900/50 border-b border-zinc-800">
+    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 p-3 sm:p-4 bg-zinc-900/50 border-b border-zinc-800">
       {/* Navegação e Data */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
         <Button
-          variant="outline"
+          variant="default"
           size="sm"
           onClick={onToday}
-          className="border-zinc-700 hover:bg-zinc-800"
+          className="border-zinc-700 hover:bg-zinc-800 text-xs sm:text-sm px-2 sm:px-3"
         >
-          <Calendar className="w-4 h-4 mr-2" />
-          Hoje
+          <Calendar className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+          <span className="hidden xs:inline">Hoje</span>
+          <span className="xs:hidden">Hj</span>
         </Button>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-0.5 sm:gap-1">
           <Button
             variant="ghost"
             size="icon"
             onClick={handlePrevious}
-            className="hover:bg-zinc-800"
+            className="hover:bg-zinc-800 h-8 w-8 sm:h-9 sm:w-9"
           >
             <ChevronLeft className="w-4 h-4" />
           </Button>
@@ -98,24 +99,24 @@ export function CalendarToolbar({ currentDate, view, onDateChange, onViewChange,
             variant="ghost"
             size="icon"
             onClick={handleNext}
-            className="hover:bg-zinc-800"
+            className="hover:bg-zinc-800 h-8 w-8 sm:h-9 sm:w-9"
           >
             <ChevronRight className="w-4 h-4" />
           </Button>
         </div>
 
-        <h2 className="text-lg font-semibold text-white capitalize">
+        <h2 className="text-sm sm:text-lg font-semibold text-white capitalize truncate">
           {getDateLabel()}
         </h2>
       </div>
 
       {/* Filtros de Visualização */}
-      <div className="flex items-center gap-1 bg-zinc-800/50 rounded-lg p-1">
+      <div className="flex items-center gap-0.5 sm:gap-1 bg-zinc-800/50 rounded-lg p-0.5 sm:p-1 w-full sm:w-auto">
         <Button
           variant="ghost"
           size="sm"
           onClick={() => onViewChange('day')}
-          className={view === 'day' ? 'bg-zinc-700 text-white' : 'text-gray-400'}
+          className={`text-xs sm:text-sm px-2 sm:px-3 h-7 sm:h-8 ${view === 'day' ? 'bg-zinc-700 text-white' : 'text-gray-400'}`}
         >
           Dia
         </Button>
@@ -123,7 +124,7 @@ export function CalendarToolbar({ currentDate, view, onDateChange, onViewChange,
           variant="ghost"
           size="sm"
           onClick={() => onViewChange('week')}
-          className={view === 'week' ? 'bg-zinc-700 text-white' : 'text-gray-400'}
+          className={`text-xs sm:text-sm px-2 sm:px-3 h-7 sm:h-8 ${view === 'week' ? 'bg-zinc-700 text-white' : 'text-gray-400'}`}
         >
           Semana
         </Button>
@@ -131,7 +132,7 @@ export function CalendarToolbar({ currentDate, view, onDateChange, onViewChange,
           variant="ghost"
           size="sm"
           onClick={() => onViewChange('month')}
-          className={view === 'month' ? 'bg-zinc-700 text-white' : 'text-gray-400'}
+          className={`text-xs sm:text-sm px-2 sm:px-3 h-7 sm:h-8 ${view === 'month' ? 'bg-zinc-700 text-white' : 'text-gray-400'}`}
         >
           Mês
         </Button>
@@ -139,7 +140,7 @@ export function CalendarToolbar({ currentDate, view, onDateChange, onViewChange,
           variant="ghost"
           size="sm"
           onClick={() => onViewChange('year')}
-          className={view === 'year' ? 'bg-zinc-700 text-white' : 'text-gray-400'}
+          className={`text-xs sm:text-sm px-2 sm:px-3 h-7 sm:h-8 ${view === 'year' ? 'bg-zinc-700 text-white' : 'text-gray-400'}`}
         >
           Ano
         </Button>

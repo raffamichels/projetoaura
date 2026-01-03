@@ -234,7 +234,7 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
       <div className="flex gap-3 pt-4 sticky bottom-0 bg-zinc-900 pb-2">
         <Button
           type="button"
-          variant="outline"
+          variant="default"
           onClick={onClose}
           className="flex-1 border-zinc-700 hover:bg-zinc-800"
           disabled={loading}

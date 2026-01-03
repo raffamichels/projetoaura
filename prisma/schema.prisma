@@ -40,7 +40,7 @@ model User {
   planoExpiraEm DateTime?
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
-  
+
   compromissos       Compromisso[]
   atividades         Atividade[]
   contasBancarias    ContaBancaria[]
@@ -48,7 +48,9 @@ model User {
   categorias         Categoria[]
   transacoes         Transacao[]
   objetivosFinanceiros ObjetivoFinanceiro[]
-  
+  cursos             Curso[]
+  anotacoes          Anotacao[]
+
   @@map("users")
 }
 
@@ -218,20 +220,96 @@ model ObjetivoFinanceiro {
   valorAtual            Decimal        @default(0) @db.Decimal(15, 2)
   dataInicio            DateTime       @default(now())
   dataMeta              DateTime?
-  
+
   isReservaEmergencia   Boolean        @default(false)
   cor                   String         @default("#F59E0B")
   icone                 String         @default("target")
   status                StatusObjetivo @default(EM_ANDAMENTO)
-  
+
   userId                String
   user                  User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   transacoes            Transacao[]
-  
+
   createdAt             DateTime       @default(now())
   updatedAt             DateTime       @updatedAt
-  
+
   @@map("objetivos_financeiros")
   @@index([userId, status])
+}
+
+model Curso {
+  id          String   @id @default(cuid())
+  nome        String
+  descricao   String?
+  cor         String   @default("#8B5CF6")
+  icone       String   @default("book-open")
+  ativo       Boolean  @default(true)
+  ordem       Int      @default(0)
+
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  modulos     Modulo[]
+  anotacoes   Anotacao[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("cursos")
+  @@index([userId, ativo])
+}
+
+model Modulo {
+  id          String   @id @default(cuid())
+  nome        String
+  descricao   String?
+  ordem       Int      @default(0)
+
+  cursoId     String
+  curso       Curso    @relation(fields: [cursoId], references: [id], onDelete: Cascade)
+
+  paginas     Pagina[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("modulos")
+  @@index([cursoId, ordem])
+}
+
+model Pagina {
+  id          String   @id @default(cuid())
+  titulo      String
+  conteudo    String   @db.Text
+  ordem       Int      @default(0)
+
+  moduloId    String
+  modulo      Modulo   @relation(fields: [moduloId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("paginas")
+  @@index([moduloId, ordem])
+}
+
+model Anotacao {
+  id          String   @id @default(cuid())
+  titulo      String
+  conteudo    String   @db.Text
+  cor         String   @default("#FBBF24")
+
+  cursoId     String?
+  curso       Curso?   @relation(fields: [cursoId], references: [id], onDelete: SetNull)
+
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("anotacoes")
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([cursoId])
 }

@@ -94,20 +94,20 @@ export function CalendarWeekView({ compromissos, onSlotClick, onCompromissoClick
       {/* Header com dias da semana */}
       <div className="grid grid-cols-8 border-b border-zinc-800 bg-zinc-900/50 sticky top-0 z-10">
         {/* Coluna de horas (vazia) */}
-        <div className="w-16 border-r border-zinc-800"></div>
+        <div className="w-10 sm:w-16 border-r border-zinc-800"></div>
 
         {/* Dias da semana */}
         {weekDays.map((day, i) => (
           <div
             key={i}
-            className={`p-3 text-center border-r border-zinc-800 ${
+            className={`p-1.5 sm:p-3 text-center border-r border-zinc-800 ${
               isToday(day) ? 'bg-aura-500/10' : ''
             }`}
           >
-            <div className="text-xs text-gray-400 uppercase">
+            <div className="text-[10px] sm:text-xs text-gray-400 uppercase">
               {format(day, 'EEE', { locale: ptBR })}
             </div>
-            <div className={`text-xl font-bold mt-1 ${
+            <div className={`text-sm sm:text-xl font-bold mt-0.5 sm:mt-1 ${
               isToday(day) ? 'text-aura-400' : 'text-white'
             }`}>
               {format(day, 'd')}
@@ -120,13 +120,13 @@ export function CalendarWeekView({ compromissos, onSlotClick, onCompromissoClick
       <div className="flex-1 overflow-auto" ref={scrollContainerRef}>
         <div className="grid grid-cols-8 relative">
           {/* Coluna de horas */}
-          <div className="w-16 relative">
+          <div className="w-10 sm:w-16 relative">
             {hours.map(hour => (
               <div
                 key={hour}
-                className="h-[60px] border-b border-zinc-800 flex items-start justify-end pr-2 pt-0"
+                className="h-[60px] border-b border-zinc-800 flex items-start justify-end pr-1 sm:pr-2 pt-0"
               >
-                <span className="text-xs text-gray-500 -translate-y-2">
+                <span className="text-[10px] sm:text-xs text-gray-500 -translate-y-2">
                   {String(hour).padStart(2, '0')}:00
                 </span>
               </div>
@@ -147,7 +147,7 @@ export function CalendarWeekView({ compromissos, onSlotClick, onCompromissoClick
                   <button
                     key={hour}
                     onClick={() => onSlotClick(day, hour)}
-                    className="w-full h-[60px] border-b border-zinc-800 hover:bg-aura-500/5 transition-colors text-left block"
+                    className="w-full h-[60px] border-b border-zinc-800 hover:bg-aura-500/5 active:bg-aura-500/10 transition-colors text-left block touch-manipulation"
                   />
                 ))}
 
@@ -158,19 +158,19 @@ export function CalendarWeekView({ compromissos, onSlotClick, onCompromissoClick
                     <button
                       key={comp.id}
                       onClick={() => onCompromissoClick(comp)}
-                      className="absolute left-1 right-1 rounded-md px-2 py-1 text-left text-xs overflow-hidden hover:opacity-90 transition-opacity z-10"
+                      className="absolute left-0.5 right-0.5 sm:left-1 sm:right-1 rounded-md px-1 sm:px-2 py-0.5 sm:py-1 text-left text-[10px] sm:text-xs overflow-hidden hover:opacity-90 active:opacity-80 transition-opacity z-10 touch-manipulation"
                       style={{
                         top: style.top,
                         height: style.height,
                         backgroundColor: `${comp.cor}30`,
-                        borderLeft: `3px solid ${comp.cor}`,
+                        borderLeft: `2px solid ${comp.cor}`,
                       }}
                     >
-                      <div className="font-semibold truncate" style={{ color: comp.cor }}>
+                      <div className="font-semibold truncate text-[10px] sm:text-xs" style={{ color: comp.cor }}>
                         {comp.titulo}
                       </div>
                       {comp.horaFim && (
-                        <div className="text-gray-400 text-[10px]">
+                        <div className="text-gray-400 text-[9px] sm:text-[10px] hidden xs:block">
                           {comp.horaInicio} - {comp.horaFim}
                         </div>
                       )}
@@ -184,7 +184,7 @@ export function CalendarWeekView({ compromissos, onSlotClick, onCompromissoClick
                     className="absolute left-0 right-0 border-t-2 border-red-500 z-20 pointer-events-none"
                     style={{ top: `${getCurrentTimePosition()}px` }}
                   >
-                    <div className="absolute -left-2 -top-2 w-4 h-4 bg-red-500 rounded-full"></div>
+                    <div className="absolute -left-1.5 sm:-left-2 -top-1.5 sm:-top-2 w-3 h-3 sm:w-4 sm:h-4 bg-red-500 rounded-full"></div>
                   </div>
                 )}
               </div>

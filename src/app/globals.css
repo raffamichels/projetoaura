@@ -123,3 +123,128 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Estilos para o editor TipTap */
+.ProseMirror {
+  outline: none;
+}
+
+.ProseMirror p {
+  margin: 0.75em 0;
+}
+
+.ProseMirror h1 {
+  font-size: 2em;
+  font-weight: bold;
+  margin: 0.75em 0;
+  color: #fff;
+}
+
+.ProseMirror h2 {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin: 0.75em 0;
+  color: #fff;
+}
+
+.ProseMirror h3 {
+  font-size: 1.25em;
+  font-weight: bold;
+  margin: 0.75em 0;
+  color: #fff;
+}
+
+.ProseMirror ul,
+.ProseMirror ol {
+  padding-left: 1.5em;
+  margin: 0.75em 0;
+}
+
+.ProseMirror li {
+  margin: 0.25em 0;
+}
+
+.ProseMirror mark {
+  padding: 0.125em 0.25em;
+  border-radius: 0.25em;
+}
+
+.ProseMirror strong {
+  font-weight: bold;
+}
+
+.ProseMirror em {
+  font-style: italic;
+}
+
+.ProseMirror u {
+  text-decoration: underline;
+}
+
+.ProseMirror s {
+  text-decoration: line-through;
+}
+
+/* Estilos para visualização de conteúdo */
+.prose {
+  color: #d4d4d8;
+  max-width: none;
+}
+
+.prose h1 {
+  color: #fff;
+  font-size: 2em;
+  font-weight: bold;
+  margin: 0.75em 0;
+}
+
+.prose h2 {
+  color: #fff;
+  font-size: 1.5em;
+  font-weight: bold;
+  margin: 0.75em 0;
+}
+
+.prose h3 {
+  color: #fff;
+  font-size: 1.25em;
+  font-weight: bold;
+  margin: 0.75em 0;
+}
+
+.prose p {
+  margin: 0.75em 0;
+  line-height: 1.7;
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 1.5em;
+  margin: 0.75em 0;
+}
+
+.prose li {
+  margin: 0.25em 0;
+}
+
+.prose strong {
+  font-weight: bold;
+  color: #fff;
+}
+
+.prose em {
+  font-style: italic;
+}
+
+.prose u {
+  text-decoration: underline;
+}
+
+.prose s {
+  text-decoration: line-through;
+}
+
+.prose mark {
+  padding: 0.125em 0.25em;
+  border-radius: 0.25em;
+}

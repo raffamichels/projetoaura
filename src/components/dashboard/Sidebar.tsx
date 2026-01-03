@@ -2,11 +2,11 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { 
-  LayoutDashboard, 
-  Calendar, 
-  Wallet, 
-  BookOpen, 
+import {
+  LayoutDashboard,
+  Calendar,
+  Wallet,
+  BookOpen,
   Target,
   Dumbbell,
   Plane,
@@ -18,18 +18,23 @@ import { Badge } from '@/components/ui/badge';
 const menuItems = [
   { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' },
   { icon: Calendar, label: 'Agenda', href: '/dashboard/agenda'},
-  { icon: Wallet, label: 'Financeiro', href: '/dashboard/financeiro', badge: 'Em breve' },
-  { icon: BookOpen, label: 'Estudos', href: '/dashboard/estudos', badge: 'Em breve' },
+  { icon: Wallet, label: 'Financeiro', href: '/dashboard/financeiro' },
+  { icon: BookOpen, label: 'Estudos', href: '/dashboard/estudos' },
   { icon: Target, label: 'Metas', href: '/dashboard/metas', badge: 'Em breve', premium: true },
   { icon: Dumbbell, label: 'Treinos', href: '/dashboard/treinos', badge: 'Em breve', premium: true },
   { icon: Plane, label: 'Viagens', href: '/dashboard/viagens', badge: 'Em breve', premium: true },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+  isMobile?: boolean;
+  onNavigate?: () => void;
+}
+
+export function Sidebar({ isMobile = false, onNavigate }: SidebarProps) {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden lg:flex flex-col w-64 border-r border-zinc-800 bg-zinc-900/50 backdrop-blur-xl">
+    <aside className={`${isMobile ? 'flex' : 'hidden lg:flex'} flex-col w-64 h-full border-r border-zinc-800 bg-zinc-900/50 backdrop-blur-xl`}>
       {/* Logo */}
       <div className="p-6 border-b border-zinc-800 bg-zinc-900">
         <h1 className="text-2xl font-extrabold">
@@ -46,15 +51,16 @@ export function Sidebar() {
         {menuItems.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.href;
-          
+
           return (
             <Link
               key={item.href}
               href={item.href}
+              onClick={onNavigate}
               className={`
                 flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all
-                ${isActive 
-                  ? 'bg-aura-500/10 text-aura-400 border border-aura-500/20' 
+                ${isActive
+                  ? 'bg-aura-500/10 text-aura-400 border border-aura-500/20'
                   : 'text-gray-400 hover:text-white hover:bg-zinc-800/50'
                 }
               `}
@@ -94,6 +100,7 @@ export function Sidebar() {
       <div className="p-4 border-t border-zinc-800">
         <Link
           href="/dashboard/settings"
+          onClick={onNavigate}
           className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:text-white hover:bg-zinc-800/50 transition-all"
         >
           <Settings className="w-5 h-5" />

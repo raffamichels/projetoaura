@@ -92,13 +92,13 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Welcome Section */}
       <div>
-        <h1 className="text-3xl font-bold text-white mb-2">
+        <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
           Olá, {firstName}! 👋
         </h1>
-        <p className="text-gray-400">
+        <p className="text-sm sm:text-base text-gray-400">
           Aqui está um resumo do seu dia
         </p>
       </div>
@@ -189,50 +189,50 @@ export default function DashboardPage() {
       </div>
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Atividades Recentes */}
         <AtividadesRecentes />
 
         {/* Quick Actions */}
         <Card className="bg-zinc-900/50 border-zinc-800">
           <CardHeader>
-            <CardTitle className="text-white">Ações Rápidas</CardTitle>
-            <CardDescription className="text-gray-400">
+            <CardTitle className="text-white text-lg sm:text-xl">Ações Rápidas</CardTitle>
+            <CardDescription className="text-gray-400 text-sm">
               Acesse rapidamente
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent className="space-y-2 sm:space-y-3">
             {/* Botão Novo Compromisso - FUNCIONAL */}
-            <Button 
+            <Button
               onClick={handleNovoCompromisso}
-              className="w-full justify-start bg-aura-500 hover:bg-aura-600 text-white border-0 shadow-lg shadow-aura-500/25 transition-all hover:shadow-aura-500/40"
+              className="w-full justify-start h-auto py-3 bg-aura-500 hover:bg-aura-600 text-white border-0 shadow-lg shadow-aura-500/25 transition-all hover:shadow-aura-500/40 text-sm sm:text-base"
             >
-              <Calendar className="w-4 h-4 mr-2" />
+              <Calendar className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
               Novo Compromisso
             </Button>
 
             {/* Outros botões - Em breve */}
-            <Button 
+            <Button
               disabled
-              className="w-full justify-start bg-green-500/10 hover:bg-green-500/20 text-green-400 border border-green-500/20 cursor-not-allowed"
+              className="w-full justify-start h-auto py-3 bg-green-500/10 hover:bg-green-500/20 text-green-400 border border-green-500/20 cursor-not-allowed text-sm sm:text-base"
             >
-              <Wallet className="w-4 h-4 mr-2" />
+              <Wallet className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
               Nova Transação
               <Badge variant="secondary" className="ml-auto text-xs">Em breve</Badge>
             </Button>
-            <Button 
+            <Button
               disabled
-              className="w-full justify-start bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 border border-orange-500/20 cursor-not-allowed"
+              className="w-full justify-start h-auto py-3 bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 border border-orange-500/20 cursor-not-allowed text-sm sm:text-base"
             >
-              <BookOpen className="w-4 h-4 mr-2" />
+              <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
               Adicionar Curso
               <Badge variant="secondary" className="ml-auto text-xs">Em breve</Badge>
             </Button>
-            <Button 
+            <Button
               disabled
-              className="w-full justify-start bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/20 cursor-not-allowed"
+              className="w-full justify-start h-auto py-3 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/20 cursor-not-allowed text-sm sm:text-base"
             >
-              <Target className="w-4 h-4 mr-2" />
+              <Target className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
               Criar Meta
               <Badge variant="secondary" className="ml-auto text-xs">Premium</Badge>
             </Button>
@@ -242,8 +242,8 @@ export default function DashboardPage() {
 
       {/* Módulos Disponíveis */}
       <div>
-        <h2 className="text-xl font-bold text-white mb-4">Seus Módulos</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <h2 className="text-lg sm:text-xl font-bold text-white mb-3 sm:mb-4">Seus Módulos</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           {/* Agenda */}
           <Card 
             onClick={handleIrParaAgenda}
@@ -308,19 +308,20 @@ export default function DashboardPage() {
 
       {/* Upgrade Banner */}
       <Card className="bg-gradient-to-r from-aura-500/10 via-blue-500/10 to-purple-500/10 border-aura-500/20">
-        <CardContent className="p-6">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+        <CardContent className="p-4 sm:p-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4">
             <div className="flex-1 text-center md:text-left">
-              <h3 className="text-xl font-bold text-white mb-2">
+              <h3 className="text-lg sm:text-xl font-bold text-white mb-1 sm:mb-2">
                 Desbloqueie Todo o Potencial do Aura
               </h3>
-              <p className="text-gray-400 text-sm">
+              <p className="text-gray-400 text-xs sm:text-sm">
                 Acesse recursos premium como Metas, Treinos, Viagens e muito mais
               </p>
             </div>
-            <Button className="bg-gradient-to-r from-aura-500 to-blue-500 hover:from-aura-600 hover:to-blue-600 shadow-lg shadow-aura-500/25">
+            <Button className="w-full md:w-auto bg-gradient-to-r from-aura-500 to-blue-500 hover:from-aura-600 hover:to-blue-600 shadow-lg shadow-aura-500/25 text-sm sm:text-base h-auto py-2.5 sm:py-2">
               <CheckCircle2 className="w-4 h-4 mr-2" />
-              Fazer Upgrade para Premium
+              <span className="hidden sm:inline">Fazer Upgrade para Premium</span>
+              <span className="sm:hidden">Upgrade Premium</span>
             </Button>
           </div>
         </CardContent>

@@ -131,38 +131,38 @@ export function AtividadesRecentes() {
   return (
     <Card className="lg:col-span-2 bg-zinc-900/50 border-zinc-800">
       <CardHeader>
-        <CardTitle className="text-white flex items-center gap-2">
-          <Sparkles className="w-5 h-5 text-aura-400" />
+        <CardTitle className="text-white flex items-center gap-2 text-lg sm:text-xl">
+          <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-aura-400" />
           Atividades Recentes
         </CardTitle>
-        <CardDescription className="text-gray-400">
+        <CardDescription className="text-gray-400 text-sm">
           Suas ações de hoje no sistema
         </CardDescription>
       </CardHeader>
       <CardContent>
         {/* Container com altura limitada e scroll */}
-        <div className="max-h-[350px] overflow-y-auto pr-2 space-y-3 scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-zinc-900">
+        <div className="max-h-[350px] overflow-y-auto pr-1 sm:pr-2 space-y-2 sm:space-y-3 scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-zinc-900">
           {atividades.map((atividade) => {
             const IconeComponent = getIcone(atividade.icone);
             const tipoInfo = getTipoTexto(atividade.tipo);
-            
+
             return (
               <div
                 key={atividade.id}
-                className="group relative flex items-start gap-4 p-4 rounded-lg border border-zinc-800 bg-zinc-900/30 hover:bg-zinc-800/50 hover:border-zinc-700 transition-all cursor-pointer"
+                className="group relative flex items-start gap-3 sm:gap-4 p-3 sm:p-4 rounded-lg border border-zinc-800 bg-zinc-900/30 hover:bg-zinc-800/50 hover:border-zinc-700 transition-all cursor-pointer"
               >
                 {/* Ícone com glow */}
                 <div className="relative flex-shrink-0">
-                  <div 
+                  <div
                     className="absolute inset-0 blur-md opacity-50 rounded-lg"
                     style={{ backgroundColor: atividade.cor }}
                   ></div>
-                  <div 
-                    className="relative w-10 h-10 rounded-lg flex items-center justify-center"
+                  <div
+                    className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center"
                     style={{ backgroundColor: `${atividade.cor}20` }}
                   >
-                    <IconeComponent 
-                      className="w-5 h-5" 
+                    <IconeComponent
+                      className="w-4 h-4 sm:w-5 sm:h-5"
                       style={{ color: atividade.cor }}
                     />
                   </div>
@@ -171,24 +171,24 @@ export function AtividadesRecentes() {
                 {/* Conteúdo */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2 mb-1">
-                    <h4 className="font-semibold text-white truncate group-hover:text-aura-400 transition-colors">
+                    <h4 className="font-semibold text-sm sm:text-base text-white truncate group-hover:text-aura-400 transition-colors">
                       {atividade.titulo}
                     </h4>
-                    <Badge 
-                      variant="outline" 
+                    <Badge
+                      variant="outline"
                       className={`flex-shrink-0 text-xs ${tipoInfo.cor}`}
                     >
                       {tipoInfo.texto}
                     </Badge>
                   </div>
-                  
+
                   {atividade.descricao && (
-                    <p className="text-sm text-gray-400 mb-2 line-clamp-1">
+                    <p className="text-xs sm:text-sm text-gray-400 mb-2 line-clamp-1">
                       {atividade.descricao}
                     </p>
                   )}
-                  
-                  <div className="flex items-center gap-2 text-xs text-gray-500">
+
+                  <div className="flex items-center gap-1.5 sm:gap-2 text-xs text-gray-500">
                     <Clock className="w-3 h-3" />
                     <span>
                       {formatDistanceToNow(new Date(atividade.createdAt), {
@@ -199,8 +199,8 @@ export function AtividadesRecentes() {
                   </div>
                 </div>
 
-                {/* Indicador de hover */}
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+                {/* Indicador de hover - oculto em mobile */}
+                <div className="hidden sm:block absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
                   <div className="w-1.5 h-8 bg-aura-500 rounded-full"></div>
                 </div>
               </div>

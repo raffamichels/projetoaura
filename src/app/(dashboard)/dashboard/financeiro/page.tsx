@@ -101,17 +101,17 @@ export default function FinanceiroDashboardPage() {
   }
 
   return (
-    <div className="p-8 space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-white">Financeiro</h1>
-          <p className="text-zinc-400">Visão geral das suas finanças</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white">Financeiro</h1>
+          <p className="text-sm sm:text-base text-zinc-400">Visão geral das suas finanças</p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-2 sm:gap-3 w-full sm:w-auto">
           <Button
             onClick={() => setModalTransacaoAberto(true)}
-            className="bg-purple-600 hover:bg-purple-700"
+            className="flex-1 sm:flex-none bg-purple-600 hover:bg-purple-700 h-auto py-2.5 text-sm sm:text-base"
           >
             <Plus className="w-4 h-4 mr-2" />
             Nova Transação
@@ -120,7 +120,7 @@ export default function FinanceiroDashboardPage() {
       </div>
 
       {/* Cards de Resumo */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {/* Saldo Total */}
         <Card className="bg-zinc-900 border-zinc-800">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -195,7 +195,7 @@ export default function FinanceiroDashboardPage() {
       </div>
 
       {/* Grid Principal */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Gastos por Categoria */}
         <Card className="bg-zinc-900 border-zinc-800">
           <CardHeader>
@@ -281,37 +281,34 @@ export default function FinanceiroDashboardPage() {
       </div>
 
       {/* Links Rápidos */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
         <Button
-          variant="outline"
-          className="h-20 border-zinc-800 hover:bg-zinc-800"
+          className="h-16 sm:h-20 border-zinc-800 hover:bg-zinc-800"
           onClick={() => window.location.href = '/dashboard/financeiro/contas'}
         >
           <div className="text-center">
-            <Wallet className="w-6 h-6 mx-auto mb-2 text-green-500" />
-            <div className="text-sm text-zinc-300">Contas e Cartões</div>
+            <Wallet className="w-5 h-5 sm:w-6 sm:h-6 mx-auto mb-1 sm:mb-2 text-green-500" />
+            <div className="text-xs sm:text-sm text-zinc-300">Contas e Cartões</div>
           </div>
         </Button>
 
         <Button
-          variant="outline"
-          className="h-20 border-zinc-800 hover:bg-zinc-800"
+          className="h-16 sm:h-20 border-zinc-800 hover:bg-zinc-800"
           onClick={() => window.location.href = '/dashboard/financeiro/transacoes'}
         >
           <div className="text-center">
-            <TrendingUp className="w-6 h-6 mx-auto mb-2 text-blue-500" />
-            <div className="text-sm text-zinc-300">Transações</div>
+            <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 mx-auto mb-1 sm:mb-2 text-blue-500" />
+            <div className="text-xs sm:text-sm text-zinc-300">Transações</div>
           </div>
         </Button>
 
         <Button
-          variant="outline"
-          className="h-20 border-zinc-800 hover:bg-zinc-800"
+          className="h-16 sm:h-20 border-zinc-800 hover:bg-zinc-800"
           onClick={() => window.location.href = '/dashboard/financeiro/objetivos'}
         >
           <div className="text-center">
-            <Target className="w-6 h-6 mx-auto mb-2 text-purple-500" />
-            <div className="text-sm text-zinc-300">Objetivos</div>
+            <Target className="w-5 h-5 sm:w-6 sm:h-6 mx-auto mb-1 sm:mb-2 text-purple-500" />
+            <div className="text-xs sm:text-sm text-zinc-300">Objetivos</div>
           </div>
         </Button>
       </div>

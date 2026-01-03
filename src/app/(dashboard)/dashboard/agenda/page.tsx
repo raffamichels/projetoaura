@@ -103,15 +103,15 @@ export default function AgendaPage() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-8rem)] space-y-4">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+    <div className="flex flex-col h-[calc(100vh-8rem)] space-y-3 sm:space-y-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Agenda</h1>
-          <p className="text-gray-400">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-1 sm:mb-2">Agenda</h1>
+          <p className="text-sm sm:text-base text-gray-400">
             Organize seus compromissos e eventos
           </p>
         </div>
-        <Button 
+        <Button
           onClick={() => {
             setSelectedDate(null);
             setSelectedHour(null);
@@ -119,7 +119,7 @@ export default function AgendaPage() {
             setIsEditMode(false);
             setIsModalOpen(true);
           }}
-          className="bg-aura-500 hover:bg-aura-600 shadow-lg shadow-aura-500/25"
+          className="w-full sm:w-auto bg-aura-500 hover:bg-aura-600 shadow-lg shadow-aura-500/25 h-auto py-2.5 text-sm sm:text-base"
         >
           <Plus className="w-4 h-4 mr-2" />
           Novo Compromisso

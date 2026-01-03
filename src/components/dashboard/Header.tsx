@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import { Menu, Bell, Crown } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -21,6 +22,7 @@ import { Sidebar } from './Sidebar';
 
 export function Header() {
   const { data: session } = useSession();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const getInitials = (name?: string | null) => {
     if (!name) return 'U';
@@ -38,14 +40,14 @@ export function Header() {
         {/* Mobile Menu + Logo */}
         <div className="flex items-center gap-3">
           {/* Mobile Sidebar */}
-          <Sheet>
+          <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="lg:hidden">
+              <Button variant="ghost" size="icon" className="lg:hidden hover:bg-zinc-800">
                 <Menu className="w-5 h-5" />
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="p-0 w-64 bg-zinc-900 border-zinc-800">
-              <Sidebar />
+              <Sidebar isMobile onNavigate={() => setSidebarOpen(false)} />
             </SheetContent>
           </Sheet>
 
@@ -56,9 +58,9 @@ export function Header() {
         </div>
 
         {/* Right Side */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 sm:gap-2">
           {/* Notificações */}
-          <Button variant="ghost" size="icon" className="relative">
+          <Button variant="ghost" size="icon" className="relative hover:bg-zinc-800">
             <Bell className="w-5 h-5" />
             <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span>
           </Button>
@@ -66,7 +68,7 @@ export function Header() {
           {/* User Menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="gap-2 px-2">
+              <Button variant="ghost" className="gap-2 px-2 hover:bg-zinc-800">
                 <Avatar className="w-8 h-8">
                   <AvatarFallback className="bg-gradient-to-br from-aura-500 to-blue-500 text-white text-sm">
                     {getInitials(session?.user?.name)}
@@ -74,15 +76,15 @@ export function Header() {
                 </Avatar>
                 <div className="hidden md:block text-left">
                   <p className="text-sm font-medium leading-none">{session?.user?.name}</p>
-                  <p className="text-xs text-gray-400 mt-0.5">{session?.user?.email}</p>
+                  <p className="text-xs text-gray-400 mt-0.5 truncate max-w-[150px]">{session?.user?.email}</p>
                 </div>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56 bg-zinc-900 border-zinc-800">
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium">{session?.user?.name}</p>
-                  <p className="text-xs text-gray-400">{session?.user?.email}</p>
+                  <p className="text-sm font-medium truncate">{session?.user?.name}</p>
+                  <p className="text-xs text-gray-400 truncate">{session?.user?.email}</p>
                   <div className="flex items-center gap-1 mt-2">
                     <Crown className="w-3 h-3 text-yellow-500" />
                     <span className="text-xs font-semibold text-yellow-500">
@@ -92,19 +94,19 @@ export function Header() {
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator className="bg-zinc-800" />
-              <DropdownMenuItem className="cursor-pointer">
+              <DropdownMenuItem className="cursor-pointer hover:bg-zinc-800">
                 Meu Perfil
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer">
+              <DropdownMenuItem className="cursor-pointer hover:bg-zinc-800">
                 Configurações
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer">
+              <DropdownMenuItem className="cursor-pointer hover:bg-zinc-800">
                 <Crown className="w-4 h-4 mr-2 text-yellow-500" />
                 Fazer Upgrade
               </DropdownMenuItem>
               <DropdownMenuSeparator className="bg-zinc-800" />
-              <DropdownMenuItem 
-                className="cursor-pointer text-red-400 focus:text-red-400"
+              <DropdownMenuItem
+                className="cursor-pointer text-red-400 focus:text-red-400 hover:bg-zinc-800"
                 onClick={() => signOut({ callbackUrl: '/login' })}
               >
                 Sair
