@@ -12,6 +12,23 @@ enum PlanoUsuario {
   PREMIUM
 }
 
+enum TipoConta {
+  CORRENTE
+  POUPANCA
+  INVESTIMENTO
+}
+
+enum TipoTransacao {
+  RECEITA
+  DESPESA
+}
+
+enum StatusObjetivo {
+  EM_ANDAMENTO
+  CONCLUIDO
+  CANCELADO
+}
+
 model User {
   id            String        @id @default(cuid())
   email         String        @unique
@@ -24,8 +41,13 @@ model User {
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   
-  compromissos  Compromisso[]
-  atividades    Atividade[]
+  compromissos       Compromisso[]
+  atividades         Atividade[]
+  contasBancarias    ContaBancaria[]
+  cartoes            Cartao[]
+  categorias         Categoria[]
+  transacoes         Transacao[]
+  objetivosFinanceiros ObjetivoFinanceiro[]
   
   @@map("users")
 }
@@ -75,4 +97,141 @@ model Atividade {
   
   @@map("atividades")
   @@index([userId, createdAt(sort: Desc)])
+}
+
+model ContaBancaria {
+  id            String     @id @default(cuid())
+  nome          String
+  tipo          TipoConta  @default(CORRENTE)
+  banco         String?
+  saldoInicial  Decimal    @default(0) @db.Decimal(15, 2)
+  saldoAtual    Decimal    @default(0) @db.Decimal(15, 2)
+  cor           String     @default("#10B981")
+  icone         String     @default("wallet")
+  ativa         Boolean    @default(true)
+  
+  userId        String
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  transacoes    Transacao[]
+  
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  
+  @@map("contas_bancarias")
+  @@index([userId, ativa])
+}
+
+model Cartao {
+  id              String    @id @default(cuid())
+  nome            String
+  bandeira        String?
+  ultimosDigitos  String?
+  limite          Decimal?  @db.Decimal(15, 2)
+  diaVencimento   Int?
+  diaFechamento   Int?
+  cor             String    @default("#3B82F6")
+  icone           String    @default("credit-card")
+  ativo           Boolean   @default(true)
+  
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  transacoes      Transacao[]
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@map("cartoes")
+  @@index([userId, ativo])
+}
+
+model Categoria {
+  id              String         @id @default(cuid())
+  nome            String
+  tipo            TipoTransacao
+  cor             String         @default("#8B5CF6")
+  icone           String         @default("tag")
+  
+  categoriaPaiId  String?
+  categoriaPai    Categoria?     @relation("SubcategoriaRelacao", fields: [categoriaPaiId], references: [id], onDelete: Cascade)
+  subcategorias   Categoria[]    @relation("SubcategoriaRelacao")
+  
+  userId          String
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  transacoes      Transacao[]
+  
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  
+  @@map("categorias")
+  @@index([userId, tipo])
+  @@unique([userId, nome, tipo])
+}
+
+model Transacao {
+  id                String         @id @default(cuid())
+  descricao         String
+  valor             Decimal        @db.Decimal(15, 2)
+  data              DateTime
+  tipo              TipoTransacao
+  observacoes       String?
+  
+  isFixa            Boolean        @default(false)
+  
+  isParcela         Boolean        @default(false)
+  parcelaNumero     Int?
+  parcelaTotais     Int?
+  grupoParcelaId    String?
+  
+  categoriaId       String?
+  categoria         Categoria?     @relation(fields: [categoriaId], references: [id], onDelete: SetNull)
+  
+  contaBancariaId   String?
+  contaBancaria     ContaBancaria? @relation(fields: [contaBancariaId], references: [id], onDelete: SetNull)
+  
+  cartaoId          String?
+  cartao            Cartao?        @relation(fields: [cartaoId], references: [id], onDelete: SetNull)
+  
+  objetivoId        String?
+  objetivo          ObjetivoFinanceiro? @relation(fields: [objetivoId], references: [id], onDelete: SetNull)
+  
+  userId            String
+  user              User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  
+  @@map("transacoes")
+  @@index([userId, data(sort: Desc)])
+  @@index([userId, tipo, data])
+  @@index([grupoParcelaId])
+  @@index([categoriaId])
+}
+
+model ObjetivoFinanceiro {
+  id                    String         @id @default(cuid())
+  nome                  String
+  descricao             String?
+  valorMeta             Decimal        @db.Decimal(15, 2)
+  valorAtual            Decimal        @default(0) @db.Decimal(15, 2)
+  dataInicio            DateTime       @default(now())
+  dataMeta              DateTime?
+  
+  isReservaEmergencia   Boolean        @default(false)
+  cor                   String         @default("#F59E0B")
+  icone                 String         @default("target")
+  status                StatusObjetivo @default(EM_ANDAMENTO)
+  
+  userId                String
+  user                  User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  transacoes            Transacao[]
+  
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+  
+  @@map("objetivos_financeiros")
+  @@index([userId, status])
 }

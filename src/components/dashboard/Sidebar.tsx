@@ -17,7 +17,7 @@ import { Badge } from '@/components/ui/badge';
 
 const menuItems = [
   { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' },
-  { icon: Calendar, label: 'Agenda', href: '/dashboard/agenda', badge: 'Em breve' },
+  { icon: Calendar, label: 'Agenda', href: '/dashboard/agenda'},
   { icon: Wallet, label: 'Financeiro', href: '/dashboard/financeiro', badge: 'Em breve' },
   { icon: BookOpen, label: 'Estudos', href: '/dashboard/estudos', badge: 'Em breve' },
   { icon: Target, label: 'Metas', href: '/dashboard/metas', badge: 'Em breve', premium: true },
@@ -31,12 +31,15 @@ export function Sidebar() {
   return (
     <aside className="hidden lg:flex flex-col w-64 border-r border-zinc-800 bg-zinc-900/50 backdrop-blur-xl">
       {/* Logo */}
-      <div className="p-6 border-b border-zinc-800">
-        <h1 className="text-2xl font-bold bg-gradient-to-r from-aura-400 to-blue-400 bg-clip-text text-transparent">
-          Aura
+      <div className="p-6 border-b border-zinc-800 bg-zinc-900">
+        <h1 className="text-2xl font-extrabold">
+          <span className="bg-gradient-to-r from-aura-400 via-blue-400 to-purple-400 bg-clip-text text-transparent drop-shadow-md">
+            Aura
+          </span>
         </h1>
         <p className="text-xs text-gray-500 mt-1">Gerenciamento Pessoal</p>
       </div>
+
 
       {/* Menu */}
       <nav className="flex-1 p-4 space-y-1 overflow-y-auto">

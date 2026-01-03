@@ -141,7 +141,7 @@ export function AtividadesRecentes() {
       </CardHeader>
       <CardContent>
         {/* Container com altura limitada e scroll */}
-        <div className="max-h-[400px] overflow-y-auto pr-2 space-y-3 scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-zinc-900">
+        <div className="max-h-[350px] overflow-y-auto pr-2 space-y-3 scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-zinc-900">
           {atividades.map((atividade) => {
             const IconeComponent = getIcone(atividade.icone);
             const tipoInfo = getTipoTexto(atividade.tipo);

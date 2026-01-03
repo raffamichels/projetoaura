@@ -6,7 +6,11 @@ import type { Prisma } from '@prisma/client';
 
 interface RegistrarAtividadeParams {
   userId: string;
-  tipo: 'compromisso_criado' | 'compromisso_editado' | 'compromisso_excluido';
+  tipo: 'compromisso_criado' | 'compromisso_editado' | 'compromisso_excluido' | 
+        'financeiro_conta_criada' | 'financeiro_conta_editada' | 'financeiro_conta_excluida' |
+        'financeiro_cartao_criado' | 'financeiro_cartao_editado' | 'financeiro_cartao_excluido' |
+        'financeiro_transacao_criada' | 'financeiro_transacao_editada' | 'financeiro_transacao_excluida' |
+        'financeiro_objetivo_criado' | 'financeiro_objetivo_concluido';
   titulo: string;
   descricao?: string;
   metadata?: Prisma.InputJsonValue;
@@ -21,7 +25,7 @@ export async function registrarAtividade({
 }: RegistrarAtividadeParams) {
   try {
     // Mapear tipo para ícone e cor
-    const config = {
+    const config: Record<string, { icone: string; cor: string }> = {
       compromisso_criado: {
         icone: 'calendar-check',
         cor: '#10B981', // verde
@@ -34,9 +38,53 @@ export async function registrarAtividade({
         icone: 'calendar-x',
         cor: '#EF4444', // vermelho
       },
+      financeiro_conta_criada: {
+        icone: 'wallet',
+        cor: '#10B981', // verde
+      },
+      financeiro_conta_editada: {
+        icone: 'edit',
+        cor: '#3B82F6', // azul
+      },
+      financeiro_conta_excluida: {
+        icone: 'trash-2',
+        cor: '#EF4444', // vermelho
+      },
+      financeiro_cartao_criado: {
+        icone: 'credit-card',
+        cor: '#10B981', // verde
+      },
+      financeiro_cartao_editado: {
+        icone: 'edit',
+        cor: '#3B82F6', // azul
+      },
+      financeiro_cartao_excluido: {
+        icone: 'credit-card',
+        cor: '#EF4444', // vermelho
+      },
+      financeiro_transacao_criada: {
+        icone: 'trending-up',
+        cor: '#10B981', // verde
+      },
+      financeiro_transacao_editada: {
+        icone: 'edit',
+        cor: '#3B82F6', // azul
+      },
+      financeiro_transacao_excluida: {
+        icone: 'trending-down',
+        cor: '#EF4444', // vermelho
+      },
+      financeiro_objetivo_criado: {
+        icone: 'target',
+        cor: '#F59E0B', // laranja
+      },
+      financeiro_objetivo_concluido: {
+        icone: 'check-circle',
+        cor: '#10B981', // verde
+      },
     };
 
-    const { icone, cor } = config[tipo];
+    const { icone, cor } = config[tipo] || { icone: 'activity', cor: '#8B5CF6' };
 
     await prisma.atividade.create({
       data: {
