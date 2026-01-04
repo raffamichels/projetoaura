@@ -16,7 +16,40 @@ export function CalendarWeekView({ compromissos, onSlotClick, onCompromissoClick
   const currentWeekStart = startOfWeek(currentDate, { weekStartsOn: 0 });
   const [currentTime, setCurrentTime] = useState(new Date());
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const hasScrolledRef = useRef(false);
+
+  // Função para realizar o scroll
+  const scrollToCurrentTime = () => {
+    const container = scrollContainerRef.current;
+    if (!container) {
+      console.log('❌ Container não encontrado');
+      return;
+    }
+
+    const currentHour = new Date().getHours();
+    const currentMinutes = new Date().getMinutes();
+
+    // Calcular posição em pixels (60px por hora) onde a barra está
+    const barPosition = (currentHour * 60) + currentMinutes;
+
+    // Subtrair metade da altura visível para centralizar a barra
+    const containerHeight = container.clientHeight;
+    const scrollPosition = barPosition - (containerHeight / 2);
+    const targetScroll = Math.max(0, scrollPosition);
+
+    console.log('🎯 Tentando scroll para:', {
+      hora: currentHour,
+      minutos: currentMinutes,
+      posicaoDaBarra: barPosition,
+      alturaContainer: containerHeight,
+      metadeDaAltura: containerHeight / 2,
+      scrollFinal: targetScroll,
+      scrollHeight: container.scrollHeight
+    });
+
+    container.scrollTop = targetScroll;
+
+    console.log('✅ Scroll definido para:', container.scrollTop);
+  };
 
   // Atualizar linha do tempo a cada minuto
   useEffect(() => {
@@ -27,27 +60,26 @@ export function CalendarWeekView({ compromissos, onSlotClick, onCompromissoClick
     return () => clearInterval(interval);
   }, []);
 
-  // Auto-scroll para o horário atual ao carregar
+  // Definir scroll inicial na posição do horário atual
   useEffect(() => {
-    if (scrollContainerRef.current && !hasScrolledRef.current) {
-      const currentHour = new Date().getHours();
-      const currentMinutes = new Date().getMinutes();
-      
-      // Calcular posição em pixels (60px por hora)
-      // Subtrair 150px para centralizar melhor na tela
-      const scrollPosition = (currentHour * 60) + (currentMinutes) - 150;
-      
-      // Fazer scroll suave para a posição
-      setTimeout(() => {
-        scrollContainerRef.current?.scrollTo({
-          top: Math.max(0, scrollPosition),
-          behavior: 'smooth'
-        });
-      }, 100);
-      
-      hasScrolledRef.current = true;
-    }
-  }, []);
+    console.log('🔄 useEffect de scroll executado');
+
+    // Aguardar o próximo frame de renderização
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        scrollToCurrentTime();
+
+        // Tentar novamente para garantir
+        const timer1 = setTimeout(scrollToCurrentTime, 100);
+        const timer2 = setTimeout(scrollToCurrentTime, 300);
+
+        return () => {
+          clearTimeout(timer1);
+          clearTimeout(timer2);
+        };
+      });
+    });
+  }, [currentWeekStart]);
 
   // Gerar dias da semana
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(currentWeekStart, i));
@@ -90,9 +122,9 @@ export function CalendarWeekView({ compromissos, onSlotClick, onCompromissoClick
   };
 
   return (
-    <div className="flex flex-col h-full">
-      {/* Header com dias da semana */}
-      <div className="grid grid-cols-8 border-b border-zinc-800 bg-zinc-900/50 sticky top-0 z-10">
+    <div className="flex flex-col flex-1 min-h-0 max-h-full relative">
+      {/* Header com dias da semana - FIXO */}
+      <div className="grid grid-cols-8 border-b-2 border-zinc-700 bg-gradient-to-b from-zinc-900 to-zinc-900/95 z-20 shadow-lg backdrop-blur-sm flex-shrink-0">
         {/* Coluna de horas (vazia) */}
         <div className="w-10 sm:w-16 border-r border-zinc-800"></div>
 
@@ -100,14 +132,14 @@ export function CalendarWeekView({ compromissos, onSlotClick, onCompromissoClick
         {weekDays.map((day, i) => (
           <div
             key={i}
-            className={`p-1.5 sm:p-3 text-center border-r border-zinc-800 ${
-              isToday(day) ? 'bg-aura-500/10' : ''
+            className={`p-2 sm:p-3 text-center border-r border-zinc-800 transition-all duration-200 ${
+              isToday(day) ? 'bg-aura-500/10 border-b-2 border-b-aura-500' : ''
             }`}
           >
-            <div className="text-[10px] sm:text-xs text-gray-400 uppercase">
+            <div className="text-[10px] sm:text-xs text-gray-400 uppercase font-medium">
               {format(day, 'EEE', { locale: ptBR })}
             </div>
-            <div className={`text-sm sm:text-xl font-bold mt-0.5 sm:mt-1 ${
+            <div className={`text-sm sm:text-xl font-bold mt-0.5 sm:mt-1 transition-colors ${
               isToday(day) ? 'text-aura-400' : 'text-white'
             }`}>
               {format(day, 'd')}
@@ -116,9 +148,13 @@ export function CalendarWeekView({ compromissos, onSlotClick, onCompromissoClick
         ))}
       </div>
 
-      {/* Grid de horários */}
-      <div className="flex-1 overflow-auto" ref={scrollContainerRef}>
-        <div className="grid grid-cols-8 relative">
+      {/* Grid de horários - SCROLLÁVEL */}
+      <div
+        className="flex-1 overflow-y-scroll overflow-x-hidden"
+        ref={scrollContainerRef}
+        style={{ height: '0px' }}
+      >
+        <div className="grid grid-cols-8 relative" style={{ height: '1440px' }}>
           {/* Coluna de horas */}
           <div className="w-10 sm:w-16 relative">
             {hours.map(hour => (

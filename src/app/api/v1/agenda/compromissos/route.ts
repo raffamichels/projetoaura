@@ -2,13 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/app/api/auth/[...nextauth]/route';
 import { prisma } from '@/lib/prisma';
 import { TipoRecorrencia } from '@/types/compromisso';
-import { 
-  gerarDatasRecorrentes, 
+import {
+  gerarDatasRecorrentes,
   gerarRecorrenciaGrupoId,
 } from '@/lib/recorrencia-utils';
-import { registrarAtividade } from '@/lib/atividades-helper'; // ✅ ADICIONAR
-import { format } from 'date-fns'; // ✅ ADICIONAR
-import { ptBR } from 'date-fns/locale'; // ✅ ADICIONAR
+import { registrarAtividade } from '@/lib/atividades-helper';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { GoogleCalendarService } from '@/lib/googleCalendar';
 
 // POST - Criar novo compromisso
 export async function POST(req: NextRequest) {
@@ -28,18 +29,19 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { 
-      titulo, 
-      descricao, 
-      data, 
-      horaInicio, 
-      horaFim, 
-      categoria, 
+    const {
+      titulo,
+      descricao,
+      data,
+      horaInicio,
+      horaFim,
+      categoria,
       cor,
       isRecorrente,
       tipoRecorrencia,
       intervaloRecorrencia,
       dataFimRecorrencia,
+      syncWithGoogle,
     } = body;
 
     // Validações básicas
@@ -52,6 +54,23 @@ export async function POST(req: NextRequest) {
 
     // Se NÃO for recorrente, cria apenas um compromisso
     if (!isRecorrente) {
+      let googleEventId: string | null = null;
+
+      // Sincronizar com Google Calendar se solicitado
+      if (syncWithGoogle) {
+        const googleService = new GoogleCalendarService();
+        
+        googleEventId = await googleService.createEvent(user.id, {
+          titulo,
+          descricao,
+          // Garante string ISO
+          data: typeof data === 'string' ? data : new Date(data).toISOString(),
+          horaInicio,
+          horaFim,
+          isRecorrente: false,
+        });
+      }
+
       const compromisso = await prisma.compromisso.create({
         data: {
           titulo,
@@ -62,11 +81,13 @@ export async function POST(req: NextRequest) {
           categoria,
           cor: cor || '#8B5CF6',
           isRecorrente: false,
+          syncWithGoogle: syncWithGoogle || false,
+          googleEventId,
           userId: user.id,
         },
       });
 
-      // ✅ ADICIONAR: Registrar atividade
+      // Registrar atividade
       await registrarAtividade({
         userId: user.id,
         tipo: 'compromisso_criado',
@@ -87,7 +108,7 @@ export async function POST(req: NextRequest) {
     // SE FOR RECORRENTE, cria múltiplas instâncias
     const dataInicial = new Date(data);
     const dataFim = dataFimRecorrencia ? new Date(dataFimRecorrencia) : undefined;
-    
+
     // Gerar as datas
     const datas = gerarDatasRecorrentes({
       dataInicial,
@@ -99,6 +120,26 @@ export async function POST(req: NextRequest) {
 
     // Gerar ID do grupo para ligar todas as instâncias
     const grupoId = gerarRecorrenciaGrupoId();
+
+    // Sincronizar com Google Calendar se solicitado (uma única recorrência no Google)
+    let googleEventId: string | null = null;
+    
+    if (syncWithGoogle) {
+      const googleService = new GoogleCalendarService();
+
+      googleEventId = await googleService.createEvent(user.id, {
+        titulo,
+        descricao,
+        data: dataInicial.toISOString(), 
+        horaInicio,
+        horaFim,
+        isRecorrente: true,
+        // CORREÇÃO AQUI: Garante string ou undefined (remove null e converte Enum)
+        tipoRecorrencia: tipoRecorrencia ? String(tipoRecorrencia) : undefined,
+        intervaloRecorrencia: intervaloRecorrencia || 1,
+        dataFimRecorrencia: dataFim ? dataFim.toISOString() : undefined,
+      });
+    }
 
     // Criar todas as instâncias
     const compromissos = await prisma.$transaction(
@@ -123,13 +164,15 @@ export async function POST(req: NextRequest) {
             dataFimRecorrencia: dataFim,
             recorrenciaGrupoId: grupoId,
             recorrenciaInstancia: index + 1,
+            syncWithGoogle: syncWithGoogle || false,
+            googleEventId: index === 0 ? googleEventId : null, // Só a primeira instância tem o googleEventId
             userId: user.id,
           },
         });
       })
     );
 
-    // ✅ ADICIONAR: Registrar atividade para série recorrente
+    // Registrar atividade para série recorrente
     await registrarAtividade({
       userId: user.id,
       tipo: 'compromisso_criado',

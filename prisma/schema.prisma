@@ -57,6 +57,12 @@ model User {
   image         String?
   plano         PlanoUsuario  @default(FREE)
   planoExpiraEm DateTime?
+
+  // Integração Google Calendar
+  googleAccessToken  String?     @db.Text
+  googleRefreshToken String?     @db.Text
+  googleTokenExpiry  DateTime?
+
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 
@@ -85,23 +91,28 @@ model Compromisso {
   categoria   String?
   cor         String    @default("#8B5CF6")
   concluido   Boolean   @default(false)
-  
+
   isRecorrente         Boolean   @default(false)
   tipoRecorrencia      String?
   intervaloRecorrencia Int?      @default(1)
   dataFimRecorrencia   DateTime?
   recorrenciaGrupoId   String?
   recorrenciaInstancia Int?      @default(1)
-  
+
+  // Integração Google Calendar
+  syncWithGoogle       Boolean   @default(false)
+  googleEventId        String?   @unique
+
   userId      String
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  
+
   @@map("compromissos")
   @@index([userId, data])
   @@index([recorrenciaGrupoId])
+  @@index([googleEventId])
 }
 
 model Atividade {

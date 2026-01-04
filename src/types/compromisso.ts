@@ -13,7 +13,7 @@ export interface Compromisso {
   categoria?: string;
   cor: string;
   concluido: boolean;
-  
+
   // Campos de recorrência
   isRecorrente: boolean;
   tipoRecorrencia?: TipoRecorrencia;
@@ -21,7 +21,11 @@ export interface Compromisso {
   dataFimRecorrencia?: string;
   recorrenciaGrupoId?: string;
   recorrenciaInstancia?: number;
-  
+
+  // Integração Google Calendar
+  syncWithGoogle: boolean;
+  googleEventId?: string;
+
   userId: string;
   createdAt: string;
   updatedAt: string;

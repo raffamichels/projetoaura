@@ -1,11 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Compromisso, TipoRecorrencia } from '@/types/compromisso';
 import { RecorrenciaConfig } from '@/components/features/agenda/RecorrenciaConfig';
+import { Checkbox } from '@/components/ui/checkbox';
 
 interface CompromissoFormProps {
   onClose: () => void;
@@ -51,8 +53,30 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
   const [dataFimRecorrencia, setDataFimRecorrencia] = useState(
     initialData?.dataFimRecorrencia?.split('T')[0] || ''
   );
-  
+
+  // Estado Google Calendar
+  const [syncWithGoogle, setSyncWithGoogle] = useState(initialData?.syncWithGoogle || false);
+  const [hasGoogleAuth, setHasGoogleAuth] = useState(false);
+
   const [loading, setLoading] = useState(false);
+  const { data: session } = useSession();
+
+  // Verificar se usuário tem autenticação do Google
+  useEffect(() => {
+    const checkGoogleAuth = async () => {
+      try {
+        const response = await fetch('/api/v1/agenda/google-auth-status');
+        if (response.ok) {
+          const data = await response.json();
+          setHasGoogleAuth(data.hasAuth);
+        }
+      } catch (error) {
+        console.error('Erro ao verificar autenticação do Google:', error);
+      }
+    };
+
+    checkGoogleAuth();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,9 +101,11 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
         isRecorrente,
         tipoRecorrencia: isRecorrente ? tipoRecorrencia : null,
         intervaloRecorrencia: isRecorrente ? intervaloRecorrencia : null,
-        dataFimRecorrencia: isRecorrente && dataFimRecorrencia 
-          ? `${dataFimRecorrencia}T23:59:59` 
+        dataFimRecorrencia: isRecorrente && dataFimRecorrencia
+          ? `${dataFimRecorrencia}T23:59:59`
           : null,
+        // Integração Google Calendar
+        syncWithGoogle: hasGoogleAuth ? syncWithGoogle : false,
       };
 
       const response = await fetch(url, {
@@ -220,11 +246,42 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
         onDataFimChange={setDataFimRecorrencia}
       />
 
+      {/* Sincronização com Google Calendar */}
+      {hasGoogleAuth && (
+        <div className="space-y-3 p-4 bg-zinc-800/30 border border-zinc-700 rounded-lg">
+          <div className="flex items-start space-x-3">
+            <Checkbox
+              id="syncWithGoogle"
+              checked={syncWithGoogle}
+              onCheckedChange={(checked) => setSyncWithGoogle(checked as boolean)}
+              className="mt-0.5"
+            />
+            <div className="flex-1">
+              <Label
+                htmlFor="syncWithGoogle"
+                className="text-sm font-medium text-gray-300 cursor-pointer flex items-center gap-2"
+              >
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 0C5.383 0 0 5.383 0 12s5.383 12 12 12 12-5.383 12-12S18.617 0 12 0zm0 23C5.935 23 1 18.065 1 12S5.935 1 12 1s11 4.935 11 11-4.935 11-11 11z"/>
+                  <path d="M12 4.5c-4.136 0-7.5 3.364-7.5 7.5s3.364 7.5 7.5 7.5 7.5-3.364 7.5-7.5-3.364-7.5-7.5-7.5zm0 13.5c-3.309 0-6-2.691-6-6s2.691-6 6-6 6 2.691 6 6-2.691 6-6 6z"/>
+                </svg>
+                Enviar para Google Agenda
+              </Label>
+              <p className="text-xs text-gray-400 mt-1">
+                {syncWithGoogle
+                  ? 'Este compromisso será sincronizado com sua agenda do Google'
+                  : 'Ative para adicionar este compromisso ao Google Calendar'}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Aviso sobre recorrência ao editar */}
       {isEditMode && initialData?.isRecorrente && (
         <div className="p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
           <p className="text-xs text-yellow-400">
-            ⚠️ Este compromisso faz parte de uma série recorrente. 
+            ⚠️ Este compromisso faz parte de uma série recorrente.
             Ao salvar, você será perguntado se deseja atualizar apenas este ou todos os futuros.
           </p>
         </div>

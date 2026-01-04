@@ -103,11 +103,11 @@ export default function AgendaPage() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-8rem)] space-y-3 sm:space-y-4">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+    <div className="flex flex-col h-[calc(100vh-120px)] max-h-[calc(100vh-120px)] space-y-2.5 overflow-hidden">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 flex-shrink-0">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-1 sm:mb-2">Agenda</h1>
-          <p className="text-sm sm:text-base text-gray-400">
+          <h1 className="text-2xl font-bold text-white">Agenda</h1>
+          <p className="text-sm text-gray-400">
             Organize seus compromissos e eventos
           </p>
         </div>
@@ -119,22 +119,14 @@ export default function AgendaPage() {
             setIsEditMode(false);
             setIsModalOpen(true);
           }}
-          className="flex-1 sm:flex-none bg-purple-600 hover:bg-purple-700 h-auto py-2.5 text-sm sm:text-base"
+          className="flex-1 sm:flex-none bg-purple-600 hover:bg-purple-700 h-auto py-2 text-sm"
         >
           <Plus className="w-4 h-4 mr-2" />
           Novo Compromisso
         </Button>
       </div>
 
-      <CalendarToolbar
-        currentDate={currentDate}
-        view={view}
-        onDateChange={setCurrentDate}
-        onViewChange={setView}
-        onToday={handleToday}
-      />
-
-      <Card className="flex-1 bg-zinc-900/50 border-zinc-800 overflow-hidden">
+      <Card className="flex-1 min-h-0 max-h-full bg-zinc-900/50 border-zinc-800 overflow-hidden flex flex-col">
         {loading ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
@@ -143,26 +135,44 @@ export default function AgendaPage() {
             </div>
           </div>
         ) : view === 'week' ? (
-          <CalendarWeekView
-            compromissos={compromissos}
-            onSlotClick={handleSlotClick}
-            onCompromissoClick={handleCompromissoClick}
-            currentDate={currentDate}
-          />
+          <>
+            <CalendarToolbar
+              currentDate={currentDate}
+              view={view}
+              onDateChange={setCurrentDate}
+              onViewChange={setView}
+              onToday={handleToday}
+            />
+            <CalendarWeekView
+              compromissos={compromissos}
+              onSlotClick={handleSlotClick}
+              onCompromissoClick={handleCompromissoClick}
+              currentDate={currentDate}
+            />
+          </>
         ) : (
-          <div className="flex items-center justify-center h-full">
-            <div className="text-center">
-              <p className="text-xl font-semibold text-white mb-2">
-                Visualização de {view === 'day' ? 'Dia' : view === 'month' ? 'Mês' : 'Ano'}
-              </p>
-              <p className="text-gray-400">Em desenvolvimento</p>
+          <>
+            <CalendarToolbar
+              currentDate={currentDate}
+              view={view}
+              onDateChange={setCurrentDate}
+              onViewChange={setView}
+              onToday={handleToday}
+            />
+            <div className="flex items-center justify-center h-full">
+              <div className="text-center">
+                <p className="text-xl font-semibold text-white mb-2">
+                  Visualização de {view === 'day' ? 'Dia' : view === 'month' ? 'Mês' : 'Ano'}
+                </p>
+                <p className="text-gray-400">Em desenvolvimento</p>
+              </div>
             </div>
-          </div>
+          </>
         )}
       </Card>
 
       {/* Modal de Detalhes do Compromisso */}
-      <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
+      <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen} modal={false}>
         <DialogContent className="bg-zinc-900 border-zinc-800 text-white sm:max-w-125">
           <DialogHeader>
             <DialogTitle>Detalhes do Compromisso</DialogTitle>
@@ -182,7 +192,7 @@ export default function AgendaPage() {
       </Dialog>
 
       {/* Modal de Criar/Editar Compromisso */}
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen} modal={false}>
         <DialogContent className="bg-zinc-900 border-zinc-800 text-white sm:max-w-125">
           <DialogHeader>
             <DialogTitle>

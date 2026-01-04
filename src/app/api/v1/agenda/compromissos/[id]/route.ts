@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/app/api/auth/[...nextauth]/route';
 import { prisma } from '@/lib/prisma';
 import { registrarAtividade } from '@/lib/atividades-helper'; // ✅ ADICIONAR
+import { GoogleCalendarService } from '@/lib/googleCalendar';
 
 // PUT - Atualizar compromisso
 export async function PUT(
@@ -39,23 +40,39 @@ export async function PUT(
     }
 
     const body = await req.json();
-    const { 
-      titulo, 
-      descricao, 
-      data, 
-      horaInicio, 
-      horaFim, 
-      categoria, 
+    const {
+      titulo,
+      descricao,
+      data,
+      horaInicio,
+      horaFim,
+      categoria,
       cor,
       applyToFuture, // true = editar este e futuros, false = só este
       isRecorrente,
       tipoRecorrencia,
       intervaloRecorrencia,
       dataFimRecorrencia,
+      syncWithGoogle,
     } = body;
 
     // Se NÃO for recorrente OU for "apenas este", atualiza apenas um
     if (!compromisso.isRecorrente || applyToFuture === false) {
+      // Atualizar Google Calendar se existir sincronização
+      if (compromisso.syncWithGoogle && compromisso.googleEventId) {
+        await GoogleCalendarService.updateEvent(user.id, compromisso.googleEventId, {
+          titulo,
+          descricao,
+          data: new Date(data),
+          horaInicio,
+          horaFim,
+          isRecorrente: isRecorrente || false,
+          tipoRecorrencia: isRecorrente ? tipoRecorrencia : null,
+          intervaloRecorrencia: isRecorrente ? intervaloRecorrencia : null,
+          dataFimRecorrencia: isRecorrente && dataFimRecorrencia ? new Date(dataFimRecorrencia) : null,
+        });
+      }
+
       const updated = await prisma.compromisso.update({
         where: { id },
         data: {
@@ -73,6 +90,7 @@ export async function PUT(
           dataFimRecorrencia: isRecorrente && dataFimRecorrencia ? new Date(dataFimRecorrencia) : null,
           // Se editar só este, remove do grupo
           recorrenciaGrupoId: applyToFuture === false ? null : compromisso.recorrenciaGrupoId,
+          syncWithGoogle: syncWithGoogle !== undefined ? syncWithGoogle : compromisso.syncWithGoogle,
         },
       });
 
@@ -81,7 +99,7 @@ export async function PUT(
         userId: user.id,
         tipo: 'compromisso_editado',
         titulo: `Compromisso atualizado: ${titulo}`,
-        descricao: applyToFuture === false 
+        descricao: applyToFuture === false
           ? 'Compromisso individual atualizado'
           : 'Compromisso atualizado',
         metadata: {
@@ -98,6 +116,29 @@ export async function PUT(
 
     // Se for "este e futuros", atualiza todos da série com data >= este
     if (applyToFuture === true && compromisso.recorrenciaGrupoId) {
+      // Atualizar Google Calendar se a primeira instância tiver sincronização
+      const primeiraInstancia = await prisma.compromisso.findFirst({
+        where: {
+          recorrenciaGrupoId: compromisso.recorrenciaGrupoId,
+          recorrenciaInstancia: 1,
+          userId: user.id,
+        },
+      });
+
+      if (primeiraInstancia?.syncWithGoogle && primeiraInstancia.googleEventId) {
+        await GoogleCalendarService.updateEvent(user.id, primeiraInstancia.googleEventId, {
+          titulo,
+          descricao,
+          data: new Date(data),
+          horaInicio,
+          horaFim,
+          isRecorrente: true,
+          tipoRecorrencia,
+          intervaloRecorrencia,
+          dataFimRecorrencia: dataFimRecorrencia ? new Date(dataFimRecorrencia) : null,
+        });
+      }
+
       const updated = await prisma.compromisso.updateMany({
         where: {
           recorrenciaGrupoId: compromisso.recorrenciaGrupoId,
@@ -135,7 +176,7 @@ export async function PUT(
       });
 
       return NextResponse.json(
-        { 
+        {
           message: `${updated.count} compromissos atualizados com sucesso`,
           data: { count: updated.count },
         },
@@ -192,6 +233,11 @@ export async function DELETE(
 
     // Se NÃO for recorrente OU for "apenas este", exclui apenas um
     if (!compromisso.isRecorrente || applyToFuture === false) {
+      // Excluir do Google Calendar se existir sincronização
+      if (compromisso.syncWithGoogle && compromisso.googleEventId) {
+        await GoogleCalendarService.deleteEvent(user.id, compromisso.googleEventId);
+      }
+
       await prisma.compromisso.delete({
         where: { id },
       });
@@ -201,7 +247,7 @@ export async function DELETE(
         userId: user.id,
         tipo: 'compromisso_excluido',
         titulo: `Compromisso excluído: ${compromisso.titulo}`,
-        descricao: applyToFuture === false 
+        descricao: applyToFuture === false
           ? 'Compromisso individual removido'
           : 'Compromisso removido',
         metadata: {
@@ -218,6 +264,19 @@ export async function DELETE(
 
     // Se for "este e futuros", exclui todos da série com data >= este
     if (applyToFuture === true && compromisso.recorrenciaGrupoId) {
+      // Excluir do Google Calendar se a primeira instância tiver sincronização
+      const primeiraInstancia = await prisma.compromisso.findFirst({
+        where: {
+          recorrenciaGrupoId: compromisso.recorrenciaGrupoId,
+          recorrenciaInstancia: 1,
+          userId: user.id,
+        },
+      });
+
+      if (primeiraInstancia?.syncWithGoogle && primeiraInstancia.googleEventId) {
+        await GoogleCalendarService.deleteEvent(user.id, primeiraInstancia.googleEventId);
+      }
+
       const deleted = await prisma.compromisso.deleteMany({
         where: {
           recorrenciaGrupoId: compromisso.recorrenciaGrupoId,
@@ -243,7 +302,7 @@ export async function DELETE(
       });
 
       return NextResponse.json(
-        { 
+        {
           message: `${deleted.count} compromissos excluídos com sucesso`,
           count: deleted.count,
         },

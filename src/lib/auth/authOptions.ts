@@ -9,6 +9,13 @@ export const authConfig = {
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      authorization: {
+        params: {
+          scope: 'openid email profile https://www.googleapis.com/auth/calendar',
+          access_type: 'offline',
+          prompt: 'consent',
+        },
+      },
     }),
     Credentials({
       name: 'Credentials',
@@ -61,6 +68,11 @@ export const authConfig = {
             where: { email: user.email! }
           });
 
+          // Calcular data de expiração do token
+          const tokenExpiry = account.expires_at
+            ? new Date(account.expires_at * 1000)
+            : null;
+
           if (!existingUser) {
             // Criar novo usuário com dados do Google
             await prisma.user.create({
@@ -70,15 +82,21 @@ export const authConfig = {
                 password: '', // Senha vazia para login via Google
                 emailVerified: new Date(),
                 image: user.image,
+                googleAccessToken: account.access_token,
+                googleRefreshToken: account.refresh_token,
+                googleTokenExpiry: tokenExpiry,
               }
             });
-          } else if (!existingUser.emailVerified) {
-            // Atualizar usuário existente para marcar email como verificado
+          } else {
+            // Atualizar usuário existente com tokens do Google
             await prisma.user.update({
               where: { email: user.email! },
               data: {
                 emailVerified: new Date(),
                 image: user.image || existingUser.image,
+                googleAccessToken: account.access_token,
+                googleRefreshToken: account.refresh_token || existingUser.googleRefreshToken,
+                googleTokenExpiry: tokenExpiry,
               }
             });
           }
