@@ -3,14 +3,14 @@
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { 
-  Calendar, 
-  Wallet, 
-  BookOpen, 
+import {
+  Calendar,
+  Wallet,
+  BookOpen,
   TrendingUp,
   Target,
-  Clock,
   CheckCircle2,
+  Library,
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -89,6 +89,31 @@ export default function DashboardPage() {
   // Função para ir para a agenda
   const handleIrParaAgenda = () => {
     router.push('/dashboard/agenda');
+  };
+
+  // Função para ir para o financeiro e abrir modal de nova transação
+  const handleNovaTransacao = () => {
+    router.push('/dashboard/financeiro?nova=true');
+  };
+
+  // Função para ir para estudos e abrir modal de novo curso
+  const handleNovoCurso = () => {
+    router.push('/dashboard/estudos?novo=true');
+  };
+
+  // Função para ir para o financeiro
+  const handleIrParaFinanceiro = () => {
+    router.push('/dashboard/financeiro');
+  };
+
+  // Função para ir para estudos
+  const handleIrParaEstudos = () => {
+    router.push('/dashboard/estudos');
+  };
+
+  // Função para ir para biblioteca
+  const handleIrParaBiblioteca = () => {
+    router.push('/dashboard/biblioteca');
   };
 
   return (
@@ -211,22 +236,22 @@ export default function DashboardPage() {
               Novo Compromisso
             </Button>
 
-            {/* Outros botões - Em breve */}
+            {/* Nova Transação - FUNCIONAL */}
             <Button
-              disabled
-              className="w-full justify-start h-auto py-3 bg-green-500/10 hover:bg-green-500/20 text-green-400 border border-green-500/20 cursor-not-allowed text-sm sm:text-base"
+              onClick={handleNovaTransacao}
+              className="w-full justify-start h-auto py-3 bg-green-500/10 hover:bg-green-500/20 text-green-400 border border-green-500/20 hover:border-green-500/40 transition-all text-sm sm:text-base"
             >
               <Wallet className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
               Nova Transação
-              <Badge variant="secondary" className="ml-auto text-xs">Em breve</Badge>
             </Button>
+
+            {/* Adicionar Curso - FUNCIONAL */}
             <Button
-              disabled
-              className="w-full justify-start h-auto py-3 bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 border border-orange-500/20 cursor-not-allowed text-sm sm:text-base"
+              onClick={handleNovoCurso}
+              className="w-full justify-start h-auto py-3 bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 border border-orange-500/20 hover:border-orange-500/40 transition-all text-sm sm:text-base"
             >
               <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
               Adicionar Curso
-              <Badge variant="secondary" className="ml-auto text-xs">Em breve</Badge>
             </Button>
             <Button
               disabled
@@ -267,11 +292,14 @@ export default function DashboardPage() {
           </Card>
 
           {/* Financeiro */}
-          <Card className="bg-gradient-to-br from-green-500/10 to-emerald-500/10 border-green-500/20 hover:border-green-500/40 transition-all cursor-pointer group opacity-60 cursor-not-allowed">
+          <Card
+            onClick={handleIrParaFinanceiro}
+            className="bg-gradient-to-br from-green-500/10 to-emerald-500/10 border-green-500/20 hover:border-green-500/40 transition-all cursor-pointer group"
+          >
             <CardHeader>
               <div className="flex items-center justify-between mb-2">
                 <Wallet className="w-8 h-8 text-green-400" />
-                <Badge className="bg-green-500/20 text-green-400 border-0">Em breve</Badge>
+                <Badge className="bg-green-500/20 text-green-400 border-0">Ativo</Badge>
               </div>
               <CardTitle className="text-white">Financeiro</CardTitle>
               <CardDescription className="text-gray-400">
@@ -279,18 +307,21 @@ export default function DashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button disabled className="w-full bg-green-500/50 cursor-not-allowed">
-                Em breve
+              <Button className="w-full bg-green-500 hover:bg-green-600 group-hover:shadow-lg group-hover:shadow-green-500/25">
+                Acessar Financeiro
               </Button>
             </CardContent>
           </Card>
 
           {/* Estudos */}
-          <Card className="bg-gradient-to-br from-orange-500/10 to-amber-500/10 border-orange-500/20 hover:border-orange-500/40 transition-all cursor-pointer group opacity-60 cursor-not-allowed">
+          <Card
+            onClick={handleIrParaEstudos}
+            className="bg-gradient-to-br from-orange-500/10 to-amber-500/10 border-orange-500/20 hover:border-orange-500/40 transition-all cursor-pointer group"
+          >
             <CardHeader>
               <div className="flex items-center justify-between mb-2">
                 <BookOpen className="w-8 h-8 text-orange-400" />
-                <Badge className="bg-orange-500/20 text-orange-400 border-0">Em breve</Badge>
+                <Badge className="bg-orange-500/20 text-orange-400 border-0">Ativo</Badge>
               </div>
               <CardTitle className="text-white">Estudos</CardTitle>
               <CardDescription className="text-gray-400">
@@ -298,8 +329,30 @@ export default function DashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button disabled className="w-full bg-orange-500/50 cursor-not-allowed">
-                Em breve
+              <Button className="w-full bg-orange-500 hover:bg-orange-600 group-hover:shadow-lg group-hover:shadow-orange-500/25">
+                Acessar Estudos
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Biblioteca */}
+          <Card
+            onClick={handleIrParaBiblioteca}
+            className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border-purple-500/20 hover:border-purple-500/40 transition-all cursor-pointer group"
+          >
+            <CardHeader>
+              <div className="flex items-center justify-between mb-2">
+                <Library className="w-8 h-8 text-purple-400" />
+                <Badge className="bg-purple-500/20 text-purple-400 border-0">Ativo</Badge>
+              </div>
+              <CardTitle className="text-white">Biblioteca</CardTitle>
+              <CardDescription className="text-gray-400">
+                Organize seus livros e leituras
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button className="w-full bg-purple-500 hover:bg-purple-600 group-hover:shadow-lg group-hover:shadow-purple-500/25">
+                Acessar Biblioteca
               </Button>
             </CardContent>
           </Card>
@@ -318,7 +371,10 @@ export default function DashboardPage() {
                 Acesse recursos premium como Metas, Treinos, Viagens e muito mais
               </p>
             </div>
-            <Button className="w-full md:w-auto bg-gradient-to-r from-aura-500 to-blue-500 hover:from-aura-600 hover:to-blue-600 shadow-lg shadow-aura-500/25 text-sm sm:text-base h-auto py-2.5 sm:py-2">
+            <Button
+              onClick={() => router.push('/premium')}
+              className="w-full md:w-auto bg-gradient-to-r from-aura-500 to-blue-500 hover:from-aura-600 hover:to-blue-600 shadow-lg shadow-aura-500/25 text-sm sm:text-base h-auto py-2.5 sm:py-2"
+            >
               <CheckCircle2 className="w-4 h-4 mr-2" />
               <span className="hidden sm:inline">Fazer Upgrade para Premium</span>
               <span className="sm:hidden">Upgrade Premium</span>

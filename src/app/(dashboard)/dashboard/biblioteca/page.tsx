@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BookOpen, Plus, Quote, Film, ChevronRight } from 'lucide-react';
+import { BookOpen, Plus, Quote, Film } from 'lucide-react';
 import { StarRating } from '@/components/ui/star-rating';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -192,8 +192,7 @@ export default function BibliotecaPage() {
       </div>
 
       {/* Biblioteca */}
-      <div>
-        <h2 className="text-lg sm:text-xl font-bold text-white mb-3 sm:mb-4">Minha Biblioteca</h2>
+      <div className="space-y-6">
         {midias.length === 0 ? (
           <Card className="bg-zinc-900 border-zinc-800">
             <CardContent className="p-6 sm:p-8 text-center">
@@ -211,67 +210,139 @@ export default function BibliotecaPage() {
             </CardContent>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-            {midias.map((midia) => {
-              const statusInfo = getStatusBadge(midia.status);
-              return (
-                <Card
-                  key={midia.id}
-                  className="bg-zinc-900 border-zinc-800 hover:border-zinc-700 cursor-pointer transition-colors overflow-hidden gap-2"
-                  onClick={() => window.location.href = `/dashboard/biblioteca/${midia.id}`}
-                >
-                  <CardHeader className="pb-0">
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex items-center gap-2 flex-1 min-w-0">
-                        <div
-                          className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-                          style={{ backgroundColor: midia.cor + '20', color: midia.cor }}
+          <>
+            {/* Livros */}
+            {midias.filter((m) => m.tipo === 'LIVRO').length > 0 && (
+              <div>
+                <div className="flex items-center justify-between mb-3 sm:mb-4">
+                  <h2 className="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                    <BookOpen className="w-5 h-5 text-blue-400" />
+                    Livros
+                  </h2>
+                  <span className="text-sm text-zinc-500">
+                    {midias.filter((m) => m.tipo === 'LIVRO').length} {midias.filter((m) => m.tipo === 'LIVRO').length === 1 ? 'livro' : 'livros'}
+                  </span>
+                </div>
+                <div className="overflow-x-auto pb-4">
+                  <div className="flex gap-4 min-w-max">
+                    {midias.filter((m) => m.tipo === 'LIVRO').map((midia) => {
+                      const statusInfo = getStatusBadge(midia.status);
+                      return (
+                        <Card
+                          key={midia.id}
+                          className="bg-zinc-900 border-zinc-800 hover:border-zinc-700 cursor-pointer transition-colors w-64 flex-shrink-0"
+                          onClick={() => window.location.href = `/dashboard/biblioteca/${midia.id}`}
                         >
-                          {midia.tipo === 'LIVRO' ? (
-                            <BookOpen className="w-4 h-4" />
-                          ) : (
-                            <Film className="w-4 h-4" />
-                          )}
-                        </div>
-                        <CardTitle className="text-white text-base line-clamp-2">{midia.titulo}</CardTitle>
-                      </div>
-                      <ChevronRight className="w-5 h-5 text-zinc-500 flex-shrink-0" />
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-3 pt-0">
-                    <div>
+                          <CardContent className="p-4 space-y-3">
+                            {/* Capa */}
+                            {midia.capa && (
+                              <div className="flex justify-center">
+                                <img
+                                  src={midia.capa}
+                                  alt={`Capa de ${midia.titulo}`}
+                                  className="w-full h-80 object-cover rounded-lg border border-zinc-700 shadow-lg"
+                                />
+                              </div>
+                            )}
 
-                      {/* Capa */}
-                      {midia.capa && (
-                        <div className="mb-3 flex justify-center">
-                          <img
-                            src={midia.capa}
-                            alt={`Capa de ${midia.titulo}`}
-                            className="max-w-full h-64 object-contain rounded-lg border border-zinc-700 shadow-lg"
-                          />
-                        </div>
-                      )}
+                            {/* Título */}
+                            <div className="flex items-start gap-2">
+                              <div
+                                className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                                style={{ backgroundColor: midia.cor + '20', color: midia.cor }}
+                              >
+                                <BookOpen className="w-4 h-4" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <h3 className="text-white font-semibold text-sm line-clamp-2">{midia.titulo}</h3>
+                                <p className="text-xs text-zinc-400 truncate mt-1">{midia.autor}</p>
+                              </div>
+                            </div>
 
-                      {/* Autor/Diretor */}
-                      <p className="text-sm text-zinc-400 truncate">
-                        {midia.tipo === 'LIVRO' ? midia.autor : midia.diretor}
-                      </p>
-                    </div>
+                            {/* Status e Nota */}
+                            <div className="flex items-center justify-between gap-4 text-xs pt-2 border-t border-zinc-800">
+                              <div className={statusInfo.className}>
+                                {statusInfo.label}
+                              </div>
+                              {midia.nota && midia.nota > 0 && (
+                                <StarRating value={midia.nota} size="sm" readonly />
+                              )}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
 
-                    {/* Status e Nota */}
-                    <div className="flex items-center justify-between gap-4 text-sm pt-2 border-t border-zinc-800">
-                      <div className={statusInfo.className}>
-                        {statusInfo.label}
-                      </div>
-                      {midia.nota && midia.nota > 0 && (
-                        <StarRating value={midia.nota} size="sm" readonly />
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
+            {/* Filmes */}
+            {midias.filter((m) => m.tipo === 'FILME').length > 0 && (
+              <div>
+                <div className="flex items-center justify-between mb-3 sm:mb-4">
+                  <h2 className="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                    <Film className="w-5 h-5 text-pink-400" />
+                    Filmes
+                  </h2>
+                  <span className="text-sm text-zinc-500">
+                    {midias.filter((m) => m.tipo === 'FILME').length} {midias.filter((m) => m.tipo === 'FILME').length === 1 ? 'filme' : 'filmes'}
+                  </span>
+                </div>
+                <div className="overflow-x-auto pb-4">
+                  <div className="flex gap-4 min-w-max">
+                    {midias.filter((m) => m.tipo === 'FILME').map((midia) => {
+                      const statusInfo = getStatusBadge(midia.status);
+                      return (
+                        <Card
+                          key={midia.id}
+                          className="bg-zinc-900 border-zinc-800 hover:border-zinc-700 cursor-pointer transition-colors w-64 flex-shrink-0"
+                          onClick={() => window.location.href = `/dashboard/biblioteca/${midia.id}`}
+                        >
+                          <CardContent className="p-4 space-y-3">
+                            {/* Capa */}
+                            {midia.capa && (
+                              <div className="flex justify-center">
+                                <img
+                                  src={midia.capa}
+                                  alt={`Capa de ${midia.titulo}`}
+                                  className="w-full h-80 object-cover rounded-lg border border-zinc-700 shadow-lg"
+                                />
+                              </div>
+                            )}
+
+                            {/* Título */}
+                            <div className="flex items-start gap-2">
+                              <div
+                                className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                                style={{ backgroundColor: midia.cor + '20', color: midia.cor }}
+                              >
+                                <Film className="w-4 h-4" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <h3 className="text-white font-semibold text-sm line-clamp-2">{midia.titulo}</h3>
+                                <p className="text-xs text-zinc-400 truncate mt-1">{midia.diretor}</p>
+                              </div>
+                            </div>
+
+                            {/* Status e Nota */}
+                            <div className="flex items-center justify-between gap-4 text-xs pt-2 border-t border-zinc-800">
+                              <div className={statusInfo.className}>
+                                {statusInfo.label}
+                              </div>
+                              {midia.nota && midia.nota > 0 && (
+                                <StarRating value={midia.nota} size="sm" readonly />
+                              )}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
 

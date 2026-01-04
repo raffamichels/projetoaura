@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
   Calendar,
@@ -35,6 +35,7 @@ interface SidebarProps {
 
 export function Sidebar({ isMobile = false, onNavigate }: SidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
 
   return (
     <aside className={`${isMobile ? 'flex' : 'hidden lg:flex'} flex-col w-64 h-full border-r border-zinc-800 bg-zinc-900/50 backdrop-blur-xl`}>
@@ -93,7 +94,9 @@ export function Sidebar({ isMobile = false, onNavigate }: SidebarProps) {
           <p className="text-xs text-gray-400 mb-3">
             Desbloqueie recursos premium
           </p>
-          <button className="w-full bg-gradient-to-r from-aura-500 to-blue-500 hover:from-aura-600 hover:to-blue-600 text-white text-sm font-medium py-2 rounded-lg transition-all">
+          <button 
+            onClick={() => router.push('/premium')}
+            className="w-full bg-gradient-to-r from-aura-500 to-blue-500 hover:from-aura-600 hover:to-blue-600 text-white text-sm font-medium py-2 rounded-lg transition-all">
             Fazer Upgrade
           </button>
         </div>

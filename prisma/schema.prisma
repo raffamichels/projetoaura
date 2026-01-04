@@ -406,3 +406,14 @@ model Citacao {
   @@index([midiaId])
   @@index([userId, createdAt(sort: Desc)])
 }
+
+model Waitlist {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  nome      String?
+  interesse String?  // Qual módulo mais interessa
+  createdAt DateTime @default(now())
+
+  @@map("waitlist")
+  @@index([createdAt(sort: Desc)])
+}
