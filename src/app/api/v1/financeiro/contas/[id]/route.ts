@@ -151,6 +151,23 @@ export async function DELETE(
       return NextResponse.json({ error: 'Conta não encontrada' }, { status: 404 });
     }
 
+    // VALIDAÇÃO CRÍTICA: Verificar se existem transações vinculadas
+    const transacoesVinculadas = await prisma.transacao.count({
+      where: {
+        contaBancariaId: id,
+        userId: user.id,
+      },
+    });
+
+    if (transacoesVinculadas > 0) {
+      return NextResponse.json(
+        {
+          error: `Não é possível excluir esta conta pois existem ${transacoesVinculadas} transação(ões) vinculada(s) a ela. Exclua ou transfira as transações primeiro.`,
+        },
+        { status: 400 }
+      );
+    }
+
     await prisma.contaBancaria.delete({
       where: { id },
     });

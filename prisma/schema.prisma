@@ -29,6 +29,25 @@ enum StatusObjetivo {
   CANCELADO
 }
 
+enum TipoMidia {
+  LIVRO
+  FILME
+}
+
+enum StatusLeitura {
+  PROXIMO
+  EM_ANDAMENTO
+  PAUSADO
+  CONCLUIDO
+}
+
+enum FonteLivro {
+  EMPRESTADO
+  FISICO
+  KINDLE
+  DIGITAL
+}
+
 model User {
   id            String        @id @default(cuid())
   email         String        @unique
@@ -50,6 +69,8 @@ model User {
   objetivosFinanceiros ObjetivoFinanceiro[]
   cursos             Curso[]
   anotacoes          Anotacao[]
+  midias             Midia[]
+  citacoes           Citacao[]
 
   @@map("users")
 }
@@ -179,37 +200,41 @@ model Transacao {
   data              DateTime
   tipo              TipoTransacao
   observacoes       String?
-  
+
   isFixa            Boolean        @default(false)
-  
+
   isParcela         Boolean        @default(false)
   parcelaNumero     Int?
   parcelaTotais     Int?
   grupoParcelaId    String?
-  
+
   categoriaId       String?
   categoria         Categoria?     @relation(fields: [categoriaId], references: [id], onDelete: SetNull)
-  
-  contaBancariaId   String?
-  contaBancaria     ContaBancaria? @relation(fields: [contaBancariaId], references: [id], onDelete: SetNull)
-  
+
+  // IMPORTANTE: Conta bancária é OBRIGATÓRIA em toda transação
+  // Cartão é apenas informação adicional opcional (ex: compra no cartão será debitada da conta)
+  contaBancariaId   String
+  contaBancaria     ContaBancaria  @relation(fields: [contaBancariaId], references: [id], onDelete: Restrict)
+
   cartaoId          String?
   cartao            Cartao?        @relation(fields: [cartaoId], references: [id], onDelete: SetNull)
-  
+
   objetivoId        String?
   objetivo          ObjetivoFinanceiro? @relation(fields: [objetivoId], references: [id], onDelete: SetNull)
-  
+
   userId            String
   user              User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   createdAt         DateTime       @default(now())
   updatedAt         DateTime       @updatedAt
-  
+
   @@map("transacoes")
   @@index([userId, data(sort: Desc)])
   @@index([userId, tipo, data])
   @@index([grupoParcelaId])
   @@index([categoriaId])
+  @@index([contaBancariaId])
+  @@index([cartaoId])
 }
 
 model ObjetivoFinanceiro {
@@ -312,4 +337,72 @@ model Anotacao {
   @@map("anotacoes")
   @@index([userId, createdAt(sort: Desc)])
   @@index([cursoId])
+}
+
+model Midia {
+  id                    String         @id @default(cuid())
+  tipo                  TipoMidia
+  titulo                String
+  capa                  String?
+  cor                   String         @default("#8B5CF6")
+
+  // Campos específicos de livro
+  autor                 String?
+  editora               String?
+  genero                String?
+  fonte                 FonteLivro?
+
+  // Campos específicos de filme
+  diretor               String?
+  duracao               Int?
+  anoLancamento         Int?
+
+  // Campos comuns
+  idioma                String?
+  status                StatusLeitura  @default(PROXIMO)
+  nota                  Int?
+  dataInicio            DateTime?
+  dataConclusao         DateTime?
+
+  // Reflexões e aprendizados
+  impressoesIniciais    String?        @db.Text
+  principaisAprendizados String?       @db.Text
+  trechosMemoraveis     String?        @db.Text
+  reflexao              String?        @db.Text
+  aprendizadosPraticos  String?        @db.Text
+  consideracoesFinais   String?        @db.Text
+
+  userId                String
+  user                  User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  citacoes              Citacao[]
+
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+
+  @@map("midias")
+  @@index([userId, tipo, status])
+  @@index([userId, createdAt(sort: Desc)])
+}
+
+model Citacao {
+  id          String   @id @default(cuid())
+  texto       String   @db.Text
+  autor       String?
+  pagina      String?
+  destaque    Boolean  @default(false)
+
+  midiaId     String?
+  midia       Midia?   @relation(fields: [midiaId], references: [id], onDelete: Cascade)
+
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("citacoes")
+  @@index([userId, destaque])
+  @@index([midiaId])
+  @@index([userId, createdAt(sort: Desc)])
 }

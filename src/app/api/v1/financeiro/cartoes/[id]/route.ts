@@ -164,6 +164,23 @@ export async function DELETE(
       return NextResponse.json({ error: 'Cartão não encontrado' }, { status: 404 });
     }
 
+    // VALIDAÇÃO CRÍTICA: Verificar se existem transações vinculadas
+    const transacoesVinculadas = await prisma.transacao.count({
+      where: {
+        cartaoId: id,
+        userId: user.id,
+      },
+    });
+
+    if (transacoesVinculadas > 0) {
+      return NextResponse.json(
+        {
+          error: `Não é possível excluir este cartão pois existem ${transacoesVinculadas} transação(ões) vinculada(s) a ele. Exclua ou transfira as transações primeiro.`,
+        },
+        { status: 400 }
+      );
+    }
+
     await prisma.cartao.delete({
       where: { id },
     });

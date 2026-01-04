@@ -103,12 +103,44 @@ export async function POST(req: NextRequest) {
       objetivoId,
     } = body;
 
-    // Validações
+    // Validações básicas
     if (!descricao || !valor || !data || !tipo) {
       return NextResponse.json(
         { error: 'Campos obrigatórios: descricao, valor, data, tipo' },
         { status: 400 }
       );
+    }
+
+    // VALIDAÇÃO CRÍTICA: Conta bancária é OBRIGATÓRIA
+    if (!contaBancariaId) {
+      return NextResponse.json(
+        { error: 'Conta bancária é obrigatória para toda transação' },
+        { status: 400 }
+      );
+    }
+
+    // Validar se a conta existe e pertence ao usuário
+    const conta = await prisma.contaBancaria.findFirst({
+      where: { id: contaBancariaId, userId: user.id },
+    });
+    if (!conta) {
+      return NextResponse.json(
+        { error: 'Conta bancária não encontrada ou não pertence ao usuário' },
+        { status: 404 }
+      );
+    }
+
+    // Validar cartão se fornecido (opcional)
+    if (cartaoId) {
+      const cartao = await prisma.cartao.findFirst({
+        where: { id: cartaoId, userId: user.id },
+      });
+      if (!cartao) {
+        return NextResponse.json(
+          { error: 'Cartão não encontrado ou não pertence ao usuário' },
+          { status: 404 }
+        );
+      }
     }
 
     // Sugerir categoria se não fornecida
@@ -148,26 +180,16 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      // Atualizar saldo da conta se for conta bancária
-      if (contaBancariaId && tipo === 'DESPESA') {
-        await prisma.contaBancaria.update({
-          where: { id: contaBancariaId },
-          data: {
-            saldoAtual: {
-              decrement: valor,
-            },
+      // Atualizar saldo da conta (sempre, pois conta é obrigatória)
+      const operacao = tipo === 'DESPESA' ? 'decrement' : 'increment';
+      await prisma.contaBancaria.update({
+        where: { id: contaBancariaId },
+        data: {
+          saldoAtual: {
+            [operacao]: valor,
           },
-        });
-      } else if (contaBancariaId && tipo === 'RECEITA') {
-        await prisma.contaBancaria.update({
-          where: { id: contaBancariaId },
-          data: {
-            saldoAtual: {
-              increment: valor,
-            },
-          },
-        });
-      }
+        },
+      });
 
       // Atualizar objetivo se fornecido
       if (objetivoId) {
@@ -218,26 +240,16 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      // Atualizar saldo da conta
-      if (contaBancariaId && tipo === 'DESPESA') {
-        await prisma.contaBancaria.update({
-          where: { id: contaBancariaId },
-          data: {
-            saldoAtual: {
-              decrement: valor,
-            },
+      // Atualizar saldo da conta (sempre, pois conta é obrigatória)
+      const operacao = tipo === 'DESPESA' ? 'decrement' : 'increment';
+      await prisma.contaBancaria.update({
+        where: { id: contaBancariaId },
+        data: {
+          saldoAtual: {
+            [operacao]: valor,
           },
-        });
-      } else if (contaBancariaId && tipo === 'RECEITA') {
-        await prisma.contaBancaria.update({
-          where: { id: contaBancariaId },
-          data: {
-            saldoAtual: {
-              increment: valor,
-            },
-          },
-        });
-      }
+        },
+      });
 
       // Registrar atividade
       await registrarAtividade({
@@ -289,26 +301,16 @@ export async function POST(req: NextRequest) {
         )
       );
 
-      // Atualizar saldo da conta apenas com a primeira parcela
-      if (contaBancariaId && tipo === 'DESPESA') {
-        await prisma.contaBancaria.update({
-          where: { id: contaBancariaId },
-          data: {
-            saldoAtual: {
-              decrement: valorParcela,
-            },
+      // Atualizar saldo da conta com a primeira parcela
+      const operacao = tipo === 'DESPESA' ? 'decrement' : 'increment';
+      await prisma.contaBancaria.update({
+        where: { id: contaBancariaId },
+        data: {
+          saldoAtual: {
+            [operacao]: valorParcela,
           },
-        });
-      } else if (contaBancariaId && tipo === 'RECEITA') {
-        await prisma.contaBancaria.update({
-          where: { id: contaBancariaId },
-          data: {
-            saldoAtual: {
-              increment: valorParcela,
-            },
-          },
-        });
-      }
+        },
+      });
 
       // Registrar atividade
       await registrarAtividade({

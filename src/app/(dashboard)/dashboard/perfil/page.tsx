@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -27,6 +28,7 @@ import {
   Camera,
   Save,
   X,
+  Loader2,
 } from 'lucide-react';
 
 interface ProfileData {
@@ -118,6 +120,8 @@ export default function PerfilPage() {
 
   const handleSalvarPerfil = async () => {
     setSaving(true);
+    const loadingToast = toast.loading('Salvando alterações...');
+
     try {
       const response = await fetch('/api/v1/perfil', {
         method: 'PUT',
@@ -125,12 +129,18 @@ export default function PerfilPage() {
         body: JSON.stringify(formData),
       });
 
+      const data = await response.json();
+
       if (response.ok) {
         await update({ name: formData.name });
         setEditando(false);
+        toast.success('Perfil atualizado com sucesso!', { id: loadingToast });
+      } else {
+        toast.error(data.error || 'Erro ao salvar perfil', { id: loadingToast });
       }
     } catch (error) {
       console.error('Erro ao salvar perfil:', error);
+      toast.error('Erro ao salvar perfil. Tente novamente.', { id: loadingToast });
     } finally {
       setSaving(false);
     }
@@ -138,11 +148,18 @@ export default function PerfilPage() {
 
   const handleAlterarSenha = async () => {
     if (senhaData.novaSenha !== senhaData.confirmarSenha) {
-      alert('As senhas não coincidem');
+      toast.error('As senhas não coincidem');
+      return;
+    }
+
+    if (senhaData.novaSenha.length < 6) {
+      toast.error('A nova senha deve ter no mínimo 6 caracteres');
       return;
     }
 
     setSaving(true);
+    const loadingToast = toast.loading('Alterando senha...');
+
     try {
       const response = await fetch('/api/v1/perfil/senha', {
         method: 'PUT',
@@ -153,15 +170,17 @@ export default function PerfilPage() {
         }),
       });
 
+      const data = await response.json();
+
       if (response.ok) {
         setSenhaData({ senhaAtual: '', novaSenha: '', confirmarSenha: '' });
-        alert('Senha alterada com sucesso!');
+        toast.success('Senha alterada com sucesso!', { id: loadingToast });
       } else {
-        const data = await response.json();
-        alert(data.error || 'Erro ao alterar senha');
+        toast.error(data.error || 'Erro ao alterar senha', { id: loadingToast });
       }
     } catch (error) {
       console.error('Erro ao alterar senha:', error);
+      toast.error('Erro ao alterar senha. Tente novamente.', { id: loadingToast });
     } finally {
       setSaving(false);
     }
@@ -365,10 +384,19 @@ export default function PerfilPage() {
                     <Button
                       onClick={handleSalvarPerfil}
                       disabled={saving}
-                      className="bg-aura-500 hover:bg-aura-600 h-auto py-2 text-sm"
+                      className="bg-aura-500 hover:bg-aura-600 h-auto py-2 text-sm disabled:opacity-50"
                     >
-                      <Save className="w-4 h-4 mr-1" />
-                      Salvar
+                      {saving ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                          Salvando...
+                        </>
+                      ) : (
+                        <>
+                          <Save className="w-4 h-4 mr-1" />
+                          Salvar
+                        </>
+                      )}
                     </Button>
                   </div>
                 )}
@@ -443,10 +471,19 @@ export default function PerfilPage() {
               <Button
                 onClick={handleAlterarSenha}
                 disabled={saving || !senhaData.senhaAtual || !senhaData.novaSenha}
-                className="bg-aura-500 hover:bg-aura-600 w-full sm:w-auto h-auto py-2.5"
+                className="bg-aura-500 hover:bg-aura-600 w-full sm:w-auto h-auto py-2.5 disabled:opacity-50"
               >
-                <Lock className="w-4 h-4 mr-2" />
-                Alterar Senha
+                {saving ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Alterando...
+                  </>
+                ) : (
+                  <>
+                    <Lock className="w-4 h-4 mr-2" />
+                    Alterar Senha
+                  </>
+                )}
               </Button>
             </CardContent>
           </Card>

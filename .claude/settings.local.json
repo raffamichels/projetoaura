@@ -2,7 +2,10 @@
   "permissions": {
     "allow": [
       "Bash(npm install:*)",
-      "Bash(npx prisma migrate:*)"
+      "Bash(npx prisma migrate:*)",
+      "Bash(ls:*)",
+      "Bash(diff:*)",
+      "Bash(grep:*)"
     ]
   }
 }

@@ -1,5 +1,6 @@
 import { Sidebar } from '@/components/dashboard/Sidebar';
 import { Header } from '@/components/dashboard/Header';
+import { Toaster } from 'sonner';
 
 export default function DashboardLayout({
   children,
@@ -21,6 +22,20 @@ export default function DashboardLayout({
           {children}
         </main>
       </div>
+
+      {/* Toast Notifications */}
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          style: {
+            background: '#18181b',
+            color: '#fff',
+            border: '1px solid #27272a',
+          },
+          className: 'sonner-toast',
+        }}
+        richColors
+      />
     </div>
   );
 }

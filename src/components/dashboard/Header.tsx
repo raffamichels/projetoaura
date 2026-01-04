@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { useSession, signOut } from 'next-auth/react';
-import { Menu, Bell, Crown } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Menu, Bell, Crown, User, Settings, LogOut, Sparkles } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -22,6 +23,7 @@ import { Sidebar } from './Sidebar';
 
 export function Header() {
   const { data: session } = useSession();
+  const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const getInitials = (name?: string | null) => {
@@ -80,37 +82,94 @@ export function Header() {
                 </div>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56 bg-zinc-900 border-zinc-800">
-              <DropdownMenuLabel className="font-normal">
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium truncate">{session?.user?.name}</p>
-                  <p className="text-xs text-gray-400 truncate">{session?.user?.email}</p>
-                  <div className="flex items-center gap-1 mt-2">
-                    <Crown className="w-3 h-3 text-yellow-500" />
-                    <span className="text-xs font-semibold text-yellow-500">
-                      Plano {session?.user?.plano}
-                    </span>
+            <DropdownMenuContent align="end" className="w-72 bg-zinc-900 border-zinc-800 p-0">
+              {/* Header do Menu */}
+              <div className="p-4 bg-gradient-to-br from-aura-500/10 via-blue-500/10 to-purple-500/10 border-b border-zinc-800">
+                <div className="flex items-center gap-3">
+                  <Avatar className="w-12 h-12 border-2 border-aura-500/20">
+                    <AvatarFallback className="bg-gradient-to-br from-aura-500 to-blue-500 text-white text-lg font-bold">
+                      {getInitials(session?.user?.name)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-white truncate">{session?.user?.name}</p>
+                    <p className="text-xs text-gray-400 truncate">{session?.user?.email}</p>
+                    <div className="flex items-center gap-1.5 mt-1.5">
+                      <Crown className="w-3 h-3 text-yellow-500" />
+                      <span className="text-xs font-semibold bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">
+                        Plano {session?.user?.plano}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator className="bg-zinc-800" />
-              <DropdownMenuItem className="cursor-pointer hover:bg-zinc-800">
-                Meu Perfil
-              </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer hover:bg-zinc-800">
-                Configurações
-              </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer hover:bg-zinc-800">
-                <Crown className="w-4 h-4 mr-2 text-yellow-500" />
-                Fazer Upgrade
-              </DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-zinc-800" />
-              <DropdownMenuItem
-                className="cursor-pointer text-red-400 focus:text-red-400 hover:bg-zinc-800"
-                onClick={() => signOut({ callbackUrl: '/login' })}
-              >
-                Sair
-              </DropdownMenuItem>
+              </div>
+
+              {/* Menu Items */}
+              <div className="p-2">
+                <DropdownMenuItem
+                  className="cursor-pointer hover:bg-zinc-800 rounded-lg px-3 py-2.5 flex items-center gap-3 transition-colors"
+                  onClick={() => router.push('/dashboard/perfil')}
+                >
+                  <div className="p-1.5 bg-aura-500/10 rounded-lg">
+                    <User className="w-4 h-4 text-aura-400" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-white">Meu Perfil</p>
+                    <p className="text-xs text-gray-500">Ver e editar informações</p>
+                  </div>
+                </DropdownMenuItem>
+
+                <DropdownMenuItem
+                  className="cursor-pointer hover:bg-zinc-800 rounded-lg px-3 py-2.5 flex items-center gap-3 transition-colors"
+                  onClick={() => router.push('/dashboard/settings')}
+                >
+                  <div className="p-1.5 bg-blue-500/10 rounded-lg">
+                    <Settings className="w-4 h-4 text-blue-400" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-white">Configurações</p>
+                    <p className="text-xs text-gray-500">Preferências do sistema</p>
+                  </div>
+                </DropdownMenuItem>
+              </div>
+
+              <DropdownMenuSeparator className="bg-zinc-800 my-1" />
+
+              {/* Upgrade CTA */}
+              {session?.user?.plano === 'FREE' && (
+                <>
+                  <div className="p-2">
+                    <DropdownMenuItem
+                      className="cursor-pointer hover:bg-gradient-to-r hover:from-yellow-500/20 hover:to-orange-500/20 rounded-lg px-3 py-2.5 flex items-center gap-3 transition-all border border-yellow-500/20"
+                    >
+                      <div className="p-1.5 bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-lg">
+                        <Sparkles className="w-4 h-4 text-yellow-500" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-semibold bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">Fazer Upgrade</p>
+                        <p className="text-xs text-gray-500">Desbloquear recursos premium</p>
+                      </div>
+                    </DropdownMenuItem>
+                  </div>
+                  <DropdownMenuSeparator className="bg-zinc-800 my-1" />
+                </>
+              )}
+
+              {/* Logout */}
+              <div className="p-2">
+                <DropdownMenuItem
+                  className="cursor-pointer hover:bg-red-500/10 rounded-lg px-3 py-2.5 flex items-center gap-3 transition-colors group"
+                  onClick={() => signOut({ callbackUrl: '/login' })}
+                >
+                  <div className="p-1.5 bg-red-500/10 rounded-lg group-hover:bg-red-500/20 transition-colors">
+                    <LogOut className="w-4 h-4 text-red-400" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-red-400">Sair</p>
+                    <p className="text-xs text-gray-500">Encerrar sessão</p>
+                  </div>
+                </DropdownMenuItem>
+              </div>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

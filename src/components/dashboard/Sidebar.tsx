@@ -7,11 +7,13 @@ import {
   Calendar,
   Wallet,
   BookOpen,
+  Library,
   Target,
   Dumbbell,
   Plane,
   Settings,
-  Crown
+  Crown,
+  Film
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
@@ -20,6 +22,7 @@ const menuItems = [
   { icon: Calendar, label: 'Agenda', href: '/dashboard/agenda'},
   { icon: Wallet, label: 'Financeiro', href: '/dashboard/financeiro' },
   { icon: BookOpen, label: 'Estudos', href: '/dashboard/estudos' },
+  { icon: Library, label: 'Biblioteca', href: '/dashboard/biblioteca' },
   { icon: Target, label: 'Metas', href: '/dashboard/metas', badge: 'Em breve', premium: true },
   { icon: Dumbbell, label: 'Treinos', href: '/dashboard/treinos', badge: 'Em breve', premium: true },
   { icon: Plane, label: 'Viagens', href: '/dashboard/viagens', badge: 'Em breve', premium: true },

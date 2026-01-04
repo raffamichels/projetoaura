@@ -83,7 +83,7 @@ export function CalendarToolbar({ currentDate, view, onDateChange, onViewChange,
         >
           <Calendar className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
           <span className="hidden xs:inline">Hoje</span>
-          <span className="xs:hidden">Hj</span>
+          <span className="xs:hidden">Hoje</span>
         </Button>
 
         <div className="flex items-center gap-0.5 sm:gap-1">

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,7 +14,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { TrendingUp, TrendingDown, Loader2 } from 'lucide-react';
+import { TrendingUp, TrendingDown, Loader2, AlertCircle } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface NovaTransacaoModalProps {
   aberto: boolean;
@@ -42,7 +43,7 @@ interface Cartao {
 export default function NovaTransacaoModal({ aberto, onFechar, onSucesso }: NovaTransacaoModalProps) {
   const [carregando, setCarregando] = useState(false);
   const [tipo, setTipo] = useState<'RECEITA' | 'DESPESA'>('DESPESA');
-  
+
   // Dados do formulário
   const [descricao, setDescricao] = useState('');
   const [valor, setValor] = useState('');
@@ -51,7 +52,7 @@ export default function NovaTransacaoModal({ aberto, onFechar, onSucesso }: Nova
   const [categoriaId, setCategoriaId] = useState('');
   const [contaBancariaId, setContaBancariaId] = useState('');
   const [cartaoId, setCartaoId] = useState('');
-  
+
   // Flags especiais
   const [isFixa, setIsFixa] = useState(false);
   const [isParcela, setIsParcela] = useState(false);
@@ -94,13 +95,30 @@ export default function NovaTransacaoModal({ aberto, onFechar, onSucesso }: Nova
     }
   };
 
+  // Handlers para conta e cartão (agora podem ter ambos)
+  const handleContaChange = (value: string) => {
+    setContaBancariaId(value);
+  };
+
+  const handleCartaoChange = (value: string) => {
+    setCartaoId(value);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validação: Conta bancária é OBRIGATÓRIA
+    if (!contaBancariaId) {
+      toast.error('Selecione uma conta bancária');
+      return;
+    }
+
     setCarregando(true);
+    const loadingToast = toast.loading('Criando transação...');
 
     try {
       const valorNumerico = parseFloat(valor.replace(',', '.'));
-      
+
       const body = {
         descricao,
         valor: valorNumerico,
@@ -121,17 +139,19 @@ export default function NovaTransacaoModal({ aberto, onFechar, onSucesso }: Nova
         body: JSON.stringify(body),
       });
 
+      const result = await response.json();
+
       if (response.ok) {
         limparFormulario();
+        toast.success(result.message || 'Transação criada com sucesso!', { id: loadingToast });
         onSucesso();
         onFechar();
       } else {
-        const error = await response.json();
-        alert(error.error || 'Erro ao criar transação');
+        toast.error(result.error || 'Erro ao criar transação', { id: loadingToast });
       }
     } catch (error) {
       console.error('Erro:', error);
-      alert('Erro ao criar transação');
+      toast.error('Erro ao criar transação. Tente novamente.', { id: loadingToast });
     } finally {
       setCarregando(false);
     }
@@ -157,6 +177,9 @@ export default function NovaTransacaoModal({ aberto, onFechar, onSucesso }: Nova
           <DialogTitle className="text-2xl font-bold text-white">
             Nova Transação
           </DialogTitle>
+          <DialogDescription className="text-zinc-400">
+            Registre uma nova receita ou despesa
+          </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -250,38 +273,55 @@ export default function NovaTransacaoModal({ aberto, onFechar, onSucesso }: Nova
             </Select>
           </div>
 
-          {/* Conta ou Cartão */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label className="text-zinc-300">Conta Bancária</Label>
-              <Select value={contaBancariaId} onValueChange={setContaBancariaId}>
-                <SelectTrigger className="bg-zinc-900/50 border-zinc-800 text-white">
-                  <SelectValue placeholder="Selecionar conta" />
-                </SelectTrigger>
-                <SelectContent className="bg-zinc-900 border-zinc-800">
-                  {contas.map((conta) => (
-                    <SelectItem key={conta.id} value={conta.id} className="text-white hover:bg-zinc-800">
-                      {conta.nome}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+          {/* Conta Bancária (obrigatório) e Cartão (opcional) */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 text-sm text-zinc-400 bg-blue-500/10 border border-blue-500/30 rounded-lg p-3">
+              <AlertCircle className="w-4 h-4 text-blue-400 shrink-0" />
+              <p>Toda transação deve estar vinculada a uma <strong>conta bancária</strong>. O cartão é opcional para registro adicional.</p>
             </div>
-            <div>
-              <Label className="text-zinc-300">Cartão de Crédito</Label>
-              <Select value={cartaoId} onValueChange={setCartaoId}>
-                <SelectTrigger className="bg-zinc-900/50 border-zinc-800 text-white">
-                  <SelectValue placeholder="Selecionar cartão" />
-                </SelectTrigger>
-                <SelectContent className="bg-zinc-900 border-zinc-800">
-                  {cartoes.map((cartao) => (
-                    <SelectItem key={cartao.id} value={cartao.id} className="text-white hover:bg-zinc-800">
-                      {cartao.nome}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label className="text-zinc-300">Conta Bancária *</Label>
+                <Select value={contaBancariaId} onValueChange={handleContaChange}>
+                  <SelectTrigger className={`bg-zinc-900/50 border-zinc-800 text-white ${!contaBancariaId ? 'border-red-500/50' : ''}`}>
+                    <SelectValue placeholder="Selecionar conta" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-zinc-900 border-zinc-800">
+                    {contas.map((conta) => (
+                      <SelectItem key={conta.id} value={conta.id} className="text-white hover:bg-zinc-800">
+                        {conta.nome}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label className="text-zinc-300">Cartão de Crédito (Opcional)</Label>
+                <Select value={cartaoId} onValueChange={handleCartaoChange}>
+                  <SelectTrigger className="bg-zinc-900/50 border-zinc-800 text-white">
+                    <SelectValue placeholder="Selecionar cartão" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-zinc-900 border-zinc-800">
+                    {cartoes.map((cartao) => (
+                      <SelectItem key={cartao.id} value={cartao.id} className="text-white hover:bg-zinc-800">
+                        {cartao.nome}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
+            {!contaBancariaId && (
+              <p className="text-xs text-red-400">
+                ⚠️ Selecione uma conta bancária
+              </p>
+            )}
+            {contaBancariaId && (
+              <p className="text-xs text-green-400">
+                ✓ Transação vinculada à conta {cartaoId && '(com informação de cartão)'}
+              </p>
+            )}
           </div>
 
           {/* Opções Especiais */}
@@ -358,12 +398,12 @@ export default function NovaTransacaoModal({ aberto, onFechar, onSucesso }: Nova
             </Button>
             <Button
               type="submit"
-              disabled={carregando}
+              disabled={carregando || !contaBancariaId}
               className={`flex-1 ${
                 tipo === 'RECEITA'
                   ? 'bg-green-600 hover:bg-green-700'
                   : 'bg-red-600 hover:bg-red-700'
-              }`}
+              } disabled:opacity-50`}
             >
               {carregando ? (
                 <>

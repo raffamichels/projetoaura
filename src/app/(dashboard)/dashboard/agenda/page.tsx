@@ -119,7 +119,7 @@ export default function AgendaPage() {
             setIsEditMode(false);
             setIsModalOpen(true);
           }}
-          className="w-full sm:w-auto bg-aura-500 hover:bg-aura-600 shadow-lg shadow-aura-500/25 h-auto py-2.5 text-sm sm:text-base"
+          className="flex-1 sm:flex-none bg-purple-600 hover:bg-purple-700 h-auto py-2.5 text-sm sm:text-base"
         >
           <Plus className="w-4 h-4 mr-2" />
           Novo Compromisso

@@ -1,0 +1,329 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { BookOpen, Plus, Quote, Film, ChevronRight } from 'lucide-react';
+import { StarRating } from '@/components/ui/star-rating';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Midia, Citacao, TipoMidia, StatusLeitura } from '@/types/midia';
+import { NovaMidiaModal } from '@/components/leituras/NovaMidiaModal';
+import { NovaCitacaoModal } from '@/components/leituras/NovaCitacaoModal';
+
+export default function BibliotecaPage() {
+  const [midias, setMidias] = useState<Midia[]>([]);
+  const [citacoes, setCitacoes] = useState<Citacao[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [modalMidiaAberto, setModalMidiaAberto] = useState(false);
+  const [modalCitacaoAberto, setModalCitacaoAberto] = useState(false);
+
+  useEffect(() => {
+    carregarDados();
+  }, []);
+
+  const carregarDados = async () => {
+    try {
+      setLoading(true);
+      const [midiasRes, citacoesRes] = await Promise.all([
+        fetch('/api/v1/leituras/midias'),
+        fetch('/api/v1/leituras/citacoes?destaque=true'),
+      ]);
+
+      if (midiasRes.ok) {
+        const midiasData = await midiasRes.json();
+        setMidias(midiasData.data);
+      }
+
+      if (citacoesRes.ok) {
+        const citacoesData = await citacoesRes.json();
+        setCitacoes(citacoesData.data);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar dados:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getStatusBadge = (status: StatusLeitura) => {
+    const badges = {
+      PROXIMO: { label: 'Próximo', className: 'text-zinc-400' },
+      EM_ANDAMENTO: { label: 'Em andamento', className: 'text-blue-400' },
+      PAUSADO: { label: 'Pausado', className: 'text-yellow-400' },
+      CONCLUIDO: { label: 'Concluído', className: 'text-green-400' },
+    };
+    return badges[status] || badges.PROXIMO;
+  };
+
+  const midiasPorTipo = {
+    total: midias.length,
+    livros: midias.filter((m) => m.tipo === 'LIVRO').length,
+    filmes: midias.filter((m) => m.tipo === 'FILME').length,
+    emAndamento: midias.filter((m) => m.status === 'EM_ANDAMENTO').length,
+    concluidos: midias.filter((m) => m.status === 'CONCLUIDO').length,
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+          <p className="text-zinc-400">Carregando...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4 sm:space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white">Biblioteca</h1>
+          <p className="text-sm sm:text-base text-zinc-400">Organize seus livros e filmes</p>
+        </div>
+        <div className="flex flex-wrap gap-2 sm:gap-3 w-full sm:w-auto">
+          <Button
+            onClick={() => setModalCitacaoAberto(true)}
+            variant="default"
+            className="flex-1 sm:flex-none border-zinc-700 hover:bg-zinc-800 h-auto py-2 text-sm"
+          >
+            <Quote className="w-4 h-4 mr-1 sm:mr-2" />
+            <span className="hidden xs:inline">Nova Citação</span>
+            <span className="xs:hidden">Citação</span>
+          </Button>
+          <Button
+            onClick={() => setModalMidiaAberto(true)}
+            className="flex-1 sm:flex-none bg-purple-600 hover:bg-purple-700 h-auto py-2 text-sm"
+          >
+            <Plus className="w-4 h-4 mr-1 sm:mr-2" />
+            <span className="hidden xs:inline">Adicionar Item</span>
+            <span className="xs:hidden">Novo</span>
+          </Button>
+        </div>
+      </div>
+
+      {/* Frases Inspiradoras */}
+      {citacoes.length > 0 && (
+        <Card className="bg-zinc-900 border-zinc-800">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-white text-lg sm:text-xl">
+              <Quote className="w-5 h-5 text-yellow-500" />
+              Frases Inspiradoras
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {citacoes.slice(0, 3).map((citacao) => (
+              <div key={citacao.id} className="border-l-4 border-purple-500 pl-4 py-2">
+                <p className="text-zinc-200 italic text-sm sm:text-base">&ldquo;{citacao.texto}&rdquo;</p>
+                {citacao.autor && (
+                  <p className="text-xs sm:text-sm text-zinc-400 mt-2">— {citacao.autor}</p>
+                )}
+                {citacao.midia && (
+                  <p className="text-xs text-zinc-500 mt-1">
+                    {citacao.midia.tipo === 'LIVRO' ? '📚' : '🎬'} {citacao.midia.titulo}
+                  </p>
+                )}
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Estatísticas */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+        <Card className="bg-zinc-900 border-zinc-800">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-zinc-400">
+              Total
+            </CardTitle>
+            <BookOpen className="w-4 h-4 text-purple-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-white">{midiasPorTipo.total}</div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-zinc-900 border-zinc-800">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-zinc-400">
+              Livros
+            </CardTitle>
+            <BookOpen className="w-4 h-4 text-blue-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-white">{midiasPorTipo.livros}</div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-zinc-900 border-zinc-800">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-zinc-400">
+              Filmes
+            </CardTitle>
+            <Film className="w-4 h-4 text-pink-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-white">{midiasPorTipo.filmes}</div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-zinc-900 border-zinc-800">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-zinc-400">
+              Em Andamento
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-blue-400">{midiasPorTipo.emAndamento}</div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-zinc-900 border-zinc-800">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-zinc-400">
+              Concluídos
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-green-400">{midiasPorTipo.concluidos}</div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Biblioteca */}
+      <div>
+        <h2 className="text-lg sm:text-xl font-bold text-white mb-3 sm:mb-4">Minha Biblioteca</h2>
+        {midias.length === 0 ? (
+          <Card className="bg-zinc-900 border-zinc-800">
+            <CardContent className="p-6 sm:p-8 text-center">
+              <BookOpen className="w-10 h-10 sm:w-12 sm:h-12 text-zinc-600 mx-auto mb-3 sm:mb-4" />
+              <p className="text-sm sm:text-base text-zinc-400 mb-3 sm:mb-4">
+                Você ainda não tem livros ou filmes cadastrados
+              </p>
+              <Button
+                onClick={() => setModalMidiaAberto(true)}
+                className="bg-purple-600 hover:bg-purple-700 h-auto py-2.5 text-sm sm:text-base"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Adicionar primeiro item
+              </Button>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+            {midias.map((midia) => {
+              const statusInfo = getStatusBadge(midia.status);
+              return (
+                <Card
+                  key={midia.id}
+                  className="bg-zinc-900 border-zinc-800 hover:border-zinc-700 cursor-pointer transition-colors overflow-hidden gap-2"
+                  onClick={() => window.location.href = `/dashboard/biblioteca/${midia.id}`}
+                >
+                  <CardHeader className="pb-0">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-center gap-2 flex-1 min-w-0">
+                        <div
+                          className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                          style={{ backgroundColor: midia.cor + '20', color: midia.cor }}
+                        >
+                          {midia.tipo === 'LIVRO' ? (
+                            <BookOpen className="w-4 h-4" />
+                          ) : (
+                            <Film className="w-4 h-4" />
+                          )}
+                        </div>
+                        <CardTitle className="text-white text-base line-clamp-2">{midia.titulo}</CardTitle>
+                      </div>
+                      <ChevronRight className="w-5 h-5 text-zinc-500 flex-shrink-0" />
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-3 pt-0">
+                    <div>
+
+                      {/* Capa */}
+                      {midia.capa && (
+                        <div className="mb-3 flex justify-center">
+                          <img
+                            src={midia.capa}
+                            alt={`Capa de ${midia.titulo}`}
+                            className="max-w-full h-64 object-contain rounded-lg border border-zinc-700 shadow-lg"
+                          />
+                        </div>
+                      )}
+
+                      {/* Autor/Diretor */}
+                      <p className="text-sm text-zinc-400 truncate">
+                        {midia.tipo === 'LIVRO' ? midia.autor : midia.diretor}
+                      </p>
+                    </div>
+
+                    {/* Status e Nota */}
+                    <div className="flex items-center justify-between gap-4 text-sm pt-2 border-t border-zinc-800">
+                      <div className={statusInfo.className}>
+                        {statusInfo.label}
+                      </div>
+                      {midia.nota && midia.nota > 0 && (
+                        <StarRating value={midia.nota} size="sm" readonly />
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* Citações Recentes */}
+      {citacoes.length > 0 && (
+        <div>
+          <h2 className="text-lg sm:text-xl font-bold text-white mb-3 sm:mb-4">Citações em Destaque</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+            {citacoes.slice(0, 6).map((citacao) => (
+              <Card
+                key={citacao.id}
+                className="bg-zinc-900 border-zinc-800 hover:border-zinc-700 cursor-pointer transition-colors"
+              >
+                <CardHeader>
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded flex items-center justify-center flex-shrink-0 bg-yellow-500/20 text-yellow-500">
+                      <Quote className="w-4 h-4" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-white text-sm italic line-clamp-3">
+                        &ldquo;{citacao.texto}&rdquo;
+                      </p>
+                      {citacao.autor && (
+                        <p className="text-xs text-zinc-500 mt-2">— {citacao.autor}</p>
+                      )}
+                      {citacao.midia && (
+                        <p className="text-xs text-zinc-500 mt-1">
+                          {citacao.midia.tipo === 'LIVRO' ? '📚' : '🎬'} {citacao.midia.titulo}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </CardHeader>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Modais */}
+      <NovaMidiaModal
+        aberto={modalMidiaAberto}
+        onFechar={() => setModalMidiaAberto(false)}
+        onSucesso={carregarDados}
+      />
+
+      <NovaCitacaoModal
+        aberto={modalCitacaoAberto}
+        onFechar={() => setModalCitacaoAberto(false)}
+        onSucesso={carregarDados}
+        midias={midias}
+      />
+    </div>
+  );
+}

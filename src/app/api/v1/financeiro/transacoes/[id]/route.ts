@@ -10,7 +10,7 @@ export async function GET(
 ) {
   try {
     const session = await auth();
-    
+
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
     }
@@ -26,7 +26,7 @@ export async function GET(
     const { id } = await context.params;
 
     const transacao = await prisma.transacao.findFirst({
-      where: { 
+      where: {
         id,
         userId: user.id,
       },
@@ -56,7 +56,7 @@ export async function PUT(
 ) {
   try {
     const session = await auth();
-    
+
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
     }
@@ -72,7 +72,7 @@ export async function PUT(
     const { id } = await context.params;
 
     const transacaoExistente = await prisma.transacao.findFirst({
-      where: { 
+      where: {
         id,
         userId: user.id,
       },
@@ -83,7 +83,7 @@ export async function PUT(
     }
 
     const body = await req.json();
-    const { 
+    const {
       descricao,
       valor,
       data,
@@ -94,28 +94,48 @@ export async function PUT(
       cartaoId,
     } = body;
 
-    // Reverter saldo anterior se necessário
-    if (transacaoExistente.contaBancariaId) {
-      if (transacaoExistente.tipo === 'DESPESA') {
-        await prisma.contaBancaria.update({
-          where: { id: transacaoExistente.contaBancariaId },
-          data: {
-            saldoAtual: {
-              increment: Number(transacaoExistente.valor),
-            },
-          },
-        });
-      } else {
-        await prisma.contaBancaria.update({
-          where: { id: transacaoExistente.contaBancariaId },
-          data: {
-            saldoAtual: {
-              decrement: Number(transacaoExistente.valor),
-            },
-          },
-        });
+    // VALIDAÇÃO CRÍTICA: Conta bancária é OBRIGATÓRIA
+    if (!contaBancariaId) {
+      return NextResponse.json(
+        { error: 'Conta bancária é obrigatória para toda transação' },
+        { status: 400 }
+      );
+    }
+
+    // Validar se a conta existe e pertence ao usuário
+    const conta = await prisma.contaBancaria.findFirst({
+      where: { id: contaBancariaId, userId: user.id },
+    });
+    if (!conta) {
+      return NextResponse.json(
+        { error: 'Conta bancária não encontrada ou não pertence ao usuário' },
+        { status: 404 }
+      );
+    }
+
+    // Validar cartão se fornecido (opcional)
+    if (cartaoId) {
+      const cartao = await prisma.cartao.findFirst({
+        where: { id: cartaoId, userId: user.id },
+      });
+      if (!cartao) {
+        return NextResponse.json(
+          { error: 'Cartão não encontrado ou não pertence ao usuário' },
+          { status: 404 }
+        );
       }
     }
+
+    // Reverter saldo anterior (sempre tem conta, pois é obrigatória)
+    const operacaoReversa = transacaoExistente.tipo === 'DESPESA' ? 'increment' : 'decrement';
+    await prisma.contaBancaria.update({
+      where: { id: transacaoExistente.contaBancariaId },
+      data: {
+        saldoAtual: {
+          [operacaoReversa]: Number(transacaoExistente.valor),
+        },
+      },
+    });
 
     // Atualizar transação
     const transacao = await prisma.transacao.update({
@@ -132,28 +152,16 @@ export async function PUT(
       },
     });
 
-    // Aplicar novo saldo
-    if (contaBancariaId) {
-      if (tipo === 'DESPESA') {
-        await prisma.contaBancaria.update({
-          where: { id: contaBancariaId },
-          data: {
-            saldoAtual: {
-              decrement: valor,
-            },
-          },
-        });
-      } else {
-        await prisma.contaBancaria.update({
-          where: { id: contaBancariaId },
-          data: {
-            saldoAtual: {
-              increment: valor,
-            },
-          },
-        });
-      }
-    }
+    // Aplicar novo saldo (sempre, pois conta é obrigatória)
+    const operacao = tipo === 'DESPESA' ? 'decrement' : 'increment';
+    await prisma.contaBancaria.update({
+      where: { id: contaBancariaId },
+      data: {
+        saldoAtual: {
+          [operacao]: valor,
+        },
+      },
+    });
 
     // Registrar atividade
     await registrarAtividade({
@@ -183,7 +191,7 @@ export async function DELETE(
 ) {
   try {
     const session = await auth();
-    
+
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
     }
@@ -201,7 +209,7 @@ export async function DELETE(
     const excluirTodas = searchParams.get('excluirTodas') === 'true';
 
     const transacao = await prisma.transacao.findFirst({
-      where: { 
+      where: {
         id,
         userId: user.id,
       },
@@ -229,28 +237,16 @@ export async function DELETE(
         },
       });
 
-      // Reverter saldo apenas da primeira parcela
-      if (transacao.contaBancariaId) {
-        if (transacao.tipo === 'DESPESA') {
-          await prisma.contaBancaria.update({
-            where: { id: transacao.contaBancariaId },
-            data: {
-              saldoAtual: {
-                increment: Number(transacao.valor),
-              },
-            },
-          });
-        } else {
-          await prisma.contaBancaria.update({
-            where: { id: transacao.contaBancariaId },
-            data: {
-              saldoAtual: {
-                decrement: Number(transacao.valor),
-              },
-            },
-          });
-        }
-      }
+      // Reverter saldo da primeira parcela (sempre tem conta, pois é obrigatória)
+      const operacaoReversa = transacao.tipo === 'DESPESA' ? 'increment' : 'decrement';
+      await prisma.contaBancaria.update({
+        where: { id: transacao.contaBancariaId },
+        data: {
+          saldoAtual: {
+            [operacaoReversa]: Number(transacao.valor),
+          },
+        },
+      });
 
       // Registrar atividade
       await registrarAtividade({
@@ -265,7 +261,7 @@ export async function DELETE(
       });
 
       return NextResponse.json(
-        { 
+        {
           message: `${parcelas.length} parcelas excluídas com sucesso`,
           quantidade: parcelas.length,
         },
@@ -278,28 +274,16 @@ export async function DELETE(
       where: { id },
     });
 
-    // Reverter saldo
-    if (transacao.contaBancariaId) {
-      if (transacao.tipo === 'DESPESA') {
-        await prisma.contaBancaria.update({
-          where: { id: transacao.contaBancariaId },
-          data: {
-            saldoAtual: {
-              increment: Number(transacao.valor),
-            },
-          },
-        });
-      } else {
-        await prisma.contaBancaria.update({
-          where: { id: transacao.contaBancariaId },
-          data: {
-            saldoAtual: {
-              decrement: Number(transacao.valor),
-            },
-          },
-        });
-      }
-    }
+    // Reverter saldo (sempre, pois conta é obrigatória)
+    const operacaoReversa = transacao.tipo === 'DESPESA' ? 'increment' : 'decrement';
+    await prisma.contaBancaria.update({
+      where: { id: transacao.contaBancariaId },
+      data: {
+        saldoAtual: {
+          [operacaoReversa]: Number(transacao.valor),
+        },
+      },
+    });
 
     // Reverter objetivo se tiver
     if (transacao.objetivoId) {
