@@ -142,6 +142,7 @@ export default function AgendaPage() {
               onDateChange={setCurrentDate}
               onViewChange={setView}
               onToday={handleToday}
+              onRefresh={fetchCompromissos}
             />
             <CalendarWeekView
               compromissos={compromissos}
@@ -158,6 +159,7 @@ export default function AgendaPage() {
               onDateChange={setCurrentDate}
               onViewChange={setView}
               onToday={handleToday}
+              onRefresh={fetchCompromissos}
             />
             <div className="flex items-center justify-center h-full">
               <div className="text-center">

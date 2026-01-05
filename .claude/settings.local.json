@@ -11,7 +11,9 @@
       "Bash(npx shadcn@latest add:*)",
       "Bash(npx prisma generate)",
       "Bash(taskkill //F //PID 67768)",
-      "Bash(taskkill:*)"
+      "Bash(taskkill:*)",
+      "Bash(npx prisma db push:*)",
+      "Bash(npx tsc:*)"
     ]
   }
 }

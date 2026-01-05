@@ -60,16 +60,17 @@ export async function PUT(
     if (!compromisso.isRecorrente || applyToFuture === false) {
       // Atualizar Google Calendar se existir sincronização
       if (compromisso.syncWithGoogle && compromisso.googleEventId) {
-        await GoogleCalendarService.updateEvent(user.id, compromisso.googleEventId, {
+        const googleService = new GoogleCalendarService();
+        await googleService.updateEvent(user.id, compromisso.googleEventId, {
           titulo,
           descricao,
-          data: new Date(data),
+          data: new Date(data).toISOString(),
           horaInicio,
-          horaFim,
+          horaFim: horaFim || undefined,
           isRecorrente: isRecorrente || false,
-          tipoRecorrencia: isRecorrente ? tipoRecorrencia : null,
-          intervaloRecorrencia: isRecorrente ? intervaloRecorrencia : null,
-          dataFimRecorrencia: isRecorrente && dataFimRecorrencia ? new Date(dataFimRecorrencia) : null,
+          tipoRecorrencia: isRecorrente ? tipoRecorrencia : undefined,
+          intervaloRecorrencia: isRecorrente ? intervaloRecorrencia : undefined,
+          dataFimRecorrencia: isRecorrente && dataFimRecorrencia ? new Date(dataFimRecorrencia).toISOString() : undefined,
         });
       }
 
@@ -126,16 +127,17 @@ export async function PUT(
       });
 
       if (primeiraInstancia?.syncWithGoogle && primeiraInstancia.googleEventId) {
-        await GoogleCalendarService.updateEvent(user.id, primeiraInstancia.googleEventId, {
+        const googleService = new GoogleCalendarService();
+        await googleService.updateEvent(user.id, primeiraInstancia.googleEventId, {
           titulo,
           descricao,
-          data: new Date(data),
+          data: new Date(data).toISOString(),
           horaInicio,
-          horaFim,
+          horaFim: horaFim || undefined,
           isRecorrente: true,
-          tipoRecorrencia,
-          intervaloRecorrencia,
-          dataFimRecorrencia: dataFimRecorrencia ? new Date(dataFimRecorrencia) : null,
+          tipoRecorrencia: tipoRecorrencia || undefined,
+          intervaloRecorrencia: intervaloRecorrencia || undefined,
+          dataFimRecorrencia: dataFimRecorrencia ? new Date(dataFimRecorrencia).toISOString() : undefined,
         });
       }
 
@@ -235,7 +237,8 @@ export async function DELETE(
     if (!compromisso.isRecorrente || applyToFuture === false) {
       // Excluir do Google Calendar se existir sincronização
       if (compromisso.syncWithGoogle && compromisso.googleEventId) {
-        await GoogleCalendarService.deleteEvent(user.id, compromisso.googleEventId);
+        const googleService = new GoogleCalendarService();
+        await googleService.deleteEvent(user.id, compromisso.googleEventId);
       }
 
       await prisma.compromisso.delete({
@@ -274,7 +277,8 @@ export async function DELETE(
       });
 
       if (primeiraInstancia?.syncWithGoogle && primeiraInstancia.googleEventId) {
-        await GoogleCalendarService.deleteEvent(user.id, primeiraInstancia.googleEventId);
+        const googleService = new GoogleCalendarService();
+        await googleService.deleteEvent(user.id, primeiraInstancia.googleEventId);
       }
 
       const deleted = await prisma.compromisso.deleteMany({

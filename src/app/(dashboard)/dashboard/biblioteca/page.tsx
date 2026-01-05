@@ -2,20 +2,22 @@
 
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BookOpen, Plus, Quote, Film } from 'lucide-react';
+import { BookOpen, Plus, Quote, Film, MoreVertical } from 'lucide-react';
 import { StarRating } from '@/components/ui/star-rating';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Midia, Citacao, TipoMidia, StatusLeitura } from '@/types/midia';
+import { Midia, Citacao, StatusLeitura } from '@/types/midia';
 import { NovaMidiaModal } from '@/components/leituras/NovaMidiaModal';
-import { NovaCitacaoModal } from '@/components/leituras/NovaCitacaoModal';
+import { CitacoesModal } from '@/components/leituras/CitacoesModal';
+import { GerenciarCitacoesModal } from '@/components/leituras/GerenciarCitacoesModal';
 
 export default function BibliotecaPage() {
   const [midias, setMidias] = useState<Midia[]>([]);
-  const [citacoes, setCitacoes] = useState<Citacao[]>([]);
+  const [citacoesDestaque, setCitacoesDestaque] = useState<Citacao[]>([]);
+  const [todasCitacoes, setTodasCitacoes] = useState<Citacao[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalMidiaAberto, setModalMidiaAberto] = useState(false);
   const [modalCitacaoAberto, setModalCitacaoAberto] = useState(false);
+  const [modalGerenciarCitacoes, setModalGerenciarCitacoes] = useState(false);
 
   useEffect(() => {
     carregarDados();
@@ -24,9 +26,10 @@ export default function BibliotecaPage() {
   const carregarDados = async () => {
     try {
       setLoading(true);
-      const [midiasRes, citacoesRes] = await Promise.all([
+      const [midiasRes, citacoesDestaqueRes, todasCitacoesRes] = await Promise.all([
         fetch('/api/v1/leituras/midias'),
         fetch('/api/v1/leituras/citacoes?destaque=true'),
+        fetch('/api/v1/leituras/citacoes'),
       ]);
 
       if (midiasRes.ok) {
@@ -34,9 +37,14 @@ export default function BibliotecaPage() {
         setMidias(midiasData.data);
       }
 
-      if (citacoesRes.ok) {
-        const citacoesData = await citacoesRes.json();
-        setCitacoes(citacoesData.data);
+      if (citacoesDestaqueRes.ok) {
+        const citacoesData = await citacoesDestaqueRes.json();
+        setCitacoesDestaque(citacoesData.data);
+      }
+
+      if (todasCitacoesRes.ok) {
+        const citacoesData = await todasCitacoesRes.json();
+        setTodasCitacoes(citacoesData.data);
       }
     } catch (error) {
       console.error('Erro ao carregar dados:', error);
@@ -104,16 +112,26 @@ export default function BibliotecaPage() {
       </div>
 
       {/* Frases Inspiradoras */}
-      {citacoes.length > 0 && (
+      {citacoesDestaque.length > 0 && (
         <Card className="bg-zinc-900 border-zinc-800">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-white text-lg sm:text-xl">
-              <Quote className="w-5 h-5 text-yellow-500" />
-              Frases Inspiradoras
+            <CardTitle className="flex items-center justify-between text-white text-lg sm:text-xl">
+              <div className="flex items-center gap-2">
+                <Quote className="w-5 h-5 text-yellow-500" />
+                Frases Inspiradoras
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setModalGerenciarCitacoes(true)}
+                className="h-8 w-8 p-0 hover:bg-zinc-800"
+              >
+                <MoreVertical className="w-4 h-4 text-zinc-400" />
+              </Button>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            {citacoes.slice(0, 3).map((citacao) => (
+            {citacoesDestaque.slice(0, 3).map((citacao) => (
               <div key={citacao.id} className="border-l-4 border-purple-500 pl-4 py-2">
                 <p className="text-zinc-200 italic text-sm sm:text-base">&ldquo;{citacao.texto}&rdquo;</p>
                 {citacao.autor && (
@@ -346,12 +364,12 @@ export default function BibliotecaPage() {
         )}
       </div>
 
-      {/* Citações Recentes */}
-      {citacoes.length > 0 && (
+      {/* Citações */}
+      {todasCitacoes.length > 0 && (
         <div>
-          <h2 className="text-lg sm:text-xl font-bold text-white mb-3 sm:mb-4">Citações em Destaque</h2>
+          <h2 className="text-lg sm:text-xl font-bold text-white mb-3 sm:mb-4">Citações</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-            {citacoes.slice(0, 6).map((citacao) => (
+            {todasCitacoes.slice(0, 6).map((citacao) => (
               <Card
                 key={citacao.id}
                 className="bg-zinc-900 border-zinc-800 hover:border-zinc-700 cursor-pointer transition-colors"
@@ -389,11 +407,17 @@ export default function BibliotecaPage() {
         onSucesso={carregarDados}
       />
 
-      <NovaCitacaoModal
+      <CitacoesModal
         aberto={modalCitacaoAberto}
         onFechar={() => setModalCitacaoAberto(false)}
         onSucesso={carregarDados}
         midias={midias}
+      />
+
+      <GerenciarCitacoesModal
+        aberto={modalGerenciarCitacoes}
+        onFechar={() => setModalGerenciarCitacoes(false)}
+        onAtualizar={carregarDados}
       />
     </div>
   );

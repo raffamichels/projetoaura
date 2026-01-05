@@ -2,8 +2,9 @@
 
 import { format, addWeeks, subWeeks, addMonths, subMonths, addYears, subYears, startOfWeek, startOfMonth, startOfYear } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useState } from 'react';
 
 type ViewType = 'day' | 'week' | 'month' | 'year';
 
@@ -13,10 +14,30 @@ interface CalendarToolbarProps {
   onDateChange: (date: Date) => void;
   onViewChange: (view: ViewType) => void;
   onToday: () => void;
+  onRefresh?: () => void;
 }
 
-export function CalendarToolbar({ currentDate, view, onDateChange, onViewChange, onToday }: CalendarToolbarProps) {
-  
+export function CalendarToolbar({ currentDate, view, onDateChange, onViewChange, onToday, onRefresh }: CalendarToolbarProps) {
+  const [isSyncing, setIsSyncing] = useState(false);
+
+  const handleSync = async () => {
+    if (!onRefresh) return;
+
+    setIsSyncing(true);
+    try {
+      const response = await fetch('/api/v1/agenda/sync-toggle');
+      if (response.ok) {
+        const data = await response.json();
+        console.log(`Sincronizados ${data.updatedCount} compromissos`);
+        onRefresh();
+      }
+    } catch (error) {
+      console.error('Erro ao sincronizar:', error);
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
   const handlePrevious = () => {
     let newDate: Date;
     switch (view) {
@@ -84,6 +105,19 @@ export function CalendarToolbar({ currentDate, view, onDateChange, onViewChange,
           <Calendar className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5" />
           Hoje
         </Button>
+
+        {onRefresh && (
+          <Button
+            variant="default"
+            size="sm"
+            onClick={handleSync}
+            disabled={isSyncing}
+            className="border-zinc-700 hover:bg-zinc-800 hover:border-blue-500 text-xs px-3 h-9 transition-all duration-200 hover:shadow-lg hover:shadow-blue-500/20"
+          >
+            <RefreshCw className={`w-3 h-3 sm:w-4 sm:h-4 mr-1.5 ${isSyncing ? 'animate-spin' : ''}`} />
+            {isSyncing ? 'Sincronizando...' : 'Sincronizar'}
+          </Button>
+        )}
 
         <div className="flex items-center gap-1 bg-zinc-800/50 rounded-lg p-0.5">
           <Button

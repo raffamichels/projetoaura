@@ -59,9 +59,12 @@ model User {
   planoExpiraEm DateTime?
 
   // Integração Google Calendar
-  googleAccessToken  String?     @db.Text
-  googleRefreshToken String?     @db.Text
-  googleTokenExpiry  DateTime?
+  googleAccessToken           String?     @db.Text
+  googleRefreshToken          String?     @db.Text
+  googleTokenExpiry           DateTime?
+  googleCalendarChannelId     String?     @unique
+  googleCalendarResourceId    String?
+  googleCalendarWatchExpiration DateTime?
 
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
