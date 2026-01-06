@@ -570,6 +570,21 @@ export default function CursoDetalhePage() {
                               margin: 1rem 0;
                               display: block;
                             }
+
+                            .prose img[data-align="center"] {
+                              margin-left: auto;
+                              margin-right: auto;
+                            }
+
+                            .prose img[data-align="right"] {
+                              margin-left: auto;
+                              margin-right: 0;
+                            }
+
+                            .prose img[data-align="left"] {
+                              margin-left: 0;
+                              margin-right: auto;
+                            }
                           `}</style>
                           <div
                             className="prose prose-invert max-w-none prose-headings:text-white prose-p:text-zinc-300 prose-strong:text-white prose-a:text-blue-400"

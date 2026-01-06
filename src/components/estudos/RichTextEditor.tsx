@@ -268,20 +268,47 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
 
         {/* Alignment */}
         <ToolbarButton
-          onClick={() => editor.chain().focus().setTextAlign('left').run()}
-          isActive={editor.isActive({ textAlign: 'left' })}
+          onClick={() => {
+            if (editor.isActive('resizableImage')) {
+              editor.chain().focus().updateAttributes('resizableImage', { align: 'left' }).run();
+            } else {
+              editor.chain().focus().setTextAlign('left').run();
+            }
+          }}
+          isActive={
+            editor.isActive({ textAlign: 'left' }) ||
+            editor.isActive('resizableImage', { align: 'left' })
+          }
           icon={AlignLeft}
           title="Alinhar à esquerda"
         />
         <ToolbarButton
-          onClick={() => editor.chain().focus().setTextAlign('center').run()}
-          isActive={editor.isActive({ textAlign: 'center' })}
+          onClick={() => {
+            if (editor.isActive('resizableImage')) {
+              editor.chain().focus().updateAttributes('resizableImage', { align: 'center' }).run();
+            } else {
+              editor.chain().focus().setTextAlign('center').run();
+            }
+          }}
+          isActive={
+            editor.isActive({ textAlign: 'center' }) ||
+            editor.isActive('resizableImage', { align: 'center' })
+          }
           icon={AlignCenter}
           title="Centralizar"
         />
         <ToolbarButton
-          onClick={() => editor.chain().focus().setTextAlign('right').run()}
-          isActive={editor.isActive({ textAlign: 'right' })}
+          onClick={() => {
+            if (editor.isActive('resizableImage')) {
+              editor.chain().focus().updateAttributes('resizableImage', { align: 'right' }).run();
+            } else {
+              editor.chain().focus().setTextAlign('right').run();
+            }
+          }}
+          isActive={
+            editor.isActive({ textAlign: 'right' }) ||
+            editor.isActive('resizableImage', { align: 'right' })
+          }
           icon={AlignRight}
           title="Alinhar à direita"
         />
