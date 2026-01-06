@@ -13,7 +13,9 @@
       "Bash(taskkill //F //PID 67768)",
       "Bash(taskkill:*)",
       "Bash(npx prisma db push:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(npm run build:*)",
+      "Bash(tail:*)"
     ]
   }
 }

@@ -138,7 +138,7 @@ async function syncGoogleCalendarEvents(userId: string) {
         ? new Date(startDateTime).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', hour12: false })
         : compromisso.horaInicio;
 
-      const horaFim = event.end?.dateTime
+      const horaFim = event.end?.dateTime && endDateTime
         ? new Date(endDateTime).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', hour12: false })
         : compromisso.horaFim;
 

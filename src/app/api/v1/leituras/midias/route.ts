@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/app/api/auth/[...nextauth]/route';
+import { auth } from '@/lib/auth/auth';
 import { prisma } from '@/lib/prisma';
 import { registrarAtividade } from '@/lib/atividades-helper';
 
@@ -96,9 +96,13 @@ export async function POST(req: NextRequest) {
     });
 
     // Registrar atividade
+    const tipoAtividadeCriado = body.tipo === 'LIVRO'
+      ? 'leitura_livro_criado'
+      : 'leitura_filme_criado';
+
     await registrarAtividade({
       userId: user.id,
-      tipo: `leitura_${body.tipo.toLowerCase()}_criado`,
+      tipo: tipoAtividadeCriado as any,
       titulo: body.titulo,
       descricao: body.tipo === 'LIVRO'
         ? `Livro: ${body.titulo}${body.autor ? ` - ${body.autor}` : ''}`

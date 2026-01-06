@@ -152,7 +152,7 @@ export function ImageSearchSelector({
 
           {sugestoes.length === 0 ? (
             <div className="bg-zinc-800/50 border border-zinc-700 rounded-lg p-6 text-center">
-              <p className="text-zinc-400">Nenhuma capa encontrada para "{termoBusca || titulo}"</p>
+              <p className="text-zinc-400">Nenhuma capa encontrada para "{titulo}"</p>
               <p className="text-xs text-zinc-500 mt-1">Tente um termo de busca diferente</p>
             </div>
           ) : (

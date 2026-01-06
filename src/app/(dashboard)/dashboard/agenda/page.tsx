@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -21,7 +21,7 @@ import { CompromissoDetails } from '@/components/features/agenda/CompromissoDeta
 
 type ViewType = 'day' | 'week' | 'month' | 'year';
 
-export default function AgendaPage() {
+function AgendaPageContent() {
   const searchParams = useSearchParams();
   const [view, setView] = useState<ViewType>('week');
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -222,5 +222,13 @@ export default function AgendaPage() {
         </DialogContent>
       </Dialog>
     </div>
+  );
+}
+
+export default function AgendaPage() {
+  return (
+    <Suspense fallback={<div>Carregando...</div>}>
+      <AgendaPageContent />
+    </Suspense>
   );
 }

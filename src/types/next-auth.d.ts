@@ -5,7 +5,12 @@ declare module 'next-auth' {
     id: string;
     email: string;
     name?: string | null;
+    image?: string | null;
+    emailVerified?: Date | null;
     plano?: string;
+    planoExpiraEm?: Date | null;
+    createdAt?: Date;
+    updatedAt?: Date;
   }
 
   interface Session {
@@ -13,7 +18,12 @@ declare module 'next-auth' {
       id: string;
       email: string;
       name?: string | null;
+      image?: string | null;
+      emailVerified?: Date | null;
       plano?: string;
+      planoExpiraEm?: Date | null;
+      createdAt?: Date;
+      updatedAt?: Date;
     };
   }
 }
@@ -21,6 +31,13 @@ declare module 'next-auth' {
 declare module 'next-auth/jwt' {
   interface JWT {
     id: string;
+    email: string;
+    name?: string | null;
+    image?: string | null;
+    emailVerified?: Date | null;
     plano?: string;
+    planoExpiraEm?: Date | null;
+    createdAt?: Date;
+    updatedAt?: Date;
   }
 }

@@ -4,7 +4,7 @@ import Google from 'next-auth/providers/google';
 import bcrypt from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
 
-export const authConfig = {
+export const authOptions = {
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -109,13 +109,58 @@ export const authConfig = {
     },
     async session({ session, token }) {
       if (token && session.user) {
-        session.user.id = token.sub!;
+        session.user.id = token.id as string;
+        session.user.email = token.email as string;
+        session.user.name = token.name as string | null | undefined;
+        session.user.image = token.image as string | null | undefined;
+        session.user.emailVerified = (token.emailVerified as Date | null | undefined) ?? null;
+        session.user.plano = token.plano as string | undefined;
+        session.user.planoExpiraEm = token.planoExpiraEm as Date | null | undefined;
+        session.user.createdAt = token.createdAt as Date | undefined;
+        session.user.updatedAt = token.updatedAt as Date | undefined;
       }
       return session;
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger }) {
       if (user) {
-        token.sub = user.id;
+        // Primeira vez que o usuário faz login
+        token.id = user.id;
+        token.email = user.email;
+        token.name = user.name;
+        token.image = user.image;
+        token.emailVerified = user.emailVerified;
+        token.plano = user.plano;
+        token.planoExpiraEm = user.planoExpiraEm;
+        token.createdAt = user.createdAt;
+        token.updatedAt = user.updatedAt;
+      } else if (trigger === 'update' || !token.plano) {
+        // Atualizar dados do usuário do banco em cada requisição
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.id as string },
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            image: true,
+            emailVerified: true,
+            plano: true,
+            planoExpiraEm: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        });
+
+        if (dbUser) {
+          token.id = dbUser.id;
+          token.email = dbUser.email;
+          token.name = dbUser.name;
+          token.image = dbUser.image;
+          token.emailVerified = dbUser.emailVerified;
+          token.plano = dbUser.plano;
+          token.planoExpiraEm = dbUser.planoExpiraEm;
+          token.createdAt = dbUser.createdAt;
+          token.updatedAt = dbUser.updatedAt;
+        }
       }
       return token;
     }

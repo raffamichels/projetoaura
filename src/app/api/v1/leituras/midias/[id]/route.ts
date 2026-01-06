@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/app/api/auth/[...nextauth]/route';
+import { auth } from '@/lib/auth/auth';
 import { prisma } from '@/lib/prisma';
 import { registrarAtividade } from '@/lib/atividades-helper';
 
@@ -129,9 +129,13 @@ export async function PUT(
     });
 
     // Registrar atividade
+    const tipoAtividade = midia.tipo === 'LIVRO'
+      ? 'leitura_livro_editado'
+      : 'leitura_filme_editado';
+
     await registrarAtividade({
       userId: user.id,
-      tipo: `leitura_${midia.tipo.toLowerCase()}_editado`,
+      tipo: tipoAtividade as any,
       titulo: midia.titulo,
       descricao: `Atualizado: ${midia.titulo}`,
       metadata: { midiaId: midia.id, tipo: midia.tipo },
@@ -186,9 +190,13 @@ export async function DELETE(
     });
 
     // Registrar atividade
+    const tipoAtividadeExcluir = midia.tipo === 'LIVRO'
+      ? 'leitura_livro_excluido'
+      : 'leitura_filme_excluido';
+
     await registrarAtividade({
       userId: user.id,
-      tipo: `leitura_${midia.tipo.toLowerCase()}_excluido`,
+      tipo: tipoAtividadeExcluir as any,
       titulo: midia.titulo,
       descricao: `Excluído: ${midia.titulo}`,
       metadata: { tipo: midia.tipo },
