@@ -7,6 +7,7 @@ import { TextStyle } from '@tiptap/extension-text-style';
 import TextAlign from '@tiptap/extension-text-align';
 import Underline from '@tiptap/extension-underline';
 import Highlight from '@tiptap/extension-highlight';
+import { ResizableImage } from './ResizableImage';
 import {
   Bold,
   Italic,
@@ -45,6 +46,7 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
       TextAlign.configure({
         types: ['heading', 'paragraph'],
       }),
+      ResizableImage,
     ],
     content,
     immediatelyRender: false,
@@ -54,6 +56,45 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
     editorProps: {
       attributes: {
         class: 'prose prose-invert max-w-none min-h-[200px] focus:outline-none px-4 py-3',
+      },
+      handlePaste: (view, event) => {
+        const items = event.clipboardData?.items;
+        if (!items) return false;
+
+        for (let i = 0; i < items.length; i++) {
+          const item = items[i];
+
+          // Verifica se é uma imagem
+          if (item.type.indexOf('image') !== -1) {
+            event.preventDefault();
+
+            const file = item.getAsFile();
+            if (!file) continue;
+
+            // Converter imagem para base64
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              const base64 = e.target?.result as string;
+
+              // Inserir imagem no editor usando resizableImage
+              const node = view.state.schema.nodes.resizableImage;
+              if (node) {
+                view.dispatch(
+                  view.state.tr.replaceSelectionWith(
+                    node.create({
+                      src: base64,
+                    })
+                  )
+                );
+              }
+            };
+            reader.readAsDataURL(file);
+
+            return true;
+          }
+        }
+
+        return false;
       },
     },
   });
@@ -119,6 +160,30 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
 
   return (
     <div className="border border-zinc-700 rounded-lg bg-zinc-900 overflow-hidden">
+      <style jsx global>{`
+        .ProseMirror img {
+          max-width: 100%;
+          height: auto;
+          border-radius: 0.5rem;
+          cursor: pointer;
+          user-select: none;
+          transition: all 0.2s ease;
+        }
+
+        .ProseMirror img:hover {
+          box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.4);
+        }
+
+        .ProseMirror img.ProseMirror-selectednode {
+          outline: 2px solid rgb(168, 85, 247);
+          outline-offset: 2px;
+        }
+
+        .ProseMirror img[data-resize] {
+          resize: both;
+          overflow: hidden;
+        }
+      `}</style>
       {/* Toolbar */}
       <div className="border-b border-zinc-700 bg-zinc-800/50 p-2 flex flex-wrap gap-1">
         {/* Undo/Redo */}

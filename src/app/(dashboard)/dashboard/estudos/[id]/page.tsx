@@ -561,10 +561,21 @@ export default function CursoDetalhePage() {
                           }
                         />
                       ) : (
-                        <div
-                          className="prose prose-invert max-w-none prose-headings:text-white prose-p:text-zinc-300 prose-strong:text-white prose-a:text-blue-400"
-                          dangerouslySetInnerHTML={{ __html: paginaSelecionada.conteudo }}
-                        />
+                        <>
+                          <style jsx global>{`
+                            .prose img {
+                              max-width: 100%;
+                              height: auto;
+                              border-radius: 0.5rem;
+                              margin: 1rem 0;
+                              display: block;
+                            }
+                          `}</style>
+                          <div
+                            className="prose prose-invert max-w-none prose-headings:text-white prose-p:text-zinc-300 prose-strong:text-white prose-a:text-blue-400"
+                            dangerouslySetInnerHTML={{ __html: paginaSelecionada.conteudo }}
+                          />
+                        </>
                       )}
                     </div>
                   </div>
