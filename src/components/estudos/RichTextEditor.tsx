@@ -36,7 +36,11 @@ interface RichTextEditorProps {
 export default function RichTextEditor({ content, onChange, placeholder }: RichTextEditorProps) {
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        heading: {
+          levels: [1, 2, 3],
+        },
+      }),
       TextStyle,
       Color,
       Underline,
@@ -102,6 +106,13 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
   if (!editor) {
     return null;
   }
+
+  // Função helper para verificar se há algo realmente selecionado/ativo
+  const hasActiveSelection = () => {
+    const { from, to } = editor.state.selection;
+    // Verifica apenas se há uma seleção de texto ou um nó de imagem selecionado
+    return from !== to || editor.isActive('resizableImage');
+  };
 
   const ToolbarButton = ({
     onClick,
@@ -203,19 +214,19 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
         {/* Headings */}
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-          isActive={editor.isActive('heading', { level: 1 })}
+          isActive={hasActiveSelection() && editor.isActive('heading', { level: 1 })}
           icon={Heading1}
           title="Título 1"
         />
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-          isActive={editor.isActive('heading', { level: 2 })}
+          isActive={hasActiveSelection() && editor.isActive('heading', { level: 2 })}
           icon={Heading2}
           title="Título 2"
         />
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-          isActive={editor.isActive('heading', { level: 3 })}
+          isActive={hasActiveSelection() && editor.isActive('heading', { level: 3 })}
           icon={Heading3}
           title="Título 3"
         />
@@ -225,25 +236,25 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
         {/* Text formatting */}
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleBold().run()}
-          isActive={editor.isActive('bold')}
+          isActive={hasActiveSelection() && editor.isActive('bold')}
           icon={Bold}
           title="Negrito"
         />
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleItalic().run()}
-          isActive={editor.isActive('italic')}
+          isActive={hasActiveSelection() && editor.isActive('italic')}
           icon={Italic}
           title="Itálico"
         />
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleUnderline().run()}
-          isActive={editor.isActive('underline')}
+          isActive={hasActiveSelection() && editor.isActive('underline')}
           icon={UnderlineIcon}
           title="Sublinhado"
         />
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleStrike().run()}
-          isActive={editor.isActive('strike')}
+          isActive={hasActiveSelection() && editor.isActive('strike')}
           icon={Strikethrough}
           title="Riscado"
         />
@@ -253,13 +264,13 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
         {/* Lists */}
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleBulletList().run()}
-          isActive={editor.isActive('bulletList')}
+          isActive={hasActiveSelection() && editor.isActive('bulletList')}
           icon={List}
           title="Lista"
         />
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          isActive={editor.isActive('orderedList')}
+          isActive={hasActiveSelection() && editor.isActive('orderedList')}
           icon={ListOrdered}
           title="Lista numerada"
         />
@@ -276,8 +287,10 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
             }
           }}
           isActive={
-            editor.isActive({ textAlign: 'left' }) ||
-            editor.isActive('resizableImage', { align: 'left' })
+            hasActiveSelection() && (
+              (editor.isActive('resizableImage') && editor.isActive('resizableImage', { align: 'left' })) ||
+              (!editor.isActive('resizableImage') && editor.isActive({ textAlign: 'left' }))
+            )
           }
           icon={AlignLeft}
           title="Alinhar à esquerda"
@@ -291,8 +304,10 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
             }
           }}
           isActive={
-            editor.isActive({ textAlign: 'center' }) ||
-            editor.isActive('resizableImage', { align: 'center' })
+            hasActiveSelection() && (
+              (editor.isActive('resizableImage') && editor.isActive('resizableImage', { align: 'center' })) ||
+              (!editor.isActive('resizableImage') && editor.isActive({ textAlign: 'center' }))
+            )
           }
           icon={AlignCenter}
           title="Centralizar"
@@ -306,8 +321,10 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
             }
           }}
           isActive={
-            editor.isActive({ textAlign: 'right' }) ||
-            editor.isActive('resizableImage', { align: 'right' })
+            hasActiveSelection() && (
+              (editor.isActive('resizableImage') && editor.isActive('resizableImage', { align: 'right' })) ||
+              (!editor.isActive('resizableImage') && editor.isActive({ textAlign: 'right' }))
+            )
           }
           icon={AlignRight}
           title="Alinhar à direita"
