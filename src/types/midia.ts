@@ -42,6 +42,9 @@ export interface Midia {
   dataInicio?: Date;
   dataConclusao?: Date;
 
+  // Resenha gerada por IA
+  resenhaGeradaIA?: string;
+
   // Reflexões e aprendizados
   impressoesIniciais?: string;
   principaisAprendizados?: string;

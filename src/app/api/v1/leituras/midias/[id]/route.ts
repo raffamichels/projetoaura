@@ -112,6 +112,9 @@ export async function PUT(
       dataUpdate.dataConclusao = body.dataConclusao ? new Date(body.dataConclusao) : null;
     }
 
+    // Resenha gerada por IA
+    if (body.resenhaGeradaIA !== undefined) dataUpdate.resenhaGeradaIA = body.resenhaGeradaIA;
+
     // Reflexões e aprendizados
     if (body.impressoesIniciais !== undefined) dataUpdate.impressoesIniciais = body.impressoesIniciais;
     if (body.principaisAprendizados !== undefined) dataUpdate.principaisAprendizados = body.principaisAprendizados;

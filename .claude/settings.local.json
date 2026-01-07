@@ -18,7 +18,8 @@
       "Bash(tail:*)",
       "Bash(git add:*)",
       "Bash(git commit -m \"$\\(cat <<''EOF''\nAdiciona script postinstall para gerar Prisma Client no Vercel\n\n- Adiciona script ''postinstall'' que roda ''prisma generate''\n- Corrige erro de build no Vercel onde o Prisma Client não era gerado\n- Necessário porque o Vercel cacheia dependências\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(find:*)"
     ]
   }
 }

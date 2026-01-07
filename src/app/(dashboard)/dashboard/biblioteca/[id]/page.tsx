@@ -6,9 +6,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { BookOpen, Film, ChevronLeft, Save, Trash2, Edit, X, Quote, Calendar, Clock, Globe } from 'lucide-react';
+import { BookOpen, Film, ChevronLeft, Save, Trash2, Edit, X, Quote, Calendar, Clock, Globe, Sparkles } from 'lucide-react';
 import { Midia, StatusLeitura } from '@/types/midia';
 import { StarRating } from '@/components/ui/star-rating';
+import { GenerateReviewButton } from '@/components/leituras/GenerateReviewButton';
+import { ReviewDisplayModal } from '@/components/leituras/ReviewDisplayModal';
 
 export default function DetalheMidiaPage() {
   const router = useRouter();
@@ -19,9 +21,11 @@ export default function DetalheMidiaPage() {
   const [loading, setLoading] = useState(true);
   const [salvando, setSalvando] = useState(false);
   const [editando, setEditando] = useState(false);
+  const [generatedReview, setGeneratedReview] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     nota: 0,
+    resenhaGeradaIA: '',
     impressoesIniciais: '',
     principaisAprendizados: '',
     trechosMemoraveis: '',
@@ -43,6 +47,7 @@ export default function DetalheMidiaPage() {
         setMidia(data.data);
         setFormData({
           nota: data.data.nota || 0,
+          resenhaGeradaIA: data.data.resenhaGeradaIA || '',
           impressoesIniciais: data.data.impressoesIniciais || '',
           principaisAprendizados: data.data.principaisAprendizados || '',
           trechosMemoraveis: data.data.trechosMemoraveis || '',
@@ -145,6 +150,10 @@ export default function DetalheMidiaPage() {
         <div className="flex gap-2">
           {!editando ? (
             <>
+              <GenerateReviewButton
+                midiaId={midiaId}
+                onReviewGenerated={(review) => setGeneratedReview(review)}
+              />
               <Button
                 onClick={() => setEditando(true)}
                 className="bg-purple-600 hover:bg-purple-700"
@@ -168,6 +177,7 @@ export default function DetalheMidiaPage() {
                   setEditando(false);
                   setFormData({
                     nota: midia.nota || 0,
+                    resenhaGeradaIA: midia.resenhaGeradaIA || '',
                     impressoesIniciais: midia.impressoesIniciais || '',
                     principaisAprendizados: midia.principaisAprendizados || '',
                     trechosMemoraveis: midia.trechosMemoraveis || '',
@@ -344,6 +354,61 @@ export default function DetalheMidiaPage() {
         </CardContent>
       </Card>
 
+      {/* Resenha Gerada por IA */}
+      {(midia.resenhaGeradaIA || editando) && (
+        <Card className="bg-zinc-900 border-zinc-800">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="text-base sm:text-lg text-white flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-purple-500" />
+              Resenha Gerada por IA
+            </CardTitle>
+            {!editando && midia.resenhaGeradaIA && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={async () => {
+                  if (confirm('Tem certeza que deseja excluir a resenha gerada?')) {
+                    try {
+                      const res = await fetch(`/api/v1/leituras/midias/${midiaId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ resenhaGeradaIA: null }),
+                      });
+                      if (res.ok) {
+                        await carregarMidia();
+                      }
+                    } catch (error) {
+                      console.error('Erro ao excluir resenha:', error);
+                    }
+                  }
+                }}
+                className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
+              >
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            )}
+          </CardHeader>
+          <CardContent>
+            {editando ? (
+              <Textarea
+                value={formData.resenhaGeradaIA}
+                onChange={(e) =>
+                  setFormData({ ...formData, resenhaGeradaIA: e.target.value })
+                }
+                className="bg-zinc-800 border-zinc-700 text-white min-h-[200px] font-serif"
+                placeholder="Resenha gerada pela IA..."
+              />
+            ) : (
+              <p className="text-zinc-300 whitespace-pre-wrap text-sm sm:text-base font-serif leading-relaxed">
+                {midia.resenhaGeradaIA || (
+                  <span className="text-zinc-500 italic">Nenhuma resenha gerada ainda.</span>
+                )}
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
       {/* Reflexões e Aprendizados */}
       <div className="space-y-4">
         <h2 className="text-lg sm:text-xl font-bold text-white">Reflexões e Aprendizados</h2>
@@ -514,6 +579,20 @@ export default function DetalheMidiaPage() {
             ))}
           </CardContent>
         </Card>
+      )}
+
+      {/* Modal de Resenha Gerada */}
+      {generatedReview && (
+        <ReviewDisplayModal
+          review={generatedReview}
+          midiaId={midiaId}
+          open={!!generatedReview}
+          onClose={() => setGeneratedReview(null)}
+          onSave={() => {
+            carregarMidia()
+            setGeneratedReview(null)
+          }}
+        />
       )}
     </div>
   );

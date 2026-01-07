@@ -378,6 +378,9 @@ model Midia {
   dataInicio            DateTime?
   dataConclusao         DateTime?
 
+  // Resenha gerada por IA
+  resenhaGeradaIA       String?        @db.Text
+
   // Reflexões e aprendizados
   impressoesIniciais    String?        @db.Text
   principaisAprendizados String?       @db.Text
