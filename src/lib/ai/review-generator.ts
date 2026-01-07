@@ -13,9 +13,14 @@ interface GenerateReviewParams {
     title?: string
     author?: string
     director?: string
-    [key: string]: any
+    [key: string]: string | number | boolean | undefined
   }
   userName?: string | null
+}
+
+interface GeminiModel {
+  name: string
+  [key: string]: unknown
 }
 
 export async function generateReview({
@@ -24,7 +29,6 @@ export async function generateReview({
   metadata,
   userName,
 }: GenerateReviewParams): Promise<string> {
-  const itemType = pageType === "BOOK" ? "livro" : "filme"
   const itemTitle = metadata?.title || "esta obra"
   const creator = pageType === "BOOK"
     ? (metadata?.author ? ` de ${metadata.author}` : "")
@@ -45,7 +49,8 @@ A resenha deve:
 - Ser pessoal e envolvente, como se você estivesse contando para um amigo
 - Não usar títulos ou subtítulos, apenas texto corrido em parágrafos
 - Começar direto falando da obra, sem introduções genéricas
-- Ter profundidade e detalhes, não apenas uma visão superficial
+- Ter profundidade e detalhes sobre as questões abordadas sobre o livro em si, não apenas uma visão superficial
+- O final deve ser conclusivo, resumindo sua experiência com a ${past} e recomendando (ou não) a obra
 
 Suas anotações sobre ${pageType === "BOOK" ? "o livro" : "o filme"}:
 
@@ -63,7 +68,7 @@ Escreva a resenha COMPLETA em português do Brasil, de forma natural, reflexiva 
 
     if (listResponse.ok) {
       const models = await listResponse.json()
-      console.log("📋 Modelos disponíveis:", models.models?.map((m: any) => m.name).join(", "))
+      console.log("📋 Modelos disponíveis:", models.models?.map((m: GeminiModel) => m.name).join(", "))
     }
 
     // Usar gemini-2.5-flash (modelo disponível na sua API key)
@@ -86,7 +91,7 @@ Escreva a resenha COMPLETA em português do Brasil, de forma natural, reflexiva 
           ],
           generationConfig: {
             temperature: 0.8,
-            maxOutputTokens: 2048,
+            maxOutputTokens: 1024,
           },
         }),
       }
@@ -109,28 +114,31 @@ Escreva a resenha COMPLETA em português do Brasil, de forma natural, reflexiva 
     console.log("✅ Resenha gerada via API REST!")
 
     return reviewText
-  } catch (error: any) {
+  } catch (error) {
     console.error("Erro ao gerar resenha com Gemini:", error)
 
+    const errorMessage = error instanceof Error ? error.message : "Erro desconhecido"
+    const errorResponse = error && typeof error === "object" && "response" in error ? error.response : null
+
     // Logar detalhes do erro para debug
-    if (error?.response) {
-      console.error("Resposta do erro:", error.response)
+    if (errorResponse) {
+      console.error("Resposta do erro:", errorResponse)
     }
-    if (error?.message) {
-      console.error("Mensagem do erro:", error.message)
+    if (errorMessage) {
+      console.error("Mensagem do erro:", errorMessage)
     }
 
     // Mensagens de erro mais específicas
-    if (error?.message?.includes("API key") || error?.message?.includes("API_KEY")) {
+    if (errorMessage.includes("API key") || errorMessage.includes("API_KEY")) {
       throw new Error("API Key do Gemini inválida ou não configurada.")
     }
-    if (error?.message?.includes("quota") || error?.message?.includes("limit")) {
+    if (errorMessage.includes("quota") || errorMessage.includes("limit")) {
       throw new Error("Limite de requisições do Gemini atingido. Tente novamente em alguns minutos.")
     }
-    if (error?.message?.includes("404")) {
+    if (errorMessage.includes("404")) {
       throw new Error("Modelo não encontrado. Verifique sua API Key.")
     }
 
-    throw new Error(error?.message || "Não foi possível gerar a resenha. Tente novamente.")
+    throw new Error(errorMessage || "Não foi possível gerar a resenha. Tente novamente.")
   }
 }
