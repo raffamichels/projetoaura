@@ -43,6 +43,7 @@ Com base nas suas anotações abaixo, escreva uma resenha COMPLETA e DETALHADA e
 
 A resenha deve:
 - Ter no máximo 500 palavras
+- Não deve conter - como separador de texto
 - Ser escrita em primeira pessoa ("eu achei", "me impressionou", "senti que", "percebi")
 - Ser COMPLETA, abordando TODOS os pontos mencionados nas anotações
 - Refletir suas impressões e sentimentos sobre a obra de forma autêntica
@@ -52,6 +53,8 @@ A resenha deve:
 - Começar direto falando da obra, sem introduções genéricas
 - Ter profundidade e detalhes sobre as questões abordadas sobre o livro em si, não apenas uma visão superficial
 - O final deve ser conclusivo, resumindo sua experiência com a ${past} e recomendando (ou não) a obra
+- É importante que a resenha pareça natural e espontânea, como uma conversa entre amigos, e não um texto formal ou acadêmico.
+- É vital que a conclusão seja clara e reflita sua opinião sincera sobre a ${past}.
 
 Suas anotações sobre ${pageType === "BOOK" ? "o livro" : "o filme"}:
 
@@ -92,7 +95,7 @@ Escreva a resenha COMPLETA em português do Brasil, de forma natural, reflexiva 
           ],
           generationConfig: {
             temperature: 0.8,
-            maxOutputTokens: 1024,
+            maxOutputTokens: 2048,
           },
         }),
       }
