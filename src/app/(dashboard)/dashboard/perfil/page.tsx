@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
@@ -14,7 +14,6 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import {
   User,
-  Mail,
   Lock,
   Bell,
   Palette,
@@ -24,13 +23,11 @@ import {
   Calendar,
   Activity,
   TrendingUp,
-  Award,
   Edit,
   Camera,
   Save,
   X,
   Loader2,
-  Upload,
   Trash2,
   Book,
   Target,
@@ -44,16 +41,10 @@ import {
   BarChart3,
   Clock,
   Check,
+  LucideIcon,
 } from 'lucide-react';
-import Image from 'next/image';
 
-interface ProfileData {
-  name: string;
-  email: string;
-  plano: string;
-  createdAt: string;
-  emailVerified: boolean;
-}
+// Interface ProfileData removida pois não estava sendo usada
 
 interface Stats {
   compromissosTotal: number;
@@ -68,7 +59,7 @@ interface Achievement {
   id: string;
   title: string;
   description: string;
-  icon: any;
+  icon: LucideIcon; // CORREÇÃO: Tipo específico em vez de any
   unlocked: boolean;
   unlockedAt?: Date;
   progress?: number;
@@ -164,70 +155,7 @@ export default function PerfilPage() {
     pushMetas: false,
   });
 
-  useEffect(() => {
-    if (session?.user) {
-      setFormData({
-        name: session.user.name || '',
-        email: session.user.email || '',
-      });
-      carregarEstatisticas();
-    }
-    setLoading(false);
-  }, [session]);
-
-  const carregarEstatisticas = async () => {
-    try {
-      // Buscar compromissos
-      const compromissosRes = await fetch('/api/v1/agenda/compromissos');
-      let totalCompromissos = 0;
-      if (compromissosRes.ok) {
-        const data = await compromissosRes.json();
-        totalCompromissos = data.data?.length || 0;
-      }
-
-      // Buscar cursos
-      const cursosRes = await fetch('/api/v1/estudos/cursos');
-      let cursosAtivos = 0;
-      if (cursosRes.ok) {
-        const data = await cursosRes.json();
-        cursosAtivos = data.data?.filter((c: any) => c.ativo).length || 0;
-      }
-
-      // Buscar transações
-      const transacoesRes = await fetch('/api/v1/financeiro/transacoes');
-      let totalTransacoes = 0;
-      if (transacoesRes.ok) {
-        const data = await transacoesRes.json();
-        totalTransacoes = data.data?.length || 0;
-      }
-
-      // Buscar mídias
-      const midiasRes = await fetch('/api/v1/biblioteca/midias');
-      let midiasLidas = 0;
-      if (midiasRes.ok) {
-        const data = await midiasRes.json();
-        midiasLidas = data.data?.filter((m: any) => m.status === 'CONCLUIDO').length || 0;
-      }
-
-      const newStats = {
-        compromissosTotal: totalCompromissos,
-        cursosAtivos: cursosAtivos,
-        metasAlcancadas: 0,
-        diasConsecutivos: 7,
-        transacoesTotal: totalTransacoes,
-        midiasLidas: midiasLidas,
-      };
-
-      setStats(newStats);
-
-      // Atualizar conquistas
-      updateAchievements(newStats);
-    } catch (error) {
-      console.error('Erro ao carregar estatísticas:', error);
-    }
-  };
-
-  const updateAchievements = (currentStats: Stats) => {
+  const updateAchievements = useCallback((currentStats: Stats) => {
     setAchievements(prev =>
       prev.map(achievement => {
         switch (achievement.id) {
@@ -269,7 +197,73 @@ export default function PerfilPage() {
         }
       })
     );
-  };
+  }, []);
+
+  // CORREÇÃO: Envolvido em useCallback para resolver warning do useEffect
+  const carregarEstatisticas = useCallback(async () => {
+    try {
+      // Buscar compromissos
+      const compromissosRes = await fetch('/api/v1/agenda/compromissos');
+      let totalCompromissos = 0;
+      if (compromissosRes.ok) {
+        const data = await compromissosRes.json();
+        totalCompromissos = data.data?.length || 0;
+      }
+
+      // Buscar cursos
+      const cursosRes = await fetch('/api/v1/estudos/cursos');
+      let cursosAtivos = 0;
+      if (cursosRes.ok) {
+        const data = await cursosRes.json();
+        // CORREÇÃO: Tipagem explícita para evitar 'any'
+        cursosAtivos = data.data?.filter((c: { ativo: boolean }) => c.ativo).length || 0;
+      }
+
+      // Buscar transações
+      const transacoesRes = await fetch('/api/v1/financeiro/transacoes');
+      let totalTransacoes = 0;
+      if (transacoesRes.ok) {
+        const data = await transacoesRes.json();
+        totalTransacoes = data.data?.length || 0;
+      }
+
+      // Buscar mídias
+      const midiasRes = await fetch('/api/v1/biblioteca/midias');
+      let midiasLidas = 0;
+      if (midiasRes.ok) {
+        const data = await midiasRes.json();
+        // CORREÇÃO: Tipagem explícita para evitar 'any'
+        midiasLidas = data.data?.filter((m: { status: string }) => m.status === 'CONCLUIDO').length || 0;
+      }
+
+      const newStats = {
+        compromissosTotal: totalCompromissos,
+        cursosAtivos: cursosAtivos,
+        metasAlcancadas: 0,
+        diasConsecutivos: 7,
+        transacoesTotal: totalTransacoes,
+        midiasLidas: midiasLidas,
+      };
+
+      setStats(newStats);
+
+      // Atualizar conquistas
+      updateAchievements(newStats);
+    } catch (error) {
+      console.error('Erro ao carregar estatísticas:', error);
+    }
+  }, [updateAchievements]);
+
+  useEffect(() => {
+    if (session?.user) {
+      setFormData({
+        name: session.user.name || '',
+        email: session.user.email || '',
+      });
+      carregarEstatisticas();
+    }
+    setLoading(false);
+  }, [session, carregarEstatisticas]);
 
   const handleAvatarClick = () => {
     fileInputRef.current?.click();
@@ -710,11 +704,12 @@ export default function PerfilPage() {
                                 {achievement.progress}/{achievement.total}
                               </span>
                               <span className="text-gray-500">
-                                {Math.round(((achievement.progress || 0) / achievement.total) * 100)}%
+                                {/* CORREÇÃO: Previne divisão por undefined ou zero */}
+                                {Math.round(((achievement.progress || 0) / (achievement.total || 1)) * 100)}%
                               </span>
                             </div>
                             <Progress
-                              value={((achievement.progress || 0) / achievement.total) * 100}
+                              value={((achievement.progress || 0) / (achievement.total || 1)) * 100}
                               className="h-1.5"
                             />
                           </div>
