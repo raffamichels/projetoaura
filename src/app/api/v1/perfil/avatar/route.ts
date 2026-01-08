@@ -1,13 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth/authOptions';
+import { auth } from '@/lib/auth/auth'; // Importa a função auth do seu arquivo de configuração v5
 import { prisma } from '@/lib/prisma';
 import { writeFile } from 'fs/promises';
 import path from 'path';
+import fs from 'fs'; // Importado para usar existsSync e mkdirSync
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    // CORREÇÃO: Usa auth() em vez de getServerSession(authOptions)
+    const session = await auth();
+    
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
@@ -42,7 +44,8 @@ export async function POST(req: NextRequest) {
 
     // Criar nome único para o arquivo
     const uniqueSuffix = `${session.user.id}-${Date.now()}`;
-    const extension = file.name.split('.').pop();
+    // Fallback seguro caso o nome do arquivo não tenha extensão
+    const extension = file.name.split('.').pop() || 'jpg';
     const filename = `avatar-${uniqueSuffix}.${extension}`;
 
     // Definir caminho
@@ -50,7 +53,6 @@ export async function POST(req: NextRequest) {
     const filepath = path.join(uploadsDir, filename);
 
     // Criar diretório se não existir
-    const fs = require('fs');
     if (!fs.existsSync(uploadsDir)) {
       fs.mkdirSync(uploadsDir, { recursive: true });
     }
@@ -92,7 +94,9 @@ export async function POST(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    // CORREÇÃO: Usa auth() em vez de getServerSession(authOptions)
+    const session = await auth();
+    
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
