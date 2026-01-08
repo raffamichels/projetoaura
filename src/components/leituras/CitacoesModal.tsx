@@ -92,7 +92,7 @@ export function CitacoesModal({ aberto, onFechar, onSucesso, midias }: CitacoesM
 
         <div className="flex justify-end gap-2 pt-4 border-t border-zinc-800">
           <Button
-            variant="outline"
+            variant="default"
             onClick={onFechar}
             className="border-zinc-700 hover:bg-zinc-800"
           >

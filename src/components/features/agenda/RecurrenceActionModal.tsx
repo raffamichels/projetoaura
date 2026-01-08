@@ -91,7 +91,7 @@ export function RecurrenceActionModal({
 
         <div className="flex justify-end pt-4 border-t border-zinc-800">
           <Button
-            variant="outline"
+            variant="default"
             onClick={onClose}
             className="border-zinc-700 hover:bg-zinc-800"
           >

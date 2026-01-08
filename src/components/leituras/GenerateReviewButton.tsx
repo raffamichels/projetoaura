@@ -52,7 +52,7 @@ export function GenerateReviewButton({
     <Button
       onClick={handleGenerate}
       disabled={isGenerating || disabled}
-      variant="outline"
+      variant="default"
       size="sm"
       className="gap-2"
     >

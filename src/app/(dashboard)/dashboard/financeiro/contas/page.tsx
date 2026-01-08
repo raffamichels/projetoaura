@@ -109,7 +109,7 @@ export default function ContasPage() {
             </div>
             <div className="flex gap-3">
               <Button
-                variant="outline"
+                variant="default"
                 className="border-zinc-800 hover:bg-zinc-800"
                 onClick={() => setOcultarSaldos(!ocultarSaldos)}
               >
@@ -180,7 +180,7 @@ export default function ContasPage() {
               </h2>
               <Button
                 onClick={() => setModalContaAberto(true)}
-                variant="outline"
+                variant="default"
                 className="border-zinc-800 hover:bg-zinc-800"
               >
                 <Plus className="w-4 h-4 mr-2" />
@@ -311,7 +311,7 @@ export default function ContasPage() {
               </h2>
               <Button
                 onClick={() => setModalCartaoAberto(true)}
-                variant="outline"
+                variant="default"
                 className="border-zinc-800 hover:bg-zinc-800"
               >
                 <Plus className="w-4 h-4 mr-2" />

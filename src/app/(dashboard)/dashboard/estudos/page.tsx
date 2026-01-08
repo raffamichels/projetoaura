@@ -426,7 +426,7 @@ export default function EstudosPage() {
             </div>
             <div className="flex gap-2 justify-end pt-4">
               <Button
-                variant="outline"
+                variant="default"
                 onClick={() => setModalCursoAberto(false)}
                 className="border-zinc-700"
               >
@@ -488,7 +488,7 @@ export default function EstudosPage() {
             </div>
             <div className="flex gap-2 justify-end pt-4">
               <Button
-                variant="outline"
+                variant="default"
                 onClick={() => setModalAnotacaoAberto(false)}
                 className="border-zinc-700"
               >

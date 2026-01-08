@@ -283,7 +283,7 @@ export default function ObjetivosPage() {
                     color: objetivo.cor,
                     border: `1px solid ${objetivo.cor}20`
                   }}
-                  variant="outline"
+                  variant="default"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Contribuir

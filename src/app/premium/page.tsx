@@ -85,7 +85,7 @@ export default function PremiumPage() {
                 FAQ
               </a>
               <Button
-                variant="outline"
+                variant="default"
                 size="sm"
                 onClick={() => router.push('/dashboard')}
               >
@@ -370,7 +370,7 @@ export default function PremiumPage() {
                 </ul>
                 <Button
                   className="w-full"
-                  variant="outline"
+                  variant="default"
                   onClick={() => router.push('/dashboard')}
                 >
                   Você já está no Free!

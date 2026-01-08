@@ -86,7 +86,7 @@ export default function CategoriasPage() {
             {/* Filtros de Tipo */}
             <div className="flex gap-2">
               <Button
-                variant={filtroTipo === 'TODOS' ? 'default' : 'outline'}
+                variant={filtroTipo === 'TODOS' ? 'default' : 'default'}
                 onClick={() => setFiltroTipo('TODOS')}
                 className={filtroTipo === 'TODOS' 
                   ? 'bg-purple-600 hover:bg-purple-700' 
@@ -96,7 +96,7 @@ export default function CategoriasPage() {
                 Todas
               </Button>
               <Button
-                variant={filtroTipo === 'RECEITA' ? 'default' : 'outline'}
+                variant={filtroTipo === 'RECEITA' ? 'default' : 'default'}
                 onClick={() => setFiltroTipo('RECEITA')}
                 className={filtroTipo === 'RECEITA' 
                   ? 'bg-green-600 hover:bg-green-700' 
@@ -107,7 +107,7 @@ export default function CategoriasPage() {
                 Receitas
               </Button>
               <Button
-                variant={filtroTipo === 'DESPESA' ? 'default' : 'outline'}
+                variant={filtroTipo === 'DESPESA' ? 'default' : 'default'}
                 onClick={() => setFiltroTipo('DESPESA')}
                 className={filtroTipo === 'DESPESA' 
                   ? 'bg-red-600 hover:bg-red-700' 
@@ -122,7 +122,7 @@ export default function CategoriasPage() {
             {/* Toggle de Visualização */}
             <div className="flex gap-2">
               <Button
-                variant="outline"
+                variant="default"
                 size="sm"
                 onClick={() => setVisualizacao('grid')}
                 className={visualizacao === 'grid' 
@@ -133,7 +133,7 @@ export default function CategoriasPage() {
                 <Grid3x3 className="w-4 h-4" />
               </Button>
               <Button
-                variant="outline"
+                variant="default"
                 size="sm"
                 onClick={() => setVisualizacao('lista')}
                 className={visualizacao === 'lista' 

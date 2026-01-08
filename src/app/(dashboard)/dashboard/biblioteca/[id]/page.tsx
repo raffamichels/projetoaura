@@ -140,7 +140,7 @@ export default function DetalheMidiaPage() {
       {/* Header Compacto */}
       <div className="flex items-center justify-between">
         <Button
-          variant="outline"
+          variant="default"
           onClick={() => router.push('/dashboard/biblioteca')}
           className="border-zinc-700 hover:bg-zinc-800"
         >
@@ -162,7 +162,7 @@ export default function DetalheMidiaPage() {
                 Editar
               </Button>
               <Button
-                variant="outline"
+                variant="default"
                 onClick={handleExcluir}
                 className="border-zinc-700 text-red-400 hover:text-red-300 hover:bg-zinc-800"
               >
@@ -172,7 +172,7 @@ export default function DetalheMidiaPage() {
           ) : (
             <>
               <Button
-                variant="outline"
+                variant="default"
                 onClick={() => {
                   setEditando(false);
                   setFormData({

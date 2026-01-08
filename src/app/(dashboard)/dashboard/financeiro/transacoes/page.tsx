@@ -188,7 +188,7 @@ export default function TransacoesPage() {
         {/* Filtros de Tipo */}
         <div className="flex gap-2">
           <Button
-            variant={filtroTipo === 'TODOS' ? 'default' : 'outline'}
+            variant={filtroTipo === 'TODOS' ? 'default' : 'default'}
             onClick={() => setFiltroTipo('TODOS')}
             className={filtroTipo === 'TODOS' 
               ? 'bg-purple-600 hover:bg-purple-700' 
@@ -198,7 +198,7 @@ export default function TransacoesPage() {
             Todas
           </Button>
           <Button
-            variant={filtroTipo === 'RECEITA' ? 'default' : 'outline'}
+            variant={filtroTipo === 'RECEITA' ? 'default' : 'default'}
             onClick={() => setFiltroTipo('RECEITA')}
             className={filtroTipo === 'RECEITA' 
               ? 'bg-green-600 hover:bg-green-700' 
@@ -208,7 +208,7 @@ export default function TransacoesPage() {
             Receitas
           </Button>
           <Button
-            variant={filtroTipo === 'DESPESA' ? 'default' : 'outline'}
+            variant={filtroTipo === 'DESPESA' ? 'default' : 'default'}
             onClick={() => setFiltroTipo('DESPESA')}
             className={filtroTipo === 'DESPESA' 
               ? 'bg-red-600 hover:bg-red-700' 

@@ -143,7 +143,7 @@ export default function SettingsPage() {
                     </Badge>
                   </div>
                 </div>
-                <Button variant="outline" className="border-zinc-700 hover:border-aura-500 hover:text-aura-400">
+                <Button variant="default" className="border-zinc-700 hover:border-aura-500 hover:text-aura-400">
                   Alterar Foto
                 </Button>
               </div>
@@ -203,14 +203,14 @@ export default function SettingsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Button variant="outline" className="w-full justify-between border-zinc-700 hover:border-red-500 hover:text-red-400">
+              <Button variant="default" className="w-full justify-between border-zinc-700 hover:border-red-500 hover:text-red-400">
                 <span className="flex items-center gap-2">
                   <Lock className="w-4 h-4" />
                   Alterar Senha
                 </span>
                 <ChevronRight className="w-4 h-4" />
               </Button>
-              <Button variant="outline" className="w-full justify-between border-zinc-700 hover:border-aura-500 hover:text-aura-400">
+              <Button variant="default" className="w-full justify-between border-zinc-700 hover:border-aura-500 hover:text-aura-400">
                 <span className="flex items-center gap-2">
                   <Smartphone className="w-4 h-4" />
                   Autenticação em Dois Fatores
@@ -490,7 +490,7 @@ export default function SettingsPage() {
                 <h4 className="text-white font-semibold">Seus Dados</h4>
 
                 <Button
-                  variant="outline"
+                  variant="default"
                   className="w-full justify-between border-zinc-700 hover:border-blue-500 hover:text-blue-400"
                 >
                   <span className="flex items-center gap-2">
@@ -501,7 +501,7 @@ export default function SettingsPage() {
                 </Button>
 
                 <Button
-                  variant="outline"
+                  variant="default"
                   className="w-full justify-between border-zinc-700 hover:border-red-500 hover:text-red-400"
                 >
                   <span className="flex items-center gap-2">

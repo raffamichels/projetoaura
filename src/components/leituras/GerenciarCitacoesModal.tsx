@@ -192,7 +192,7 @@ function ConteudoGerenciarCitacoes({ onAtualizar, modoEmbutido, onVoltar }: Cont
       <div className="flex justify-end gap-2 pt-4 border-t border-zinc-800">
         {modoEmbutido && onVoltar && (
           <Button
-            variant="outline"
+            variant="default"
             onClick={onVoltar}
             className="border-zinc-700 hover:bg-zinc-800"
           >
@@ -236,7 +236,7 @@ export function GerenciarCitacoesModal({
 
         <div className="flex justify-end gap-2 pt-4 border-t border-zinc-800">
           <Button
-            variant="outline"
+            variant="default"
             onClick={onFechar}
             className="border-zinc-700 hover:bg-zinc-800"
           >

@@ -90,7 +90,7 @@ export function ReviewDisplayModal({
 
         <DialogFooter className="gap-2 border-t border-zinc-800 pt-4">
           <Button
-            variant="outline"
+            variant="default"
             onClick={onClose}
             className="border-zinc-700 hover:bg-zinc-800"
           >
@@ -99,7 +99,7 @@ export function ReviewDisplayModal({
           </Button>
 
           <Button
-            variant="outline"
+            variant="default"
             onClick={handleCopy}
             className="border-zinc-700 hover:bg-zinc-800"
           >

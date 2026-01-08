@@ -152,7 +152,7 @@ export default function LoginPage() {
               const { signIn } = await import('next-auth/react');
               signIn('google', { callbackUrl: '/dashboard' });
             }}
-            variant="outline"
+            variant="default"
             className="w-full bg-white hover:bg-gray-100 text-gray-900 font-semibold h-11 rounded-lg border-2 border-zinc-300 transition-all duration-200 hover:border-gray-400"
           >
             <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">

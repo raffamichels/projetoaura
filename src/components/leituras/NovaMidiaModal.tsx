@@ -149,7 +149,7 @@ export function NovaMidiaModal({ aberto, onFechar, onSucesso }: NovaMidiaModalPr
             <div className="grid grid-cols-2 gap-2 mt-2">
               <Button
                 type="button"
-                variant={formData.tipo === TipoMidia.LIVRO ? 'default' : 'outline'}
+                variant="default"
                 onClick={() => setFormData({ ...formData, tipo: TipoMidia.LIVRO })}
                 className={formData.tipo === TipoMidia.LIVRO ? 'bg-purple-600 hover:bg-purple-700' : 'border-zinc-700'}
               >
@@ -157,7 +157,7 @@ export function NovaMidiaModal({ aberto, onFechar, onSucesso }: NovaMidiaModalPr
               </Button>
               <Button
                 type="button"
-                variant={formData.tipo === TipoMidia.FILME ? 'default' : 'outline'}
+                variant="default"
                 onClick={() => setFormData({ ...formData, tipo: TipoMidia.FILME })}
                 className={formData.tipo === TipoMidia.FILME ? 'bg-purple-600 hover:bg-purple-700' : 'border-zinc-700'}
               >
@@ -348,7 +348,7 @@ export function NovaMidiaModal({ aberto, onFechar, onSucesso }: NovaMidiaModalPr
           <div className="flex gap-2 justify-end pt-4">
             <Button
               type="button"
-              variant="outline"
+              variant="default"
               onClick={onFechar}
               disabled={carregando}
               className="border-zinc-700"

@@ -129,7 +129,7 @@ export function NovaCitacaoForm({ onSubmit, onCancel, midias, loading: externalL
       <div className="flex gap-2 justify-end pt-4">
         <Button
           type="button"
-          variant="outline"
+          variant="default"
           onClick={onCancel}
           disabled={loading}
           className="border-zinc-700"

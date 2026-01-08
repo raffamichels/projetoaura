@@ -92,7 +92,7 @@ Escreva a resenha COMPLETA em português do Brasil, de forma natural, reflexiva 
           ],
           generationConfig: {
             temperature: 0.8,
-            maxOutputTokens: 2048,
+            maxOutputTokens: 1024,
           },
         }),
       }

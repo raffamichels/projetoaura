@@ -191,7 +191,7 @@ export default function NovoCartaoModal({ aberto, onFechar, onSucesso }: NovoCar
           <div className="flex gap-3 pt-4">
             <Button
               type="button"
-              variant="outline"
+              variant="default"
               onClick={onFechar}
               className="flex-1 border-zinc-800 hover:bg-zinc-800"
               disabled={carregando}

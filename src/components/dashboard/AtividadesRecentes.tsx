@@ -175,7 +175,7 @@ export function AtividadesRecentes() {
                       {atividade.titulo}
                     </h4>
                     <Badge
-                      variant="outline"
+                      variant="default"
                       className={`flex-shrink-0 text-xs ${tipoInfo.cor}`}
                     >
                       {tipoInfo.texto}

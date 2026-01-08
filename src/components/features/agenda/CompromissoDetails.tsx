@@ -168,7 +168,7 @@ export function CompromissoDetails({
           </Button>
           <Button
             onClick={handleDeleteClick}
-            variant="outline"
+            variant="default"
             className="flex-1 border-red-500/50 text-red-400 hover:bg-red-500/10 hover:text-red-400"
             disabled={isDeleting}
           >
