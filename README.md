@@ -494,3 +494,257 @@ chore: manutenção
 ⭐ **Se gostou do projeto, deixe uma estrela!** ⭐
 
 </div>
+
+```
+aura
+├─ .claude
+│  └─ settings.local.json
+├─ components.json
+├─ eslint.config.mjs
+├─ FEATURE_GERAR_RESENHA.md
+├─ GEMINI_API_KEY_SETUP.md
+├─ LANDING_PAGE.md
+├─ next.config.ts
+├─ package-lock.json
+├─ package.json
+├─ PLANO_MVP.md
+├─ postcss.config.mjs
+├─ prisma
+│  ├─ migrations
+│  │  ├─ 20251230151556_init
+│  │  │  └─ migration.sql
+│  │  ├─ 20260102154229_add_recorrencia_fields
+│  │  │  └─ migration.sql
+│  │  ├─ 20260102164208_add_atividades
+│  │  │  └─ migration.sql
+│  │  ├─ 20260102193859_add_modulo_financeiro
+│  │  │  └─ migration.sql
+│  │  ├─ 20260103145345_add_estudos_module
+│  │  │  └─ migration.sql
+│  │  ├─ 20260103210129_add_leituras_filmes_module
+│  │  │  └─ migration.sql
+│  │  ├─ 20260103233553_update_transacao_restrict_conta_cartao
+│  │  │  └─ migration.sql
+│  │  ├─ 20260103235021_make_conta_bancaria_required
+│  │  │  └─ migration.sql
+│  │  ├─ 20260104041950_add_waitlist_table
+│  │  │  └─ migration.sql
+│  │  ├─ 20260104_add_google_calendar_integration
+│  │  │  └─ migration.sql
+│  │  └─ migration_lock.toml
+│  └─ schema.prisma
+├─ PROJECAO_FINANCEIRA_24_MESES.md
+├─ public
+│  ├─ file.svg
+│  ├─ globe.svg
+│  ├─ next.svg
+│  ├─ vercel.svg
+│  └─ window.svg
+├─ README.md
+├─ ROADMAP_REACT_NATIVE.md
+├─ src
+│  ├─ app
+│  │  ├─ (auth)
+│  │  │  ├─ login
+│  │  │  │  └─ page.tsx
+│  │  │  └─ register
+│  │  │     └─ page.tsx
+│  │  ├─ (dashboard)
+│  │  │  ├─ dashboard
+│  │  │  │  ├─ agenda
+│  │  │  │  │  └─ page.tsx
+│  │  │  │  ├─ biblioteca
+│  │  │  │  │  ├─ page.tsx
+│  │  │  │  │  └─ [id]
+│  │  │  │  │     └─ page.tsx
+│  │  │  │  ├─ estudos
+│  │  │  │  │  ├─ page.tsx
+│  │  │  │  │  └─ [id]
+│  │  │  │  │     └─ page.tsx
+│  │  │  │  ├─ financeiro
+│  │  │  │  │  ├─ categorias
+│  │  │  │  │  │  └─ page.tsx
+│  │  │  │  │  ├─ contas
+│  │  │  │  │  │  └─ page.tsx
+│  │  │  │  │  ├─ objetivos
+│  │  │  │  │  │  └─ page.tsx
+│  │  │  │  │  ├─ page.tsx
+│  │  │  │  │  └─ transacoes
+│  │  │  │  │     └─ page.tsx
+│  │  │  │  ├─ page.tsx
+│  │  │  │  ├─ perfil
+│  │  │  │  │  └─ page.tsx
+│  │  │  │  └─ settings
+│  │  │  │     └─ page.tsx
+│  │  │  └─ layout.tsx
+│  │  ├─ api
+│  │  │  ├─ auth
+│  │  │  │  ├─ login
+│  │  │  │  │  └─ route.ts
+│  │  │  │  ├─ register
+│  │  │  │  │  └─ route.ts
+│  │  │  │  └─ [...nextauth]
+│  │  │  │     └─ route.ts
+│  │  │  ├─ generate-review
+│  │  │  │  └─ route.ts
+│  │  │  ├─ v1
+│  │  │  │  ├─ agenda
+│  │  │  │  │  ├─ compromissos
+│  │  │  │  │  │  ├─ route.ts
+│  │  │  │  │  │  └─ [id]
+│  │  │  │  │  │     └─ route.ts
+│  │  │  │  │  ├─ google-auth-status
+│  │  │  │  │  │  └─ route.ts
+│  │  │  │  │  ├─ google-sync
+│  │  │  │  │  │  └─ route.ts
+│  │  │  │  │  └─ sync-toggle
+│  │  │  │  │     └─ route.ts
+│  │  │  │  ├─ atividades
+│  │  │  │  │  └─ route.ts
+│  │  │  │  ├─ estudos
+│  │  │  │  │  ├─ anotacoes
+│  │  │  │  │  │  ├─ route.ts
+│  │  │  │  │  │  └─ [id]
+│  │  │  │  │  │     └─ route.ts
+│  │  │  │  │  ├─ buscar
+│  │  │  │  │  │  └─ route.ts
+│  │  │  │  │  ├─ cursos
+│  │  │  │  │  │  ├─ route.ts
+│  │  │  │  │  │  └─ [id]
+│  │  │  │  │  │     └─ route.ts
+│  │  │  │  │  ├─ modulos
+│  │  │  │  │  │  ├─ route.ts
+│  │  │  │  │  │  └─ [id]
+│  │  │  │  │  │     └─ route.ts
+│  │  │  │  │  └─ paginas
+│  │  │  │  │     ├─ route.ts
+│  │  │  │  │     └─ [id]
+│  │  │  │  │        └─ route.ts
+│  │  │  │  ├─ financeiro
+│  │  │  │  │  ├─ cartoes
+│  │  │  │  │  │  ├─ route.ts
+│  │  │  │  │  │  └─ [id]
+│  │  │  │  │  │     └─ route.ts
+│  │  │  │  │  ├─ categorias
+│  │  │  │  │  │  ├─ inicializar
+│  │  │  │  │  │  │  └─ route.ts
+│  │  │  │  │  │  ├─ route.ts
+│  │  │  │  │  │  └─ [id]
+│  │  │  │  │  │     └─ route.ts
+│  │  │  │  │  ├─ contas
+│  │  │  │  │  │  ├─ route.ts
+│  │  │  │  │  │  └─ [id]
+│  │  │  │  │  │     └─ route.ts
+│  │  │  │  │  ├─ dashboard
+│  │  │  │  │  │  └─ route.ts
+│  │  │  │  │  ├─ objetivos
+│  │  │  │  │  │  ├─ route.ts
+│  │  │  │  │  │  └─ [id]
+│  │  │  │  │  │     ├─ contribuir
+│  │  │  │  │  │     │  └─ route.ts
+│  │  │  │  │  │     └─ route.ts
+│  │  │  │  │  └─ transacoes
+│  │  │  │  │     ├─ route.ts
+│  │  │  │  │     └─ [id]
+│  │  │  │  │        └─ route.ts
+│  │  │  │  ├─ leituras
+│  │  │  │  │  ├─ buscar-capas
+│  │  │  │  │  │  └─ route.ts
+│  │  │  │  │  ├─ citacoes
+│  │  │  │  │  │  ├─ route.ts
+│  │  │  │  │  │  └─ [id]
+│  │  │  │  │  │     └─ route.ts
+│  │  │  │  │  └─ midias
+│  │  │  │  │     ├─ route.ts
+│  │  │  │  │     └─ [id]
+│  │  │  │  │        └─ route.ts
+│  │  │  │  └─ perfil
+│  │  │  │     ├─ avatar
+│  │  │  │     │  └─ route.ts
+│  │  │  │     ├─ route.ts
+│  │  │  │     └─ senha
+│  │  │  │        └─ route.ts
+│  │  │  └─ waitlist
+│  │  │     └─ route.ts
+│  │  ├─ favicon.ico
+│  │  ├─ globals.css
+│  │  ├─ layout.tsx
+│  │  ├─ page.tsx
+│  │  └─ premium
+│  │     ├─ layout.tsx
+│  │     └─ page.tsx
+│  ├─ components
+│  │  ├─ dashboard
+│  │  │  ├─ AtividadesRecentes.tsx
+│  │  │  ├─ Header.tsx
+│  │  │  └─ Sidebar.tsx
+│  │  ├─ estudos
+│  │  │  ├─ ResizableImage.tsx
+│  │  │  └─ RichTextEditor.tsx
+│  │  ├─ features
+│  │  │  └─ agenda
+│  │  │     ├─ CalendarToolbar.tsx
+│  │  │     ├─ CalendarWeekView.tsx
+│  │  │     ├─ CompromissoDetails.tsx
+│  │  │     ├─ CompromissoForm.tsx
+│  │  │     ├─ RecorrenciaConfig.tsx
+│  │  │     └─ RecurrenceActionModal.tsx
+│  │  ├─ financeiro
+│  │  │  ├─ ContribuirObjetivoModal.tsx
+│  │  │  ├─ NovaCategoriaModal.tsx
+│  │  │  ├─ NovaContaModal.tsx
+│  │  │  ├─ NovaTransacaoModal.tsx
+│  │  │  ├─ NovoCartaoModal.tsx
+│  │  │  └─ NovoObjetivoModal.tsx
+│  │  ├─ leituras
+│  │  │  ├─ CitacoesModal.tsx
+│  │  │  ├─ GenerateReviewButton.tsx
+│  │  │  ├─ GerenciarCitacoesModal.tsx
+│  │  │  ├─ ImageSearchSelector.tsx
+│  │  │  ├─ NovaCitacaoModal.tsx
+│  │  │  ├─ NovaMidiaModal.tsx
+│  │  │  └─ ReviewDisplayModal.tsx
+│  │  ├─ providers
+│  │  │  └─ SessionProvider.tsx
+│  │  └─ ui
+│  │     ├─ avatar.tsx
+│  │     ├─ badge.tsx
+│  │     ├─ button.tsx
+│  │     ├─ card.tsx
+│  │     ├─ checkbox.tsx
+│  │     ├─ dialog.tsx
+│  │     ├─ dropdown-menu.tsx
+│  │     ├─ input.tsx
+│  │     ├─ label.tsx
+│  │     ├─ popover.tsx
+│  │     ├─ progress.tsx
+│  │     ├─ select.tsx
+│  │     ├─ separator.tsx
+│  │     ├─ sheet.tsx
+│  │     ├─ star-rating.tsx
+│  │     ├─ switch.tsx
+│  │     ├─ tabs.tsx
+│  │     └─ textarea.tsx
+│  ├─ hooks
+│  ├─ lib
+│  │  ├─ ai
+│  │  │  └─ review-generator.ts
+│  │  ├─ atividades-helper.ts
+│  │  ├─ auth
+│  │  │  ├─ auth.ts
+│  │  │  └─ authOptions.ts
+│  │  ├─ financeiro-helper.ts
+│  │  ├─ googleCalendar.ts
+│  │  ├─ prisma.ts
+│  │  ├─ recorrencia-utils.ts
+│  │  ├─ utils.ts
+│  │  └─ validations
+│  │     └─ auth.ts
+│  └─ types
+│     ├─ compromisso.ts
+│     ├─ financeiro.ts
+│     ├─ midia.ts
+│     └─ next-auth.d.ts
+└─ tsconfig.json
+
+```
