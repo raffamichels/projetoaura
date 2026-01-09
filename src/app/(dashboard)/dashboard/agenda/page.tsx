@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/dialog';
 import { CompromissoForm } from '@/components/features/agenda/CompromissoForm';
 import { CalendarWeekView } from '@/components/features/agenda/CalendarWeekView';
+import { CalendarDayView } from '@/components/features/agenda/CalendarDayView';
 import { CalendarToolbar } from '@/components/features/agenda/CalendarToolbar';
 import { Compromisso } from '@/types/compromisso';
 import { format } from 'date-fns';
@@ -23,7 +24,13 @@ type ViewType = 'day' | 'week' | 'month' | 'year';
 
 function AgendaPageContent() {
   const searchParams = useSearchParams();
-  const [view, setView] = useState<ViewType>('week');
+  // Detectar se é dispositivo móvel e definir view padrão
+  const [view, setView] = useState<ViewType>(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth < 768 ? 'day' : 'week';
+    }
+    return 'week';
+  });
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
@@ -103,11 +110,11 @@ function AgendaPageContent() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-120px)] max-h-[calc(100vh-120px)] space-y-2.5 overflow-hidden">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 flex-shrink-0">
-        <div>
-          <h1 className="text-2xl font-bold text-white">Agenda</h1>
-          <p className="text-sm text-gray-400">
+    <div className="flex flex-col h-[calc(100vh-80px)] sm:h-[calc(100vh-100px)] md:h-[calc(100vh-120px)] max-h-[calc(100vh-80px)] sm:max-h-[calc(100vh-100px)] md:max-h-[calc(100vh-120px)] space-y-2 sm:space-y-2.5 overflow-hidden">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-3 shrink-0 px-1 sm:px-0">
+        <div className="flex-1">
+          <h1 className="text-xl sm:text-2xl font-bold text-white">Agenda</h1>
+          <p className="text-xs sm:text-sm text-gray-400">
             Organize seus compromissos e eventos
           </p>
         </div>
@@ -119,9 +126,9 @@ function AgendaPageContent() {
             setIsEditMode(false);
             setIsModalOpen(true);
           }}
-          className="flex-1 sm:flex-none bg-purple-600 hover:bg-purple-700 h-auto py-2 text-sm"
+          className="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 h-9 sm:h-10 text-sm"
         >
-          <Plus className="w-4 h-4 mr-2" />
+          <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
           Novo Compromisso
         </Button>
       </div>
@@ -134,6 +141,23 @@ function AgendaPageContent() {
               <p className="text-gray-400">Carregando calendário...</p>
             </div>
           </div>
+        ) : view === 'day' ? (
+          <>
+            <CalendarToolbar
+              currentDate={currentDate}
+              view={view}
+              onDateChange={setCurrentDate}
+              onViewChange={setView}
+              onToday={handleToday}
+              onRefresh={fetchCompromissos}
+            />
+            <CalendarDayView
+              compromissos={compromissos}
+              onSlotClick={handleSlotClick}
+              onCompromissoClick={handleCompromissoClick}
+              currentDate={currentDate}
+            />
+          </>
         ) : view === 'week' ? (
           <>
             <CalendarToolbar
@@ -164,7 +188,7 @@ function AgendaPageContent() {
             <div className="flex items-center justify-center h-full">
               <div className="text-center">
                 <p className="text-xl font-semibold text-white mb-2">
-                  Visualização de {view === 'day' ? 'Dia' : view === 'month' ? 'Mês' : 'Ano'}
+                  Visualização de {view === 'month' ? 'Mês' : 'Ano'}
                 </p>
                 <p className="text-gray-400">Em desenvolvimento</p>
               </div>
@@ -175,10 +199,10 @@ function AgendaPageContent() {
 
       {/* Modal de Detalhes do Compromisso */}
       <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen} modal={false}>
-        <DialogContent className="bg-zinc-900 border-zinc-800 text-white sm:max-w-125">
+        <DialogContent className="bg-zinc-900 border-zinc-800 text-white w-[95vw] max-w-[500px] sm:max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Detalhes do Compromisso</DialogTitle>
-            <DialogDescription className="text-gray-400">
+            <DialogTitle className="text-base sm:text-lg">Detalhes do Compromisso</DialogTitle>
+            <DialogDescription className="text-gray-400 text-xs sm:text-sm">
               Visualize e gerencie seu compromisso
             </DialogDescription>
           </DialogHeader>
@@ -195,16 +219,16 @@ function AgendaPageContent() {
 
       {/* Modal de Criar/Editar Compromisso */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen} modal={false}>
-        <DialogContent className="bg-zinc-900 border-zinc-800 text-white sm:max-w-125">
+        <DialogContent className="bg-zinc-900 border-zinc-800 text-white w-[95vw] max-w-[600px] sm:max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>
-              {isEditMode 
+            <DialogTitle className="text-base sm:text-lg">
+              {isEditMode
                 ? 'Editar Compromisso'
                 : selectedDate && selectedHour !== null
                   ? `Novo Compromisso - ${format(selectedDate, 'dd/MM/yyyy')} às ${String(selectedHour).padStart(2, '0')}:00`
                   : 'Novo Compromisso'}
             </DialogTitle>
-            <DialogDescription className="text-gray-400">
+            <DialogDescription className="text-gray-400 text-xs sm:text-sm">
               {isEditMode ? 'Atualize as informações do compromisso' : 'Preencha os detalhes do seu compromisso'}
             </DialogDescription>
           </DialogHeader>

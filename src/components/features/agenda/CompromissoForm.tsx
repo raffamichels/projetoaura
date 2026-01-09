@@ -131,10 +131,10 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5 max-h-[70vh] overflow-y-auto pr-2">
+    <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4 md:space-y-5">
       {/* Título */}
-      <div className="space-y-2">
-        <Label htmlFor="titulo" className="text-gray-300">
+      <div className="space-y-1.5 sm:space-y-2">
+        <Label htmlFor="titulo" className="text-gray-300 text-sm sm:text-base">
           Título *
         </Label>
         <Input
@@ -143,13 +143,13 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
           onChange={(e) => setTitulo(e.target.value)}
           placeholder="Ex: Reunião com cliente"
           required
-          className="bg-zinc-800/50 border-zinc-700 text-white"
+          className="bg-zinc-800/50 border-zinc-700 text-white text-sm sm:text-base h-9 sm:h-10"
         />
       </div>
 
       {/* Descrição */}
-      <div className="space-y-2">
-        <Label htmlFor="descricao" className="text-gray-300">
+      <div className="space-y-1.5 sm:space-y-2">
+        <Label htmlFor="descricao" className="text-gray-300 text-sm sm:text-base">
           Descrição
         </Label>
         <textarea
@@ -158,13 +158,13 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
           onChange={(e) => setDescricao(e.target.value)}
           placeholder="Adicione detalhes sobre o compromisso..."
           rows={3}
-          className="w-full px-3 py-2 bg-zinc-800/50 border border-zinc-700 rounded-lg text-white placeholder:text-gray-500 focus:border-aura-500 focus:ring-1 focus:ring-aura-500 resize-none"
+          className="w-full px-2 sm:px-3 py-1.5 sm:py-2 bg-zinc-800/50 border border-zinc-700 rounded-lg text-white text-sm sm:text-base placeholder:text-gray-500 focus:border-aura-500 focus:ring-1 focus:ring-aura-500 resize-none"
         />
       </div>
 
       {/* Data */}
-      <div className="space-y-2">
-        <Label htmlFor="data" className="text-gray-300">
+      <div className="space-y-1.5 sm:space-y-2">
+        <Label htmlFor="data" className="text-gray-300 text-sm sm:text-base">
           Data {isRecorrente && '(data inicial)'}*
         </Label>
         <Input
@@ -173,14 +173,14 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
           value={data}
           onChange={(e) => setData(e.target.value)}
           required
-          className="bg-zinc-800/50 border-zinc-700 text-white"
+          className="bg-zinc-800/50 border-zinc-700 text-white text-sm sm:text-base h-9 sm:h-10"
         />
       </div>
 
       {/* Horários */}
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="horaInicio" className="text-gray-300">
+      <div className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-4">
+        <div className="space-y-1.5 sm:space-y-2">
+          <Label htmlFor="horaInicio" className="text-gray-300 text-sm sm:text-base">
             Início *
           </Label>
           <Input
@@ -189,11 +189,11 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
             value={horaInicio}
             onChange={(e) => setHoraInicio(e.target.value)}
             required
-            className="bg-zinc-800/50 border-zinc-700 text-white"
+            className="bg-zinc-800/50 border-zinc-700 text-white text-sm sm:text-base h-9 sm:h-10"
           />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="horaFim" className="text-gray-300">
+        <div className="space-y-1.5 sm:space-y-2">
+          <Label htmlFor="horaFim" className="text-gray-300 text-sm sm:text-base">
             Término
           </Label>
           <Input
@@ -201,22 +201,22 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
             type="time"
             value={horaFim}
             onChange={(e) => setHoraFim(e.target.value)}
-            className="bg-zinc-800/50 border-zinc-700 text-white"
+            className="bg-zinc-800/50 border-zinc-700 text-white text-sm sm:text-base h-9 sm:h-10"
           />
         </div>
       </div>
 
       {/* Categoria */}
-      <div className="space-y-2">
-        <Label className="text-gray-300">Categoria *</Label>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+      <div className="space-y-1.5 sm:space-y-2">
+        <Label className="text-gray-300 text-sm sm:text-base">Categoria *</Label>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 sm:gap-2">
           {categorias.map((cat) => (
             <button
               key={cat.value}
               type="button"
               onClick={() => setCategoria(cat.value)}
               className={`
-                px-3 py-2 rounded-lg border text-sm font-medium transition-all
+                px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg border text-xs sm:text-sm font-medium transition-all
                 ${categoria === cat.value
                   ? 'border-2 scale-105'
                   : 'border-zinc-700 hover:border-zinc-600'
@@ -248,8 +248,8 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
 
       {/* Sincronização com Google Calendar */}
       {hasGoogleAuth && (
-        <div className="space-y-3 p-4 bg-zinc-800/30 border border-zinc-700 rounded-lg">
-          <div className="flex items-start space-x-3">
+        <div className="space-y-2 sm:space-y-3 p-3 sm:p-4 bg-zinc-800/30 border border-zinc-700 rounded-lg">
+          <div className="flex items-start space-x-2 sm:space-x-3">
             <Checkbox
               id="syncWithGoogle"
               checked={syncWithGoogle}
@@ -259,15 +259,15 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
             <div className="flex-1">
               <Label
                 htmlFor="syncWithGoogle"
-                className="text-sm font-medium text-gray-300 cursor-pointer flex items-center gap-2"
+                className="text-xs sm:text-sm font-medium text-gray-300 cursor-pointer flex items-center gap-2"
               >
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                <svg className="w-3 h-3 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 0C5.383 0 0 5.383 0 12s5.383 12 12 12 12-5.383 12-12S18.617 0 12 0zm0 23C5.935 23 1 18.065 1 12S5.935 1 12 1s11 4.935 11 11-4.935 11-11 11z"/>
                   <path d="M12 4.5c-4.136 0-7.5 3.364-7.5 7.5s3.364 7.5 7.5 7.5 7.5-3.364 7.5-7.5-3.364-7.5-7.5-7.5zm0 13.5c-3.309 0-6-2.691-6-6s2.691-6 6-6 6 2.691 6 6-2.691 6-6 6z"/>
                 </svg>
                 Enviar para Google Agenda
               </Label>
-              <p className="text-xs text-gray-400 mt-1">
+              <p className="text-[10px] sm:text-xs text-gray-400 mt-1">
                 {syncWithGoogle
                   ? 'Este compromisso será sincronizado com sua agenda do Google'
                   : 'Ative para adicionar este compromisso ao Google Calendar'}
@@ -279,8 +279,8 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
 
       {/* Aviso sobre recorrência ao editar */}
       {isEditMode && initialData?.isRecorrente && (
-        <div className="p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
-          <p className="text-xs text-yellow-400">
+        <div className="p-2 sm:p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+          <p className="text-[10px] sm:text-xs text-yellow-400">
             ⚠️ Este compromisso faz parte de uma série recorrente.
             Ao salvar, você será perguntado se deseja atualizar apenas este ou todos os futuros.
           </p>
@@ -288,24 +288,24 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
       )}
 
       {/* Botões */}
-      <div className="flex gap-3 pt-4 sticky bottom-0 bg-zinc-900 pb-2">
+      <div className="flex gap-2 sm:gap-3 pt-3 sm:pt-4 sticky bottom-0 bg-zinc-900 pb-2">
         <Button
           type="button"
           variant="default"
           onClick={onClose}
-          className="flex-1 border-zinc-700 hover:bg-zinc-800"
+          className="flex-1 border-zinc-700 hover:bg-zinc-800 h-9 sm:h-10 text-sm sm:text-base"
           disabled={loading}
         >
           Cancelar
         </Button>
         <Button
           type="submit"
-          className="flex-1 bg-aura-500 hover:bg-aura-600"
+          className="flex-1 bg-aura-500 hover:bg-aura-600 h-9 sm:h-10 text-sm sm:text-base"
           disabled={loading}
         >
-          {loading 
-            ? (isEditMode ? 'Atualizando...' : 'Salvando...') 
-            : (isEditMode ? 'Atualizar' : 'Salvar Compromisso')}
+          {loading
+            ? (isEditMode ? 'Atualizando...' : 'Salvando...')
+            : (isEditMode ? 'Atualizar' : 'Salvar')}
         </Button>
       </div>
     </form>

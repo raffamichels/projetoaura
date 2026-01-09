@@ -93,63 +93,69 @@ export function CalendarToolbar({ currentDate, view, onDateChange, onViewChange,
   };
 
   return (
-    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 p-3 sm:p-4 bg-gradient-to-r from-zinc-900 via-zinc-900 to-zinc-900/95 border-b-2 border-zinc-700 sticky top-0 z-30 backdrop-blur-md shadow-xl">
-      {/* Navegação e Data */}
-      <div className="flex items-center gap-2 w-full sm:w-auto">
-        <Button
-          variant="default"
-          size="sm"
-          onClick={onToday}
-          className="border-zinc-700 hover:bg-zinc-800 hover:border-aura-500 text-xs px-3 h-9 transition-all duration-200 hover:shadow-lg hover:shadow-aura-500/20"
-        >
-          <Calendar className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5" />
-          Hoje
-        </Button>
-
-        {onRefresh && (
+    <div className="flex flex-col gap-2 sm:gap-3 p-2 sm:p-3 md:p-4 bg-gradient-to-r from-zinc-900 via-zinc-900 to-zinc-900/95 border-b-2 border-zinc-700 sticky top-0 z-30 backdrop-blur-md shadow-xl">
+      {/* Primeira linha: Botões de ação e navegação */}
+      <div className="flex items-center justify-between gap-2 w-full">
+        {/* Grupo de botões à esquerda */}
+        <div className="flex items-center gap-1.5 sm:gap-2">
           <Button
             variant="default"
             size="sm"
-            onClick={handleSync}
-            disabled={isSyncing}
-            className="border-zinc-700 hover:bg-zinc-800 hover:border-blue-500 text-xs px-3 h-9 transition-all duration-200 hover:shadow-lg hover:shadow-blue-500/20"
+            onClick={onToday}
+            className="border-zinc-700 hover:bg-zinc-800 hover:border-aura-500 text-xs px-2 sm:px-3 h-8 sm:h-9 transition-all duration-200 hover:shadow-lg hover:shadow-aura-500/20"
           >
-            <RefreshCw className={`w-3 h-3 sm:w-4 sm:h-4 mr-1.5 ${isSyncing ? 'animate-spin' : ''}`} />
-            {isSyncing ? 'Sincronizando...' : 'Sincronizar'}
+            <Calendar className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-1.5" />
+            <span className="hidden sm:inline">Hoje</span>
           </Button>
-        )}
 
-        <div className="flex items-center gap-1 bg-zinc-800/50 rounded-lg p-0.5">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handlePrevious}
-            className="hover:bg-zinc-700 h-8 w-8 transition-all duration-200 hover:text-aura-400"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleNext}
-            className="hover:bg-zinc-700 h-8 w-8 transition-all duration-200 hover:text-aura-400"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </Button>
+          {onRefresh && (
+            <Button
+              variant="default"
+              size="sm"
+              onClick={handleSync}
+              disabled={isSyncing}
+              className="border-zinc-700 hover:bg-zinc-800 hover:border-blue-500 text-xs px-2 sm:px-3 h-8 sm:h-9 transition-all duration-200 hover:shadow-lg hover:shadow-blue-500/20"
+            >
+              <RefreshCw className={`w-3 h-3 sm:w-4 sm:h-4 ${isSyncing ? 'animate-spin' : ''}`} />
+              <span className="hidden md:inline ml-1.5">{isSyncing ? 'Sincronizando...' : 'Sincronizar'}</span>
+            </Button>
+          )}
         </div>
 
-        <h2 className="text-sm sm:text-lg font-bold text-white capitalize truncate bg-zinc-800/30 px-3 py-1.5 rounded-lg">
-          {getDateLabel()}
-        </h2>
+        {/* Navegação central */}
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="flex items-center gap-0.5 sm:gap-1 bg-zinc-800/50 rounded-lg p-0.5">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handlePrevious}
+              className="hover:bg-zinc-700 h-7 w-7 sm:h-8 sm:w-8 transition-all duration-200 hover:text-aura-400"
+            >
+              <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleNext}
+              className="hover:bg-zinc-700 h-7 w-7 sm:h-8 sm:w-8 transition-all duration-200 hover:text-aura-400"
+            >
+              <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+            </Button>
+          </div>
+
+          <h2 className="text-xs sm:text-sm md:text-base lg:text-lg font-bold text-white capitalize truncate bg-zinc-800/30 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg max-w-[120px] sm:max-w-[200px] md:max-w-none">
+            {getDateLabel()}
+          </h2>
+        </div>
       </div>
 
-      {/* Filtros de Visualização */}
-      <div className="flex items-center gap-1 bg-zinc-800/60 rounded-lg p-1 w-full sm:w-auto shadow-inner">
+      {/* Segunda linha: Filtros de Visualização */}
+      <div className="flex items-center gap-1 bg-zinc-800/60 rounded-lg p-1 w-full shadow-inner">
         <Button
           variant="ghost"
           size="sm"
           onClick={() => onViewChange('day')}
-          className={`text-xs px-3 h-8 transition-all duration-200 ${
+          className={`flex-1 text-xs px-2 sm:px-3 h-7 sm:h-8 transition-all duration-200 ${
             view === 'day'
               ? 'bg-aura-600 text-white shadow-lg shadow-aura-500/30 hover:bg-aura-700'
               : 'text-gray-400 hover:text-white hover:bg-zinc-700'
@@ -161,7 +167,7 @@ export function CalendarToolbar({ currentDate, view, onDateChange, onViewChange,
           variant="ghost"
           size="sm"
           onClick={() => onViewChange('week')}
-          className={`text-xs px-3 h-8 transition-all duration-200 ${
+          className={`flex-1 text-xs px-2 sm:px-3 h-7 sm:h-8 transition-all duration-200 ${
             view === 'week'
               ? 'bg-aura-600 text-white shadow-lg shadow-aura-500/30 hover:bg-aura-700'
               : 'text-gray-400 hover:text-white hover:bg-zinc-700'
@@ -173,7 +179,7 @@ export function CalendarToolbar({ currentDate, view, onDateChange, onViewChange,
           variant="ghost"
           size="sm"
           onClick={() => onViewChange('month')}
-          className={`text-xs px-3 h-8 transition-all duration-200 ${
+          className={`flex-1 text-xs px-2 sm:px-3 h-7 sm:h-8 transition-all duration-200 ${
             view === 'month'
               ? 'bg-aura-600 text-white shadow-lg shadow-aura-500/30 hover:bg-aura-700'
               : 'text-gray-400 hover:text-white hover:bg-zinc-700'
@@ -185,7 +191,7 @@ export function CalendarToolbar({ currentDate, view, onDateChange, onViewChange,
           variant="ghost"
           size="sm"
           onClick={() => onViewChange('year')}
-          className={`text-xs px-3 h-8 transition-all duration-200 ${
+          className={`flex-1 text-xs px-2 sm:px-3 h-7 sm:h-8 transition-all duration-200 ${
             view === 'year'
               ? 'bg-aura-600 text-white shadow-lg shadow-aura-500/30 hover:bg-aura-700'
               : 'text-gray-400 hover:text-white hover:bg-zinc-700'

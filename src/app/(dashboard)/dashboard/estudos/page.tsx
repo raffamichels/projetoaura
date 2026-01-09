@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BookOpen, Plus, Search, StickyNote, FileText, ChevronRight } from 'lucide-react';
+import { BookOpen, Plus, Search, StickyNote, FileText, ChevronRight, Edit, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -39,6 +39,9 @@ export default function EstudosPage() {
   const [loading, setLoading] = useState(true);
   const [modalCursoAberto, setModalCursoAberto] = useState(false);
   const [modalAnotacaoAberto, setModalAnotacaoAberto] = useState(false);
+  const [modalVisualizarAnotacao, setModalVisualizarAnotacao] = useState(false);
+  const [anotacaoSelecionada, setAnotacaoSelecionada] = useState<Anotacao | null>(null);
+  const [editandoAnotacao, setEditandoAnotacao] = useState(false);
   const [buscaAtiva, setBuscaAtiva] = useState(false);
   const [termoBusca, setTermoBusca] = useState('');
   const [resultadosBusca, setResultadosBusca] = useState<any>(null);
@@ -133,6 +136,59 @@ export default function EstudosPage() {
       }
     } catch (error) {
       console.error('Erro ao buscar:', error);
+    }
+  };
+
+  const abrirAnotacao = (anotacao: Anotacao) => {
+    setAnotacaoSelecionada(anotacao);
+    setEditandoAnotacao(false);
+    setModalVisualizarAnotacao(true);
+  };
+
+  const editarAnotacao = async () => {
+    if (!anotacaoSelecionada) return;
+
+    try {
+      const response = await fetch(`/api/v1/estudos/anotacoes/${anotacaoSelecionada.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          titulo: anotacaoSelecionada.titulo,
+          conteudo: anotacaoSelecionada.conteudo,
+          cor: anotacaoSelecionada.cor,
+        }),
+      });
+
+      if (response.ok) {
+        setEditandoAnotacao(false);
+        setModalVisualizarAnotacao(false);
+        setAnotacaoSelecionada(null);
+        carregarDados();
+      }
+    } catch (error) {
+      console.error('Erro ao editar anotação:', error);
+    }
+  };
+
+  const excluirAnotacao = async () => {
+    if (!anotacaoSelecionada) return;
+
+    if (!confirm('Deseja realmente excluir esta anotação?')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/v1/estudos/anotacoes/${anotacaoSelecionada.id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        setModalVisualizarAnotacao(false);
+        setAnotacaoSelecionada(null);
+        carregarDados();
+      }
+    } catch (error) {
+      console.error('Erro ao excluir anotação:', error);
     }
   };
 
@@ -357,6 +413,7 @@ export default function EstudosPage() {
               <Card
                 key={anotacao.id}
                 className="bg-zinc-900 border-zinc-800 hover:border-zinc-700 cursor-pointer transition-colors"
+                onClick={() => abrirAnotacao(anotacao)}
               >
                 <CardHeader>
                   <div className="flex items-start gap-3">
@@ -503,6 +560,122 @@ export default function EstudosPage() {
               </Button>
             </div>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal Visualizar/Editar Anotação */}
+      <Dialog open={modalVisualizarAnotacao} onOpenChange={setModalVisualizarAnotacao}>
+        <DialogContent className="bg-zinc-900 border-zinc-800 max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-white">
+              {editandoAnotacao ? 'Editar Anotação' : 'Visualizar Anotação'}
+            </DialogTitle>
+          </DialogHeader>
+          {anotacaoSelecionada && (
+            <div className="space-y-4">
+              {editandoAnotacao ? (
+                <>
+                  <div>
+                    <Label htmlFor="titulo-editar" className="text-zinc-300">Título</Label>
+                    <Input
+                      id="titulo-editar"
+                      value={anotacaoSelecionada.titulo}
+                      onChange={(e) =>
+                        setAnotacaoSelecionada({ ...anotacaoSelecionada, titulo: e.target.value })
+                      }
+                      className="bg-zinc-800 border-zinc-700 text-white mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="conteudo-editar" className="text-zinc-300">Conteúdo</Label>
+                    <textarea
+                      id="conteudo-editar"
+                      value={anotacaoSelecionada.conteudo}
+                      onChange={(e) =>
+                        setAnotacaoSelecionada({ ...anotacaoSelecionada, conteudo: e.target.value })
+                      }
+                      className="w-full bg-zinc-800 border-zinc-700 text-white mt-1 rounded-md p-3 min-h-[200px]"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-zinc-300">Cor</Label>
+                    <div className="flex gap-2 mt-2">
+                      {cores.map((cor) => (
+                        <button
+                          key={cor}
+                          onClick={() => setAnotacaoSelecionada({ ...anotacaoSelecionada, cor })}
+                          className={`w-8 h-8 rounded-full ${
+                            anotacaoSelecionada.cor === cor ? 'ring-2 ring-white ring-offset-2 ring-offset-zinc-900' : ''
+                          }`}
+                          style={{ backgroundColor: cor }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex gap-2 justify-end pt-4">
+                    <Button
+                      variant="default"
+                      onClick={() => setEditandoAnotacao(false)}
+                      className="border-zinc-700"
+                    >
+                      Cancelar
+                    </Button>
+                    <Button
+                      onClick={editarAnotacao}
+                      disabled={!anotacaoSelecionada.titulo}
+                      className="bg-purple-600 hover:bg-purple-700"
+                    >
+                      Salvar Alterações
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="space-y-3">
+                    <div className="flex items-start gap-3">
+                      <div
+                        className="w-10 h-10 rounded flex items-center justify-center"
+                        style={{ backgroundColor: anotacaoSelecionada.cor + '20', color: anotacaoSelecionada.cor }}
+                      >
+                        <StickyNote className="w-5 h-5" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-xl font-bold text-white mb-1">
+                          {anotacaoSelecionada.titulo}
+                        </h3>
+                        {anotacaoSelecionada.curso && (
+                          <p className="text-sm text-zinc-400">{anotacaoSelecionada.curso.nome}</p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="bg-zinc-800/50 rounded-lg p-4 border border-zinc-700/50">
+                      <p className="text-zinc-300 whitespace-pre-wrap">{anotacaoSelecionada.conteudo}</p>
+                    </div>
+                    <p className="text-xs text-zinc-500">
+                      Criada em {new Date(anotacaoSelecionada.createdAt).toLocaleDateString('pt-BR')}
+                    </p>
+                  </div>
+                  <div className="flex gap-2 justify-end pt-4 border-t border-zinc-800">
+                    <Button
+                      variant="default"
+                      onClick={excluirAnotacao}
+                      className="border-zinc-700 hover:bg-red-500/20 hover:text-red-400 hover:border-red-500/50"
+                    >
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      Excluir
+                    </Button>
+                    <Button
+                      onClick={() => setEditandoAnotacao(true)}
+                      className="bg-purple-600 hover:bg-purple-700"
+                    >
+                      <Edit className="w-4 h-4 mr-2" />
+                      Editar
+                    </Button>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>

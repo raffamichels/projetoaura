@@ -18,8 +18,10 @@ import {
   Sheet,
   SheetContent,
   SheetTrigger,
+  SheetTitle,
 } from '@/components/ui/sheet';
 import { Sidebar } from './Sidebar';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
 export function Header() {
   const { data: session } = useSession();
@@ -49,6 +51,9 @@ export function Header() {
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="p-0 w-64 bg-zinc-900 border-zinc-800">
+              <VisuallyHidden>
+                <SheetTitle>Menu de Navegação</SheetTitle>
+              </VisuallyHidden>
               <Sidebar isMobile onNavigate={() => setSidebarOpen(false)} />
             </SheetContent>
           </Sheet>

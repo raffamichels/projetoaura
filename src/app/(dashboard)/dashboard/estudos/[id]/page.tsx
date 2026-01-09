@@ -239,6 +239,24 @@ export default function CursoDetalhePage() {
     }
   };
 
+  const excluirCurso = async () => {
+    if (!confirm('Deseja realmente excluir este curso? Todos os módulos, páginas e anotações serão excluídos permanentemente.')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/v1/estudos/cursos/${cursoId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        router.push('/dashboard/estudos');
+      }
+    } catch (error) {
+      console.error('Erro ao excluir curso:', error);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950">
@@ -312,6 +330,14 @@ export default function CursoDetalhePage() {
                   {curso.modulos.reduce((acc, m) => acc + (m._count?.paginas || 0), 0)}
                 </p>
               </div>
+              <Button
+                onClick={excluirCurso}
+                variant="ghost"
+                className="hover:bg-red-500/20 hover:text-red-400 text-zinc-400 rounded-xl h-auto py-2 px-3"
+                title="Excluir curso"
+              >
+                <Trash2 className="w-4 h-4" />
+              </Button>
             </div>
           </div>
         </div>

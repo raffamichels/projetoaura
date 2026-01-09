@@ -93,26 +93,26 @@ export function CompromissoDetails({
 
   return (
     <>
-      <div className="w-full max-w-md p-4 space-y-4">
+      <div className="w-full p-2 sm:p-3 md:p-4 space-y-3 sm:space-y-4">
         {/* Header com cor */}
-        <div 
-          className="h-2 -mx-4 -mt-4 rounded-t-lg"
+        <div
+          className="h-2 -mx-2 sm:-mx-3 md:-mx-4 -mt-2 sm:-mt-3 md:-mt-4 rounded-t-lg"
           style={{ backgroundColor: compromisso.cor }}
         />
 
         {/* Título */}
         <div>
-          <h3 className="text-lg font-bold text-white mb-1">{compromisso.titulo}</h3>
+          <h3 className="text-base sm:text-lg font-bold text-white mb-1">{compromisso.titulo}</h3>
           {compromisso.descricao && (
-            <p className="text-sm text-gray-400">{compromisso.descricao}</p>
+            <p className="text-xs sm:text-sm text-gray-400">{compromisso.descricao}</p>
           )}
         </div>
 
         {/* Badge de Recorrente */}
         {compromisso.isRecorrente && (
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-aura-500/10 border border-aura-500/30 rounded-full">
+          <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 bg-aura-500/10 border border-aura-500/30 rounded-full">
             <RefreshCw className="w-3 h-3 text-aura-400" />
-            <span className="text-xs text-aura-400 font-medium">
+            <span className="text-[10px] sm:text-xs text-aura-400 font-medium">
               {getDescricaoRecorrencia(
                 compromisso.tipoRecorrencia ?? 'semanal',
                 compromisso.intervaloRecorrencia || 1
@@ -124,16 +124,16 @@ export function CompromissoDetails({
         {/* Informações */}
         <div className="space-y-2">
           {/* Data */}
-          <div className="flex items-center gap-2 text-sm">
-            <Calendar className="w-4 h-4 text-gray-400" />
+          <div className="flex items-center gap-2 text-xs sm:text-sm">
+            <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 flex-shrink-0" />
             <span className="text-gray-300">
               {format(parseISO(compromisso.data), "EEEE, d 'de' MMMM 'de' yyyy", { locale: ptBR })}
             </span>
           </div>
 
           {/* Horário */}
-          <div className="flex items-center gap-2 text-sm">
-            <Clock className="w-4 h-4 text-gray-400" />
+          <div className="flex items-center gap-2 text-xs sm:text-sm">
+            <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 flex-shrink-0" />
             <span className="text-gray-300">
               {compromisso.horaInicio}
               {compromisso.horaFim && ` - ${compromisso.horaFim}`}
@@ -142,15 +142,15 @@ export function CompromissoDetails({
 
           {/* Categoria */}
           {compromisso.categoria && (
-            <div className="flex items-center gap-2 text-sm">
-              <Tag className="w-4 h-4 text-gray-400" />
+            <div className="flex items-center gap-2 text-xs sm:text-sm">
+              <Tag className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 flex-shrink-0" />
               <span className="text-gray-300 capitalize">{compromisso.categoria}</span>
             </div>
           )}
 
           {/* Informação adicional sobre recorrência */}
           {compromisso.isRecorrente && compromisso.dataFimRecorrencia && (
-            <div className="text-xs text-gray-500 pt-2 border-t border-zinc-800">
+            <div className="text-[10px] sm:text-xs text-gray-500 pt-2 border-t border-zinc-800">
               Repete até {format(parseISO(compromisso.dataFimRecorrencia), "dd/MM/yyyy")}
             </div>
           )}
@@ -160,19 +160,19 @@ export function CompromissoDetails({
         <div className="flex gap-2 pt-2 border-t border-zinc-700">
           <Button
             onClick={handleEditClick}
-            className="flex-1 bg-aura-500 hover:bg-aura-600"
+            className="flex-1 bg-aura-500 hover:bg-aura-600 h-9 sm:h-10 text-sm sm:text-base"
             disabled={isDeleting}
           >
-            <Edit className="w-4 h-4 mr-2" />
+            <Edit className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
             Editar
           </Button>
           <Button
             onClick={handleDeleteClick}
             variant="default"
-            className="flex-1 border-red-500/50 text-red-400 hover:bg-red-500/10 hover:text-red-400"
+            className="flex-1 border-red-500/50 text-red-400 hover:bg-red-500/10 hover:text-red-400 h-9 sm:h-10 text-sm sm:text-base"
             disabled={isDeleting}
           >
-            <Trash2 className="w-4 h-4 mr-2" />
+            <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
             {isDeleting ? 'Excluindo...' : 'Excluir'}
           </Button>
         </div>
