@@ -69,30 +69,31 @@ export function ReviewDisplayModal({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="bg-zinc-900 border-zinc-800 text-white max-w-3xl max-h-[85vh] flex flex-col">
+      <DialogContent className="bg-zinc-900 border-zinc-800 text-white max-w-3xl w-[95vw] max-h-[85vh] flex flex-col p-4 sm:p-6">
         <DialogHeader>
-          <DialogTitle className="text-xl flex items-center gap-2">
-            Resenha Gerada por IA
+          <DialogTitle className="text-base sm:text-lg md:text-xl flex items-center gap-2">
+            <span className="hidden xs:inline">Resenha Gerada por IA</span>
+            <span className="xs:hidden">Resenha IA</span>
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex-1 overflow-y-auto min-h-0 py-4">
+        <div className="flex-1 overflow-y-auto min-h-0 py-3 sm:py-4">
           <Textarea
             value={review}
             onChange={(e) => setReview(e.target.value)}
-            className="min-h-[450px] font-serif text-base leading-relaxed bg-zinc-800/50 border-zinc-700 text-white resize-none focus-visible:ring-purple-600"
+            className="min-h-[300px] sm:min-h-112.5 font-serif text-sm sm:text-base leading-relaxed bg-zinc-800/50 border-zinc-700 text-white resize-none focus-visible:ring-purple-600"
             placeholder="Sua resenha..."
           />
-          <p className="text-sm text-zinc-400 mt-2">
+          <p className="text-xs sm:text-sm text-zinc-400 mt-2">
             Você pode editar a resenha antes de salvar ou copiar.
           </p>
         </div>
 
-        <DialogFooter className="gap-2 border-t border-zinc-800 pt-4">
+        <DialogFooter className="gap-2 border-t border-zinc-800 pt-3 sm:pt-4 flex-col sm:flex-row">
           <Button
             variant="default"
             onClick={onClose}
-            className="border-zinc-700 hover:bg-zinc-800"
+            className="border-zinc-700 hover:bg-zinc-800 w-full sm:w-auto text-sm order-3 sm:order-1"
           >
             <X className="mr-2 h-4 w-4" />
             Fechar
@@ -101,7 +102,7 @@ export function ReviewDisplayModal({
           <Button
             variant="default"
             onClick={handleCopy}
-            className="border-zinc-700 hover:bg-zinc-800"
+            className="border-zinc-700 hover:bg-zinc-800 w-full sm:w-auto text-sm order-2 sm:order-2"
           >
             {copied ? (
               <>
@@ -119,7 +120,7 @@ export function ReviewDisplayModal({
           <Button
             onClick={handleSave}
             disabled={saving}
-            className="bg-purple-600 hover:bg-purple-700"
+            className="bg-purple-600 hover:bg-purple-700 w-full sm:w-auto text-sm order-1 sm:order-3"
           >
             <Save className="mr-2 h-4 w-4" />
             {saving ? "Salvando..." : "Salvar"}

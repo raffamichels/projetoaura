@@ -58,14 +58,14 @@ export function ShareMidiaModal({ midia, open, onClose }: Props) {
   return (
     <>
       <Dialog open={open} onOpenChange={onClose}>
-        <DialogContent className="bg-zinc-900 border-zinc-800 text-white sm:max-w-xl max-h-[95vh] overflow-y-auto flex flex-col">
-          <DialogHeader className="space-y-4">
+        <DialogContent className="bg-zinc-900 border-zinc-800 text-white sm:max-w-xl w-[95vw] max-h-[95vh] overflow-y-auto flex flex-col p-4 sm:p-6">
+          <DialogHeader className="space-y-3 sm:space-y-4">
             <div>
-              <DialogTitle className="flex items-center gap-2">
-                <Share2 className="w-5 h-5 text-purple-500" />
+              <DialogTitle className="flex items-center gap-2 text-base sm:text-lg">
+                <Share2 className="w-4 h-4 sm:w-5 sm:h-5 text-purple-500" />
                 Compartilhar
               </DialogTitle>
-              <DialogDescription className="text-zinc-400">
+              <DialogDescription className="text-zinc-400 text-xs sm:text-sm">
                 Escolha o formato e compartilhe.
               </DialogDescription>
             </div>
@@ -74,40 +74,42 @@ export function ShareMidiaModal({ midia, open, onClose }: Props) {
             <div className="flex p-1 bg-zinc-950 rounded-lg border border-zinc-800">
               <button
                 onClick={() => setFormat('POST')}
-                className={`flex-1 flex items-center justify-center gap-2 py-2 text-sm font-medium rounded-md transition-all ${
-                  format === 'POST' 
-                    ? 'bg-zinc-800 text-white shadow-sm' 
+                className={`flex-1 flex items-center justify-center gap-1 sm:gap-2 py-1.5 sm:py-2 text-xs sm:text-sm font-medium rounded-md transition-all ${
+                  format === 'POST'
+                    ? 'bg-zinc-800 text-white shadow-sm'
                     : 'text-zinc-400 hover:text-zinc-200'
                 }`}
               >
-                <LayoutGrid className="w-4 h-4" />
-                Post (4:5)
+                <LayoutGrid className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="hidden xs:inline">Post (4:5)</span>
+                <span className="xs:hidden">Post</span>
               </button>
               <button
                 onClick={() => setFormat('STORY')}
-                className={`flex-1 flex items-center justify-center gap-2 py-2 text-sm font-medium rounded-md transition-all ${
-                  format === 'STORY' 
-                    ? 'bg-zinc-800 text-white shadow-sm' 
+                className={`flex-1 flex items-center justify-center gap-1 sm:gap-2 py-1.5 sm:py-2 text-xs sm:text-sm font-medium rounded-md transition-all ${
+                  format === 'STORY'
+                    ? 'bg-zinc-800 text-white shadow-sm'
                     : 'text-zinc-400 hover:text-zinc-200'
                 }`}
               >
-                <Smartphone className="w-4 h-4" />
-                Story (9:16)
+                <Smartphone className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="hidden xs:inline">Story (9:16)</span>
+                <span className="xs:hidden">Story</span>
               </button>
             </div>
           </DialogHeader>
 
           {/* ÁREA DE PRÉVIA (PREVIEW) */}
           {/* Removido overflow-hidden para não cortar a sombra ou bordas */}
-          <div className="flex-1 flex items-center justify-center py-4 my-2 min-h-[450px]">
-            <div 
+          <div className="flex-1 flex items-center justify-center py-3 sm:py-4 my-2 min-h-[350px] sm:min-h-[450px]">
+            <div
               className="relative transition-all duration-300"
               style={{
                 width: `${previewWidth}px`,
                 height: `${previewHeight}px`
               }}
-            > 
-              <div 
+            >
+              <div
                 className="origin-top-left transform transition-transform duration-300"
                 style={{ transform: `scale(${scale})` }}
               >
@@ -117,20 +119,20 @@ export function ShareMidiaModal({ midia, open, onClose }: Props) {
           </div>
 
           {/* RODAPÉ */}
-          <div className="flex items-center justify-between mt-4 pt-4 border-t border-zinc-800">
-            <Button 
-              variant="ghost" 
+          <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center gap-2 sm:justify-between mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-zinc-800">
+            <Button
+              variant="ghost"
               onClick={onClose}
-              className="text-zinc-400 hover:text-white hover:bg-zinc-800"
+              className="text-zinc-400 hover:text-white hover:bg-zinc-800 w-full sm:w-auto text-sm"
             >
               <X className="w-4 h-4 mr-2" />
               Fechar
             </Button>
 
-            <Button 
-              onClick={handleDownload} 
+            <Button
+              onClick={handleDownload}
               disabled={generating}
-              className="bg-purple-600 hover:bg-purple-700 min-w-[140px]"
+              className="bg-purple-600 hover:bg-purple-700 w-full sm:w-auto sm:min-w-[140px] text-sm"
             >
               {generating ? (
                 <>

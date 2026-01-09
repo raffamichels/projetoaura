@@ -55,22 +55,22 @@ export function CitacoesModal({ aberto, onFechar, onSucesso, midias }: CitacoesM
 
   return (
     <Dialog open={aberto} onOpenChange={onFechar}>
-      <DialogContent className="bg-zinc-900 border-zinc-800 text-white max-w-3xl max-h-[80vh] overflow-hidden flex flex-col">
+      <DialogContent className="bg-zinc-900 border-zinc-800 text-white max-w-3xl w-[95vw] max-h-[80vh] overflow-hidden flex flex-col p-4 sm:p-6">
         <DialogHeader>
-          <DialogTitle className="text-xl">Citações</DialogTitle>
+          <DialogTitle className="text-base sm:text-lg md:text-xl">Citações</DialogTitle>
         </DialogHeader>
 
         <Tabs value={abaAtiva} onValueChange={(value) => setAbaAtiva(value as 'nova' | 'gerenciar')} className="flex-1 flex flex-col min-h-0">
           <TabsList className="grid w-full grid-cols-2 bg-zinc-800/50">
-            <TabsTrigger value="nova" className="data-[state=active]:bg-purple-600">
+            <TabsTrigger value="nova" className="data-[state=active]:bg-purple-600 text-xs sm:text-sm">
               Nova
             </TabsTrigger>
-            <TabsTrigger value="gerenciar" className="data-[state=active]:bg-purple-600">
+            <TabsTrigger value="gerenciar" className="data-[state=active]:bg-purple-600 text-xs sm:text-sm">
               Gerenciar
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="nova" className="flex-1 overflow-y-auto mt-4">
+          <TabsContent value="nova" className="flex-1 overflow-y-auto mt-3 sm:mt-4">
             <NovaCitacaoForm
               onSubmit={handleSubmit}
               onCancel={onFechar}
@@ -79,7 +79,7 @@ export function CitacoesModal({ aberto, onFechar, onSucesso, midias }: CitacoesM
             />
           </TabsContent>
 
-          <TabsContent value="gerenciar" className="flex-1 overflow-y-auto mt-4 flex flex-col min-h-0">
+          <TabsContent value="gerenciar" className="flex-1 overflow-y-auto mt-3 sm:mt-4 flex flex-col min-h-0">
             <GerenciarCitacoesModal
               aberto={true}
               onFechar={onFechar}
@@ -90,11 +90,11 @@ export function CitacoesModal({ aberto, onFechar, onSucesso, midias }: CitacoesM
           </TabsContent>
         </Tabs>
 
-        <div className="flex justify-end gap-2 pt-4 border-t border-zinc-800">
+        <div className="flex justify-end gap-2 pt-3 sm:pt-4 border-t border-zinc-800">
           <Button
             variant="default"
             onClick={onFechar}
-            className="border-zinc-700 hover:bg-zinc-800"
+            className="border-zinc-700 hover:bg-zinc-800 w-full sm:w-auto text-sm"
           >
             Fechar
           </Button>

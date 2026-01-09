@@ -18,100 +18,108 @@ export function MidiaShareCard({ midia, format = 'POST' }: Props) {
   return (
     <div
       id="aura-share-card"
-      // Lógica de Layout e Safe Zones:
-      // POST:  1080x1350 | Padding equilibrado (py-24 = 96px)
-      // STORY: 1080x1920 | Padding Topo (pt-32 = 128px) para livrar perfil
-      //                  | Padding Base (pb-96 = 384px) MUITO IMPORTANTE para livrar o input de msg
       className={`
-        w-[1080px] bg-zinc-950 text-white flex flex-col relative overflow-hidden font-sans px-12 transition-all duration-300
-        ${isStory ? 'h-[1920px] pt-32 pb-96' : 'h-[1350px] py-24'}
+        w-[1080px] relative overflow-hidden font-sans
+        ${isStory ? 'h-[1920px] pt-32 pb-40' : 'h-[1350px] py-20'}
       `}
     >
-      {/* Background Decorativo */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-zinc-900 via-zinc-950 to-black z-0" />
+      {/* Background com gradiente suave */}
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-900 via-purple-950/40 to-slate-950" />
 
-      {/* Conteúdo Principal */}
-      <div className="relative z-10 flex flex-col h-full items-center justify-between">
-        
-        {/* === BLOCO SUPERIOR: CAPA, INFO E ESTRELAS === */}
-        <div className="flex flex-col items-center w-full">
-          
-          {/* 1. Capa 
-              Post: 500px | Story: 620px (Aumentado, mas sem exagero)
-          */}
+      {/* Textura de fundo sutil */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_rgba(255,255,255,0.1)_1px,_transparent_1px)] bg-[size:50px_50px]" />
+      </div>
+
+      {/* Brilho superior */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-purple-500/10 rounded-full blur-[120px]" />
+
+      {/* Conteúdo */}
+      <div className="relative z-10 flex flex-col h-full items-center justify-between px-16">
+
+        {/* Seção da Mídia */}
+        <div className={`flex flex-col items-center w-full ${isStory ? 'space-y-12' : 'space-y-8'}`}>
+
+          {/* Capa */}
           <div className={`
-            relative aspect-[2/3] rounded-2xl shadow-[0_50px_100px_-20px_rgba(0,0,0,0.7)] overflow-hidden border border-white/5 transition-all duration-300
-            ${isStory ? 'w-[620px] mb-12' : 'w-[500px] mb-10'}
+            relative group transition-all duration-500
+            ${isStory ? 'w-[560px]' : 'w-[480px]'}
           `}>
-            {midia.capa ? (
-              <img
-                src={getImageUrl(midia.capa)}
-                alt={midia.titulo}
-                className="w-full h-full object-cover"
-                crossOrigin="anonymous" 
-              />
-            ) : (
-              <div className="w-full h-full bg-zinc-900 flex flex-col items-center justify-center">
-                 <span className="text-zinc-600 text-3xl font-medium">Sem Capa</span>
-              </div>
-            )}
+            {/* Shadow layer */}
+            <div className="absolute -inset-4 bg-gradient-to-b from-purple-500/30 to-blue-500/30 rounded-[2.5rem] blur-2xl opacity-60" />
+
+            <div className="relative aspect-[2/3] rounded-[2rem] overflow-hidden shadow-2xl ring-1 ring-white/10">
+              {midia.capa ? (
+                <img
+                  src={getImageUrl(midia.capa)}
+                  alt={midia.titulo}
+                  className="w-full h-full object-cover"
+                  crossOrigin="anonymous"
+                />
+              ) : (
+                <div className="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
+                  <span className="text-slate-500 text-4xl font-semibold">Sem Capa</span>
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* 2. Título 
-              Post: text-6xl | Story: text-7xl (Grande, mas legível)
-          */}
-          <h1 className={`
-            font-extrabold text-center leading-tight tracking-tight text-white drop-shadow-md max-w-4xl mx-auto transition-all duration-300
-            ${isStory ? 'text-7xl mb-5' : 'text-6xl mb-3'}
-          `}>
-            {midia.titulo}
-          </h1>
+          {/* Info Container */}
+          <div className={`flex flex-col items-center max-w-4xl w-full ${isStory ? 'space-y-10' : 'space-y-6'}`}>
 
-          {/* 3. Autor 
-              Post: text-3xl | Story: text-4xl
-          */}
-          <p className={`
-            text-zinc-400 font-medium tracking-wide transition-all duration-300
-            ${isStory ? 'text-4xl mb-10' : 'text-3xl mb-8'}
-          `}>
-            {midia.tipo === 'LIVRO' ? midia.autor : midia.diretor}
-          </p>
-
-          {/* 4. Estrelas 
-              Post: Scale 2.5 | Story: Scale 3.0
-          */}
-          <div className={`transform transition-all duration-300 ${isStory ? 'scale-[3.0]' : 'scale-[2.5]'}`}>
-             <StarRating value={midia.nota || 0} readonly size="lg" />
-          </div>
-        </div>
-
-        {/* === BLOCO CENTRAL: SEPARADOR === */}
-        <div className={`w-full max-w-2xl transition-all duration-300 ${isStory ? 'mt-12' : 'mt-8'}`}>
-          <div className="flex items-center w-full gap-6 opacity-40">
-            <div className="h-[2px] bg-zinc-500 flex-1 rounded-full" />
-            <span className={`font-bold uppercase tracking-[0.2em] text-zinc-300 transition-all duration-300 ${isStory ? 'text-3xl' : 'text-2xl'}`}>
-              NO
-            </span>
-            <div className="h-[2px] bg-zinc-500 flex-1 rounded-full" />
-          </div>
-        </div>
-
-        {/* === BLOCO INFERIOR: LOGO AURA === */}
-        {/* A margem inferior aqui é controlada pelo padding do container (pb-96 no story)
-            para garantir que isso fique LONGE da zona de digitação do Instagram */}
-        <div className="flex flex-col items-center w-full">
-          <div className="text-center">
+            {/* Título */}
             <h1 className={`
-              font-bold tracking-tighter leading-none transition-all duration-300
-              ${isStory ? 'text-9xl mb-4' : 'text-9xl mb-2'}
+              font-bold text-center text-white leading-tight tracking-tight
+              ${isStory ? 'text-[4.5rem]' : 'text-[3.75rem]'}
             `}>
-              <span className="bg-gradient-to-r from-purple-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+              {midia.titulo}
+            </h1>
+
+            {/* Autor */}
+            <div className="flex items-center gap-3">
+              <div className="h-px w-12 bg-gradient-to-r from-transparent to-purple-400/50" />
+              <p className={`
+                text-slate-300 font-medium
+                ${isStory ? 'text-[2rem]' : 'text-[1.75rem]'}
+              `}>
+                {midia.tipo === 'LIVRO' ? midia.autor : midia.diretor}
+              </p>
+              <div className="h-px w-12 bg-gradient-to-l from-transparent to-purple-400/50" />
+            </div>
+
+            {/* Rating */}
+            <div className={`flex flex-col items-center gap-4 ${isStory ? 'py-10' : 'py-6'}`}>
+              <div className={`transform ${isStory ? 'scale-[3.2]' : 'scale-[2.8]'}`}>
+                <StarRating value={midia.nota || 0} readonly size="lg" />
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        {/* Branding */}
+        <div className={`flex flex-col items-center ${isStory ? 'space-y-10' : 'space-y-6'}`}>
+
+          {/* Divider */}
+          <div className="flex items-center gap-4 w-full max-w-md">
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-slate-600 to-transparent" />
+            <div className="w-2 h-2 rounded-full bg-purple-400/60" />
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-slate-600 to-transparent" />
+          </div>
+
+          {/* Logo */}
+          <div className="flex flex-col items-center">
+            <h2 className={`
+              font-extrabold tracking-tight
+              ${isStory ? 'text-[6rem] mb-2' : 'text-[5rem] mb-1'}
+            `}>
+              <span className="bg-gradient-to-r from-purple-400 via-purple-300 to-blue-400 bg-clip-text text-transparent">
                 Aura
               </span>
-            </h1>
+            </h2>
             <p className={`
-              text-zinc-500 tracking-wide font-medium transition-all duration-300
-              ${isStory ? 'text-3xl' : 'text-2xl'}
+              text-slate-400 font-medium tracking-wide
+              ${isStory ? 'text-[1.5rem]' : 'text-[1.25rem]'}
             `}>
               Organize sua vida, simplifique seu dia
             </p>

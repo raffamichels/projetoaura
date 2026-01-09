@@ -137,21 +137,21 @@ export function NovaMidiaModal({ aberto, onFechar, onSucesso }: NovaMidiaModalPr
 
   return (
     <Dialog open={aberto} onOpenChange={onFechar}>
-      <DialogContent className="bg-zinc-900 border-zinc-800 text-white max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="bg-zinc-900 border-zinc-800 text-white max-w-2xl max-h-[90vh] overflow-y-auto p-4 sm:p-6">
         <DialogHeader>
-          <DialogTitle className="text-white">Adicionar {formData.tipo === TipoMidia.LIVRO ? 'Livro' : 'Filme'}</DialogTitle>
+          <DialogTitle className="text-white text-base sm:text-lg">Adicionar {formData.tipo === TipoMidia.LIVRO ? 'Livro' : 'Filme'}</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
           {/* Tipo */}
           <div>
-            <Label className="text-zinc-300">Tipo</Label>
+            <Label className="text-zinc-300 text-sm sm:text-base">Tipo</Label>
             <div className="grid grid-cols-2 gap-2 mt-2">
               <Button
                 type="button"
                 variant="default"
                 onClick={() => setFormData({ ...formData, tipo: TipoMidia.LIVRO })}
-                className={formData.tipo === TipoMidia.LIVRO ? 'bg-purple-600 hover:bg-purple-700' : 'border-zinc-700'}
+                className={`text-sm sm:text-base ${formData.tipo === TipoMidia.LIVRO ? 'bg-purple-600 hover:bg-purple-700' : 'border-zinc-700'}`}
               >
                 📚 Livro
               </Button>
@@ -159,7 +159,7 @@ export function NovaMidiaModal({ aberto, onFechar, onSucesso }: NovaMidiaModalPr
                 type="button"
                 variant="default"
                 onClick={() => setFormData({ ...formData, tipo: TipoMidia.FILME })}
-                className={formData.tipo === TipoMidia.FILME ? 'bg-purple-600 hover:bg-purple-700' : 'border-zinc-700'}
+                className={`text-sm sm:text-base ${formData.tipo === TipoMidia.FILME ? 'bg-purple-600 hover:bg-purple-700' : 'border-zinc-700'}`}
               >
                 🎬 Filme
               </Button>
@@ -168,14 +168,14 @@ export function NovaMidiaModal({ aberto, onFechar, onSucesso }: NovaMidiaModalPr
 
           {/* Título */}
           <div>
-            <Label htmlFor="titulo" className="text-zinc-300">
+            <Label htmlFor="titulo" className="text-zinc-300 text-sm sm:text-base">
               Título <span className="text-red-400">*</span>
             </Label>
             <Input
               id="titulo"
               value={formData.titulo}
               onChange={(e) => setFormData({ ...formData, titulo: e.target.value })}
-              className="bg-zinc-800 border-zinc-700 text-white mt-1"
+              className="bg-zinc-800 border-zinc-700 text-white mt-1 text-sm sm:text-base"
               required
             />
           </div>
@@ -183,34 +183,34 @@ export function NovaMidiaModal({ aberto, onFechar, onSucesso }: NovaMidiaModalPr
           {/* Campos específicos de Livro */}
           {formData.tipo === TipoMidia.LIVRO && (
             <>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
-                  <Label htmlFor="autor" className="text-zinc-300">Autor</Label>
+                  <Label htmlFor="autor" className="text-zinc-300 text-sm sm:text-base">Autor</Label>
                   <Input
                     id="autor"
                     value={formData.autor}
                     onChange={(e) => setFormData({ ...formData, autor: e.target.value })}
-                    className="bg-zinc-800 border-zinc-700 text-white mt-1"
+                    className="bg-zinc-800 border-zinc-700 text-white mt-1 text-sm sm:text-base"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="editora" className="text-zinc-300">Editora</Label>
+                  <Label htmlFor="editora" className="text-zinc-300 text-sm sm:text-base">Editora</Label>
                   <Input
                     id="editora"
                     value={formData.editora}
                     onChange={(e) => setFormData({ ...formData, editora: e.target.value })}
-                    className="bg-zinc-800 border-zinc-700 text-white mt-1"
+                    className="bg-zinc-800 border-zinc-700 text-white mt-1 text-sm sm:text-base"
                   />
                 </div>
               </div>
 
               <div>
-                <Label htmlFor="fonte" className="text-zinc-300">Fonte</Label>
+                <Label htmlFor="fonte" className="text-zinc-300 text-sm sm:text-base">Fonte</Label>
                 <select
                   id="fonte"
                   value={formData.fonte}
                   onChange={(e) => setFormData({ ...formData, fonte: e.target.value as FonteLivro })}
-                  className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md text-white mt-1"
+                  className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md text-white mt-1 text-sm sm:text-base"
                 >
                   <option value={FonteLivro.FISICO}>Físico</option>
                   <option value={FonteLivro.DIGITAL}>Digital</option>
@@ -224,37 +224,37 @@ export function NovaMidiaModal({ aberto, onFechar, onSucesso }: NovaMidiaModalPr
           {/* Campos específicos de Filme */}
           {formData.tipo === TipoMidia.FILME && (
             <>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
-                  <Label htmlFor="diretor" className="text-zinc-300">Diretor</Label>
+                  <Label htmlFor="diretor" className="text-zinc-300 text-sm sm:text-base">Diretor</Label>
                   <Input
                     id="diretor"
                     value={formData.diretor}
                     onChange={(e) => setFormData({ ...formData, diretor: e.target.value })}
-                    className="bg-zinc-800 border-zinc-700 text-white mt-1"
+                    className="bg-zinc-800 border-zinc-700 text-white mt-1 text-sm sm:text-base"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="anoLancamento" className="text-zinc-300">Ano de Lançamento</Label>
+                  <Label htmlFor="anoLancamento" className="text-zinc-300 text-sm sm:text-base">Ano de Lançamento</Label>
                   <Input
                     id="anoLancamento"
                     type="number"
                     value={formData.anoLancamento}
                     onChange={(e) => setFormData({ ...formData, anoLancamento: e.target.value })}
-                    className="bg-zinc-800 border-zinc-700 text-white mt-1"
+                    className="bg-zinc-800 border-zinc-700 text-white mt-1 text-sm sm:text-base"
                     placeholder="Ex: 2023"
                   />
                 </div>
               </div>
 
               <div>
-                <Label htmlFor="duracao" className="text-zinc-300">Duração (minutos)</Label>
+                <Label htmlFor="duracao" className="text-zinc-300 text-sm sm:text-base">Duração (minutos)</Label>
                 <Input
                   id="duracao"
                   type="number"
                   value={formData.duracao}
                   onChange={(e) => setFormData({ ...formData, duracao: e.target.value })}
-                  className="bg-zinc-800 border-zinc-700 text-white mt-1"
+                  className="bg-zinc-800 border-zinc-700 text-white mt-1 text-sm sm:text-base"
                   placeholder="Ex: 120"
                 />
               </div>
@@ -262,14 +262,14 @@ export function NovaMidiaModal({ aberto, onFechar, onSucesso }: NovaMidiaModalPr
           )}
 
           {/* Campos comuns */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
-              <Label htmlFor="genero" className="text-zinc-300">Gênero</Label>
+              <Label htmlFor="genero" className="text-zinc-300 text-sm sm:text-base">Gênero</Label>
               <select
                 id="genero"
                 value={formData.genero}
                 onChange={(e) => setFormData({ ...formData, genero: e.target.value })}
-                className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md text-white mt-1"
+                className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md text-white mt-1 text-sm sm:text-base"
               >
                 <option value="">Selecione...</option>
                 {generos.map((g) => (
@@ -281,25 +281,25 @@ export function NovaMidiaModal({ aberto, onFechar, onSucesso }: NovaMidiaModalPr
             </div>
 
             <div>
-              <Label htmlFor="idioma" className="text-zinc-300">Idioma</Label>
+              <Label htmlFor="idioma" className="text-zinc-300 text-sm sm:text-base">Idioma</Label>
               <Input
                 id="idioma"
                 value={formData.idioma}
                 onChange={(e) => setFormData({ ...formData, idioma: e.target.value })}
-                className="bg-zinc-800 border-zinc-700 text-white mt-1"
+                className="bg-zinc-800 border-zinc-700 text-white mt-1 text-sm sm:text-base"
                 placeholder="Ex: Português"
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
-              <Label htmlFor="status" className="text-zinc-300">Status</Label>
+              <Label htmlFor="status" className="text-zinc-300 text-sm sm:text-base">Status</Label>
               <select
                 id="status"
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value as StatusLeitura })}
-                className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md text-white mt-1"
+                className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md text-white mt-1 text-sm sm:text-base"
               >
                 <option value={StatusLeitura.PROXIMO}>Próximo</option>
                 <option value={StatusLeitura.EM_ANDAMENTO}>Em andamento</option>
@@ -309,7 +309,7 @@ export function NovaMidiaModal({ aberto, onFechar, onSucesso }: NovaMidiaModalPr
             </div>
 
             <div>
-              <Label className="text-zinc-300 mb-2 block">Avaliação</Label>
+              <Label className="text-zinc-300 text-sm sm:text-base mb-2 block">Avaliação</Label>
               <StarRating
                 value={parseInt(formData.nota) || 0}
                 onChange={(nota) => setFormData({ ...formData, nota: nota.toString() })}
@@ -328,13 +328,13 @@ export function NovaMidiaModal({ aberto, onFechar, onSucesso }: NovaMidiaModalPr
           />
 
           <div>
-            <Label className="text-zinc-300">Cor</Label>
-            <div className="flex gap-2 mt-2">
+            <Label className="text-zinc-300 text-sm sm:text-base">Cor</Label>
+            <div className="flex flex-wrap gap-2 mt-2">
               {CORES_MIDIA.map((cor) => (
                 <button
                   key={cor}
                   type="button"
-                  className={`w-8 h-8 rounded-full transition-all ${
+                  className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full transition-all ${
                     formData.cor === cor ? 'ring-2 ring-white ring-offset-2 ring-offset-zinc-900' : ''
                   }`}
                   style={{ backgroundColor: cor }}
@@ -345,20 +345,20 @@ export function NovaMidiaModal({ aberto, onFechar, onSucesso }: NovaMidiaModalPr
           </div>
 
           {/* Botões */}
-          <div className="flex gap-2 justify-end pt-4">
+          <div className="flex flex-col-reverse sm:flex-row gap-2 justify-end pt-3 sm:pt-4">
             <Button
               type="button"
               variant="default"
               onClick={onFechar}
               disabled={carregando}
-              className="border-zinc-700"
+              className="border-zinc-700 w-full sm:w-auto text-sm sm:text-base"
             >
               Cancelar
             </Button>
             <Button
               type="submit"
               disabled={carregando}
-              className="bg-purple-600 hover:bg-purple-700"
+              className="bg-purple-600 hover:bg-purple-700 w-full sm:w-auto text-sm sm:text-base"
             >
               {carregando ? 'Criando...' : `Criar ${formData.tipo === TipoMidia.LIVRO ? 'Livro' : 'Filme'}`}
             </Button>
