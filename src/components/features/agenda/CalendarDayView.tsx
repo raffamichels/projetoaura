@@ -104,46 +104,43 @@ export function CalendarDayView({ compromissos, onSlotClick, onCompromissoClick,
 
   return (
     <div className="flex flex-col flex-1 min-h-0 max-h-full relative">
-      {/* Header com o dia - FIXO */}
-      <div className="grid grid-cols-[auto_1fr] border-b-2 border-zinc-700 bg-gradient-to-b from-zinc-900 to-zinc-900/95 z-20 shadow-lg backdrop-blur-sm flex-shrink-0">
+      {/* Header com o dia - FIXO e COMPACTO */}
+      <div className="grid grid-cols-[auto_1fr] border-b border-zinc-800 bg-zinc-900/95 z-20 backdrop-blur-sm flex-shrink-0">
         {/* Coluna de horas (vazia) */}
-        <div className="w-16 sm:w-20 border-r border-zinc-800"></div>
+        <div className="w-12 sm:w-14 md:w-16 border-r border-zinc-800"></div>
 
         {/* Dia */}
         <div
-          className={`p-3 sm:p-4 text-center transition-all duration-200 ${
-            isToday ? 'bg-aura-500/10 border-b-2 border-b-aura-500' : ''
+          className={`p-2 sm:p-2.5 text-center transition-all ${
+            isToday ? 'bg-purple-500/10' : ''
           }`}
         >
-          <div className="text-xs sm:text-sm text-gray-400 uppercase font-medium">
+          <div className="text-[10px] sm:text-xs text-gray-400 uppercase font-medium">
             {format(currentDate, 'EEEE', { locale: ptBR })}
           </div>
-          <div className={`text-2xl sm:text-3xl font-bold mt-1 transition-colors ${
-            isToday ? 'text-aura-400' : 'text-white'
+          <div className={`text-xl sm:text-2xl font-bold transition-colors ${
+            isToday ? 'text-purple-400' : 'text-white'
           }`}>
             {format(currentDate, 'd')}
-          </div>
-          <div className="text-xs sm:text-sm text-gray-400 mt-1">
-            {format(currentDate, 'MMMM yyyy', { locale: ptBR })}
           </div>
         </div>
       </div>
 
       {/* Grid de horários - SCROLLÁVEL */}
       <div
-        className="flex-1 overflow-y-scroll overflow-x-hidden"
+        className="flex-1 overflow-y-auto overflow-x-hidden"
         ref={scrollContainerRef}
         style={{ height: '0px' }}
       >
         <div className="grid grid-cols-[auto_1fr] relative" style={{ height: '1440px' }}>
           {/* Coluna de horas */}
-          <div className="w-16 sm:w-20 relative border-r border-zinc-800">
+          <div className="w-12 sm:w-14 md:w-16 relative border-r border-zinc-800 bg-zinc-900/50">
             {hours.map(hour => (
               <div
                 key={hour}
-                className="h-[60px] border-b border-zinc-800 flex items-start justify-end pr-2 sm:pr-3 pt-0"
+                className="h-[60px] border-b border-zinc-800/50 flex items-start justify-end pr-1.5 sm:pr-2 pt-0"
               >
-                <span className="text-xs sm:text-sm text-gray-500 -translate-y-2">
+                <span className="text-[10px] sm:text-xs text-gray-500 -translate-y-2 font-medium">
                   {String(hour).padStart(2, '0')}:00
                 </span>
               </div>
@@ -151,13 +148,13 @@ export function CalendarDayView({ compromissos, onSlotClick, onCompromissoClick,
           </div>
 
           {/* Coluna do dia */}
-          <div className="relative">
+          <div className="relative bg-zinc-950/30">
             {/* Grid de horas clicável */}
             {hours.map(hour => (
               <button
                 key={hour}
                 onClick={() => onSlotClick(currentDate, hour)}
-                className="w-full h-[60px] border-b border-zinc-800 hover:bg-aura-500/5 active:bg-aura-500/10 transition-colors text-left block touch-manipulation"
+                className="w-full h-[60px] border-b border-zinc-800/50 hover:bg-purple-500/5 active:bg-purple-500/10 transition-colors text-left block touch-manipulation"
               />
             ))}
 
@@ -168,24 +165,24 @@ export function CalendarDayView({ compromissos, onSlotClick, onCompromissoClick,
                 <button
                   key={comp.id}
                   onClick={() => onCompromissoClick(comp)}
-                  className="absolute left-2 right-2 sm:left-4 sm:right-4 rounded-lg px-3 sm:px-4 py-2 sm:py-3 text-left overflow-hidden hover:opacity-90 active:opacity-80 transition-opacity z-10 touch-manipulation"
+                  className="absolute left-1 right-1 sm:left-2 sm:right-2 rounded-lg px-2 sm:px-3 py-1.5 sm:py-2 text-left overflow-hidden hover:opacity-90 active:opacity-80 active:scale-[0.98] transition-all z-10 touch-manipulation shadow-sm"
                   style={{
                     top: style.top,
                     height: style.height,
-                    backgroundColor: `${comp.cor}30`,
-                    borderLeft: `4px solid ${comp.cor}`,
+                    backgroundColor: `${comp.cor}25`,
+                    borderLeft: `3px solid ${comp.cor}`,
                   }}
                 >
-                  <div className="font-semibold truncate text-sm sm:text-base" style={{ color: comp.cor }}>
+                  <div className="font-semibold truncate text-xs sm:text-sm" style={{ color: comp.cor }}>
                     {comp.titulo}
                   </div>
                   {comp.horaFim && (
-                    <div className="text-gray-400 text-xs sm:text-sm mt-1">
+                    <div className="text-gray-400 text-[10px] sm:text-xs mt-0.5">
                       {comp.horaInicio} - {comp.horaFim}
                     </div>
                   )}
                   {comp.descricao && (
-                    <div className="text-gray-500 text-xs mt-1 line-clamp-2 hidden sm:block">
+                    <div className="text-gray-500 text-[10px] mt-1 line-clamp-2 hidden sm:block">
                       {comp.descricao}
                     </div>
                   )}
@@ -199,7 +196,8 @@ export function CalendarDayView({ compromissos, onSlotClick, onCompromissoClick,
                 className="absolute left-0 right-0 border-t-2 border-red-500 z-20 pointer-events-none"
                 style={{ top: `${getCurrentTimePosition()}px` }}
               >
-                <div className="absolute -left-2 -top-2 w-4 h-4 bg-red-500 rounded-full shadow-lg shadow-red-500/50"></div>
+                <div className="absolute -left-1.5 -top-1.5 w-3 h-3 bg-red-500 rounded-full shadow-lg shadow-red-500/50 animate-pulse"></div>
+                <div className="absolute -left-1 -top-1 w-2 h-2 bg-white rounded-full"></div>
               </div>
             )}
           </div>

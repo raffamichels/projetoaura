@@ -110,14 +110,10 @@ function AgendaPageContent() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-80px)] sm:h-[calc(100vh-100px)] md:h-[calc(100vh-120px)] max-h-[calc(100vh-80px)] sm:max-h-[calc(100vh-100px)] md:max-h-[calc(100vh-120px)] space-y-2 sm:space-y-2.5 overflow-hidden">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-3 shrink-0 px-1 sm:px-0">
-        <div className="flex-1">
-          <h1 className="text-xl sm:text-2xl font-bold text-white">Agenda</h1>
-          <p className="text-xs sm:text-sm text-gray-400">
-            Organize seus compromissos e eventos
-          </p>
-        </div>
+    <div className="flex flex-col h-[calc(100vh-64px)] sm:h-[calc(100vh-80px)] max-h-[calc(100vh-64px)] sm:max-h-[calc(100vh-80px)] overflow-hidden">
+      {/* Header compacto - apenas mobile */}
+      <div className="md:hidden flex items-center justify-between gap-2 p-3 border-b border-zinc-800 bg-zinc-900/80 backdrop-blur-sm shrink-0">
+        <h1 className="text-lg font-bold text-white">Agenda</h1>
         <Button
           onClick={() => {
             setSelectedDate(null);
@@ -126,14 +122,34 @@ function AgendaPageContent() {
             setIsEditMode(false);
             setIsModalOpen(true);
           }}
-          className="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 h-9 sm:h-10 text-sm"
+          size="sm"
+          className="bg-purple-600 hover:bg-purple-700 h-8"
         >
-          <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
+          <Plus className="w-3.5 h-3.5 mr-1.5" />
+          Novo
+        </Button>
+      </div>
+
+      {/* Header desktop - integrado */}
+      <div className="hidden md:flex items-center justify-between gap-3 px-4 py-2 border-b border-zinc-800 bg-zinc-900/80 backdrop-blur-sm shrink-0">
+        <h1 className="text-xl font-bold text-white">Agenda</h1>
+        <Button
+          onClick={() => {
+            setSelectedDate(null);
+            setSelectedHour(null);
+            setSelectedCompromisso(null);
+            setIsEditMode(false);
+            setIsModalOpen(true);
+          }}
+          className="bg-purple-600 hover:bg-purple-700 h-9"
+        >
+          <Plus className="w-4 h-4 mr-2" />
           Novo Compromisso
         </Button>
       </div>
 
-      <Card className="flex-1 min-h-0 max-h-full bg-zinc-900/50 border-zinc-800 overflow-hidden flex flex-col">
+      {/* Calendário - ocupa todo espaço restante */}
+      <div className="flex-1 min-h-0 max-h-full bg-zinc-900/50 overflow-hidden flex flex-col">
         {loading ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
@@ -195,7 +211,7 @@ function AgendaPageContent() {
             </div>
           </>
         )}
-      </Card>
+      </div>
 
       {/* Modal de Detalhes do Compromisso */}
       <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen} modal={false}>

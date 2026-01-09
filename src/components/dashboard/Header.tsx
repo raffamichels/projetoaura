@@ -40,14 +40,14 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-zinc-800 bg-zinc-900/80 backdrop-blur-xl">
-      <div className="flex items-center justify-between px-4 py-3 lg:px-6">
+      <div className="flex items-center justify-between px-3 py-2 sm:px-4 sm:py-2.5 lg:px-6 lg:py-3">
         {/* Mobile Menu + Logo */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           {/* Mobile Sidebar */}
           <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="lg:hidden hover:bg-zinc-800">
-                <Menu className="w-5 h-5" />
+              <Button variant="ghost" size="icon" className="lg:hidden hover:bg-zinc-800 h-8 w-8 sm:h-9 sm:w-9">
+                <Menu className="w-4 h-4 sm:w-5 sm:h-5" />
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="p-0 w-64 bg-zinc-900 border-zinc-800">
@@ -59,25 +59,25 @@ export function Header() {
           </Sheet>
 
           {/* Logo (mobile only) */}
-          <h1 className="text-xl font-bold bg-gradient-to-r from-aura-400 to-blue-400 bg-clip-text text-transparent lg:hidden">
+          <h1 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-aura-400 to-blue-400 bg-clip-text text-transparent lg:hidden">
             Aura
           </h1>
         </div>
 
         {/* Right Side */}
-        <div className="flex items-center gap-1 sm:gap-2">
+        <div className="flex items-center gap-0.5 sm:gap-1 md:gap-2">
           {/* Notificações */}
-          <Button variant="ghost" size="icon" className="relative hover:bg-zinc-800">
-            <Bell className="w-5 h-5" />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span>
+          <Button variant="ghost" size="icon" className="relative hover:bg-zinc-800 h-8 w-8 sm:h-9 sm:w-9">
+            <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
+            <span className="absolute top-1 right-1 sm:top-1.5 sm:right-1.5 w-1.5 h-1.5 sm:w-2 sm:h-2 bg-red-500 rounded-full"></span>
           </Button>
 
           {/* User Menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="gap-2 px-2 hover:bg-zinc-800">
-                <Avatar className="w-8 h-8">
-                  <AvatarFallback className="bg-gradient-to-br from-aura-500 to-blue-500 text-white text-sm">
+              <Button variant="ghost" className="gap-1.5 sm:gap-2 px-1.5 sm:px-2 hover:bg-zinc-800 h-8 sm:h-9">
+                <Avatar className="w-7 h-7 sm:w-8 sm:h-8">
+                  <AvatarFallback className="bg-gradient-to-br from-aura-500 to-blue-500 text-white text-xs sm:text-sm">
                     {getInitials(session?.user?.name)}
                   </AvatarFallback>
                 </Avatar>
