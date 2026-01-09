@@ -23,8 +23,8 @@ export function MidiaShareCard({ midia, format = 'POST' }: Props) {
         ${isStory ? 'h-[1920px] pt-32 pb-40' : 'h-[1350px] py-20'}
       `}
     >
-      {/* Background com gradiente suave */}
-      <div className="absolute inset-0 bg-gradient-to-b from-slate-900 via-purple-950/40 to-slate-950" />
+      {/* Background escuro cinza */}
+      <div className="absolute inset-0 bg-gradient-to-b from-zinc-900 via-zinc-900 to-zinc-950" />
 
       {/* Textura de fundo sutil */}
       <div className="absolute inset-0 opacity-5">

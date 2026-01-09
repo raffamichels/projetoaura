@@ -20,13 +20,15 @@
 
 ## 📖 Sobre o Projeto
 
-**Aura** é uma plataforma moderna e completa de gestão pessoal que combina o melhor de três mundos:
+**Aura** é uma plataforma moderna e completa de gestão pessoal que unifica os aspectos mais importantes da sua vida em um só lugar:
 
 - 💰 **Gestão Financeira Completa** - Controle total sobre suas finanças pessoais
-- 📅 **Agenda Inteligente** - Organize compromissos com recorrência avançada
+- 📅 **Agenda Inteligente** - Organize compromissos com sincronização Google Calendar
+- 📚 **Estudos Organizados** - Cursos, módulos e anotações em um sistema completo
+- 📖 **Biblioteca Digital** - Livros e filmes com IA para resenhas e compartilhamento
 - ✅ **Produtividade** - Acompanhe atividades e metas diárias
 
-Desenvolvida com as tecnologias mais modernas do mercado, Aura oferece uma experiência fluida, rápida e intuitiva, colocando o usuário no controle total de sua vida financeira e produtiva.
+Desenvolvida com as tecnologias mais modernas do mercado, Aura oferece uma experiência fluida, rápida e intuitiva, colocando você no controle total da sua vida.
 
 ---
 
@@ -72,7 +74,9 @@ Desenvolvida com as tecnologias mais modernas do mercado, Aura oferece uma exper
 
 ### 📅 Módulo de Agenda
 
-- ✅ Visualização semanal moderna e intuitiva
+- ✅ **Visualizações múltiplas**: Dia, Semana, Mês e Ano
+- ✅ **Design otimizado**: Interface inspirada no Google Agenda
+- ✅ **Responsividade excepcional**: Perfeito em mobile e desktop
 - ✅ **Sistema avançado de recorrência**:
   - Diária (a cada X dias)
   - Semanal (dias específicos da semana)
@@ -80,15 +84,35 @@ Desenvolvida com as tecnologias mais modernas do mercado, Aura oferece uma exper
   - Personalizada
 - ✅ Edição de instâncias únicas ou série completa
 - ✅ Cores personalizadas por compromisso
-- ✅ Navegação por semanas/meses
-- ✅ Integração com sistema de notificações
+- ✅ Navegação fluida com scroll automático
+- ✅ Linha do tempo em tempo real
+- ✅ Sincronização com Google Calendar
+
+### 📚 Módulo de Estudos
+
+- ✅ **Gestão de Cursos**: Organize cursos com módulos e páginas
+- ✅ **Editor Rich Text**: Crie conteúdo formatado com imagens
+- ✅ **Anotações Inteligentes**: Sistema completo de anotações coloridas
+- ✅ **CRUD Completo**: Criar, visualizar, editar e excluir
+- ✅ **Busca Integrada**: Busque em cursos, módulos e anotações
+- ✅ **Organização Visual**: Cores personalizadas e ícones
+
+### 📖 Módulo de Biblioteca
+
+- ✅ **Catálogo de Mídias**: Livros e filmes em um só lugar
+- ✅ **Sistema de Avaliação**: Estrelas e comentários detalhados
+- ✅ **Citações**: Salve trechos favoritos de livros
+- ✅ **Geração de Resenhas com IA**: Crie resenhas automáticas usando Gemini
+- ✅ **Compartilhamento Social**: Gere cards visuais para redes sociais
+- ✅ **Busca de Capas**: Integração com APIs de busca de imagens
+- ✅ **Progresso de Leitura**: Acompanhe páginas lidas
 
 ### ✅ Módulo de Produtividade
 
 - ✅ Registro de atividades recentes
 - ✅ Histórico completo de ações
 - ✅ Timeline de eventos do sistema
-- ✅ Integração entre módulos
+- ✅ Integração entre todos os módulos
 
 ---
 
@@ -108,11 +132,14 @@ Desenvolvida com as tecnologias mais modernas do mercado, Aura oferece uma exper
 - **[NextAuth.js](https://next-auth.js.org/)** - Autenticação completa
 - **[Prisma ORM](https://www.prisma.io/)** - ORM type-safe para TypeScript
 - **[PostgreSQL](https://www.postgresql.org/)** - Banco de dados relacional
+- **[Google Calendar API](https://developers.google.com/calendar)** - Sincronização de calendário
+- **[Google Gemini AI](https://ai.google.dev/)** - Geração de resenhas inteligentes
 
 ### **Ferramentas de Desenvolvimento**
 - **[ESLint](https://eslint.org/)** - Linter para código JavaScript/TypeScript
 - **[PostCSS](https://postcss.org/)** - Processador CSS
 - **[Prisma Studio](https://www.prisma.io/studio)** - Interface visual do banco de dados
+- **[TipTap](https://tiptap.dev/)** - Editor Rich Text moderno
 
 ---
 
@@ -336,9 +363,46 @@ model Compromisso {
 - `GET /api/v1/agenda/compromissos/:id` - Detalhes
 - `PUT /api/v1/agenda/compromissos/:id` - Atualizar
 - `DELETE /api/v1/agenda/compromissos/:id` - Excluir
+- `GET /api/v1/agenda/google-auth-status` - Status Google Calendar
+- `POST /api/v1/agenda/google-sync` - Sincronizar com Google
+- `POST /api/v1/agenda/sync-toggle` - Alternar sincronização
+
+### Estudos
+- `GET /api/v1/estudos/cursos` - Listar cursos
+- `POST /api/v1/estudos/cursos` - Criar curso
+- `GET /api/v1/estudos/cursos/:id` - Detalhes do curso
+- `PUT /api/v1/estudos/cursos/:id` - Atualizar curso
+- `DELETE /api/v1/estudos/cursos/:id` - Excluir curso
+- `GET /api/v1/estudos/modulos` - Listar módulos
+- `POST /api/v1/estudos/modulos` - Criar módulo
+- `GET /api/v1/estudos/paginas` - Listar páginas
+- `POST /api/v1/estudos/paginas` - Criar página
+- `GET /api/v1/estudos/anotacoes` - Listar anotações
+- `POST /api/v1/estudos/anotacoes` - Criar anotação
+- `PUT /api/v1/estudos/anotacoes/:id` - Editar anotação
+- `DELETE /api/v1/estudos/anotacoes/:id` - Excluir anotação
+- `GET /api/v1/estudos/buscar` - Busca global
+
+### Biblioteca
+- `GET /api/v1/leituras/midias` - Listar mídias
+- `POST /api/v1/leituras/midias` - Criar mídia
+- `GET /api/v1/leituras/midias/:id` - Detalhes da mídia
+- `PUT /api/v1/leituras/midias/:id` - Atualizar mídia
+- `DELETE /api/v1/leituras/midias/:id` - Excluir mídia
+- `GET /api/v1/leituras/citacoes` - Listar citações
+- `POST /api/v1/leituras/citacoes` - Criar citação
+- `DELETE /api/v1/leituras/citacoes/:id` - Excluir citação
+- `GET /api/v1/leituras/buscar-capas` - Buscar capas
+- `POST /api/generate-review` - Gerar resenha com IA
 
 ### Atividades
 - `GET /api/v1/atividades` - Histórico de atividades
+
+### Perfil
+- `GET /api/v1/perfil` - Dados do perfil
+- `PUT /api/v1/perfil` - Atualizar perfil
+- `PUT /api/v1/perfil/senha` - Alterar senha
+- `POST /api/v1/perfil/avatar` - Upload de avatar
 
 ---
 
@@ -422,7 +486,11 @@ docker run -p 3000:3000 aura
 - [x] 27 endpoints REST
 
 ### 🚧 Versão 1.1 (Em Desenvolvimento)
-- [ ] Notificações push
+- [x] Módulo de Estudos completo
+- [x] Módulo de Biblioteca com IA
+- [x] Sincronização com Google Calendar
+- [x] Sistema de compartilhamento social
+- [ ] Notificações push em tempo real
 - [ ] Exportação de relatórios (PDF/Excel)
 - [ ] Gráficos avançados com Chart.js
 - [ ] Modo claro/escuro toggle
@@ -431,10 +499,11 @@ docker run -p 3000:3000 aura
 ### 🔮 Versão 2.0 (Planejado)
 - [ ] Mobile app (React Native)
 - [ ] Sincronização bancária (Open Banking)
-- [ ] IA para análise de gastos
-- [ ] Previsões financeiras com ML
+- [ ] IA para análise de gastos e previsões
+- [ ] Assistente virtual inteligente
+- [ ] Sistema de gamificação
 - [ ] Comunidade e compartilhamento
-- [ ] Assinatura Premium
+- [ ] Assinatura Premium com recursos exclusivos
 
 ---
 

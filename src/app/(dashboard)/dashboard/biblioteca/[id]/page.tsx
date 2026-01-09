@@ -153,11 +153,10 @@ export default function DetalheMidiaPage() {
         </Button>
         <div className="flex flex-wrap gap-2">
 
-          {/* BOTÃO NOVO AQUI */}
+          {/* BOTÃO DE COMPARTILHAR */}
           <Button
-            variant="secondary"
             onClick={() => setShareOpen(true)}
-            className="border-zinc-700 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 flex-1 sm:flex-none text-sm"
+            className="bg-purple-600 hover:bg-purple-700 flex-1 sm:flex-none text-sm"
           >
             <Share2 className="w-4 h-4 sm:mr-2" />
             <span className="hidden sm:inline">Compartilhar</span>
