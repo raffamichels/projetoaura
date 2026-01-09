@@ -5,12 +5,13 @@ import { useRouter, useParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { BookOpen, Film, ChevronLeft, Save, Trash2, Edit, X, Quote, Calendar, Clock, Globe, Sparkles } from 'lucide-react';
+import { BookOpen, Film, ChevronLeft, Save, Trash2, Edit, X, Quote, Calendar, Clock, Globe, Sparkles, Share2 } from 'lucide-react';
 import { Midia, StatusLeitura } from '@/types/midia';
 import { StarRating } from '@/components/ui/star-rating';
 import { GenerateReviewButton } from '@/components/leituras/GenerateReviewButton';
 import { ReviewDisplayModal } from '@/components/leituras/ReviewDisplayModal';
+// IMPORTAÇÃO NOVA AQUI:
+import { ShareMidiaModal } from '@/components/share/ShareMidiaModal';
 
 export default function DetalheMidiaPage() {
   const router = useRouter();
@@ -22,6 +23,9 @@ export default function DetalheMidiaPage() {
   const [salvando, setSalvando] = useState(false);
   const [editando, setEditando] = useState(false);
   const [generatedReview, setGeneratedReview] = useState<string | null>(null);
+  
+  // ESTADO NOVO AQUI:
+  const [shareOpen, setShareOpen] = useState(false);
 
   const [formData, setFormData] = useState({
     nota: 0,
@@ -148,6 +152,17 @@ export default function DetalheMidiaPage() {
           Voltar
         </Button>
         <div className="flex gap-2">
+          
+          {/* BOTÃO NOVO AQUI */}
+          <Button
+            variant="secondary"
+            onClick={() => setShareOpen(true)}
+            className="border-zinc-700 bg-zinc-800 hover:bg-zinc-700 text-zinc-200"
+          >
+            <Share2 className="w-4 h-4 mr-2" />
+            Compartilhar
+          </Button>
+
           {!editando ? (
             <>
               <GenerateReviewButton
@@ -579,6 +594,15 @@ export default function DetalheMidiaPage() {
             ))}
           </CardContent>
         </Card>
+      )}
+
+      {/* MODAL DE COMPARTILHAMENTO AQUI */}
+      {midia && (
+        <ShareMidiaModal
+          midia={midia}
+          open={shareOpen}
+          onClose={() => setShareOpen(false)}
+        />
       )}
 
       {/* Modal de Resenha Gerada */}
