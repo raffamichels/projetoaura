@@ -8,6 +8,10 @@ import { Label } from '@/components/ui/label';
 import { Compromisso, TipoRecorrencia } from '@/types/compromisso';
 import { RecorrenciaConfig } from '@/components/features/agenda/RecorrenciaConfig';
 import { Checkbox } from '@/components/ui/checkbox';
+import { UpgradeToPremiumModal } from '@/components/planos/UpgradeToPremiumModal';
+import { verificarAcessoRecurso } from '@/lib/planos-helper';
+import { RecursoPremium, PlanoUsuario } from '@/types/planos';
+import { Crown } from 'lucide-react';
 
 interface CompromissoFormProps {
   onClose: () => void;
@@ -57,9 +61,20 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
   // Estado Google Calendar
   const [syncWithGoogle, setSyncWithGoogle] = useState(initialData?.syncWithGoogle || false);
   const [hasGoogleAuth, setHasGoogleAuth] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const { data: session } = useSession();
+
+  // Verificar se o usuário tem acesso ao recurso de sincronização com Google
+  const plano = (session?.user?.plano as PlanoUsuario) || PlanoUsuario.FREE;
+  const planoExpiraEm = session?.user?.planoExpiraEm;
+  const acessoRecurso = verificarAcessoRecurso(
+    plano,
+    planoExpiraEm,
+    RecursoPremium.SINCRONIZAR_GOOGLE_CALENDAR
+  );
+  const canSyncGoogle = acessoRecurso.temAcesso;
 
   // Verificar se usuário tem autenticação do Google
   useEffect(() => {
@@ -253,22 +268,36 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
             <Checkbox
               id="syncWithGoogle"
               checked={syncWithGoogle}
-              onCheckedChange={(checked) => setSyncWithGoogle(checked as boolean)}
+              disabled={!canSyncGoogle}
+              onCheckedChange={(checked) => {
+                if (!canSyncGoogle) {
+                  setShowUpgradeModal(true);
+                  return;
+                }
+                setSyncWithGoogle(checked as boolean);
+              }}
               className="mt-0.5"
             />
             <div className="flex-1">
               <Label
                 htmlFor="syncWithGoogle"
-                className="text-xs sm:text-sm font-medium text-gray-300 cursor-pointer flex items-center gap-2"
+                className={`text-xs sm:text-sm font-medium cursor-pointer flex items-center gap-2 ${
+                  !canSyncGoogle ? 'text-gray-500' : 'text-gray-300'
+                }`}
               >
                 <svg className="w-3 h-3 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 0C5.383 0 0 5.383 0 12s5.383 12 12 12 12-5.383 12-12S18.617 0 12 0zm0 23C5.935 23 1 18.065 1 12S5.935 1 12 1s11 4.935 11 11-4.935 11-11 11z"/>
                   <path d="M12 4.5c-4.136 0-7.5 3.364-7.5 7.5s3.364 7.5 7.5 7.5 7.5-3.364 7.5-7.5-3.364-7.5-7.5-7.5zm0 13.5c-3.309 0-6-2.691-6-6s2.691-6 6-6 6 2.691 6 6-2.691 6-6 6z"/>
                 </svg>
                 Enviar para Google Agenda
+                {!canSyncGoogle && (
+                  <Crown className="w-3 h-3 sm:w-4 sm:h-4 text-purple-400" />
+                )}
               </Label>
               <p className="text-[10px] sm:text-xs text-gray-400 mt-1">
-                {syncWithGoogle
+                {!canSyncGoogle
+                  ? 'Recurso disponível apenas para usuários Premium'
+                  : syncWithGoogle
                   ? 'Este compromisso será sincronizado com sua agenda do Google'
                   : 'Ative para adicionar este compromisso ao Google Calendar'}
               </p>
@@ -288,19 +317,19 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
       )}
 
       {/* Botões */}
-      <div className="flex gap-2 sm:gap-3 pt-3 sm:pt-4 sticky bottom-0 bg-zinc-900 pb-2">
+      <div className="flex gap-2 sm:gap-3 pt-3 sm:pt-4">
         <Button
           type="button"
           variant="default"
           onClick={onClose}
-          className="flex-1 border-zinc-700 hover:bg-zinc-800 h-9 sm:h-10 text-sm sm:text-base"
+          className="flex-1 h-9 sm:h-10 text-sm sm:text-base"
           disabled={loading}
         >
           Cancelar
         </Button>
         <Button
           type="submit"
-          className="flex-1 bg-aura-500 hover:bg-aura-600 h-9 sm:h-10 text-sm sm:text-base"
+          className="flex-1 bg-purple-600 hover:bg-purple-700 h-9 sm:h-10 text-sm sm:text-base"
           disabled={loading}
         >
           {loading
@@ -308,6 +337,14 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
             : (isEditMode ? 'Atualizar' : 'Salvar')}
         </Button>
       </div>
+
+      {/* Modal de Upgrade */}
+      <UpgradeToPremiumModal
+        open={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        recurso="Sincronização com Google Calendar"
+        descricao="A sincronização automática com o Google Calendar está disponível apenas para usuários Premium."
+      />
     </form>
   );
 }

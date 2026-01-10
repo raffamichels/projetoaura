@@ -3,6 +3,8 @@ import { auth } from '@/lib/auth/auth';
 import { prisma } from '@/lib/prisma';
 import { registrarAtividade } from '@/lib/atividades-helper'; // ✅ ADICIONAR
 import { GoogleCalendarService } from '@/lib/googleCalendar';
+import { verificarAcessoRecurso } from '@/lib/planos-helper';
+import { RecursoPremium } from '@/types/planos';
 
 // PUT - Atualizar compromisso
 export async function PUT(
@@ -11,7 +13,7 @@ export async function PUT(
 ) {
   try {
     const session = await auth();
-    
+
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
     }
@@ -55,6 +57,27 @@ export async function PUT(
       dataFimRecorrencia,
       syncWithGoogle,
     } = body;
+
+    // Verificar se o usuário quer sincronizar com Google Calendar
+    if (syncWithGoogle && !compromisso.syncWithGoogle) {
+      // Se está tentando ATIVAR a sincronização, verificar plano
+      const acessoRecurso = verificarAcessoRecurso(
+        user.plano,
+        user.planoExpiraEm,
+        RecursoPremium.SINCRONIZAR_GOOGLE_CALENDAR
+      );
+
+      if (!acessoRecurso.temAcesso) {
+        return NextResponse.json(
+          {
+            error: acessoRecurso.motivo || 'Sincronização com Google Calendar disponível apenas para usuários Premium',
+            planoAtual: acessoRecurso.planoEfetivo,
+            recursoNecessario: RecursoPremium.SINCRONIZAR_GOOGLE_CALENDAR
+          },
+          { status: 403 }
+        );
+      }
+    }
 
     // Se NÃO for recorrente OU for "apenas este", atualiza apenas um
     if (!compromisso.isRecorrente || applyToFuture === false) {

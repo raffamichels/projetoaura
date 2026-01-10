@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { Menu, Bell, Crown, User, Settings, LogOut, Sparkles } from 'lucide-react';
@@ -27,6 +27,9 @@ export function Header() {
   const { data: session } = useSession();
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Sempre usar o valor mais recente da sessão diretamente
+  const currentPlano = session?.user?.plano || 'FREE';
 
   const getInitials = (name?: string | null) => {
     if (!name) return 'U';
@@ -100,9 +103,13 @@ export function Header() {
                     <p className="text-sm font-semibold text-white truncate">{session?.user?.name}</p>
                     <p className="text-xs text-gray-400 truncate">{session?.user?.email}</p>
                     <div className="flex items-center gap-1.5 mt-1.5">
-                      <Crown className="w-3 h-3 text-yellow-500" />
-                      <span className="text-xs font-semibold bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">
-                        Plano {session?.user?.plano}
+                      <Crown className={`w-3 h-3 ${currentPlano === 'PREMIUM' ? 'text-purple-500' : 'text-gray-500'}`} />
+                      <span className={`text-xs font-semibold ${
+                        currentPlano === 'PREMIUM'
+                          ? 'bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent'
+                          : 'text-gray-400'
+                      }`}>
+                        Plano {currentPlano || 'FREE'}
                       </span>
                     </div>
                   </div>
@@ -141,11 +148,12 @@ export function Header() {
               <DropdownMenuSeparator className="bg-zinc-800 my-1" />
 
               {/* Upgrade CTA */}
-              {session?.user?.plano === 'FREE' && (
+              {currentPlano === 'FREE' && (
                 <>
                   <div className="p-2">
                     <DropdownMenuItem
                       className="cursor-pointer hover:bg-gradient-to-r hover:from-yellow-500/20 hover:to-orange-500/20 rounded-lg px-3 py-2.5 flex items-center gap-3 transition-all border border-yellow-500/20"
+                      onClick={() => router.push('/premium')}
                     >
                       <div className="p-1.5 bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-lg">
                         <Sparkles className="w-4 h-4 text-yellow-500" />

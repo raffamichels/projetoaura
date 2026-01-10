@@ -10,12 +10,14 @@ import { registrarAtividade } from '@/lib/atividades-helper';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { GoogleCalendarService } from '@/lib/googleCalendar';
+import { verificarAcessoRecurso } from '@/lib/planos-helper';
+import { RecursoPremium } from '@/types/planos';
 
 // POST - Criar novo compromisso
 export async function POST(req: NextRequest) {
   try {
     const session = await auth();
-    
+
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
     }
@@ -47,9 +49,29 @@ export async function POST(req: NextRequest) {
     // Validações básicas
     if (!titulo || !data || !horaInicio) {
       return NextResponse.json(
-        { error: 'Campos obrigatórios faltando' }, 
+        { error: 'Campos obrigatórios faltando' },
         { status: 400 }
       );
+    }
+
+    // Verificar se o usuário quer sincronizar com Google Calendar
+    if (syncWithGoogle) {
+      const acessoRecurso = verificarAcessoRecurso(
+        user.plano,
+        user.planoExpiraEm,
+        RecursoPremium.SINCRONIZAR_GOOGLE_CALENDAR
+      );
+
+      if (!acessoRecurso.temAcesso) {
+        return NextResponse.json(
+          {
+            error: acessoRecurso.motivo || 'Sincronização com Google Calendar disponível apenas para usuários Premium',
+            planoAtual: acessoRecurso.planoEfetivo,
+            recursoNecessario: RecursoPremium.SINCRONIZAR_GOOGLE_CALENDAR
+          },
+          { status: 403 }
+        );
+      }
     }
 
     // Se NÃO for recorrente, cria apenas um compromisso

@@ -49,6 +49,12 @@ export const authOptions = {
           id: user.id,
           email: user.email,
           name: user.name,
+          image: user.image,
+          emailVerified: user.emailVerified,
+          plano: user.plano,
+          planoExpiraEm: user.planoExpiraEm,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
         };
       }
     })
@@ -75,7 +81,7 @@ export const authOptions = {
 
           if (!existingUser) {
             // Criar novo usuário com dados do Google
-            await prisma.user.create({
+            const newUser = await prisma.user.create({
               data: {
                 email: user.email!,
                 name: user.name || user.email!.split('@')[0],
@@ -87,9 +93,13 @@ export const authOptions = {
                 googleTokenExpiry: tokenExpiry,
               }
             });
+
+            // Adicionar dados do plano ao objeto user
+            user.plano = newUser.plano;
+            user.planoExpiraEm = newUser.planoExpiraEm;
           } else {
             // Atualizar usuário existente com tokens do Google
-            await prisma.user.update({
+            const updatedUser = await prisma.user.update({
               where: { email: user.email! },
               data: {
                 emailVerified: new Date(),
@@ -99,6 +109,10 @@ export const authOptions = {
                 googleTokenExpiry: tokenExpiry,
               }
             });
+
+            // Adicionar dados do plano ao objeto user
+            user.plano = updatedUser.plano;
+            user.planoExpiraEm = updatedUser.planoExpiraEm;
           }
         } catch (error) {
           console.error('Erro ao criar/atualizar usuário do Google:', error);
@@ -133,33 +147,46 @@ export const authOptions = {
         token.planoExpiraEm = user.planoExpiraEm;
         token.createdAt = user.createdAt;
         token.updatedAt = user.updatedAt;
-      } else if (trigger === 'update' || !token.plano) {
-        // Atualizar dados do usuário do banco em cada requisição
-        const dbUser = await prisma.user.findUnique({
-          where: { id: token.id as string },
-          select: {
-            id: true,
-            email: true,
-            name: true,
-            image: true,
-            emailVerified: true,
-            plano: true,
-            planoExpiraEm: true,
-            createdAt: true,
-            updatedAt: true,
-          },
-        });
+        token.lastUpdated = Date.now();
+      } else {
+        // Atualizar dados do usuário do banco periodicamente (a cada 30 segundos)
+        const now = Date.now();
+        const lastUpdated = (token.lastUpdated as number) || 0;
+        const thirtySeconds = 30 * 1000; // 30 segundos em milissegundos
 
-        if (dbUser) {
-          token.id = dbUser.id;
-          token.email = dbUser.email;
-          token.name = dbUser.name;
-          token.image = dbUser.image;
-          token.emailVerified = dbUser.emailVerified;
-          token.plano = dbUser.plano;
-          token.planoExpiraEm = dbUser.planoExpiraEm;
-          token.createdAt = dbUser.createdAt;
-          token.updatedAt = dbUser.updatedAt;
+        const shouldUpdate =
+          trigger === 'update' ||
+          !token.plano ||
+          (now - lastUpdated) > thirtySeconds;
+
+        if (shouldUpdate) {
+          const dbUser = await prisma.user.findUnique({
+            where: { id: token.id as string },
+            select: {
+              id: true,
+              email: true,
+              name: true,
+              image: true,
+              emailVerified: true,
+              plano: true,
+              planoExpiraEm: true,
+              createdAt: true,
+              updatedAt: true,
+            },
+          });
+
+          if (dbUser) {
+            token.id = dbUser.id;
+            token.email = dbUser.email;
+            token.name = dbUser.name;
+            token.image = dbUser.image;
+            token.emailVerified = dbUser.emailVerified;
+            token.plano = dbUser.plano;
+            token.planoExpiraEm = dbUser.planoExpiraEm;
+            token.createdAt = dbUser.createdAt;
+            token.updatedAt = dbUser.updatedAt;
+            token.lastUpdated = now;
+          }
         }
       }
       return token;

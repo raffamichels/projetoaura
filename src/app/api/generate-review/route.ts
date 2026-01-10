@@ -2,6 +2,8 @@ import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth/auth"
 import { prisma } from "@/lib/prisma"
 import { generateReview } from "@/lib/ai/review-generator"
+import { verificarAcessoRecurso } from "@/lib/planos-helper"
+import { RecursoPremium } from "@/types/planos"
 
 export async function POST(req: Request) {
   try {
@@ -24,6 +26,27 @@ export async function POST(req: Request) {
     }
 
     console.log(`✅ Usuário autenticado: ${user.email}`)
+
+    // Verificar se o usuário tem acesso ao recurso de geração de resenha
+    const acessoRecurso = verificarAcessoRecurso(
+      user.plano,
+      user.planoExpiraEm,
+      RecursoPremium.GERAR_RESENHA_IA
+    )
+
+    if (!acessoRecurso.temAcesso) {
+      console.log(`❌ Usuário sem acesso ao recurso (Plano: ${acessoRecurso.planoEfetivo})`)
+      return NextResponse.json(
+        {
+          error: acessoRecurso.motivo || "Recurso disponível apenas para usuários Premium",
+          planoAtual: acessoRecurso.planoEfetivo,
+          recursoNecessario: RecursoPremium.GERAR_RESENHA_IA
+        },
+        { status: 403 }
+      )
+    }
+
+    console.log(`✅ Acesso ao recurso verificado (Plano: ${acessoRecurso.planoEfetivo})`)
 
     const { midiaId } = await req.json()
 

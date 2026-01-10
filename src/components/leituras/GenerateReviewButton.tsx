@@ -1,9 +1,13 @@
 "use client"
 
 import { useState } from "react"
+import { useSession } from "next-auth/react"
 import { Button } from "@/components/ui/button"
-import { Sparkles, Loader2 } from "lucide-react"
+import { Sparkles, Loader2, Crown } from "lucide-react"
 import { toast } from "sonner"
+import { UpgradeToPremiumModal } from "@/components/planos/UpgradeToPremiumModal"
+import { verificarAcessoRecurso } from "@/lib/planos-helper"
+import { RecursoPremium, PlanoUsuario } from "@/types/planos"
 
 interface GenerateReviewButtonProps {
   midiaId: string
@@ -17,8 +21,25 @@ export function GenerateReviewButton({
   disabled = false,
 }: GenerateReviewButtonProps) {
   const [isGenerating, setIsGenerating] = useState(false)
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false)
+  const { data: session } = useSession()
 
   const handleGenerate = async () => {
+    // Verificar acesso ao recurso
+    const plano = (session?.user?.plano as PlanoUsuario) || PlanoUsuario.FREE
+    const planoExpiraEm = session?.user?.planoExpiraEm
+
+    const acessoRecurso = verificarAcessoRecurso(
+      plano,
+      planoExpiraEm,
+      RecursoPremium.GERAR_RESENHA_IA
+    )
+
+    if (!acessoRecurso.temAcesso) {
+      setShowUpgradeModal(true)
+      return
+    }
+
     setIsGenerating(true)
 
     try {
@@ -31,6 +52,11 @@ export function GenerateReviewButton({
       const data = await response.json()
 
       if (!response.ok) {
+        // Se for erro 403, mostrar modal de upgrade
+        if (response.status === 403) {
+          setShowUpgradeModal(true)
+          return
+        }
         throw new Error(data.error || "Erro ao gerar resenha")
       }
 
@@ -49,24 +75,33 @@ export function GenerateReviewButton({
   }
 
   return (
-    <Button
-      onClick={handleGenerate}
-      disabled={isGenerating || disabled}
-      variant="default"
-      size="sm"
-      className="gap-2"
-    >
-      {isGenerating ? (
-        <>
-          <Loader2 className="h-4 w-4 animate-spin" />
-          Gerando resenha...
-        </>
-      ) : (
-        <>
-          <Sparkles className="h-4 w-4" />
-          Gerar Resenha
-        </>
-      )}
-    </Button>
+    <>
+      <Button
+        onClick={handleGenerate}
+        disabled={isGenerating || disabled}
+        variant="default"
+        size="sm"
+        className="gap-2"
+      >
+        {isGenerating ? (
+          <>
+            <Loader2 className="h-4 w-4 animate-spin" />
+            Gerando resenha...
+          </>
+        ) : (
+          <>
+            <Sparkles className="h-4 w-4" />
+            Gerar Resenha
+          </>
+        )}
+      </Button>
+
+      <UpgradeToPremiumModal
+        open={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        recurso="Geração de Resenhas com IA"
+        descricao="A geração de resenhas com inteligência artificial está disponível apenas para usuários Premium."
+      />
+    </>
   )
 }

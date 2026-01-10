@@ -33,6 +33,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
+import { PlanoManager } from '@/components/planos/PlanoManager';
 
 type SettingsTab = 'conta' | 'aparencia' | 'notificacoes' | 'privacidade';
 
@@ -190,6 +191,9 @@ export default function SettingsPage() {
               </Button>
             </CardContent>
           </Card>
+
+          {/* Gerenciar Plano */}
+          <PlanoManager />
 
           {/* Segurança */}
           <Card className="bg-zinc-900/50 border-zinc-800">
