@@ -69,7 +69,7 @@ export default function ObjetivosPage() {
   const totalMetas = objetivosAtivos.reduce((acc, obj) => acc + obj.valorMeta, 0);
 
   return (
-    <div className="min-h-screen bg-zinc-950 p-8">
+    <div className="bg-zinc-950 p-4 lg:p-6 space-y-4 sm:space-y-6">
       <div className="relative mb-8">
         <div className="relative">
           <div className="flex justify-between items-start mb-6">

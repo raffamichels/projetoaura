@@ -140,7 +140,7 @@ export default function DetalheMidiaPage() {
   const statusInfo = getStatusBadge(midia.status);
 
   return (
-    <div className="space-y-4 sm:space-y-6 px-2 sm:px-0">
+    <div className="space-y-4 sm:space-y-6 p-4 lg:p-6">
       {/* Header Compacto */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         <Button

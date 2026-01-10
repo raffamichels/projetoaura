@@ -18,7 +18,7 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const menuItems = [
   { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' },
@@ -41,8 +41,14 @@ export function Sidebar({ isMobile = false, onNavigate }: SidebarProps) {
   const router = useRouter();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.style.setProperty('--sidebar-width', isCollapsed ? '5rem' : '16rem');
+    }
+  }, [isCollapsed]);
+
   return (
-    <aside className={`${isMobile ? 'flex' : 'hidden lg:flex'} flex-col h-full border-r border-zinc-800 bg-zinc-900/50 backdrop-blur-xl transition-all duration-300 ${isCollapsed ? 'w-20' : 'w-64'}`}>
+    <aside className={`${isMobile ? 'flex' : 'hidden lg:flex'} flex-col h-screen fixed left-0 top-0 border-r border-zinc-800 bg-zinc-900/50 backdrop-blur-xl transition-all duration-300 z-40 ${isCollapsed ? 'w-20' : 'w-64'}`}>
       {/* Logo */}
       <div className="p-6 border-b border-zinc-800 bg-zinc-900 flex items-center justify-between">
         <div className={`${isCollapsed ? 'hidden' : 'block'}`}>
@@ -71,7 +77,7 @@ export function Sidebar({ isMobile = false, onNavigate }: SidebarProps) {
 
 
       {/* Menu */}
-      <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+      <nav className="flex-1 p-4 space-y-1">
         {menuItems.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.href;

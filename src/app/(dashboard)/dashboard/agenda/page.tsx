@@ -110,7 +110,7 @@ function AgendaPageContent() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-64px)] sm:h-[calc(100vh-80px)] max-h-[calc(100vh-64px)] sm:max-h-[calc(100vh-80px)] overflow-hidden">
+    <div className="flex flex-col h-full p-4 lg:p-6 overflow-hidden">
       {/* Header compacto - apenas mobile */}
       <div className="md:hidden flex items-center justify-between gap-2 p-3 border-b border-zinc-800 bg-zinc-900/80 backdrop-blur-sm shrink-0">
         <h1 className="text-lg font-bold text-white">Agenda</h1>

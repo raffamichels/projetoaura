@@ -285,9 +285,9 @@ export default function CursoDetalhePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950">
+    <div className="bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950 p-4 lg:p-6 space-y-4 sm:space-y-6">
       {/* Header com gradiente */}
-      <div className="relative border-b border-zinc-800/50 backdrop-blur-xl bg-zinc-900/80">
+      <div className="relative border-b border-zinc-800/50 backdrop-blur-xl bg-zinc-900/80 -mx-4 lg:-mx-6">
         <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 via-transparent to-blue-500/5" />
         <div className="relative p-3 sm:p-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-6">

@@ -117,7 +117,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="space-y-4 sm:space-y-6 p-4 lg:p-6">
       {/* Welcome Section */}
       <div>
         <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">

@@ -428,7 +428,7 @@ export default function PerfilPage() {
   const completionPercentage = Math.round((unlockedAchievements.length / achievements.length) * 100);
 
   return (
-    <div className="space-y-6 pb-16">
+    <div className="space-y-6 pb-16 p-4 lg:p-6">
       {/* Header Moderno */}
       <div className="relative overflow-hidden">
         {/* Banner com gradiente dinâmico */}

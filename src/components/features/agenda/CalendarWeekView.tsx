@@ -20,10 +20,7 @@ export function CalendarWeekView({ compromissos, onSlotClick, onCompromissoClick
   // Função para realizar o scroll
   const scrollToCurrentTime = () => {
     const container = scrollContainerRef.current;
-    if (!container) {
-      console.log('❌ Container não encontrado');
-      return;
-    }
+    if (!container) return;
 
     const currentHour = new Date().getHours();
     const currentMinutes = new Date().getMinutes();
@@ -36,19 +33,7 @@ export function CalendarWeekView({ compromissos, onSlotClick, onCompromissoClick
     const scrollPosition = barPosition - (containerHeight / 2);
     const targetScroll = Math.max(0, scrollPosition);
 
-    console.log('🎯 Tentando scroll para:', {
-      hora: currentHour,
-      minutos: currentMinutes,
-      posicaoDaBarra: barPosition,
-      alturaContainer: containerHeight,
-      metadeDaAltura: containerHeight / 2,
-      scrollFinal: targetScroll,
-      scrollHeight: container.scrollHeight
-    });
-
     container.scrollTop = targetScroll;
-
-    console.log('✅ Scroll definido para:', container.scrollTop);
   };
 
   // Atualizar linha do tempo a cada minuto
@@ -60,10 +45,8 @@ export function CalendarWeekView({ compromissos, onSlotClick, onCompromissoClick
     return () => clearInterval(interval);
   }, []);
 
-  // Definir scroll inicial na posição do horário atual
+  // Definir scroll inicial na posição do horário atual (apenas na montagem inicial)
   useEffect(() => {
-    console.log('🔄 useEffect de scroll executado');
-
     // Aguardar o próximo frame de renderização
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
@@ -79,7 +62,7 @@ export function CalendarWeekView({ compromissos, onSlotClick, onCompromissoClick
         };
       });
     });
-  }, [currentWeekStart]);
+  }, []);
 
   // Gerar dias da semana
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(currentWeekStart, i));
@@ -183,7 +166,7 @@ export function CalendarWeekView({ compromissos, onSlotClick, onCompromissoClick
                   <button
                     key={hour}
                     onClick={() => onSlotClick(day, hour)}
-                    className="w-full h-[60px] border-b border-zinc-800 hover:bg-aura-500/5 active:bg-aura-500/10 transition-colors text-left block touch-manipulation"
+                    className="w-full h-[60px] border-b border-zinc-800 hover:bg-purple-500/5 active:bg-purple-500/10 transition-colors text-left block touch-manipulation"
                   />
                 ))}
 
