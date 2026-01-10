@@ -1,6 +1,11 @@
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+function getResendClient() {
+  if (!process.env.RESEND_API_KEY) {
+    throw new Error('RESEND_API_KEY is not configured');
+  }
+  return new Resend(process.env.RESEND_API_KEY);
+}
 
 export async function sendVerificationEmail(
   email: string,
@@ -10,6 +15,7 @@ export async function sendVerificationEmail(
   const verificationUrl = `${process.env.APP_URL}/verify-email?token=${token}`;
 
   try {
+    const resend = getResendClient();
     await resend.emails.send({
       from: process.env.EMAIL_FROM!,
       to: email,
@@ -82,6 +88,7 @@ export async function sendPasswordResetEmail(
   const resetUrl = `${process.env.APP_URL}/reset-password?token=${token}`;
 
   try {
+    const resend = getResendClient();
     await resend.emails.send({
       from: process.env.EMAIL_FROM!,
       to: email,
