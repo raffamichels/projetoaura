@@ -22,7 +22,8 @@
       "Bash(find:*)",
       "Bash(netstat:*)",
       "Bash(findstr:*)",
-      "Bash(node test-email.js:*)"
+      "Bash(node test-email.js:*)",
+      "Bash(wc:*)"
     ]
   }
 }

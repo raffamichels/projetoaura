@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import RichTextEditor from '@/components/estudos/RichTextEditor';
 import { PomodoroTimer } from '@/components/PomodoroTimer';
+import { ConfirmModal } from '@/components/ui/ConfirmModal';
 
 interface Modulo {
   id: string;
@@ -65,6 +66,11 @@ export default function CursoDetalhePage() {
   const [modalPaginaAberto, setModalPaginaAberto] = useState(false);
   const [editandoPagina, setEditandoPagina] = useState(false);
   const [paginaAmpliada, setPaginaAmpliada] = useState(false);
+
+  const [modalExcluirCurso, setModalExcluirCurso] = useState(false);
+  const [modalExcluirModulo, setModalExcluirModulo] = useState(false);
+  const [modalExcluirPagina, setModalExcluirPagina] = useState(false);
+  const [itemParaExcluir, setItemParaExcluir] = useState<string | null>(null);
 
   const [novoModulo, setNovoModulo] = useState({
     nome: '',
@@ -193,22 +199,25 @@ export default function CursoDetalhePage() {
 
   const excluirModulo = async (moduloId: string, e: React.MouseEvent) => {
     e.stopPropagation();
+    setItemParaExcluir(moduloId);
+    setModalExcluirModulo(true);
+  };
 
-    if (!confirm('Deseja realmente excluir este módulo? Todas as páginas serão excluídas.')) {
-      return;
-    }
+  const confirmarExcluirModulo = async () => {
+    if (!itemParaExcluir) return;
 
     try {
-      const response = await fetch(`/api/v1/estudos/modulos/${moduloId}`, {
+      const response = await fetch(`/api/v1/estudos/modulos/${itemParaExcluir}`, {
         method: 'DELETE',
       });
 
       if (response.ok) {
-        if (moduloSelecionado?.id === moduloId) {
+        if (moduloSelecionado?.id === itemParaExcluir) {
           setModuloSelecionado(null);
           setPaginaSelecionada(null);
         }
         carregarCurso();
+        setItemParaExcluir(null);
       }
     } catch (error) {
       console.error('Erro ao excluir módulo:', error);
@@ -217,23 +226,26 @@ export default function CursoDetalhePage() {
 
   const excluirPagina = async (paginaId: string, e: React.MouseEvent) => {
     e.stopPropagation();
+    setItemParaExcluir(paginaId);
+    setModalExcluirPagina(true);
+  };
 
-    if (!confirm('Deseja realmente excluir esta página?')) {
-      return;
-    }
+  const confirmarExcluirPagina = async () => {
+    if (!itemParaExcluir) return;
 
     try {
-      const response = await fetch(`/api/v1/estudos/paginas/${paginaId}`, {
+      const response = await fetch(`/api/v1/estudos/paginas/${itemParaExcluir}`, {
         method: 'DELETE',
       });
 
       if (response.ok) {
-        if (paginaSelecionada?.id === paginaId) {
+        if (paginaSelecionada?.id === itemParaExcluir) {
           setPaginaSelecionada(null);
         }
         if (moduloSelecionado) {
           carregarModulo(moduloSelecionado.id);
         }
+        setItemParaExcluir(null);
       }
     } catch (error) {
       console.error('Erro ao excluir página:', error);
@@ -241,10 +253,10 @@ export default function CursoDetalhePage() {
   };
 
   const excluirCurso = async () => {
-    if (!confirm('Deseja realmente excluir este curso? Todos os módulos, páginas e anotações serão excluídos permanentemente.')) {
-      return;
-    }
+    setModalExcluirCurso(true);
+  };
 
+  const confirmarExcluirCurso = async () => {
     try {
       const response = await fetch(`/api/v1/estudos/cursos/${cursoId}`, {
         method: 'DELETE',
@@ -763,6 +775,48 @@ export default function CursoDetalhePage() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Modal Confirmar Exclusão de Curso */}
+      <ConfirmModal
+        open={modalExcluirCurso}
+        onClose={() => setModalExcluirCurso(false)}
+        onConfirm={confirmarExcluirCurso}
+        title="Excluir Curso"
+        description="Tem certeza que deseja excluir este curso? Todos os módulos, páginas e anotações serão excluídos permanentemente. Esta ação não pode ser desfeita."
+        confirmText="Excluir Curso"
+        cancelText="Cancelar"
+        variant="danger"
+      />
+
+      {/* Modal Confirmar Exclusão de Módulo */}
+      <ConfirmModal
+        open={modalExcluirModulo}
+        onClose={() => {
+          setModalExcluirModulo(false);
+          setItemParaExcluir(null);
+        }}
+        onConfirm={confirmarExcluirModulo}
+        title="Excluir Módulo"
+        description="Tem certeza que deseja excluir este módulo? Todas as páginas dentro dele serão excluídas permanentemente. Esta ação não pode ser desfeita."
+        confirmText="Excluir Módulo"
+        cancelText="Cancelar"
+        variant="danger"
+      />
+
+      {/* Modal Confirmar Exclusão de Página */}
+      <ConfirmModal
+        open={modalExcluirPagina}
+        onClose={() => {
+          setModalExcluirPagina(false);
+          setItemParaExcluir(null);
+        }}
+        onConfirm={confirmarExcluirPagina}
+        title="Excluir Página"
+        description="Tem certeza que deseja excluir esta página? Todo o conteúdo será perdido permanentemente. Esta ação não pode ser desfeita."
+        confirmText="Excluir Página"
+        cancelText="Cancelar"
+        variant="danger"
+      />
     </div>
   );
 }

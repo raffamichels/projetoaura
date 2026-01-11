@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Star, Trash2 } from 'lucide-react';
 import { Citacao } from '@/types/midia';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ConfirmModal } from '@/components/ui/ConfirmModal';
 
 interface ConteudoGerenciarCitacoesProps {
   onAtualizar: () => void;
@@ -19,6 +20,8 @@ function ConteudoGerenciarCitacoes({ onAtualizar, modoEmbutido, onVoltar }: Cont
   const [todasCitacoes, setTodasCitacoes] = useState<Citacao[]>([]);
   const [loading, setLoading] = useState(false);
   const [processando, setProcessando] = useState<string | null>(null);
+  const [modalExcluir, setModalExcluir] = useState(false);
+  const [citacaoParaExcluir, setCitacaoParaExcluir] = useState<string | null>(null);
 
   useEffect(() => {
     carregarCitacoes();
@@ -69,13 +72,16 @@ function ConteudoGerenciarCitacoes({ onAtualizar, modoEmbutido, onVoltar }: Cont
   };
 
   const excluirCitacao = async (id: string) => {
-    if (!confirm('Tem certeza que deseja excluir esta citação?')) {
-      return;
-    }
+    setCitacaoParaExcluir(id);
+    setModalExcluir(true);
+  };
+
+  const confirmarExcluirCitacao = async () => {
+    if (!citacaoParaExcluir) return;
 
     try {
-      setProcessando(id);
-      const response = await fetch(`/api/v1/leituras/citacoes/${id}`, {
+      setProcessando(citacaoParaExcluir);
+      const response = await fetch(`/api/v1/leituras/citacoes/${citacaoParaExcluir}`, {
         method: 'DELETE',
       });
 
@@ -87,6 +93,7 @@ function ConteudoGerenciarCitacoes({ onAtualizar, modoEmbutido, onVoltar }: Cont
       console.error('Erro ao excluir citação:', error);
     } finally {
       setProcessando(null);
+      setCitacaoParaExcluir(null);
     }
   };
 
@@ -202,6 +209,21 @@ function ConteudoGerenciarCitacoes({ onAtualizar, modoEmbutido, onVoltar }: Cont
           </Button>
         )}
       </div>
+
+      {/* Modal Confirmar Exclusão */}
+      <ConfirmModal
+        open={modalExcluir}
+        onClose={() => {
+          setModalExcluir(false);
+          setCitacaoParaExcluir(null);
+        }}
+        onConfirm={confirmarExcluirCitacao}
+        title="Excluir Citação"
+        description="Tem certeza que deseja excluir esta citação? Ela será removida permanentemente de todas as suas listas. Esta ação não pode ser desfeita."
+        confirmText="Excluir Citação"
+        cancelText="Cancelar"
+        variant="danger"
+      />
     </div>
   );
 }

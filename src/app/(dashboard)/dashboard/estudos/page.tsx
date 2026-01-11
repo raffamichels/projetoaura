@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
+import { ConfirmModal } from '@/components/ui/ConfirmModal';
 
 interface Curso {
   id: string;
@@ -40,6 +41,7 @@ export default function EstudosPage() {
   const [modalCursoAberto, setModalCursoAberto] = useState(false);
   const [modalAnotacaoAberto, setModalAnotacaoAberto] = useState(false);
   const [modalVisualizarAnotacao, setModalVisualizarAnotacao] = useState(false);
+  const [modalExcluirAnotacao, setModalExcluirAnotacao] = useState(false);
   const [anotacaoSelecionada, setAnotacaoSelecionada] = useState<Anotacao | null>(null);
   const [editandoAnotacao, setEditandoAnotacao] = useState(false);
   const [buscaAtiva, setBuscaAtiva] = useState(false);
@@ -172,10 +174,11 @@ export default function EstudosPage() {
 
   const excluirAnotacao = async () => {
     if (!anotacaoSelecionada) return;
+    setModalExcluirAnotacao(true);
+  };
 
-    if (!confirm('Deseja realmente excluir esta anotação?')) {
-      return;
-    }
+  const confirmarExcluirAnotacao = async () => {
+    if (!anotacaoSelecionada) return;
 
     try {
       const response = await fetch(`/api/v1/estudos/anotacoes/${anotacaoSelecionada.id}`, {
@@ -184,6 +187,7 @@ export default function EstudosPage() {
 
       if (response.ok) {
         setModalVisualizarAnotacao(false);
+        setModalExcluirAnotacao(false);
         setAnotacaoSelecionada(null);
         carregarDados();
       }
@@ -678,6 +682,18 @@ export default function EstudosPage() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Modal Confirmar Exclusão de Anotação */}
+      <ConfirmModal
+        open={modalExcluirAnotacao}
+        onClose={() => setModalExcluirAnotacao(false)}
+        onConfirm={confirmarExcluirAnotacao}
+        title="Excluir Anotação"
+        description="Tem certeza que deseja excluir esta anotação? Todo o conteúdo será perdido permanentemente. Esta ação não pode ser desfeita."
+        confirmText="Excluir Anotação"
+        cancelText="Cancelar"
+        variant="danger"
+      />
     </div>
   );
 }

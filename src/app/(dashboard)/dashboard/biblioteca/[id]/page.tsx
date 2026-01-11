@@ -12,6 +12,7 @@ import { GenerateReviewButton } from '@/components/leituras/GenerateReviewButton
 import { ReviewDisplayModal } from '@/components/leituras/ReviewDisplayModal';
 // IMPORTAÇÃO NOVA AQUI:
 import { ShareMidiaModal } from '@/components/share/ShareMidiaModal';
+import { ConfirmModal } from '@/components/ui/ConfirmModal';
 
 export default function DetalheMidiaPage() {
   const router = useRouter();
@@ -23,9 +24,10 @@ export default function DetalheMidiaPage() {
   const [salvando, setSalvando] = useState(false);
   const [editando, setEditando] = useState(false);
   const [generatedReview, setGeneratedReview] = useState<string | null>(null);
-  
+
   // ESTADO NOVO AQUI:
   const [shareOpen, setShareOpen] = useState(false);
+  const [modalExcluir, setModalExcluir] = useState(false);
 
   const [formData, setFormData] = useState({
     nota: 0,
@@ -94,8 +96,10 @@ export default function DetalheMidiaPage() {
   };
 
   const handleExcluir = async () => {
-    if (!confirm('Tem certeza que deseja excluir este item?')) return;
+    setModalExcluir(true);
+  };
 
+  const confirmarExcluir = async () => {
     try {
       const res = await fetch(`/api/v1/leituras/midias/${midiaId}`, {
         method: 'DELETE',
@@ -618,6 +622,18 @@ export default function DetalheMidiaPage() {
           }}
         />
       )}
+
+      {/* Modal Confirmar Exclusão */}
+      <ConfirmModal
+        open={modalExcluir}
+        onClose={() => setModalExcluir(false)}
+        onConfirm={confirmarExcluir}
+        title="Excluir Item da Biblioteca"
+        description="Tem certeza que deseja excluir este item da sua biblioteca? Todas as anotações, reflexões e avaliações serão perdidas permanentemente. Esta ação não pode ser desfeita."
+        confirmText="Excluir Item"
+        cancelText="Cancelar"
+        variant="danger"
+      />
     </div>
   );
 }

@@ -8,6 +8,7 @@ import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { RecurrenceActionModal } from '@/components/features/agenda/RecurrenceActionModal';
 import { getDescricaoRecorrencia } from '@/lib/recorrencia-utils';
+import { ConfirmModal } from '@/components/ui/ConfirmModal';
 
 interface CompromissoDetailsProps {
   compromisso: Compromisso;
@@ -16,15 +17,16 @@ interface CompromissoDetailsProps {
   onClose: () => void;
 }
 
-export function CompromissoDetails({ 
-  compromisso, 
-  onEdit, 
-  onDelete, 
-  onClose 
+export function CompromissoDetails({
+  compromisso,
+  onEdit,
+  onDelete,
+  onClose
 }: CompromissoDetailsProps) {
   const [showRecurrenceModal, setShowRecurrenceModal] = useState(false);
   const [recurrenceAction, setRecurrenceAction] = useState<'edit' | 'delete'>('delete');
   const [isDeleting, setIsDeleting] = useState(false);
+  const [modalExcluir, setModalExcluir] = useState(false);
 
   const handleEditClick = () => {
     if (compromisso.isRecorrente) {
@@ -40,18 +42,11 @@ export function CompromissoDetails({
       setRecurrenceAction('delete');
       setShowRecurrenceModal(true);
     } else {
-      handleDelete(false);
+      setModalExcluir(true);
     }
   };
 
   const handleDelete = async (applyToFuture: boolean) => {
-    if (!compromisso.isRecorrente) {
-      // Confirmação simples para não-recorrente
-      if (!confirm('Tem certeza que deseja excluir este compromisso?')) {
-        return;
-      }
-    }
-
     setIsDeleting(true);
 
     try {
@@ -74,7 +69,12 @@ export function CompromissoDetails({
     } finally {
       setIsDeleting(false);
       setShowRecurrenceModal(false);
+      setModalExcluir(false);
     }
+  };
+
+  const confirmarExcluir = () => {
+    handleDelete(false);
   };
 
   const handleRecurrenceConfirm = (applyToFuture: boolean) => {
@@ -185,6 +185,18 @@ export function CompromissoDetails({
         action={recurrenceAction}
         onConfirm={handleRecurrenceConfirm}
         compromissoTitulo={compromisso.titulo}
+      />
+
+      {/* Modal Confirmar Exclusão */}
+      <ConfirmModal
+        open={modalExcluir}
+        onClose={() => setModalExcluir(false)}
+        onConfirm={confirmarExcluir}
+        title="Excluir Compromisso"
+        description="Tem certeza que deseja excluir este compromisso? Ele será removido permanentemente da sua agenda. Esta ação não pode ser desfeita."
+        confirmText="Excluir Compromisso"
+        cancelText="Cancelar"
+        variant="danger"
       />
     </>
   );
