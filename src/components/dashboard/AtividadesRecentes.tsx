@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import { 
-  Calendar, 
-  CalendarCheck, 
-  CalendarX, 
+import { ptBR, enUS } from 'date-fns/locale';
+import { useTranslations, useLocale } from 'next-intl';
+import {
+  Calendar,
+  CalendarCheck,
+  CalendarX,
   Edit3,
   Activity,
   Clock,
@@ -36,18 +37,21 @@ const getIcone = (icone: string) => {
   return icones[icone] || Activity;
 };
 
-const getTipoTexto = (tipo: string) => {
+const getTipoTexto = (tipo: string, t: (key: string) => string) => {
   const tipos: Record<string, { texto: string; cor: string }> = {
-    'compromisso_criado': { texto: 'Criado', cor: 'bg-green-500/10 text-green-400 border-green-500/20' },
-    'compromisso_editado': { texto: 'Editado', cor: 'bg-blue-500/10 text-blue-400 border-blue-500/20' },
-    'compromisso_excluido': { texto: 'Excluído', cor: 'bg-red-500/10 text-red-400 border-red-500/20' },
+    'compromisso_criado': { texto: t('created'), cor: 'bg-green-500/10 text-green-400 border-green-500/20' },
+    'compromisso_editado': { texto: t('edited'), cor: 'bg-blue-500/10 text-blue-400 border-blue-500/20' },
+    'compromisso_excluido': { texto: t('deleted'), cor: 'bg-red-500/10 text-red-400 border-red-500/20' },
   };
-  return tipos[tipo] || { texto: 'Ação', cor: 'bg-gray-500/10 text-gray-400 border-gray-500/20' };
+  return tipos[tipo] || { texto: t('action'), cor: 'bg-gray-500/10 text-gray-400 border-gray-500/20' };
 };
 
 export function AtividadesRecentes() {
   const [atividades, setAtividades] = useState<Atividade[]>([]);
   const [loading, setLoading] = useState(true);
+  const t = useTranslations('dashboard');
+  const locale = useLocale();
+  const dateLocale = locale === 'pt' ? ptBR : enUS;
 
   useEffect(() => {
     fetchAtividades();
@@ -85,10 +89,10 @@ export function AtividadesRecentes() {
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-aura-400" />
-            Atividades Recentes
+            {t('recentActivities')}
           </CardTitle>
           <CardDescription className="text-gray-400">
-            Suas ações de hoje no sistema
+            {t('yourTodayActions')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -106,10 +110,10 @@ export function AtividadesRecentes() {
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-aura-400" />
-            Atividades Recentes
+            {t('recentActivities')}
           </CardTitle>
           <CardDescription className="text-gray-400">
-            Suas ações de hoje no sistema
+            {t('yourTodayActions')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -118,9 +122,9 @@ export function AtividadesRecentes() {
               <div className="absolute inset-0 bg-aura-500/20 blur-xl rounded-full"></div>
               <Clock className="w-12 h-12 text-gray-600 relative" />
             </div>
-            <p className="text-gray-400 mb-2 font-medium">Nenhuma atividade hoje</p>
+            <p className="text-gray-400 mb-2 font-medium">{t('noActivityToday')}</p>
             <p className="text-sm text-gray-500 max-w-sm">
-              Comece criando compromissos para ver suas atividades de hoje aqui
+              {t('startCreatingAppointments')}
             </p>
           </div>
         </CardContent>
@@ -133,10 +137,10 @@ export function AtividadesRecentes() {
       <CardHeader>
         <CardTitle className="text-white flex items-center gap-2 text-lg sm:text-xl">
           <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-aura-400" />
-          Atividades Recentes
+          {t('recentActivities')}
         </CardTitle>
         <CardDescription className="text-gray-400 text-sm">
-          Suas ações de hoje no sistema
+          {t('yourTodayActions')}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -144,7 +148,7 @@ export function AtividadesRecentes() {
         <div className="max-h-[350px] overflow-y-auto pr-1 sm:pr-2 space-y-2 sm:space-y-3 scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-zinc-900">
           {atividades.map((atividade) => {
             const IconeComponent = getIcone(atividade.icone);
-            const tipoInfo = getTipoTexto(atividade.tipo);
+            const tipoInfo = getTipoTexto(atividade.tipo, t);
 
             return (
               <div
@@ -193,7 +197,7 @@ export function AtividadesRecentes() {
                     <span>
                       {formatDistanceToNow(new Date(atividade.createdAt), {
                         addSuffix: true,
-                        locale: ptBR,
+                        locale: dateLocale,
                       })}
                     </span>
                   </div>

@@ -1,10 +1,11 @@
 'use client';
 
 import { format, addWeeks, subWeeks, addMonths, subMonths, addYears, subYears, startOfWeek, startOfMonth, startOfYear } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { ptBR, enUS } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight, Calendar, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
+import { useTranslations, useLocale } from 'next-intl';
 
 type ViewType = 'day' | 'week' | 'month' | 'year';
 
@@ -18,6 +19,10 @@ interface CalendarToolbarProps {
 }
 
 export function CalendarToolbar({ currentDate, view, onDateChange, onViewChange, onToday, onRefresh }: CalendarToolbarProps) {
+  const t = useTranslations('agenda');
+  const locale = useLocale();
+  const dateLocale = locale === 'pt' ? ptBR : enUS;
+
   const [isSyncing, setIsSyncing] = useState(false);
 
   const handleSync = async () => {
@@ -81,12 +86,12 @@ export function CalendarToolbar({ currentDate, view, onDateChange, onViewChange,
   const getDateLabel = () => {
     switch (view) {
       case 'day':
-        return format(currentDate, "d 'de' MMMM 'de' yyyy", { locale: ptBR });
+        return format(currentDate, "d 'de' MMMM 'de' yyyy", { locale: dateLocale });
       case 'week':
         const weekStart = startOfWeek(currentDate, { weekStartsOn: 0 });
-        return format(weekStart, "MMMM 'de' yyyy", { locale: ptBR });
+        return format(weekStart, "MMMM 'de' yyyy", { locale: dateLocale });
       case 'month':
-        return format(startOfMonth(currentDate), "MMMM 'de' yyyy", { locale: ptBR });
+        return format(startOfMonth(currentDate), "MMMM 'de' yyyy", { locale: dateLocale });
       case 'year':
         return format(startOfYear(currentDate), 'yyyy');
     }
@@ -128,7 +133,7 @@ export function CalendarToolbar({ currentDate, view, onDateChange, onViewChange,
             size="icon"
             onClick={onToday}
             className="hover:bg-zinc-800 h-8 w-8 sm:h-9 sm:w-9"
-            title="Hoje"
+            title={t('today')}
           >
             <Calendar className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
           </Button>
@@ -140,7 +145,7 @@ export function CalendarToolbar({ currentDate, view, onDateChange, onViewChange,
               onClick={handleSync}
               disabled={isSyncing}
               className="hover:bg-zinc-800 h-8 w-8 sm:h-9 sm:w-9"
-              title={isSyncing ? 'Sincronizando...' : 'Sincronizar'}
+              title={isSyncing ? t('synchronizing') : t('synchronize')}
             >
               <RefreshCw className={`w-4 h-4 sm:w-4.5 sm:h-4.5 ${isSyncing ? 'animate-spin' : ''}`} />
             </Button>
@@ -160,7 +165,7 @@ export function CalendarToolbar({ currentDate, view, onDateChange, onViewChange,
               : 'text-gray-400 hover:text-white hover:bg-zinc-700'
           }`}
         >
-          Dia
+          {t('day')}
         </Button>
         <Button
           variant="ghost"
@@ -172,7 +177,7 @@ export function CalendarToolbar({ currentDate, view, onDateChange, onViewChange,
               : 'text-gray-400 hover:text-white hover:bg-zinc-700'
           }`}
         >
-          Semana
+          {t('week')}
         </Button>
         <Button
           variant="ghost"
@@ -184,7 +189,7 @@ export function CalendarToolbar({ currentDate, view, onDateChange, onViewChange,
               : 'text-gray-400 hover:text-white hover:bg-zinc-700'
           }`}
         >
-          Mês
+          {t('month')}
         </Button>
         <Button
           variant="ghost"
@@ -196,7 +201,7 @@ export function CalendarToolbar({ currentDate, view, onDateChange, onViewChange,
               : 'text-gray-400 hover:text-white hover:bg-zinc-700'
           }`}
         >
-          Ano
+          {t('year')}
         </Button>
       </div>
     </div>

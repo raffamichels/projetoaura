@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import {
   LayoutDashboard,
   Calendar,
@@ -20,17 +21,6 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { useState, useEffect } from 'react';
 
-const menuItems = [
-  { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' },
-  { icon: Calendar, label: 'Agenda', href: '/dashboard/agenda'},
-  { icon: Wallet, label: 'Financeiro', href: '/dashboard/financeiro' },
-  { icon: BookOpen, label: 'Estudos', href: '/dashboard/estudos' },
-  { icon: Library, label: 'Biblioteca', href: '/dashboard/biblioteca' },
-  { icon: Target, label: 'Metas', href: '/dashboard/metas', badge: 'Em breve', premium: true },
-  { icon: Dumbbell, label: 'Treinos', href: '/dashboard/treinos', badge: 'Em breve', premium: true },
-  { icon: Plane, label: 'Viagens', href: '/dashboard/viagens', badge: 'Em breve', premium: true },
-];
-
 interface SidebarProps {
   isMobile?: boolean;
   onNavigate?: () => void;
@@ -40,6 +30,19 @@ export function Sidebar({ isMobile = false, onNavigate }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const t = useTranslations('sidebar');
+  const tCommon = useTranslations('common');
+
+  const menuItems = [
+    { icon: LayoutDashboard, label: t('dashboard'), href: '/dashboard' },
+    { icon: Calendar, label: t('agenda'), href: '/dashboard/agenda'},
+    { icon: Wallet, label: t('financial'), href: '/dashboard/financeiro' },
+    { icon: BookOpen, label: t('studies'), href: '/dashboard/estudos' },
+    { icon: Library, label: t('library'), href: '/dashboard/biblioteca' },
+    { icon: Target, label: t('goals'), href: '/dashboard/metas', badge: tCommon('comingSoon'), premium: true },
+    { icon: Dumbbell, label: t('workouts'), href: '/dashboard/treinos', badge: tCommon('comingSoon'), premium: true },
+    { icon: Plane, label: t('travels'), href: '/dashboard/viagens', badge: tCommon('comingSoon'), premium: true },
+  ];
 
   useEffect(() => {
     if (typeof document !== 'undefined') {
@@ -57,7 +60,7 @@ export function Sidebar({ isMobile = false, onNavigate }: SidebarProps) {
               Aura
             </span>
           </h1>
-          <p className="text-xs text-gray-500 mt-1">Gerenciamento Pessoal</p>
+          <p className="text-xs text-gray-500 mt-1">{t('personalManagement')}</p>
         </div>
         {isCollapsed && (
           <h1 className="text-2xl font-extrabold mx-auto">
@@ -69,7 +72,7 @@ export function Sidebar({ isMobile = false, onNavigate }: SidebarProps) {
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
           className="text-gray-400 hover:text-white transition-colors p-1 hover:bg-zinc-800 rounded"
-          aria-label={isCollapsed ? 'Expandir sidebar' : 'Minimizar sidebar'}
+          aria-label={isCollapsed ? t('expandSidebar') : t('collapseSidebar')}
         >
           {isCollapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
         </button>
@@ -125,15 +128,15 @@ export function Sidebar({ isMobile = false, onNavigate }: SidebarProps) {
           <div className="bg-gradient-to-br from-aura-500/10 to-blue-500/10 border border-aura-500/20 rounded-xl p-4">
             <div className="flex items-center gap-2 mb-2">
               <Crown className="w-5 h-5 text-yellow-500" />
-              <h3 className="font-semibold text-sm">Plano FREE</h3>
+              <h3 className="font-semibold text-sm">{t('freePlan')}</h3>
             </div>
             <p className="text-xs text-gray-400 mb-3">
-              Desbloqueie recursos premium
+              {t('unlockPremiumFeatures')}
             </p>
             <button
               onClick={() => router.push('/premium')}
               className="w-full bg-gradient-to-r from-aura-500 to-blue-500 hover:from-aura-600 hover:to-blue-600 text-white text-sm font-medium py-2 rounded-lg transition-all">
-              Fazer Upgrade
+              {t('upgrade')}
             </button>
           </div>
         </div>
@@ -144,7 +147,7 @@ export function Sidebar({ isMobile = false, onNavigate }: SidebarProps) {
           <button
             onClick={() => router.push('/premium')}
             className="bg-gradient-to-r from-aura-500 to-blue-500 hover:from-aura-600 hover:to-blue-600 text-white p-2 rounded-lg transition-all"
-            title="Fazer Upgrade">
+            title={t('upgrade')}>
             <Crown className="w-5 h-5 text-yellow-500" />
           </button>
         </div>
@@ -156,11 +159,11 @@ export function Sidebar({ isMobile = false, onNavigate }: SidebarProps) {
           href="/dashboard/settings"
           onClick={onNavigate}
           className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:text-white hover:bg-zinc-800/50 transition-all ${isCollapsed ? 'justify-center' : ''}`}
-          title={isCollapsed ? 'Configurações' : ''}
+          title={isCollapsed ? t('settings') : ''}
         >
           <Settings className="w-5 h-5" />
           {!isCollapsed && (
-            <span className="font-medium text-sm">Configurações</span>
+            <span className="font-medium text-sm">{t('settings')}</span>
           )}
         </Link>
       </div>

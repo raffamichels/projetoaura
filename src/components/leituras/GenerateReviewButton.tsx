@@ -74,27 +74,45 @@ export function GenerateReviewButton({
     }
   }
 
+  // Verifica se o usuário é premium
+  const plano = (session?.user?.plano as PlanoUsuario) || PlanoUsuario.FREE
+  const planoExpiraEm = session?.user?.planoExpiraEm
+  const acessoRecurso = verificarAcessoRecurso(
+    plano,
+    planoExpiraEm,
+    RecursoPremium.GERAR_RESENHA_IA
+  )
+  const isPremium = acessoRecurso.temAcesso
+
   return (
     <>
-      <Button
-        onClick={handleGenerate}
-        disabled={isGenerating || disabled}
-        variant="default"
-        size="sm"
-        className="gap-2"
-      >
-        {isGenerating ? (
-          <>
-            <Loader2 className="h-4 w-4 animate-spin" />
-            Gerando resenha...
-          </>
-        ) : (
-          <>
-            <Sparkles className="h-4 w-4" />
-            Gerar Resenha
-          </>
+      <div className="relative">
+        {/* Coroa indicando recurso premium - aparece apenas para usuários FREE */}
+        {!isGenerating && !isPremium && (
+          <Crown className="w-3 h-3 text-yellow-400 absolute -top-1 -right-1 z-10" />
         )}
-      </Button>
+
+        <Button
+          onClick={handleGenerate}
+          disabled={isGenerating || disabled}
+          variant="default"
+          size="sm"
+          className="gap-2"
+          title={isGenerating ? 'Gerando resenha...' : !isPremium ? 'Premium - Clique para fazer upgrade' : 'Gerar Resenha com IA'}
+        >
+          {isGenerating ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Gerando resenha...
+            </>
+          ) : (
+            <>
+              <Sparkles className="h-4 w-4" />
+              Gerar Resenha
+            </>
+          )}
+        </Button>
+      </div>
 
       <UpgradeToPremiumModal
         open={showUpgradeModal}

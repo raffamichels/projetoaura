@@ -4,6 +4,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { TipoRecorrencia } from '@/types/compromisso';
 import { Calendar, RefreshCw } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface RecorrenciaConfigProps {
   isRecorrente: boolean;
@@ -26,20 +27,41 @@ export function RecorrenciaConfig({
   onIntervaloChange,
   onDataFimChange,
 }: RecorrenciaConfigProps) {
-  
+  const t = useTranslations('agenda');
+
   const tiposRecorrencia = [
-    { value: 'diario', label: 'Diariamente', icon: '📅' },
-    { value: 'semanal', label: 'Semanalmente', icon: '📆' },
-    { value: 'mensal', label: 'Mensalmente', icon: '🗓️' },
-    { value: 'anual', label: 'Anualmente', icon: '📋' },
+    { value: 'diario', label: t('daily'), icon: '📅' },
+    { value: 'semanal', label: t('weekly'), icon: '📆' },
+    { value: 'mensal', label: t('monthly'), icon: '🗓️' },
+    { value: 'anual', label: t('yearly'), icon: '📋' },
   ];
 
   const getTextoIntervalo = () => {
     switch (tipoRecorrencia) {
-      case 'diario': return 'dia(s)';
-      case 'semanal': return 'semana(s)';
-      case 'mensal': return 'mês(es)';
-      case 'anual': return 'ano(s)';
+      case 'diario': return t('daily').toLowerCase();
+      case 'semanal': return t('weekly').toLowerCase();
+      case 'mensal': return t('monthly').toLowerCase();
+      case 'anual': return t('yearly').toLowerCase();
+      default: return '';
+    }
+  };
+
+  const getTextoRepeteSingular = () => {
+    switch (tipoRecorrencia) {
+      case 'diario': return t('repeatsSingleDay');
+      case 'semanal': return t('repeatsSingleWeek');
+      case 'mensal': return t('repeatsSingleMonth');
+      case 'anual': return t('repeatsSingleYear');
+      default: return '';
+    }
+  };
+
+  const getTextoRepetePlural = () => {
+    switch (tipoRecorrencia) {
+      case 'diario': return t('repeatsEveryDays', { count: intervaloRecorrencia });
+      case 'semanal': return t('repeatsEveryWeeks', { count: intervaloRecorrencia });
+      case 'mensal': return t('repeatsEveryMonths', { count: intervaloRecorrencia });
+      case 'anual': return t('repeatsEveryYears', { count: intervaloRecorrencia });
       default: return '';
     }
   };
@@ -51,7 +73,7 @@ export function RecorrenciaConfig({
         <div className="flex items-center gap-2">
           <RefreshCw className="w-4 h-4 text-aura-400" />
           <Label className="text-gray-300 font-semibold">
-            Compromisso Recorrente
+            {t('recurringAppointment')}
           </Label>
         </div>
         <button
@@ -76,7 +98,7 @@ export function RecorrenciaConfig({
         <div className="space-y-4 pt-2 border-t border-zinc-700">
           {/* Tipo de Recorrência */}
           <div className="space-y-2">
-            <Label className="text-gray-300 text-sm">Repetir</Label>
+            <Label className="text-gray-300 text-sm">{t('repeat')}</Label>
             <div className="grid grid-cols-2 gap-2">
               {tiposRecorrencia.map((tipo) => (
                 <button
@@ -102,7 +124,7 @@ export function RecorrenciaConfig({
           {/* Intervalo */}
           <div className="space-y-2">
             <Label className="text-gray-300 text-sm">
-              A cada
+              {t('every')}
             </Label>
             <div className="flex items-center gap-2">
               <Input
@@ -116,9 +138,9 @@ export function RecorrenciaConfig({
               <span className="text-gray-400 text-sm">{getTextoIntervalo()}</span>
             </div>
             <p className="text-xs text-gray-500">
-              {intervaloRecorrencia === 1 
-                ? `Repete todo(a) ${tipoRecorrencia === 'diario' ? 'dia' : tipoRecorrencia === 'semanal' ? 'semana' : tipoRecorrencia === 'mensal' ? 'mês' : 'ano'}`
-                : `Repete a cada ${intervaloRecorrencia} ${getTextoIntervalo()}`
+              {intervaloRecorrencia === 1
+                ? getTextoRepeteSingular()
+                : getTextoRepetePlural()
               }
             </p>
           </div>
@@ -126,7 +148,7 @@ export function RecorrenciaConfig({
           {/* Data de Término (Opcional) */}
           <div className="space-y-2">
             <Label className="text-gray-300 text-sm">
-              Termina em (opcional)
+              {t('endsOn')}
             </Label>
             <div className="flex items-center gap-2">
               <Calendar className="w-4 h-4 text-gray-400" />
@@ -138,9 +160,9 @@ export function RecorrenciaConfig({
               />
             </div>
             <p className="text-xs text-gray-500">
-              {dataFimRecorrencia 
-                ? 'Os compromissos serão criados até esta data'
-                : 'Sem data de término (cria até 1 ano no futuro)'
+              {dataFimRecorrencia
+                ? t('appointmentsUntilDate')
+                : t('noEndDate')
               }
             </p>
           </div>

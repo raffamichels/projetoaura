@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { Menu, Bell, Crown, User, Settings, LogOut, Sparkles } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -22,11 +23,13 @@ import {
 } from '@/components/ui/sheet';
 import { Sidebar } from './Sidebar';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
 
 export function Header() {
   const { data: session } = useSession();
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const t = useTranslations('header');
 
   // Sempre usar o valor mais recente da sessão diretamente
   const currentPlano = session?.user?.plano || 'FREE';
@@ -55,7 +58,7 @@ export function Header() {
             </SheetTrigger>
             <SheetContent side="left" className="p-0 w-64 bg-zinc-900 border-zinc-800">
               <VisuallyHidden>
-                <SheetTitle>Menu de Navegação</SheetTitle>
+                <SheetTitle>{t('navigationMenu')}</SheetTitle>
               </VisuallyHidden>
               <Sidebar isMobile onNavigate={() => setSidebarOpen(false)} />
             </SheetContent>
@@ -69,6 +72,9 @@ export function Header() {
 
         {/* Right Side */}
         <div className="flex items-center gap-0.5 sm:gap-1 md:gap-2">
+          {/* Language Switcher */}
+          <LanguageSwitcher />
+
           {/* Notificações */}
           <Button variant="ghost" size="icon" className="relative hover:bg-zinc-800 h-8 w-8 sm:h-9 sm:w-9">
             <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -109,7 +115,7 @@ export function Header() {
                           ? 'bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent'
                           : 'text-gray-400'
                       }`}>
-                        Plano {currentPlano || 'FREE'}
+                        {t('plan')} {currentPlano || 'FREE'}
                       </span>
                     </div>
                   </div>
@@ -126,8 +132,8 @@ export function Header() {
                     <User className="w-4 h-4 text-aura-400" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-white">Meu Perfil</p>
-                    <p className="text-xs text-gray-500">Ver e editar informações</p>
+                    <p className="text-sm font-medium text-white">{t('myProfile')}</p>
+                    <p className="text-xs text-gray-500">{t('viewAndEdit')}</p>
                   </div>
                 </DropdownMenuItem>
 
@@ -139,8 +145,8 @@ export function Header() {
                     <Settings className="w-4 h-4 text-blue-400" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-white">Configurações</p>
-                    <p className="text-xs text-gray-500">Preferências do sistema</p>
+                    <p className="text-sm font-medium text-white">{t('settings')}</p>
+                    <p className="text-xs text-gray-500">{t('systemPreferences')}</p>
                   </div>
                 </DropdownMenuItem>
               </div>
@@ -159,8 +165,8 @@ export function Header() {
                         <Sparkles className="w-4 h-4 text-yellow-500" />
                       </div>
                       <div className="flex-1">
-                        <p className="text-sm font-semibold bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">Fazer Upgrade</p>
-                        <p className="text-xs text-gray-500">Desbloquear recursos premium</p>
+                        <p className="text-sm font-semibold bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">{t('upgrade')}</p>
+                        <p className="text-xs text-gray-500">{t('unlockPremium')}</p>
                       </div>
                     </DropdownMenuItem>
                   </div>
@@ -178,8 +184,8 @@ export function Header() {
                     <LogOut className="w-4 h-4 text-red-400" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-red-400">Sair</p>
-                    <p className="text-xs text-gray-500">Encerrar sessão</p>
+                    <p className="text-sm font-medium text-red-400">{t('logout')}</p>
+                    <p className="text-xs text-gray-500">{t('endSession')}</p>
                   </div>
                 </DropdownMenuItem>
               </div>

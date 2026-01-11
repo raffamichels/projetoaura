@@ -1,6 +1,8 @@
 import { SessionProvider } from '@/components/providers/SessionProvider';
+import { IntlProvider } from '@/components/providers/IntlProvider';
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { getMessages } from 'next-intl/server';
 import "./globals.css";
 
 const geistSans = Geist({
@@ -18,18 +20,22 @@ export const metadata: Metadata = {
   description: "Sistema completo de gerenciamento pessoal",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const messages = await getMessages();
+
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="pt" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <SessionProvider>
-          {children}
+          <IntlProvider initialMessages={messages}>
+            {children}
+          </IntlProvider>
         </SessionProvider>
       </body>
     </html>

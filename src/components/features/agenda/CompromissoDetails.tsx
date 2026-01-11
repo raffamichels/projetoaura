@@ -5,10 +5,11 @@ import { Compromisso } from '@/types/compromisso';
 import { Button } from '@/components/ui/button';
 import { Calendar, Clock, Tag, Edit, Trash2, RefreshCw } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { ptBR, enUS } from 'date-fns/locale';
 import { RecurrenceActionModal } from '@/components/features/agenda/RecurrenceActionModal';
 import { getDescricaoRecorrencia } from '@/lib/recorrencia-utils';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
+import { useTranslations, useLocale } from 'next-intl';
 
 interface CompromissoDetailsProps {
   compromisso: Compromisso;
@@ -23,6 +24,10 @@ export function CompromissoDetails({
   onDelete,
   onClose
 }: CompromissoDetailsProps) {
+  const t = useTranslations('agenda');
+  const locale = useLocale();
+  const dateLocale = locale === 'pt' ? ptBR : enUS;
+
   const [showRecurrenceModal, setShowRecurrenceModal] = useState(false);
   const [recurrenceAction, setRecurrenceAction] = useState<'edit' | 'delete'>('delete');
   const [isDeleting, setIsDeleting] = useState(false);
@@ -115,7 +120,8 @@ export function CompromissoDetails({
             <span className="text-[10px] sm:text-xs text-aura-400 font-medium">
               {getDescricaoRecorrencia(
                 compromisso.tipoRecorrencia ?? 'semanal',
-                compromisso.intervaloRecorrencia || 1
+                compromisso.intervaloRecorrencia || 1,
+                t
               )}
             </span>
           </div>
@@ -127,7 +133,7 @@ export function CompromissoDetails({
           <div className="flex items-center gap-2 text-xs sm:text-sm">
             <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 flex-shrink-0" />
             <span className="text-gray-300">
-              {format(parseISO(compromisso.data), "EEEE, d 'de' MMMM 'de' yyyy", { locale: ptBR })}
+              {format(parseISO(compromisso.data), "EEEE, d 'de' MMMM 'de' yyyy", { locale: dateLocale })}
             </span>
           </div>
 
@@ -144,14 +150,14 @@ export function CompromissoDetails({
           {compromisso.categoria && (
             <div className="flex items-center gap-2 text-xs sm:text-sm">
               <Tag className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 flex-shrink-0" />
-              <span className="text-gray-300 capitalize">{compromisso.categoria}</span>
+              <span className="text-gray-300 capitalize">{t(compromisso.categoria as any)}</span>
             </div>
           )}
 
           {/* Informação adicional sobre recorrência */}
           {compromisso.isRecorrente && compromisso.dataFimRecorrencia && (
             <div className="text-[10px] sm:text-xs text-gray-500 pt-2 border-t border-zinc-800">
-              Repete até {format(parseISO(compromisso.dataFimRecorrencia), "dd/MM/yyyy")}
+              {t('repeatsUntil', { date: format(parseISO(compromisso.dataFimRecorrencia), "dd/MM/yyyy") })}
             </div>
           )}
         </div>
@@ -164,7 +170,7 @@ export function CompromissoDetails({
             disabled={isDeleting}
           >
             <Edit className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
-            Editar
+            {t('edit')}
           </Button>
           <Button
             onClick={handleDeleteClick}
@@ -173,7 +179,7 @@ export function CompromissoDetails({
             disabled={isDeleting}
           >
             <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
-            {isDeleting ? 'Excluindo...' : 'Excluir'}
+            {isDeleting ? t('deleting') : t('delete')}
           </Button>
         </div>
       </div>
@@ -192,10 +198,10 @@ export function CompromissoDetails({
         open={modalExcluir}
         onClose={() => setModalExcluir(false)}
         onConfirm={confirmarExcluir}
-        title="Excluir Compromisso"
-        description="Tem certeza que deseja excluir este compromisso? Ele será removido permanentemente da sua agenda. Esta ação não pode ser desfeita."
-        confirmText="Excluir Compromisso"
-        cancelText="Cancelar"
+        title={t('deleteAppointment')}
+        description={t('deleteConfirmation')}
+        confirmText={t('deleteAppointment')}
+        cancelText={t('cancel')}
         variant="danger"
       />
     </>

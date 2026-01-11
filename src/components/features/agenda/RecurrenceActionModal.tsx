@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { RefreshCw, Calendar } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface RecurrenceActionModalProps {
   isOpen: boolean;
@@ -25,7 +26,7 @@ export function RecurrenceActionModal({
   onConfirm,
   compromissoTitulo,
 }: RecurrenceActionModalProps) {
-  
+  const t = useTranslations('agenda');
   const isEdit = action === 'edit';
   
   return (
@@ -34,16 +35,16 @@ export function RecurrenceActionModal({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <RefreshCw className="w-5 h-5 text-aura-400" />
-            {isEdit ? 'Editar Compromisso Recorrente' : 'Excluir Compromisso Recorrente'}
+            {isEdit ? t('editRecurring') : t('deleteRecurring')}
           </DialogTitle>
           <DialogDescription className="text-gray-400">
-            {compromissoTitulo} faz parte de uma série recorrente.
+            {t('partOfSeries', { title: compromissoTitulo })}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
           <p className="text-sm text-gray-300">
-            Como você deseja {isEdit ? 'editar' : 'excluir'} este compromisso?
+            {isEdit ? t('howToEdit') : t('howToDelete')}
           </p>
 
           {/* Opção 1: Apenas este */}
@@ -55,12 +56,12 @@ export function RecurrenceActionModal({
               <Calendar className="w-5 h-5 text-gray-400 group-hover:text-aura-400 mt-0.5" />
               <div>
                 <h4 className="font-semibold text-white group-hover:text-aura-400 mb-1">
-                  Apenas este compromisso
+                  {t('onlyThis')}
                 </h4>
                 <p className="text-sm text-gray-400">
-                  {isEdit 
-                    ? 'Modifica somente esta ocorrência. As demais permanecerão inalteradas.'
-                    : 'Remove somente esta ocorrência. As demais permanecerão na agenda.'
+                  {isEdit
+                    ? t('onlyThisEditDesc')
+                    : t('onlyThisDeleteDesc')
                   }
                 </p>
               </div>
@@ -76,12 +77,12 @@ export function RecurrenceActionModal({
               <RefreshCw className="w-5 h-5 text-gray-400 group-hover:text-aura-400 mt-0.5" />
               <div>
                 <h4 className="font-semibold text-white group-hover:text-aura-400 mb-1">
-                  Este e todos os futuros
+                  {t('thisAndFuture')}
                 </h4>
                 <p className="text-sm text-gray-400">
-                  {isEdit 
-                    ? 'Modifica esta ocorrência e todas as próximas da série.'
-                    : 'Remove esta ocorrência e todas as próximas da série.'
+                  {isEdit
+                    ? t('thisAndFutureEditDesc')
+                    : t('thisAndFutureDeleteDesc')
                   }
                 </p>
               </div>
@@ -95,7 +96,7 @@ export function RecurrenceActionModal({
             onClick={onClose}
             className="border-zinc-700 hover:bg-zinc-800"
           >
-            Cancelar
+            {t('cancel')}
           </Button>
         </div>
       </DialogContent>

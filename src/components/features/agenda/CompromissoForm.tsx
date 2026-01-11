@@ -12,6 +12,7 @@ import { UpgradeToPremiumModal } from '@/components/planos/UpgradeToPremiumModal
 import { verificarAcessoRecurso } from '@/lib/planos-helper';
 import { RecursoPremium, PlanoUsuario } from '@/types/planos';
 import { Crown } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface CompromissoFormProps {
   onClose: () => void;
@@ -21,17 +22,18 @@ interface CompromissoFormProps {
   initialData?: Compromisso | null;
 }
 
-const categorias = [
-  { value: 'trabalho', label: 'Trabalho', cor: '#8B5CF6' },
-  { value: 'pessoal', label: 'Pessoal', cor: '#3B82F6' },
-  { value: 'saude', label: 'Saúde', cor: '#10B981' },
-  { value: 'estudo', label: 'Estudo', cor: '#F97316' },
-  { value: 'lazer', label: 'Lazer', cor: '#EC4899' },
-  { value: 'outro', label: 'Outro', cor: '#6B7280' },
-];
-
 export function CompromissoForm({ onClose, onSave, initialDate, initialHour, initialData }: CompromissoFormProps) {
+  const t = useTranslations('agenda');
   const isEditMode = !!initialData;
+
+  const categorias = [
+    { value: 'trabalho', label: t('work'), cor: '#8B5CF6' },
+    { value: 'pessoal', label: t('personal'), cor: '#3B82F6' },
+    { value: 'saude', label: t('health'), cor: '#10B981' },
+    { value: 'estudo', label: t('study'), cor: '#F97316' },
+    { value: 'lazer', label: t('leisure'), cor: '#EC4899' },
+    { value: 'outro', label: t('other'), cor: '#6B7280' },
+  ];
   
   const [titulo, setTitulo] = useState(initialData?.titulo || '');
   const [descricao, setDescricao] = useState(initialData?.descricao || '');
@@ -150,13 +152,13 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
       {/* Título */}
       <div className="space-y-1.5 sm:space-y-2">
         <Label htmlFor="titulo" className="text-gray-300 text-sm sm:text-base">
-          Título *
+          {t('titleLabel')}
         </Label>
         <Input
           id="titulo"
           value={titulo}
           onChange={(e) => setTitulo(e.target.value)}
-          placeholder="Ex: Reunião com cliente"
+          placeholder={t('titlePlaceholder')}
           required
           className="bg-zinc-800/50 border-zinc-700 text-white text-sm sm:text-base h-9 sm:h-10"
         />
@@ -165,13 +167,13 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
       {/* Descrição */}
       <div className="space-y-1.5 sm:space-y-2">
         <Label htmlFor="descricao" className="text-gray-300 text-sm sm:text-base">
-          Descrição
+          {t('descriptionLabel')}
         </Label>
         <textarea
           id="descricao"
           value={descricao}
           onChange={(e) => setDescricao(e.target.value)}
-          placeholder="Adicione detalhes sobre o compromisso..."
+          placeholder={t('descriptionPlaceholder')}
           rows={3}
           className="w-full px-2 sm:px-3 py-1.5 sm:py-2 bg-zinc-800/50 border border-zinc-700 rounded-lg text-white text-sm sm:text-base placeholder:text-gray-500 focus:border-aura-500 focus:ring-1 focus:ring-aura-500 resize-none"
         />
@@ -180,7 +182,7 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
       {/* Data */}
       <div className="space-y-1.5 sm:space-y-2">
         <Label htmlFor="data" className="text-gray-300 text-sm sm:text-base">
-          Data {isRecorrente && '(data inicial)'}*
+          {t('dateLabel')}
         </Label>
         <Input
           id="data"
@@ -196,7 +198,7 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
       <div className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-4">
         <div className="space-y-1.5 sm:space-y-2">
           <Label htmlFor="horaInicio" className="text-gray-300 text-sm sm:text-base">
-            Início *
+            {t('startTimeLabel')}
           </Label>
           <Input
             id="horaInicio"
@@ -209,7 +211,7 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
         </div>
         <div className="space-y-1.5 sm:space-y-2">
           <Label htmlFor="horaFim" className="text-gray-300 text-sm sm:text-base">
-            Término
+            {t('endTimeLabel')}
           </Label>
           <Input
             id="horaFim"
@@ -223,7 +225,7 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
 
       {/* Categoria */}
       <div className="space-y-1.5 sm:space-y-2">
-        <Label className="text-gray-300 text-sm sm:text-base">Categoria *</Label>
+        <Label className="text-gray-300 text-sm sm:text-base">{t('categoryLabel')}</Label>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 sm:gap-2">
           {categorias.map((cat) => (
             <button
@@ -289,17 +291,17 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
                   <path d="M12 0C5.383 0 0 5.383 0 12s5.383 12 12 12 12-5.383 12-12S18.617 0 12 0zm0 23C5.935 23 1 18.065 1 12S5.935 1 12 1s11 4.935 11 11-4.935 11-11 11z"/>
                   <path d="M12 4.5c-4.136 0-7.5 3.364-7.5 7.5s3.364 7.5 7.5 7.5 7.5-3.364 7.5-7.5-3.364-7.5-7.5-7.5zm0 13.5c-3.309 0-6-2.691-6-6s2.691-6 6-6 6 2.691 6 6-2.691 6-6 6z"/>
                 </svg>
-                Enviar para Google Agenda
+                {t('sendToGoogleCalendar')}
                 {!canSyncGoogle && (
                   <Crown className="w-3 h-3 sm:w-4 sm:h-4 text-purple-400" />
                 )}
               </Label>
               <p className="text-[10px] sm:text-xs text-gray-400 mt-1">
                 {!canSyncGoogle
-                  ? 'Recurso disponível apenas para usuários Premium'
+                  ? t('premiumFeatureOnly')
                   : syncWithGoogle
-                  ? 'Este compromisso será sincronizado com sua agenda do Google'
-                  : 'Ative para adicionar este compromisso ao Google Calendar'}
+                  ? t('willBeSynced')
+                  : t('activateToAddGoogle')}
               </p>
             </div>
           </div>
@@ -310,8 +312,7 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
       {isEditMode && initialData?.isRecorrente && (
         <div className="p-2 sm:p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
           <p className="text-[10px] sm:text-xs text-yellow-400">
-            ⚠️ Este compromisso faz parte de uma série recorrente.
-            Ao salvar, você será perguntado se deseja atualizar apenas este ou todos os futuros.
+            ⚠️ {t('recurringEditWarning')}
           </p>
         </div>
       )}
@@ -325,7 +326,7 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
           className="flex-1 h-9 sm:h-10 text-sm sm:text-base"
           disabled={loading}
         >
-          Cancelar
+          {t('cancel')}
         </Button>
         <Button
           type="submit"
@@ -333,8 +334,8 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
           disabled={loading}
         >
           {loading
-            ? (isEditMode ? 'Atualizando...' : 'Salvando...')
-            : (isEditMode ? 'Atualizar' : 'Salvar')}
+            ? (isEditMode ? t('updating') : `${t('save').slice(0, -1)}ando...`)
+            : (isEditMode ? t('update') : t('save'))}
         </Button>
       </div>
 
@@ -342,8 +343,8 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
       <UpgradeToPremiumModal
         open={showUpgradeModal}
         onClose={() => setShowUpgradeModal(false)}
-        recurso="Sincronização com Google Calendar"
-        descricao="A sincronização automática com o Google Calendar está disponível apenas para usuários Premium."
+        recurso={t('googleCalendarSync')}
+        descricao={t('googleSyncPremium')}
       />
     </form>
   );

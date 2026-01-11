@@ -19,11 +19,14 @@ import { CalendarToolbar } from '@/components/features/agenda/CalendarToolbar';
 import { Compromisso } from '@/types/compromisso';
 import { format } from 'date-fns';
 import { CompromissoDetails } from '@/components/features/agenda/CompromissoDetails';
+import { useTranslations } from 'next-intl';
 
 type ViewType = 'day' | 'week' | 'month' | 'year';
 
 function AgendaPageContent() {
   const searchParams = useSearchParams();
+  const t = useTranslations('agenda');
+
   // Detectar se é dispositivo móvel e definir view padrão
   const [view, setView] = useState<ViewType>(() => {
     if (typeof window !== 'undefined') {
@@ -113,7 +116,7 @@ function AgendaPageContent() {
     <div className="flex flex-col h-full p-4 lg:p-6 overflow-hidden">
       {/* Header compacto - apenas mobile */}
       <div className="md:hidden flex items-center justify-between gap-2 p-3 border-b border-zinc-800 bg-zinc-900/80 backdrop-blur-sm shrink-0">
-        <h1 className="text-lg font-bold text-white">Agenda</h1>
+        <h1 className="text-lg font-bold text-white">{t('title')}</h1>
         <Button
           onClick={() => {
             setSelectedDate(null);
@@ -126,13 +129,13 @@ function AgendaPageContent() {
           className="bg-purple-600 hover:bg-purple-700 h-8"
         >
           <Plus className="w-3.5 h-3.5 mr-1.5" />
-          Novo
+          {t('new')}
         </Button>
       </div>
 
       {/* Header desktop - integrado */}
       <div className="hidden md:flex items-center justify-between gap-3 px-4 py-2 border-b border-zinc-800 bg-zinc-900/80 backdrop-blur-sm shrink-0">
-        <h1 className="text-xl font-bold text-white">Agenda</h1>
+        <h1 className="text-xl font-bold text-white">{t('title')}</h1>
         <Button
           onClick={() => {
             setSelectedDate(null);
@@ -144,7 +147,7 @@ function AgendaPageContent() {
           className="bg-purple-600 hover:bg-purple-700 h-9"
         >
           <Plus className="w-4 h-4 mr-2" />
-          Novo Compromisso
+          {t('newAppointment')}
         </Button>
       </div>
 
@@ -154,7 +157,7 @@ function AgendaPageContent() {
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-aura-500 mx-auto mb-4"></div>
-              <p className="text-gray-400">Carregando calendário...</p>
+              <p className="text-gray-400">{t('loadingCalendar')}</p>
             </div>
           </div>
         ) : view === 'day' ? (
@@ -204,9 +207,9 @@ function AgendaPageContent() {
             <div className="flex items-center justify-center h-full">
               <div className="text-center">
                 <p className="text-xl font-semibold text-white mb-2">
-                  Visualização de {view === 'month' ? 'Mês' : 'Ano'}
+                  {view === 'month' ? t('monthView') : t('yearView')}
                 </p>
-                <p className="text-gray-400">Em desenvolvimento</p>
+                <p className="text-gray-400">{t('common.comingSoon', { ns: 'common' })}</p>
               </div>
             </div>
           </>
@@ -217,9 +220,9 @@ function AgendaPageContent() {
       <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen} modal={false}>
         <DialogContent className="bg-zinc-900 border-zinc-800 text-white w-[95vw] max-w-[500px] sm:max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-base sm:text-lg">Detalhes do Compromisso</DialogTitle>
+            <DialogTitle className="text-base sm:text-lg">{t('appointmentDetails')}</DialogTitle>
             <DialogDescription className="text-gray-400 text-xs sm:text-sm">
-              Visualize e gerencie seu compromisso
+              {t('viewAndManage')}
             </DialogDescription>
           </DialogHeader>
           {selectedCompromisso && (
@@ -239,13 +242,13 @@ function AgendaPageContent() {
           <DialogHeader>
             <DialogTitle className="text-base sm:text-lg">
               {isEditMode
-                ? 'Editar Compromisso'
+                ? t('editAppointment')
                 : selectedDate && selectedHour !== null
-                  ? `Novo Compromisso - ${format(selectedDate, 'dd/MM/yyyy')} às ${String(selectedHour).padStart(2, '0')}:00`
-                  : 'Novo Compromisso'}
+                  ? `${t('newAppointment')} - ${format(selectedDate, 'dd/MM/yyyy')} ${t('startTimeLabel').replace(' *', '')} ${String(selectedHour).padStart(2, '0')}:00`
+                  : t('newAppointment')}
             </DialogTitle>
             <DialogDescription className="text-gray-400 text-xs sm:text-sm">
-              {isEditMode ? 'Atualize as informações do compromisso' : 'Preencha os detalhes do seu compromisso'}
+              {isEditMode ? t('updateInfo') : t('fillDetails')}
             </DialogDescription>
           </DialogHeader>
           <CompromissoForm
@@ -266,8 +269,10 @@ function AgendaPageContent() {
 }
 
 export default function AgendaPage() {
+  const t = useTranslations('common');
+
   return (
-    <Suspense fallback={<div>Carregando...</div>}>
+    <Suspense fallback={<div>{t('loading')}</div>}>
       <AgendaPageContent />
     </Suspense>
   );

@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from '@/components/ui/button';
 import { Crown, Sparkles, Calendar, Check, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 interface UpgradeToPremiumModalProps {
   open: boolean;
@@ -15,9 +16,10 @@ interface UpgradeToPremiumModalProps {
 export function UpgradeToPremiumModal({
   open,
   onClose,
-  recurso = 'Recurso Premium',
-  descricao = 'Este recurso está disponível apenas para usuários Premium.',
+  recurso,
+  descricao,
 }: UpgradeToPremiumModalProps) {
+  const t = useTranslations('premium');
   const router = useRouter();
 
   const handleUpgrade = () => {
@@ -46,41 +48,41 @@ export function UpgradeToPremiumModal({
           <div className="bg-zinc-800/50 border border-zinc-700 rounded-lg p-4">
             <h3 className="font-semibold text-white mb-3 flex items-center gap-2">
               <Crown className="w-5 h-5 text-purple-400" />
-              Recursos Premium
+              {t('features')}
             </h3>
             <div className="space-y-2">
               <div className="flex items-start gap-2 text-sm">
                 <Check className="w-4 h-4 text-green-400 mt-0.5 shrink-0" />
                 <span className="text-zinc-300">
                   <Sparkles className="w-4 h-4 inline mr-1 text-purple-400" />
-                  Geração de resenhas com IA
+                  {t('aiReviews')}
                 </span>
               </div>
               <div className="flex items-start gap-2 text-sm">
                 <Check className="w-4 h-4 text-green-400 mt-0.5 shrink-0" />
                 <span className="text-zinc-300">
                   <Calendar className="w-4 h-4 inline mr-1 text-blue-400" />
-                  Sincronização com Google Calendar
+                  {t('googleCalendar')}
                 </span>
               </div>
               <div className="flex items-start gap-2 text-sm">
                 <Check className="w-4 h-4 text-green-400 mt-0.5 shrink-0" />
-                <span className="text-zinc-300">Temporizador Pomodoro completo</span>
+                <span className="text-zinc-300">{t('pomodoroTimer')}</span>
               </div>
               <div className="flex items-start gap-2 text-sm">
                 <Check className="w-4 h-4 text-green-400 mt-0.5 shrink-0" />
-                <span className="text-zinc-300">Suporte prioritário</span>
+                <span className="text-zinc-300">{t('prioritySupport')}</span>
               </div>
               <div className="flex items-start gap-2 text-sm">
                 <Check className="w-4 h-4 text-green-400 mt-0.5 shrink-0" />
-                <span className="text-zinc-300">Novos recursos em primeira mão</span>
+                <span className="text-zinc-300">{t('earlyAccess')}</span>
               </div>
             </div>
           </div>
 
           <div className="bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/30 rounded-lg p-4 text-center">
-            <div className="text-3xl font-bold text-white mb-1">R$ 12,90</div>
-            <div className="text-sm text-zinc-400">por mês</div>
+            <div className="text-3xl font-bold text-white mb-1">{t('price')}</div>
+            <div className="text-sm text-zinc-400">{t('perMonth')}</div>
           </div>
         </div>
 
@@ -90,14 +92,14 @@ export function UpgradeToPremiumModal({
             onClick={onClose}
             className="flex-1 border-zinc-700 text-zinc-300 hover:bg-zinc-800"
           >
-            Agora Não
+            {t('notNow')}
           </Button>
           <Button
             onClick={handleUpgrade}
             className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold"
           >
             <Crown className="w-4 h-4 mr-2" />
-            Fazer Upgrade
+            {t('upgrade')}
           </Button>
         </div>
       </DialogContent>
