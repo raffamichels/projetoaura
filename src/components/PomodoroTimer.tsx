@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
-import { Timer, Play, Pause, RotateCcw, Settings, X } from 'lucide-react'
+import { Timer, Play, Pause, RotateCcw, Settings, X, Crown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { UpgradeToPremiumModal } from '@/components/planos/UpgradeToPremiumModal'
 import { useSession } from 'next-auth/react'
@@ -37,7 +37,7 @@ export function PomodoroTimer() {
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
   // Verifica se o usuário é premium
-  const isPremium = session?.user?.plano === 'premium'
+  const isPremium = session?.user?.plano === 'premium' || session?.user?.plano === 'PREMIUM'
 
   // Carrega configurações do localStorage
   useEffect(() => {
@@ -367,16 +367,19 @@ export function PomodoroTimer() {
           <div className="flex items-center gap-2">
             <button
               onClick={toggleTimer}
-              className={`p-2 rounded-lg font-medium text-white transition-all ${
+              className={`relative p-2 rounded-lg font-medium text-white transition-all ${
                 mode === 'work'
                   ? 'bg-purple-600 hover:bg-purple-700'
                   : mode === 'shortBreak'
                   ? 'bg-green-600 hover:bg-green-700'
                   : 'bg-blue-600 hover:bg-blue-700'
               }`}
-              title={isRunning ? 'Pausar' : 'Iniciar'}
+              title={isRunning ? 'Pausar' : !isPremium ? 'Premium - Clique para fazer upgrade' : 'Iniciar'}
             >
               {isRunning ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+              {!isRunning && !isPremium && (
+                <Crown className="w-3 h-3 text-yellow-400 absolute -top-1 -right-1" />
+              )}
             </button>
             <button
               onClick={resetTimer}
@@ -449,7 +452,7 @@ export function PomodoroTimer() {
             <div className="flex items-center gap-1.5">
               <button
                 onClick={toggleTimer}
-                className={`p-1.5 rounded-lg font-medium text-white transition-all ${
+                className={`relative p-1.5 rounded-lg font-medium text-white transition-all ${
                   mode === 'work'
                     ? 'bg-purple-600'
                     : mode === 'shortBreak'
@@ -458,6 +461,9 @@ export function PomodoroTimer() {
                 }`}
               >
                 {isRunning ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                {!isRunning && !isPremium && (
+                  <Crown className="w-2.5 h-2.5 text-yellow-400 absolute -top-0.5 -right-0.5" />
+                )}
               </button>
               <button
                 onClick={resetTimer}

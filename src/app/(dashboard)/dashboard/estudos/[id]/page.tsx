@@ -288,59 +288,82 @@ export default function CursoDetalhePage() {
   return (
     <div className="bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950 p-4 lg:p-6 space-y-4 sm:space-y-6">
       {/* Header com gradiente */}
-      <div className="relative border-b border-zinc-800/50 backdrop-blur-xl bg-zinc-900/80 -mx-4 lg:-mx-6">
+      <div className="relative border-b border-zinc-800/50 backdrop-blur-xl bg-zinc-900/80 -mx-4 lg:-mx-6 overflow-x-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 via-transparent to-blue-500/5" />
-        <div className="relative p-3 sm:p-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-6">
+        <div className="relative p-3 sm:p-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 w-full">
             <Button
               variant="ghost"
               onClick={() => router.push('/dashboard/estudos')}
-              className="text-zinc-400 hover:text-white hover:bg-zinc-800/50 rounded-xl h-auto py-2 px-3 text-sm"
+              className="text-zinc-400 hover:text-white hover:bg-zinc-800/50 rounded-xl h-auto py-2 px-3 text-sm flex-shrink-0"
             >
               <ChevronLeft className="w-4 h-4 mr-1 sm:mr-2" />
               Voltar
             </Button>
-            <div className="flex-1 w-full sm:w-auto">
-              <div className="flex items-center gap-3 sm:gap-4">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 sm:gap-3">
                 <div
-                  className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg"
+                  className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center shadow-lg flex-shrink-0"
                   style={{
                     backgroundColor: curso.cor + '20',
                     color: curso.cor,
-                    boxShadow: `0 0 30px ${curso.cor}30`,
+                    boxShadow: `0 0 20px ${curso.cor}20`,
                   }}
                 >
-                  <BookOpen className="w-5 h-5 sm:w-7 sm:h-7" />
+                  <BookOpen className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h1 className="text-lg sm:text-2xl font-bold text-white mb-0.5 sm:mb-1 truncate">{curso.nome}</h1>
+                  <h1 className="text-base sm:text-xl font-bold text-white truncate">{curso.nome}</h1>
                   {curso.descricao && (
-                    <p className="text-zinc-400 text-xs sm:text-sm truncate">{curso.descricao}</p>
+                    <p className="text-zinc-400 text-xs truncate">{curso.descricao}</p>
                   )}
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
+            <div className="flex items-center gap-2 w-full sm:w-auto flex-shrink-0 overflow-x-auto">
               <PomodoroTimer />
-              <div className="flex-1 sm:flex-none px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl bg-zinc-800/50 border border-zinc-700/50">
-                <span className="text-xs text-zinc-500">Módulos</span>
-                <p className="text-base sm:text-lg font-bold text-white">{curso.modulos.length}</p>
+              <div className="hidden sm:flex items-center gap-2">
+                <div className="px-2.5 py-1 rounded-lg bg-zinc-800/50 border border-zinc-700/50">
+                  <span className="text-xs text-zinc-500 block">Módulos</span>
+                  <p className="text-sm font-bold text-white">{curso.modulos.length}</p>
+                </div>
+                <div className="px-2.5 py-1 rounded-lg bg-zinc-800/50 border border-zinc-700/50">
+                  <span className="text-xs text-zinc-500 block">Páginas</span>
+                  <p className="text-sm font-bold text-white">
+                    {curso.modulos.reduce((acc, m) => acc + (m._count?.paginas || 0), 0)}
+                  </p>
+                </div>
+                <Button
+                  onClick={excluirCurso}
+                  variant="ghost"
+                  className="hover:bg-red-500/20 hover:text-red-400 text-zinc-400 rounded-lg h-auto py-1.5 px-2"
+                  title="Excluir curso"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
               </div>
-              <div className="flex-1 sm:flex-none px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl bg-zinc-800/50 border border-zinc-700/50">
-                <span className="text-xs text-zinc-500">Páginas</span>
-                <p className="text-base sm:text-lg font-bold text-white">
-                  {curso.modulos.reduce((acc, m) => acc + (m._count?.paginas || 0), 0)}
-                </p>
-              </div>
-              <Button
-                onClick={excluirCurso}
-                variant="ghost"
-                className="hover:bg-red-500/20 hover:text-red-400 text-zinc-400 rounded-xl h-auto py-2 px-3"
-                title="Excluir curso"
-              >
-                <Trash2 className="w-4 h-4" />
-              </Button>
             </div>
+          </div>
+          {/* Mobile stats row */}
+          <div className="flex sm:hidden items-center gap-2 mt-2 w-full">
+            <div className="flex-1 px-2.5 py-1 rounded-lg bg-zinc-800/50 border border-zinc-700/50">
+              <span className="text-xs text-zinc-500 block">Módulos</span>
+              <p className="text-sm font-bold text-white">{curso.modulos.length}</p>
+            </div>
+            <div className="flex-1 px-2.5 py-1 rounded-lg bg-zinc-800/50 border border-zinc-700/50">
+              <span className="text-xs text-zinc-500 block">Páginas</span>
+              <p className="text-sm font-bold text-white">
+                {curso.modulos.reduce((acc, m) => acc + (m._count?.paginas || 0), 0)}
+              </p>
+            </div>
+            <Button
+              onClick={excluirCurso}
+              variant="ghost"
+              className="hover:bg-red-500/20 hover:text-red-400 text-zinc-400 rounded-lg h-auto py-1.5 px-2"
+              title="Excluir curso"
+            >
+              <Trash2 className="w-4 h-4" />
+            </Button>
           </div>
         </div>
       </div>
