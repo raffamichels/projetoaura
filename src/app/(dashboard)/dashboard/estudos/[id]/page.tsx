@@ -23,6 +23,7 @@ import {
   Minimize2,
 } from 'lucide-react';
 import RichTextEditor from '@/components/estudos/RichTextEditor';
+import { PomodoroTimer } from '@/components/PomodoroTimer';
 
 interface Modulo {
   id: string;
@@ -320,6 +321,7 @@ export default function CursoDetalhePage() {
               </div>
             </div>
             <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
+              <PomodoroTimer />
               <div className="flex-1 sm:flex-none px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl bg-zinc-800/50 border border-zinc-700/50">
                 <span className="text-xs text-zinc-500">Módulos</span>
                 <p className="text-base sm:text-lg font-bold text-white">{curso.modulos.length}</p>

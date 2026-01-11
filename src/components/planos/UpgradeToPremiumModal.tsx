@@ -65,6 +65,10 @@ export function UpgradeToPremiumModal({
               </div>
               <div className="flex items-start gap-2 text-sm">
                 <Check className="w-4 h-4 text-green-400 mt-0.5 shrink-0" />
+                <span className="text-zinc-300">Temporizador Pomodoro completo</span>
+              </div>
+              <div className="flex items-start gap-2 text-sm">
+                <Check className="w-4 h-4 text-green-400 mt-0.5 shrink-0" />
                 <span className="text-zinc-300">Suporte prioritário</span>
               </div>
               <div className="flex items-start gap-2 text-sm">
@@ -75,14 +79,14 @@ export function UpgradeToPremiumModal({
           </div>
 
           <div className="bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/30 rounded-lg p-4 text-center">
-            <div className="text-3xl font-bold text-white mb-1">R$ 29,90</div>
+            <div className="text-3xl font-bold text-white mb-1">R$ 12,90</div>
             <div className="text-sm text-zinc-400">por mês</div>
           </div>
         </div>
 
         <div className="flex gap-3">
           <Button
-            variant="outline"
+            variant="default"
             onClick={onClose}
             className="flex-1 border-zinc-700 text-zinc-300 hover:bg-zinc-800"
           >
