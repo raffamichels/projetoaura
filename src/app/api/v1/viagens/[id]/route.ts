@@ -5,7 +5,7 @@ import { requirePremium } from '@/lib/middleware/premiumOnly';
 // GET - Buscar viagem específica
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const premiumCheck = await requirePremium(req);
   if (premiumCheck instanceof NextResponse) {
@@ -13,10 +13,12 @@ export async function GET(
   }
   const { userId } = premiumCheck;
 
+  const { id } = await params;
+
   try {
     const viagem = await prisma.viagem.findFirst({
       where: {
-        id: params.id,
+        id,
         userId,
       },
       include: {
@@ -77,7 +79,7 @@ export async function GET(
 // PUT - Atualizar viagem
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const premiumCheck = await requirePremium(req);
   if (premiumCheck instanceof NextResponse) {
@@ -85,11 +87,13 @@ export async function PUT(
   }
   const { userId } = premiumCheck;
 
+  const { id } = await params;
+
   try {
     // Verificar se a viagem existe e pertence ao usuário
     const viagemExistente = await prisma.viagem.findFirst({
       where: {
-        id: params.id,
+        id,
         userId,
       },
     });
@@ -116,7 +120,7 @@ export async function PUT(
     } = body;
 
     const viagem = await prisma.viagem.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         ...(nome && { nome }),
         ...(descricao !== undefined && { descricao }),
@@ -155,7 +159,7 @@ export async function PUT(
 // DELETE - Excluir viagem
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const premiumCheck = await requirePremium(req);
   if (premiumCheck instanceof NextResponse) {
@@ -163,11 +167,13 @@ export async function DELETE(
   }
   const { userId } = premiumCheck;
 
+  const { id } = await params;
+
   try {
     // Verificar se a viagem existe e pertence ao usuário
     const viagem = await prisma.viagem.findFirst({
       where: {
-        id: params.id,
+        id,
         userId,
       },
     });
@@ -181,7 +187,7 @@ export async function DELETE(
 
     // Excluir viagem (cascade deletará todos os relacionados)
     await prisma.viagem.delete({
-      where: { id: params.id },
+      where: { id },
     });
 
     return NextResponse.json({ success: true });

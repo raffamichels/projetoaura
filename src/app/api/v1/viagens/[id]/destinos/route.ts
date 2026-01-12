@@ -5,7 +5,7 @@ import { requirePremium } from '@/lib/middleware/premiumOnly';
 // GET - Listar destinos da viagem
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const premiumCheck = await requirePremium(req);
   if (premiumCheck instanceof NextResponse) {
@@ -13,10 +13,12 @@ export async function GET(
   }
   const { userId } = premiumCheck;
 
+  const { id } = await params;
+
   try {
     // Verificar se a viagem pertence ao usuário
     const viagem = await prisma.viagem.findFirst({
-      where: { id: params.id, userId },
+      where: { id, userId },
     });
 
     if (!viagem) {
@@ -27,7 +29,7 @@ export async function GET(
     }
 
     const destinos = await prisma.destinoViagem.findMany({
-      where: { viagemId: params.id },
+      where: { viagemId: id },
       include: { locaisSalvos: true },
       orderBy: { ordem: 'asc' },
     });
@@ -45,7 +47,7 @@ export async function GET(
 // POST - Criar novo destino
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const premiumCheck = await requirePremium(req);
   if (premiumCheck instanceof NextResponse) {
@@ -53,10 +55,12 @@ export async function POST(
   }
   const { userId } = premiumCheck;
 
+  const { id } = await params;
+
   try {
     // Verificar se a viagem pertence ao usuário
     const viagem = await prisma.viagem.findFirst({
-      where: { id: params.id, userId },
+      where: { id, userId },
     });
 
     if (!viagem) {
@@ -92,7 +96,7 @@ export async function POST(
         dataChegada: new Date(dataChegada),
         dataSaida: new Date(dataSaida),
         ordem: ordem || 0,
-        viagemId: params.id,
+        viagemId: id,
         ...restoDosDados,
       },
       include: { locaisSalvos: true },

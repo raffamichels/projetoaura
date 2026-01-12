@@ -5,7 +5,7 @@ import { requirePremium } from '@/lib/middleware/premiumOnly';
 // DELETE - Excluir destino
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string; destinoId: string } }
+  { params }: { params: Promise<{ id: string; destinoId: string }> }
 ) {
   const premiumCheck = await requirePremium(req);
   if (premiumCheck instanceof NextResponse) {
@@ -13,10 +13,12 @@ export async function DELETE(
   }
   const { userId } = premiumCheck;
 
+  const { id, destinoId } = await params;
+
   try {
     // Verificar se a viagem pertence ao usuário
     const viagem = await prisma.viagem.findFirst({
-      where: { id: params.id, userId },
+      where: { id, userId },
     });
 
     if (!viagem) {
@@ -29,8 +31,8 @@ export async function DELETE(
     // Verificar se o destino existe e pertence à viagem
     const destino = await prisma.destinoViagem.findFirst({
       where: {
-        id: params.destinoId,
-        viagemId: params.id,
+        id: destinoId,
+        viagemId: id,
       },
     });
 
@@ -43,7 +45,7 @@ export async function DELETE(
 
     // Excluir destino
     await prisma.destinoViagem.delete({
-      where: { id: params.destinoId },
+      where: { id: destinoId },
     });
 
     return NextResponse.json({ success: true });

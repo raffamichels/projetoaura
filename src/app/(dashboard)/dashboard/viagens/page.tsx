@@ -187,7 +187,7 @@ export default function ViagensPage() {
     setFormData({
       nome: '',
       descricao: '',
-      proposito: 'LAZER',
+      proposito: 'LAZER' as PropostoViagem,
       dataInicio: '',
       dataFim: '',
       orcamentoTotal: '',
