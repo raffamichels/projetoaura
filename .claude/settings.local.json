@@ -23,7 +23,9 @@
       "Bash(netstat:*)",
       "Bash(findstr:*)",
       "Bash(node test-email.js:*)",
-      "Bash(wc:*)"
+      "Bash(wc:*)",
+      "Bash(timeout /t 2 /nobreak)",
+      "Bash(dir:*)"
     ]
   }
 }

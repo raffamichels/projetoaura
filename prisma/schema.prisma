@@ -48,6 +48,48 @@ enum FonteLivro {
   DIGITAL
 }
 
+enum StatusViagem {
+  PLANEJADA
+  EM_ANDAMENTO
+  CONCLUIDA
+  CANCELADA
+}
+
+enum PropostoViagem {
+  LAZER
+  TRABALHO
+  ESTUDO
+  OUTRO
+}
+
+enum TipoTransporte {
+  AVIAO
+  CARRO
+  ONIBUS
+  TREM
+  TAXI
+  UBER
+  OUTRO
+}
+
+enum CategoriaAtividade {
+  TURISMO
+  TRABALHO
+  LAZER
+  ALIMENTACAO
+  OUTRO
+}
+
+enum TipoDocumento {
+  PASSAPORTE
+  VISTO
+  RG
+  CNH
+  SEGURO_VIAGEM
+  RESERVA
+  OUTRO
+}
+
 model User {
   id            String        @id @default(cuid())
   email         String        @unique
@@ -80,6 +122,8 @@ model User {
   anotacoes          Anotacao[]
   midias             Midia[]
   citacoes           Citacao[]
+  viagens            Viagem[]
+  documentosViagem   DocumentoViagem[]
 
   @@map("users")
 }
@@ -459,4 +503,282 @@ model PasswordResetToken {
   @@index([email])
   @@index([token])
   @@map("password_reset_tokens")
+}
+
+// ============================================
+// MODELOS DE GERENCIAMENTO DE VIAGENS
+// ============================================
+
+model Viagem {
+  id                String          @id @default(cuid())
+  nome              String
+  descricao         String?         @db.Text
+  proposito         PropostoViagem  @default(LAZER)
+  status            StatusViagem    @default(PLANEJADA)
+
+  // Datas principais
+  dataInicio        DateTime
+  dataFim           DateTime
+
+  // Informações gerais
+  orcamentoTotal    Decimal?        @db.Decimal(15, 2)
+  notasGerais       String?         @db.Text
+
+  // Avaliação e memórias
+  avaliacaoGeral    Int?            // 1-5 estrelas
+  diario            String?         @db.Text
+
+  userId            String
+  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  destinos          DestinoViagem[]
+  transportes       TransporteViagem[]
+  hospedagens       HospedagemViagem[]
+  atividades        AtividadeViagem[]
+  despesas          DespesaViagem[]
+
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  @@map("viagens")
+  @@index([userId, status])
+  @@index([userId, dataInicio])
+}
+
+model DestinoViagem {
+  id                String          @id @default(cuid())
+  ordem             Int             @default(0)
+
+  // Informações do destino
+  nome              String
+  cidade            String
+  pais              String
+  endereco          String?
+  latitude          Float?
+  longitude         Float?
+
+  // Datas no destino
+  dataChegada       DateTime
+  dataSaida         DateTime
+
+  // Informações do destino
+  fusoHorario       String?
+  idioma            String?
+  moeda             String?
+  voltagem          String?
+  tomada            String?
+
+  // Informações culturais e práticas
+  costumes          String?         @db.Text
+  gorjetas          String?
+  emergencia        String?
+  frasesBasicas     String?         @db.Text
+
+  // Clima
+  temperaturaMed    String?
+  previsaoClima     String?
+
+  viagemId          String
+  viagem            Viagem          @relation(fields: [viagemId], references: [id], onDelete: Cascade)
+
+  locaisSalvos      LocalSalvo[]
+
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  @@map("destinos_viagem")
+  @@index([viagemId, ordem])
+}
+
+model LocalSalvo {
+  id                String          @id @default(cuid())
+  nome              String
+  tipo              String          // restaurante, atração, hospital, farmácia, etc
+  endereco          String?
+  latitude          Float?
+  longitude         Float?
+  telefone          String?
+  notas             String?         @db.Text
+  favorito          Boolean         @default(false)
+
+  destinoId         String
+  destino           DestinoViagem   @relation(fields: [destinoId], references: [id], onDelete: Cascade)
+
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  @@map("locais_salvos")
+  @@index([destinoId, favorito])
+}
+
+model TransporteViagem {
+  id                String          @id @default(cuid())
+  tipo              TipoTransporte
+
+  // Informações gerais
+  descricao         String?
+  dataHora          DateTime
+  origem            String?
+  destino           String?
+
+  // Informações de voo
+  companhia         String?
+  numeroVoo         String?
+  assento           String?
+  horarioEmbarque   DateTime?
+  portaoEmbarque    String?
+  conexao           String?
+  horarioChegada    DateTime?
+  codigoReserva     String?
+
+  // Transporte terrestre
+  empresa           String?
+  placaVeiculo      String?
+
+  // Arquivos
+  arquivoUrl        String?         // URL do cartão de embarque ou comprovante
+
+  // Rotas e tempo
+  rotaUrl           String?
+  tempoEstimado     String?
+
+  notas             String?         @db.Text
+
+  viagemId          String
+  viagem            Viagem          @relation(fields: [viagemId], references: [id], onDelete: Cascade)
+
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  @@map("transportes_viagem")
+  @@index([viagemId, dataHora])
+}
+
+model HospedagemViagem {
+  id                String          @id @default(cuid())
+  tipo              String          @default("hotel") // hotel, hostel, airbnb, etc
+  nome              String
+
+  // Datas
+  checkIn           DateTime
+  checkOut          DateTime
+
+  // Localização
+  endereco          String?
+  cidade            String?
+  latitude          Float?
+  longitude         Float?
+
+  // Contato e reserva
+  telefone          String?
+  email             String?
+  codigoReserva     String?
+  website           String?
+
+  // Arquivos
+  comprovanteUrl    String?
+
+  // Avaliação
+  avaliacaoPessoal  Int?            // 1-5 estrelas
+  notas             String?         @db.Text
+
+  viagemId          String
+  viagem            Viagem          @relation(fields: [viagemId], references: [id], onDelete: Cascade)
+
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  @@map("hospedagens_viagem")
+  @@index([viagemId, checkIn])
+}
+
+model AtividadeViagem {
+  id                String              @id @default(cuid())
+  titulo            String
+  descricao         String?             @db.Text
+
+  // Data e horário
+  data              DateTime
+  horaInicio        String?
+  horaFim           String?
+
+  // Local
+  local             String?
+  endereco          String?
+  latitude          Float?
+  longitude         Float?
+
+  // Categoria e prioridade
+  categoria         CategoriaAtividade  @default(TURISMO)
+  prioridade        Int                 @default(0) // 0-5
+
+  // Status
+  concluida         Boolean             @default(false)
+  favorita          Boolean             @default(false)
+
+  // Tempo
+  tempoEstimado     String?
+
+  // Checklist
+  checklist         Json?               // Array de { item: string, concluido: boolean }
+
+  notas             String?             @db.Text
+
+  viagemId          String
+  viagem            Viagem              @relation(fields: [viagemId], references: [id], onDelete: Cascade)
+
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+
+  @@map("atividades_viagem")
+  @@index([viagemId, data])
+  @@index([viagemId, favorita])
+}
+
+model DespesaViagem {
+  id                String          @id @default(cuid())
+  descricao         String
+  valor             Decimal         @db.Decimal(15, 2)
+  moeda             String          @default("BRL")
+  valorConvertido   Decimal?        @db.Decimal(15, 2) // Valor em BRL
+
+  data              DateTime
+  categoria         String          // transporte, hospedagem, alimentacao, passeios, compras
+
+  formaPagamento    String?         // dinheiro, cartao, pix
+
+  notas             String?
+
+  viagemId          String
+  viagem            Viagem          @relation(fields: [viagemId], references: [id], onDelete: Cascade)
+
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  @@map("despesas_viagem")
+  @@index([viagemId, data])
+  @@index([viagemId, categoria])
+}
+
+model DocumentoViagem {
+  id                String          @id @default(cuid())
+  tipo              TipoDocumento
+  nome              String
+  numero            String?
+
+  dataEmissao       DateTime?
+  dataValidade      DateTime?
+
+  arquivoUrl        String?
+  notas             String?         @db.Text
+
+  userId            String
+  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  @@map("documentos_viagem")
+  @@index([userId, tipo])
+  @@index([userId, dataValidade])
 }

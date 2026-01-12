@@ -426,33 +426,35 @@ export function PomodoroTimer() {
         </div>
 
         {/* Mobile Layout */}
-        <div className="flex lg:hidden flex-col gap-2 w-full">
-          <div className="flex items-center justify-between w-full">
+        <div className="flex lg:hidden flex-col gap-3 min-w-[320px]">
+          <div className="flex items-center justify-between">
             {/* Timer e Botão de fechar */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <button
                 onClick={() => setIsOpen(false)}
-                className={`flex items-center gap-2 px-2 py-1.5 rounded-lg transition-all ${
+                className={`flex items-center justify-center p-2 rounded-lg transition-all ${
                   isRunning
                     ? `bg-${color}-500/20 border border-${color}-500/50 text-${color}-400`
                     : 'bg-zinc-800/50 border border-zinc-700/50 text-zinc-400'
                 }`}
               >
-                <Timer className={`${isRunning ? 'w-4 h-4 animate-pulse' : 'w-4 h-4'}`} />
+                <Timer className={`${isRunning ? 'w-5 h-5 animate-pulse' : 'w-5 h-5'}`} />
               </button>
-              <div className={`text-xl font-bold ${
-                mode === 'work' ? 'text-purple-400' : mode === 'shortBreak' ? 'text-green-400' : 'text-blue-400'
-              }`}>
-                {formatTime(timeLeft)}
+              <div className="flex flex-col">
+                <div className={`text-2xl font-bold ${
+                  mode === 'work' ? 'text-purple-400' : mode === 'shortBreak' ? 'text-green-400' : 'text-blue-400'
+                }`}>
+                  {formatTime(timeLeft)}
+                </div>
+                <div className="text-xs text-zinc-500">{getModeLabel(mode)}</div>
               </div>
-              <div className="text-xs text-zinc-500">{getModeLabel(mode)}</div>
             </div>
 
             {/* Controles principais */}
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-2">
               <button
                 onClick={toggleTimer}
-                className={`relative p-1.5 rounded-lg font-medium text-white transition-all ${
+                className={`relative p-2 rounded-lg font-medium text-white transition-all ${
                   mode === 'work'
                     ? 'bg-purple-600'
                     : mode === 'shortBreak'
@@ -462,69 +464,70 @@ export function PomodoroTimer() {
               >
                 {isRunning ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
                 {!isRunning && !isPremium && (
-                  <Crown className="w-2.5 h-2.5 text-yellow-400 absolute -top-0.5 -right-0.5" />
+                  <Crown className="w-3 h-3 text-yellow-400 absolute -top-1 -right-1" />
                 )}
               </button>
               <button
                 onClick={resetTimer}
-                className="p-1.5 rounded-lg bg-zinc-800 text-zinc-400"
+                className="p-2 rounded-lg bg-zinc-800 text-zinc-400 hover:bg-zinc-700"
               >
                 <RotateCcw className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setShowSettings(true)}
-                className="p-1.5 rounded-lg bg-zinc-800 text-zinc-400"
+                className="p-2 rounded-lg bg-zinc-800 text-zinc-400 hover:bg-zinc-700"
               >
                 <Settings className="w-4 h-4" />
               </button>
             </div>
           </div>
 
-          {/* Seletor de Modo e Contador */}
-          <div className="flex items-center justify-between w-full">
-            <div className="flex gap-1">
-              <button
-                onClick={() => !isRunning && switchMode('work')}
-                className={`py-1 px-2 rounded text-xs font-medium transition-all ${
-                  mode === 'work'
-                    ? 'bg-purple-600 text-white'
-                    : 'bg-zinc-800 text-zinc-400'
-                }`}
-                disabled={isRunning}
-              >
-                Foco
-              </button>
-              <button
-                onClick={() => !isRunning && switchMode('shortBreak')}
-                className={`py-1 px-2 rounded text-xs font-medium transition-all ${
-                  mode === 'shortBreak'
-                    ? 'bg-green-600 text-white'
-                    : 'bg-zinc-800 text-zinc-400'
-                }`}
-                disabled={isRunning}
-              >
-                Pausa
-              </button>
-              <button
-                onClick={() => !isRunning && switchMode('longBreak')}
-                className={`py-1 px-2 rounded text-xs font-medium transition-all ${
-                  mode === 'longBreak'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-zinc-800 text-zinc-400'
-                }`}
-                disabled={isRunning}
-              >
-                Descanso
-              </button>
-            </div>
+          {/* Seletor de Modo */}
+          <div className="flex gap-2">
+            <button
+              onClick={() => !isRunning && switchMode('work')}
+              className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all ${
+                mode === 'work'
+                  ? 'bg-purple-600 text-white'
+                  : 'bg-zinc-800 text-zinc-400'
+              }`}
+              disabled={isRunning}
+            >
+              Foco
+            </button>
+            <button
+              onClick={() => !isRunning && switchMode('shortBreak')}
+              className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all ${
+                mode === 'shortBreak'
+                  ? 'bg-green-600 text-white'
+                  : 'bg-zinc-800 text-zinc-400'
+              }`}
+              disabled={isRunning}
+            >
+              Pausa
+            </button>
+            <button
+              onClick={() => !isRunning && switchMode('longBreak')}
+              className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all ${
+                mode === 'longBreak'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-zinc-800 text-zinc-400'
+              }`}
+              disabled={isRunning}
+            >
+              Descanso
+            </button>
+          </div>
 
-            {/* Contador de pomodoros */}
-            <div className="flex items-center gap-1.5">
+          {/* Contador de pomodoros */}
+          <div className="flex items-center justify-between pt-2 border-t border-zinc-800">
+            <span className="text-sm text-zinc-400">Pomodoros completos</span>
+            <div className="flex items-center gap-2">
               <div className="flex gap-1">
                 {Array.from({ length: settings.pomodorosUntilLongBreak }).map((_, i) => (
                   <div
                     key={i}
-                    className={`w-1.5 h-1.5 rounded-full transition-all ${
+                    className={`w-2 h-2 rounded-full transition-all ${
                       i < completedPomodoros % settings.pomodorosUntilLongBreak
                         ? 'bg-purple-500'
                         : 'bg-zinc-700'
@@ -532,11 +535,11 @@ export function PomodoroTimer() {
                   />
                 ))}
               </div>
-              <span className="text-xs text-zinc-500">{completedPomodoros}</span>
+              <span className="text-sm font-bold text-white">{completedPomodoros}</span>
               {completedPomodoros > 0 && (
                 <button
                   onClick={() => setCompletedPomodoros(0)}
-                  className="p-0.5 rounded text-zinc-500"
+                  className="p-1 rounded hover:bg-zinc-800 text-zinc-500 hover:text-zinc-300"
                 >
                   <X className="w-3 h-3" />
                 </button>

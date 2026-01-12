@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Mail, Lock, User, ArrowRight, Shield } from 'lucide-react';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -38,7 +39,7 @@ export default function RegisterPage() {
       // Sucesso - redireciona para login
       alert('Conta criada com sucesso! Faça login para continuar.');
       router.push('/login');
-      
+
     } catch {
       setError('Erro ao conectar com o servidor');
       setLoading(false);
@@ -46,101 +47,131 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black relative overflow-hidden flex items-center justify-center p-4">
-      {/* Background gradients animados */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-blue-500/20 via-transparent to-transparent blur-3xl animate-pulse"></div>
-        <div className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-to-tl from-purple-500/20 via-transparent to-transparent blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+    <div className="min-h-screen relative overflow-hidden flex items-center justify-center p-3 sm:p-4" style={{
+      background: 'linear-gradient(135deg, #0f0f0f 0%, #0a0a0a 50%, #0f0f0f 100%)'
+    }}>
+      {/* Subtle noise texture */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' /%3E%3C/svg%3E")`,
+      }} />
+
+      {/* Radial vignette effect */}
+      <div className="absolute inset-0 pointer-events-none" style={{
+        background: 'radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.4) 100%)'
+      }} />
+
+      {/* Animated gradient orbs - more subtle */}
+      <div className="absolute inset-0 overflow-hidden opacity-30">
+        <div className="absolute top-1/4 -left-1/4 w-96 h-96 bg-blue-600 rounded-full mix-blend-screen filter blur-3xl opacity-20 animate-blob"></div>
+        <div className="absolute top-1/3 -right-1/4 w-96 h-96 bg-purple-600 rounded-full mix-blend-screen filter blur-3xl opacity-15 animate-blob animation-delay-2000"></div>
+        <div className="absolute -bottom-1/4 left-1/3 w-96 h-96 bg-fuchsia-600 rounded-full mix-blend-screen filter blur-3xl opacity-10 animate-blob animation-delay-4000"></div>
       </div>
 
-      {/* Grid pattern */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(59,130,246,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(59,130,246,0.05)_1px,transparent_1px)] bg-[size:64px_64px]"></div>
+      {/* Very subtle grid */}
+      <div className="absolute inset-0 opacity-[0.02] pointer-events-none" style={{
+        backgroundImage: 'linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)',
+        backgroundSize: '50px 50px'
+      }} />
 
       {/* Conteúdo */}
       <div className="relative z-10 w-full max-w-md">
         {/* Logo */}
-        <div className="text-center mb-8">
-          <h1 className="text-5xl font-bold mb-2">
-            <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-aura-400 bg-clip-text text-transparent">
+        <div className="text-center mb-5">
+          <h1 className="text-4xl sm:text-5xl font-bold mb-2 tracking-tight">
+            <span className="bg-gradient-to-r from-purple-400 via-fuchsia-400 to-blue-400 bg-clip-text text-transparent animate-gradient">
               Aura
             </span>
           </h1>
-          <p className="text-gray-400 text-sm">Comece sua jornada de organização</p>
+          <p className="text-gray-400 text-xs sm:text-sm font-light">Comece sua jornada de produtividade</p>
         </div>
 
-        {/* Card de Registro */}
-        <div className="bg-zinc-900/50 backdrop-blur-xl border border-zinc-800 rounded-2xl p-8 shadow-2xl">
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold text-white mb-2">Criar sua conta</h2>
-            <p className="text-gray-400 text-sm">Preencha os dados abaixo para começar gratuitamente</p>
+        {/* Card de Registro - Glassmorphism */}
+        <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-5 sm:p-6 shadow-2xl shadow-purple-900/20 hover:shadow-purple-800/30 transition-all duration-300">
+          <div className="mb-4">
+            <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">Criar sua conta</h2>
+            <p className="text-gray-400 text-xs sm:text-sm">Junte-se a milhares de usuários produtivos</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-3">
             {/* Nome */}
-            <div className="space-y-2">
-              <Label htmlFor="name" className="text-gray-300 text-sm font-medium">
+            <div className="space-y-1.5">
+              <Label htmlFor="name" className="text-gray-300 text-xs sm:text-sm font-medium flex items-center gap-2">
+                <User className="w-3.5 h-3.5" />
                 Nome completo
               </Label>
-              <Input
-                id="name"
-                type="text"
-                placeholder="João Silva"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                className="bg-zinc-800/50 border-zinc-700 text-white placeholder:text-gray-500 focus:border-blue-500 focus:ring-blue-500/20 h-11"
-              />
+              <div className="relative group">
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder="João Silva"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 h-10 sm:h-11 rounded-xl transition-all hover:bg-white/10 text-sm"
+                />
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-500/0 via-purple-500/5 to-blue-500/0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+              </div>
             </div>
 
             {/* Email */}
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-gray-300 text-sm font-medium">
+            <div className="space-y-1.5">
+              <Label htmlFor="email" className="text-gray-300 text-xs sm:text-sm font-medium flex items-center gap-2">
+                <Mail className="w-3.5 h-3.5" />
                 Email
               </Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="seu@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="bg-zinc-800/50 border-zinc-700 text-white placeholder:text-gray-500 focus:border-blue-500 focus:ring-blue-500/20 h-11"
-              />
+              <div className="relative group">
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="seu@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 h-10 sm:h-11 rounded-xl transition-all hover:bg-white/10 text-sm"
+                />
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-500/0 via-purple-500/5 to-blue-500/0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+              </div>
             </div>
 
             {/* Senha */}
-            <div className="space-y-2">
-              <Label htmlFor="password" className="text-gray-300 text-sm font-medium">
+            <div className="space-y-1.5">
+              <Label htmlFor="password" className="text-gray-300 text-xs sm:text-sm font-medium flex items-center gap-2">
+                <Lock className="w-3.5 h-3.5" />
                 Senha
               </Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="bg-zinc-800/50 border-zinc-700 text-white placeholder:text-gray-500 focus:border-blue-500 focus:ring-blue-500/20 h-11"
-              />
-              <p className="text-xs text-gray-500 mt-1">
-                Mínimo 8 caracteres, com letra maiúscula, minúscula e número
+              <div className="relative group">
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  minLength={8}
+                  className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 h-10 sm:h-11 rounded-xl transition-all hover:bg-white/10 text-sm"
+                />
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-500/0 via-purple-500/5 to-blue-500/0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+              </div>
+              <p className="text-xs text-gray-500 flex items-center gap-1.5">
+                <Shield className="w-3 h-3" />
+                Mínimo 8 caracteres, com maiúscula, minúscula e número
               </p>
             </div>
 
             {/* Erro */}
             {error && (
-              <div className="bg-red-500/10 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg text-sm flex items-center gap-2">
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="bg-red-500/10 backdrop-blur-sm border border-red-500/30 text-red-300 px-4 py-3 rounded-xl text-sm flex items-center gap-2 animate-in slide-in-from-top-2 duration-300">
+                <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                {error}
+                <span>{error}</span>
               </div>
             )}
 
             {/* Botão */}
-            <Button 
-              type="submit" 
-              className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold h-11 rounded-lg shadow-lg shadow-blue-500/25 transition-all duration-200 hover:shadow-blue-500/40 hover:-translate-y-0.5"
+            <Button
+              type="submit"
+              className="w-full bg-gradient-to-r from-purple-600 via-fuchsia-600 to-blue-600 hover:from-purple-500 hover:via-fuchsia-500 hover:to-blue-500 text-white font-semibold h-10 sm:h-11 rounded-xl shadow-lg shadow-purple-900/50 transition-all duration-300 hover:shadow-purple-800/60 hover:scale-[1.02] active:scale-[0.98] group mt-4 text-sm"
               disabled={loading}
             >
               {loading ? (
@@ -149,52 +180,71 @@ export default function RegisterPage() {
                   Criando conta...
                 </div>
               ) : (
-                'Criar conta gratuita'
+                <span className="flex items-center justify-center gap-2">
+                  Criar conta gratuita
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </span>
               )}
             </Button>
           </form>
 
           {/* Termos */}
-          <p className="text-xs text-gray-500 text-center mt-4">
+          <p className="text-xs text-gray-500 text-center mt-3">
             Ao criar uma conta, você concorda com nossos{' '}
-            <button className="text-gray-400 hover:text-white transition-colors">
+            <button className="text-purple-400 hover:text-purple-300 transition-colors font-medium">
               Termos de Uso
             </button>
             {' '}e{' '}
-            <button className="text-gray-400 hover:text-white transition-colors">
+            <button className="text-purple-400 hover:text-purple-300 transition-colors font-medium">
               Política de Privacidade
             </button>
           </p>
 
-          {/* Divider */}
-          <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-zinc-800"></div>
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-zinc-900 px-2 text-gray-500">ou</span>
-            </div>
-          </div>
-
           {/* Link para Login */}
-          <div className="text-center">
-            <p className="text-sm text-gray-400">
+          <div className="text-center mt-4 pt-4 border-t border-white/10">
+            <p className="text-xs sm:text-sm text-gray-400">
               Já tem uma conta?{' '}
-              <Link 
-                href="/login" 
-                className="text-blue-400 hover:text-blue-300 font-semibold transition-colors"
+              <Link
+                href="/login"
+                className="text-purple-400 hover:text-purple-300 font-semibold transition-colors inline-flex items-center gap-1 group"
               >
                 Fazer login
+                <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
               </Link>
             </p>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="text-center mt-8 text-xs text-gray-500">
-          © 2025 Aura. Todos os direitos reservados.
+        <div className="text-center mt-4 text-xs text-gray-500">
+          <p>© 2025 Aura. Feito com dedicação para sua produtividade.</p>
         </div>
       </div>
+
+      <style jsx>{`
+        @keyframes blob {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          33% { transform: translate(30px, -50px) scale(1.1); }
+          66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+        .animate-blob {
+          animation: blob 7s infinite;
+        }
+        .animation-delay-2000 {
+          animation-delay: 2s;
+        }
+        .animation-delay-4000 {
+          animation-delay: 4s;
+        }
+        @keyframes gradient {
+          0%, 100% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+        }
+        .animate-gradient {
+          background-size: 200% 200%;
+          animation: gradient 3s ease infinite;
+        }
+      `}</style>
     </div>
   );
 }

@@ -303,7 +303,7 @@ export default function CursoDetalhePage() {
       <div className="relative border-b border-zinc-800/50 backdrop-blur-xl bg-zinc-900/80 -mx-4 lg:-mx-6 overflow-x-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 via-transparent to-blue-500/5" />
         <div className="relative p-3 sm:p-4">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 w-full">
+          <div className="flex flex-row items-start sm:items-center gap-2 sm:gap-4 w-full">
             <Button
               variant="ghost"
               onClick={() => router.push('/dashboard/estudos')}
@@ -332,9 +332,9 @@ export default function CursoDetalhePage() {
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-2 w-full sm:w-auto flex-shrink-0 overflow-x-auto">
+            <div className="hidden sm:flex items-center gap-2 flex-shrink-0">
               <PomodoroTimer />
-              <div className="hidden sm:flex items-center gap-2">
+              <div className="flex items-center gap-2">
                 <div className="px-2.5 py-1 rounded-lg bg-zinc-800/50 border border-zinc-700/50">
                   <span className="text-xs text-zinc-500 block">Módulos</span>
                   <p className="text-sm font-bold text-white">{curso.modulos.length}</p>
@@ -376,6 +376,10 @@ export default function CursoDetalhePage() {
             >
               <Trash2 className="w-4 h-4" />
             </Button>
+          </div>
+          {/* Mobile Pomodoro Timer - abaixo dos stats */}
+          <div className="sm:hidden mt-3">
+            <PomodoroTimer />
           </div>
         </div>
       </div>
