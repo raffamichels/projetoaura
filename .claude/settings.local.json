@@ -25,7 +25,8 @@
       "Bash(node test-email.js:*)",
       "Bash(wc:*)",
       "Bash(timeout /t 2 /nobreak)",
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "Bash(powershell -Command:*)"
     ]
   }
 }

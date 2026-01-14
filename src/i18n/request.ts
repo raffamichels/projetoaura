@@ -11,5 +11,16 @@ export default getRequestConfig(async () => {
     locale,
     messages: (await import(`./locales/${locale}.json`)).default,
     timeZone: 'America/Sao_Paulo',
+    now: new Date(),
+    // Adicionar configuração de formato padrão
+    formats: {
+      dateTime: {
+        short: {
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric'
+        }
+      }
+    }
   };
 });

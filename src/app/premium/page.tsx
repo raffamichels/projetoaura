@@ -27,13 +27,37 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { toast } from "sonner";
 
 export default function PremiumPage() {
   const router = useRouter();
+  const { data: session } = useSession();
   const [email, setEmail] = useState("");
   const [nome, setNome] = useState("");
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+
+  const handleAssinarClick = () => {
+    console.log('Botão clicado!', { plano: session?.user?.plano });
+
+    // Verificar se o usuário já é premium
+    if (session?.user?.plano === 'PREMIUM') {
+      console.log('Usuário é premium, mostrando toast');
+      toast.info('Você já é um assinante Premium!', {
+        description: 'Acesse o dashboard para gerenciar sua assinatura.',
+        action: {
+          label: 'Ver Assinatura',
+          onClick: () => router.push('/dashboard/assinatura'),
+        },
+      });
+      return;
+    }
+
+    console.log('Redirecionando para checkout');
+    // Se não for premium, redirecionar para checkout
+    router.push('/premium/checkout');
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -412,8 +436,11 @@ export default function PremiumPage() {
                     </li>
                   ))}
                 </ul>
-                <Button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
-                  Entrar para a lista Premium
+                <Button
+                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                  onClick={handleAssinarClick}
+                >
+                  Assinar Agora
                   <Star className="w-4 h-4 ml-2" />
                 </Button>
               </CardContent>

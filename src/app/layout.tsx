@@ -3,6 +3,7 @@ import { IntlProvider } from '@/components/providers/IntlProvider';
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { getMessages } from 'next-intl/server';
+import { Toaster } from 'sonner';
 import "./globals.css";
 
 const geistSans = Geist({
@@ -37,6 +38,7 @@ export default async function RootLayout({
             {children}
           </IntlProvider>
         </SessionProvider>
+        <Toaster />
       </body>
     </html>
   );

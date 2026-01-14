@@ -41,7 +41,7 @@ export function Sidebar({ isMobile = false, onNavigate }: SidebarProps) {
     { icon: Library, label: t('library'), href: '/dashboard/biblioteca' },
     { icon: Target, label: t('goals'), href: '/dashboard/metas', badge: tCommon('comingSoon'), premium: true },
     { icon: Dumbbell, label: t('workouts'), href: '/dashboard/treinos', badge: tCommon('comingSoon'), premium: true },
-    { icon: Plane, label: t('travels'), href: '/dashboard/viagens', premium: true },
+    { icon: Plane, label: t('travels'), href: '/dashboard/viagens', badge: tCommon('comingSoon'), premium: true },
   ];
 
   useEffect(() => {
