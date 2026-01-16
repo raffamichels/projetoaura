@@ -91,13 +91,14 @@ export async function createSubscriptionWithIntent(
   let clientSecret: string | null = null;
   let intentType: 'payment' | 'setup' = 'payment';
 
-  // Verificar se payment_intent existe
-  if (fullInvoice.payment_intent) {
-    if (typeof fullInvoice.payment_intent === 'string') {
-      const paymentIntent = await stripe.paymentIntents.retrieve(fullInvoice.payment_intent);
+  // Verificar se payment_intent existe (usar any para compatibilidade com API 2025)
+  const invoicePaymentIntent = (fullInvoice as unknown as { payment_intent?: string | Stripe.PaymentIntent | null }).payment_intent;
+  if (invoicePaymentIntent) {
+    if (typeof invoicePaymentIntent === 'string') {
+      const paymentIntent = await stripe.paymentIntents.retrieve(invoicePaymentIntent);
       clientSecret = paymentIntent.client_secret;
     } else {
-      clientSecret = fullInvoice.payment_intent.client_secret;
+      clientSecret = invoicePaymentIntent.client_secret;
     }
   }
 
