@@ -62,7 +62,7 @@ Não inclua markdown, código ou qualquer formatação. Apenas o JSON puro.`
           ],
           generationConfig: {
             temperature: 0.7,
-            maxOutputTokens: 2048,
+            maxOutputTokens: 8192,
           },
         }),
       }
@@ -104,11 +104,15 @@ Não inclua markdown, código ou qualquer formatação. Apenas o JSON puro.`
       }
     } catch (parseError) {
       console.error("❌ Erro ao fazer parse do JSON:", parseError)
-      // Se falhar o parse, usar o texto como conteúdo
-      return {
-        title: "Anotação gerada por IA",
-        content: responseText
+      console.error("❌ Resposta recebida:", responseText.substring(0, 500))
+
+      // Verificar se o JSON foi cortado (resposta incompleta)
+      const finishReason = data.candidates?.[0]?.finishReason
+      if (finishReason === "MAX_TOKENS") {
+        throw new Error("A resposta foi cortada por limite de tokens. Tente com um texto menor.")
       }
+
+      throw new Error("Não foi possível processar a resposta da IA. Tente novamente.")
     }
   } catch (error) {
     console.error("Erro ao gerar anotação com Gemini:", error)
