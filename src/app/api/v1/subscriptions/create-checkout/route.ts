@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth/auth';
-import { createSubscription, getOrCreateStripeCustomer, PLANS } from '@/lib/stripe';
+import { createSubscriptionWithIntent, getOrCreateStripeCustomer, PLANS } from '@/lib/stripe';
 
 export async function POST(request: NextRequest) {
   try {
@@ -41,34 +41,18 @@ export async function POST(request: NextRequest) {
       session.user.name
     );
 
-    // Criar subscription
-    const subscription = await createSubscription(customerId, priceId);
+    // Criar subscription com intent
+    const { subscriptionId, clientSecret, type } = await createSubscriptionWithIntent(
+      customerId,
+      priceId
+    );
 
-    // Log da subscription criada
-    console.log('✅ Subscription criada:', {
-      subscriptionId: subscription.id,
-      status: subscription.status,
-      priceId: subscription.items.data[0]?.price.id,
-      interval: subscription.items.data[0]?.price.recurring?.interval,
-      currentPeriodEnd: (subscription as unknown as { current_period_end: number }).current_period_end,
-      currentPeriodEndDate: new Date((subscription as unknown as { current_period_end: number }).current_period_end * 1000).toISOString(),
-    });
-
-    // Extrair o client secret do payment intent
-    const invoice = subscription.latest_invoice as any;
-    const paymentIntent = invoice?.payment_intent as any;
-    const clientSecret = paymentIntent?.client_secret;
-
-    if (!clientSecret) {
-      return NextResponse.json(
-        { error: 'Erro ao criar checkout' },
-        { status: 500 }
-      );
-    }
+    console.log('✅ Subscription criada:', { subscriptionId, hasClientSecret: !!clientSecret, type });
 
     return NextResponse.json({
-      subscriptionId: subscription.id,
+      subscriptionId,
       clientSecret,
+      type,
     });
   } catch (error) {
     console.error('Error creating checkout:', error);

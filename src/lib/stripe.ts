@@ -60,11 +60,12 @@ export async function getOrCreateStripeCustomer(
   return customer.id;
 }
 
-// Helper para criar uma subscription
-export async function createSubscription(
+// Helper para criar uma subscription com payment intent embutido
+export async function createSubscriptionWithIntent(
   customerId: string,
   priceId: string
-): Promise<Stripe.Subscription> {
+): Promise<{ subscriptionId: string; clientSecret: string; type: 'payment' | 'setup' }> {
+  // Criar a subscription
   const subscription = await stripe.subscriptions.create({
     customer: customerId,
     items: [{ price: priceId }],
@@ -73,10 +74,56 @@ export async function createSubscription(
       payment_method_types: ['card'],
       save_default_payment_method: 'on_subscription',
     },
-    expand: ['latest_invoice.payment_intent'],
+    expand: ['latest_invoice'],
   });
 
-  return subscription;
+  const invoice = subscription.latest_invoice as Stripe.Invoice;
+
+  if (!invoice) {
+    throw new Error('Invoice não foi criada');
+  }
+
+  // Buscar a invoice com payment_intent expandido
+  const fullInvoice = await stripe.invoices.retrieve(invoice.id, {
+    expand: ['payment_intent'],
+  });
+
+  let clientSecret: string | null = null;
+  let intentType: 'payment' | 'setup' = 'payment';
+
+  // Verificar se payment_intent existe
+  if (fullInvoice.payment_intent) {
+    if (typeof fullInvoice.payment_intent === 'string') {
+      const paymentIntent = await stripe.paymentIntents.retrieve(fullInvoice.payment_intent);
+      clientSecret = paymentIntent.client_secret;
+    } else {
+      clientSecret = fullInvoice.payment_intent.client_secret;
+    }
+  }
+
+  // Se ainda não tem payment_intent, criar um SetupIntent para coletar o método de pagamento
+  if (!clientSecret) {
+    const setupIntent = await stripe.setupIntents.create({
+      customer: customerId,
+      payment_method_types: ['card'],
+      metadata: {
+        subscription_id: subscription.id,
+      },
+    });
+
+    clientSecret = setupIntent.client_secret;
+    intentType = 'setup';
+  }
+
+  if (!clientSecret) {
+    throw new Error('Não foi possível obter o client secret');
+  }
+
+  return {
+    subscriptionId: subscription.id,
+    clientSecret,
+    type: intentType,
+  };
 }
 
 // Helper para cancelar uma subscription

@@ -24,6 +24,7 @@ export function SubscriptionCheckout({
   onSuccess,
 }: SubscriptionCheckoutProps) {
   const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [intentType, setIntentType] = useState<'payment' | 'setup'>('payment');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const hasCreatedSubscription = useRef(false);
@@ -31,7 +32,6 @@ export function SubscriptionCheckout({
 
   useEffect(() => {
     // Só criar subscription quando o priceId mudar E não tiver criado ainda
-    // OU quando for a primeira vez
     if (currentPriceIdRef.current === priceId && hasCreatedSubscription.current) {
       console.log('⏸️ Subscription já criada para este priceId, ignorando...');
       return;
@@ -66,7 +66,8 @@ export function SubscriptionCheckout({
 
         const data = await response.json();
         setClientSecret(data.clientSecret);
-        console.log('✅ Checkout session criada com sucesso');
+        setIntentType(data.type || 'payment');
+        console.log('✅ Checkout session criada com sucesso, tipo:', data.type);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Erro desconhecido');
         toast.error('Erro ao iniciar checkout');
@@ -146,7 +147,7 @@ export function SubscriptionCheckout({
             },
           }}
         >
-          <CheckoutForm onSuccess={handleSuccess} onError={handleError} />
+          <CheckoutForm onSuccess={handleSuccess} onError={handleError} intentType={intentType} />
         </Elements>
       </CardContent>
     </Card>
