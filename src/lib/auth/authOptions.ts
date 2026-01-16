@@ -94,7 +94,8 @@ export const authOptions = {
               }
             });
 
-            // Adicionar dados do plano ao objeto user
+            // IMPORTANTE: Atualizar o user.id para o ID real do banco de dados
+            user.id = newUser.id;
             user.plano = newUser.plano;
             user.planoExpiraEm = newUser.planoExpiraEm;
           } else {
@@ -110,7 +111,8 @@ export const authOptions = {
               }
             });
 
-            // Adicionar dados do plano ao objeto user
+            // IMPORTANTE: Atualizar o user.id para o ID real do banco de dados
+            user.id = updatedUser.id;
             user.plano = updatedUser.plano;
             user.planoExpiraEm = updatedUser.planoExpiraEm;
           }
