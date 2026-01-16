@@ -50,8 +50,8 @@ export async function POST(request: NextRequest) {
       status: subscription.status,
       priceId: subscription.items.data[0]?.price.id,
       interval: subscription.items.data[0]?.price.recurring?.interval,
-      currentPeriodEnd: subscription.current_period_end,
-      currentPeriodEndDate: new Date(subscription.current_period_end * 1000).toISOString(),
+      currentPeriodEnd: (subscription as unknown as { current_period_end: number }).current_period_end,
+      currentPeriodEndDate: new Date((subscription as unknown as { current_period_end: number }).current_period_end * 1000).toISOString(),
     });
 
     // Extrair o client secret do payment intent

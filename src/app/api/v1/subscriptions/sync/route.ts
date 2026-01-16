@@ -46,8 +46,8 @@ export async function POST(request: NextRequest) {
         status: sub.status,
         priceId: sub.items.data[0]?.price.id,
         interval: sub.items.data[0]?.price.recurring?.interval,
-        currentPeriodEnd: sub.current_period_end,
-        currentPeriodEndDate: new Date(sub.current_period_end * 1000).toISOString(),
+        currentPeriodEnd: (sub as unknown as { current_period_end: number }).current_period_end,
+        currentPeriodEndDate: new Date((sub as unknown as { current_period_end: number }).current_period_end * 1000).toISOString(),
       })),
     });
 
@@ -97,8 +97,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Atualizar dados no banco com informações do Stripe
-    const planoExpiraEm = activeSubscription.current_period_end
-      ? new Date(activeSubscription.current_period_end * 1000)
+    const currentPeriodEnd = (activeSubscription as unknown as { current_period_end: number }).current_period_end;
+    const planoExpiraEm = currentPeriodEnd
+      ? new Date(currentPeriodEnd * 1000)
       : null;
 
     // Determinar o intervalo do plano

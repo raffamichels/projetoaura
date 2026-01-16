@@ -86,8 +86,9 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
   const plano = isPremium ? 'PREMIUM' : 'FREE';
 
   // Data de expiração do período atual
-  const planoExpiraEm = subscription.current_period_end
-    ? new Date(subscription.current_period_end * 1000)
+  const currentPeriodEnd = (subscription as unknown as { current_period_end: number }).current_period_end;
+  const planoExpiraEm = currentPeriodEnd
+    ? new Date(currentPeriodEnd * 1000)
     : null;
 
   // Atualizar o usuário
@@ -109,7 +110,7 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
     planoExpiraEm: planoExpiraEm?.toISOString(),
     subscriptionId: subscription.id,
     priceId: subscription.items.data[0]?.price.id,
-    currentPeriodEnd: subscription.current_period_end,
+    currentPeriodEnd: (subscription as unknown as { current_period_end: number }).current_period_end,
   });
 }
 
