@@ -26,7 +26,8 @@
       "Bash(wc:*)",
       "Bash(timeout /t 2 /nobreak)",
       "Bash(dir:*)",
-      "Bash(powershell -Command:*)"
+      "Bash(powershell -Command:*)",
+      "Bash(npx eslint:*)"
     ]
   }
 }

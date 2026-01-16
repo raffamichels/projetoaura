@@ -1,13 +1,17 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BookOpen, Plus, Search, StickyNote, FileText, ChevronRight, Edit, Trash2 } from 'lucide-react';
+import { BookOpen, Plus, Search, StickyNote, FileText, ChevronRight, Edit, Trash2, Sparkles, Loader2, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
+import { UpgradeToPremiumModal } from '@/components/planos/UpgradeToPremiumModal';
+import { verificarAcessoRecurso } from '@/lib/planos-helper';
+import { RecursoPremium, PlanoUsuario } from '@/types/planos';
 
 interface Curso {
   id: string;
@@ -35,6 +39,7 @@ interface Anotacao {
 }
 
 export default function EstudosPage() {
+  const { data: session } = useSession();
   const [cursos, setCursos] = useState<Curso[]>([]);
   const [anotacoes, setAnotacoes] = useState<Anotacao[]>([]);
   const [loading, setLoading] = useState(true);
@@ -47,6 +52,13 @@ export default function EstudosPage() {
   const [buscaAtiva, setBuscaAtiva] = useState(false);
   const [termoBusca, setTermoBusca] = useState('');
   const [resultadosBusca, setResultadosBusca] = useState<any>(null);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+
+  // Verificar se o usuário é premium
+  const plano = (session?.user?.plano as PlanoUsuario) || PlanoUsuario.FREE;
+  const planoExpiraEm = session?.user?.planoExpiraEm;
+  const acessoRecurso = verificarAcessoRecurso(plano, planoExpiraEm, RecursoPremium.GERAR_RESENHA_IA);
+  const isPremium = acessoRecurso.temAcesso;
 
   const [novoCurso, setNovoCurso] = useState({
     nome: '',
@@ -59,6 +71,13 @@ export default function EstudosPage() {
     conteudo: '',
     cor: '#FBBF24',
   });
+
+  // Estados para anotação com IA
+  const [tipoAnotacao, setTipoAnotacao] = useState<'livre' | 'ia'>('livre');
+  const [textoOriginalIA, setTextoOriginalIA] = useState('');
+  const [anotacaoGeradaIA, setAnotacaoGeradaIA] = useState<{ title: string; content: string } | null>(null);
+  const [gerandoAnotacao, setGerandoAnotacao] = useState(false);
+  const [erroIA, setErroIA] = useState<string | null>(null);
 
   useEffect(() => {
     carregarDados();
@@ -108,20 +127,79 @@ export default function EstudosPage() {
 
   const criarAnotacao = async () => {
     try {
+      const dadosAnotacao = tipoAnotacao === 'ia' && anotacaoGeradaIA
+        ? { titulo: anotacaoGeradaIA.title, conteudo: anotacaoGeradaIA.content, cor: novaAnotacao.cor }
+        : novaAnotacao;
+
       const response = await fetch('/api/v1/estudos/anotacoes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(novaAnotacao),
+        body: JSON.stringify(dadosAnotacao),
       });
 
       if (response.ok) {
-        setModalAnotacaoAberto(false);
-        setNovaAnotacao({ titulo: '', conteudo: '', cor: '#FBBF24' });
+        fecharModalAnotacao();
         carregarDados();
       }
     } catch (error) {
       console.error('Erro ao criar anotação:', error);
     }
+  };
+
+  const gerarAnotacaoComIA = async () => {
+    // Verificar se o usuário tem acesso ao recurso
+    if (!isPremium) {
+      setShowUpgradeModal(true);
+      return;
+    }
+
+    if (!textoOriginalIA.trim()) return;
+
+    setGerandoAnotacao(true);
+    setErroIA(null);
+
+    try {
+      const response = await fetch('/api/generate-note', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: textoOriginalIA }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        // Se for erro 403, mostrar modal de upgrade
+        if (response.status === 403) {
+          setShowUpgradeModal(true);
+          return;
+        }
+        throw new Error(data.error || 'Erro ao gerar anotação');
+      }
+
+      setAnotacaoGeradaIA({ title: data.title, content: data.content });
+    } catch (error) {
+      console.error('Erro ao gerar anotação com IA:', error);
+      setErroIA(error instanceof Error ? error.message : 'Erro ao gerar anotação');
+    } finally {
+      setGerandoAnotacao(false);
+    }
+  };
+
+  const handleAnotacaoComIAClick = () => {
+    if (!isPremium) {
+      setShowUpgradeModal(true);
+      return;
+    }
+    setTipoAnotacao('ia');
+  };
+
+  const fecharModalAnotacao = () => {
+    setModalAnotacaoAberto(false);
+    setNovaAnotacao({ titulo: '', conteudo: '', cor: '#FBBF24' });
+    setTipoAnotacao('livre');
+    setTextoOriginalIA('');
+    setAnotacaoGeradaIA(null);
+    setErroIA(null);
   };
 
   const buscarConteudo = async (query: string) => {
@@ -506,64 +584,207 @@ export default function EstudosPage() {
       </Dialog>
 
       {/* Modal Nova Anotação */}
-      <Dialog open={modalAnotacaoAberto} onOpenChange={setModalAnotacaoAberto}>
-        <DialogContent className="bg-zinc-900 border-zinc-800">
+      <Dialog open={modalAnotacaoAberto} onOpenChange={fecharModalAnotacao}>
+        <DialogContent className="bg-zinc-900 border-zinc-800 max-w-4xl">
           <DialogHeader>
             <DialogTitle className="text-white">Nova Anotação</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="titulo-anotacao" className="text-zinc-300">Título</Label>
-              <Input
-                id="titulo-anotacao"
-                value={novaAnotacao.titulo}
-                onChange={(e) => setNovaAnotacao({ ...novaAnotacao, titulo: e.target.value })}
-                className="bg-zinc-800 border-zinc-700 text-white mt-1"
-                placeholder="Ex: Anotações da aula 5"
-              />
-            </div>
-            <div>
-              <Label htmlFor="conteudo-anotacao" className="text-zinc-300">Conteúdo</Label>
-              <textarea
-                id="conteudo-anotacao"
-                value={novaAnotacao.conteudo}
-                onChange={(e) => setNovaAnotacao({ ...novaAnotacao, conteudo: e.target.value })}
-                className="w-full bg-zinc-800 border-zinc-700 text-white mt-1 rounded-md p-3 min-h-[120px]"
-                placeholder="Digite suas anotações..."
-              />
-            </div>
-            <div>
-              <Label className="text-zinc-300">Cor</Label>
-              <div className="flex gap-2 mt-2">
-                {cores.map((cor) => (
-                  <button
-                    key={cor}
-                    onClick={() => setNovaAnotacao({ ...novaAnotacao, cor })}
-                    className={`w-8 h-8 rounded-full ${
-                      novaAnotacao.cor === cor ? 'ring-2 ring-white ring-offset-2 ring-offset-zinc-900' : ''
-                    }`}
-                    style={{ backgroundColor: cor }}
-                  />
-                ))}
-              </div>
-            </div>
-            <div className="flex gap-2 justify-end pt-4">
-              <Button
-                variant="default"
-                onClick={() => setModalAnotacaoAberto(false)}
-                className="border-zinc-700"
+
+          {/* Tabs para selecionar tipo */}
+          <div className="flex gap-2 mb-4">
+            <button
+              onClick={() => setTipoAnotacao('livre')}
+              className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors ${
+                tipoAnotacao === 'livre'
+                  ? 'bg-purple-600 text-white'
+                  : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
+              }`}
+            >
+              <StickyNote className="w-4 h-4 inline-block mr-2" />
+              Anotação Livre
+            </button>
+            <div className="relative flex-1">
+              {/* Coroa indicando recurso premium - aparece apenas para usuários FREE */}
+              {!isPremium && (
+                <Crown className="w-3 h-3 text-yellow-400 absolute -top-1 -right-1 z-10" />
+              )}
+              <button
+                onClick={handleAnotacaoComIAClick}
+                className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${
+                  tipoAnotacao === 'ia'
+                    ? 'bg-purple-600 text-white'
+                    : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
+                }`}
+                title={!isPremium ? 'Premium - Clique para fazer upgrade' : 'Anotação com IA'}
               >
-                Cancelar
-              </Button>
-              <Button
-                onClick={criarAnotacao}
-                disabled={!novaAnotacao.titulo}
-                className="bg-purple-600 hover:bg-purple-700"
-              >
-                Criar Anotação
-              </Button>
+                <Sparkles className="w-4 h-4 inline-block mr-2" />
+                Anotação com IA
+              </button>
             </div>
           </div>
+
+          {/* Conteúdo baseado no tipo selecionado */}
+          {tipoAnotacao === 'livre' ? (
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="titulo-anotacao" className="text-zinc-300">Título</Label>
+                <Input
+                  id="titulo-anotacao"
+                  value={novaAnotacao.titulo}
+                  onChange={(e) => setNovaAnotacao({ ...novaAnotacao, titulo: e.target.value })}
+                  className="bg-zinc-800 border-zinc-700 text-white mt-1"
+                  placeholder="Ex: Anotações da aula 5"
+                />
+              </div>
+              <div>
+                <Label htmlFor="conteudo-anotacao" className="text-zinc-300">Conteúdo</Label>
+                <textarea
+                  id="conteudo-anotacao"
+                  value={novaAnotacao.conteudo}
+                  onChange={(e) => setNovaAnotacao({ ...novaAnotacao, conteudo: e.target.value })}
+                  className="w-full bg-zinc-800 border-zinc-700 text-white mt-1 rounded-md p-3 min-h-[120px] border"
+                  placeholder="Digite suas anotações..."
+                />
+              </div>
+              <div>
+                <Label className="text-zinc-300">Cor</Label>
+                <div className="flex gap-2 mt-2">
+                  {cores.map((cor) => (
+                    <button
+                      key={cor}
+                      onClick={() => setNovaAnotacao({ ...novaAnotacao, cor })}
+                      className={`w-8 h-8 rounded-full ${
+                        novaAnotacao.cor === cor ? 'ring-2 ring-white ring-offset-2 ring-offset-zinc-900' : ''
+                      }`}
+                      style={{ backgroundColor: cor }}
+                    />
+                  ))}
+                </div>
+              </div>
+              <div className="flex gap-2 justify-end pt-4">
+                <Button
+                  variant="default"
+                  onClick={fecharModalAnotacao}
+                  className="border-zinc-700"
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  onClick={criarAnotacao}
+                  disabled={!novaAnotacao.titulo}
+                  className="bg-purple-600 hover:bg-purple-700"
+                >
+                  Criar Anotação
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <p className="text-zinc-400 text-sm">
+                Cole seus textos brutos, transcrições ou bullet points e a IA irá criar uma anotação organizada em primeira pessoa.
+              </p>
+
+              {erroIA && (
+                <div className="bg-red-500/10 border border-red-500/50 rounded-lg p-3 text-red-400 text-sm">
+                  {erroIA}
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Coluna esquerda - Texto original */}
+                <div>
+                  <Label className="text-zinc-300">Texto bruto</Label>
+                  <textarea
+                    value={textoOriginalIA}
+                    onChange={(e) => setTextoOriginalIA(e.target.value)}
+                    className="w-full bg-zinc-800 border-zinc-700 text-white mt-1 rounded-md p-3 min-h-[250px] border resize-none"
+                    placeholder="Cole suas anotações de reunião, transcrições ou bullet points aqui..."
+                    disabled={gerandoAnotacao}
+                  />
+                </div>
+
+                {/* Coluna direita - Anotação gerada */}
+                <div>
+                  <Label className="text-zinc-300">Anotação estruturada</Label>
+                  {anotacaoGeradaIA ? (
+                    <div className="mt-1 space-y-2">
+                      <Input
+                        value={anotacaoGeradaIA.title}
+                        onChange={(e) => setAnotacaoGeradaIA({ ...anotacaoGeradaIA, title: e.target.value })}
+                        className="bg-zinc-800 border-zinc-700 text-white"
+                        placeholder="Título da anotação"
+                      />
+                      <textarea
+                        value={anotacaoGeradaIA.content}
+                        onChange={(e) => setAnotacaoGeradaIA({ ...anotacaoGeradaIA, content: e.target.value })}
+                        className="w-full bg-zinc-800 border-zinc-700 text-white rounded-md p-3 min-h-[208px] border resize-none"
+                        placeholder="Conteúdo gerado..."
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-full bg-zinc-800/50 border-zinc-700 text-zinc-500 mt-1 rounded-md p-3 min-h-[250px] border flex items-center justify-center text-center">
+                      <p className="text-sm italic">
+                        Sua anotação estruturada aparecerá aqui após você colar seu texto e clicar em &quot;Organizar&quot;.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <Label className="text-zinc-300">Cor</Label>
+                <div className="flex gap-2 mt-2">
+                  {cores.map((cor) => (
+                    <button
+                      key={cor}
+                      onClick={() => setNovaAnotacao({ ...novaAnotacao, cor })}
+                      className={`w-8 h-8 rounded-full ${
+                        novaAnotacao.cor === cor ? 'ring-2 ring-white ring-offset-2 ring-offset-zinc-900' : ''
+                      }`}
+                      style={{ backgroundColor: cor }}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex gap-2 justify-end pt-4">
+                <Button
+                  variant="default"
+                  onClick={fecharModalAnotacao}
+                  className="border-zinc-700"
+                >
+                  Cancelar
+                </Button>
+                {!anotacaoGeradaIA ? (
+                  <Button
+                    onClick={gerarAnotacaoComIA}
+                    disabled={!textoOriginalIA.trim() || gerandoAnotacao}
+                    className="bg-purple-600 hover:bg-purple-700"
+                  >
+                    {gerandoAnotacao ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Organizando...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-4 h-4 mr-2" />
+                        Organizar
+                      </>
+                    )}
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={criarAnotacao}
+                    disabled={!anotacaoGeradaIA.title}
+                    className="bg-purple-600 hover:bg-purple-700"
+                  >
+                    Criar Anotação
+                  </Button>
+                )}
+              </div>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
 
@@ -693,6 +914,14 @@ export default function EstudosPage() {
         confirmText="Excluir Anotação"
         cancelText="Cancelar"
         variant="danger"
+      />
+
+      {/* Modal Upgrade Premium */}
+      <UpgradeToPremiumModal
+        open={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        recurso="Anotações com IA"
+        descricao="A geração de anotações organizadas com inteligência artificial está disponível apenas para usuários Premium."
       />
     </div>
   );

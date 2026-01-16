@@ -5,7 +5,7 @@ import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Menu, Bell, Crown, User, Settings, LogOut, Sparkles } from 'lucide-react';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -86,6 +86,7 @@ export function Header() {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="gap-1.5 sm:gap-2 px-1.5 sm:px-2 hover:bg-zinc-800 h-8 sm:h-9">
                 <Avatar className="w-7 h-7 sm:w-8 sm:h-8">
+                  <AvatarImage src={session?.user?.image || undefined} />
                   <AvatarFallback className="bg-gradient-to-br from-aura-500 to-blue-500 text-white text-xs sm:text-sm">
                     {getInitials(session?.user?.name)}
                   </AvatarFallback>
@@ -101,6 +102,7 @@ export function Header() {
               <div className="p-4 bg-gradient-to-br from-aura-500/10 via-blue-500/10 to-purple-500/10 border-b border-zinc-800">
                 <div className="flex items-center gap-3">
                   <Avatar className="w-12 h-12 border-2 border-aura-500/20">
+                    <AvatarImage src={session?.user?.image || undefined} />
                     <AvatarFallback className="bg-gradient-to-br from-aura-500 to-blue-500 text-white text-lg font-bold">
                       {getInitials(session?.user?.name)}
                     </AvatarFallback>
