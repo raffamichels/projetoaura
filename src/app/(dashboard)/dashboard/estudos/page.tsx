@@ -585,13 +585,13 @@ export default function EstudosPage() {
 
       {/* Modal Nova Anotação */}
       <Dialog open={modalAnotacaoAberto} onOpenChange={fecharModalAnotacao}>
-        <DialogContent className="bg-zinc-900 border-zinc-800 max-w-4xl">
-          <DialogHeader>
+        <DialogContent className="bg-zinc-900 border-zinc-800 max-w-4xl h-[90vh] max-h-[700px] flex flex-col">
+          <DialogHeader className="shrink-0">
             <DialogTitle className="text-white">Nova Anotação</DialogTitle>
           </DialogHeader>
 
           {/* Tabs para selecionar tipo */}
-          <div className="flex gap-2 mb-4">
+          <div className="flex gap-2 mb-4 shrink-0">
             <button
               onClick={() => setTipoAnotacao('livre')}
               className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors ${
@@ -625,43 +625,45 @@ export default function EstudosPage() {
 
           {/* Conteúdo baseado no tipo selecionado */}
           {tipoAnotacao === 'livre' ? (
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="titulo-anotacao" className="text-zinc-300">Título</Label>
-                <Input
-                  id="titulo-anotacao"
-                  value={novaAnotacao.titulo}
-                  onChange={(e) => setNovaAnotacao({ ...novaAnotacao, titulo: e.target.value })}
-                  className="bg-zinc-800 border-zinc-700 text-white mt-1"
-                  placeholder="Ex: Anotações da aula 5"
-                />
-              </div>
-              <div>
-                <Label htmlFor="conteudo-anotacao" className="text-zinc-300">Conteúdo</Label>
-                <textarea
-                  id="conteudo-anotacao"
-                  value={novaAnotacao.conteudo}
-                  onChange={(e) => setNovaAnotacao({ ...novaAnotacao, conteudo: e.target.value })}
-                  className="w-full bg-zinc-800 border-zinc-700 text-white mt-1 rounded-md p-3 min-h-[120px] border"
-                  placeholder="Digite suas anotações..."
-                />
-              </div>
-              <div>
-                <Label className="text-zinc-300">Cor</Label>
-                <div className="flex gap-2 mt-2">
-                  {cores.map((cor) => (
-                    <button
-                      key={cor}
-                      onClick={() => setNovaAnotacao({ ...novaAnotacao, cor })}
-                      className={`w-8 h-8 rounded-full ${
-                        novaAnotacao.cor === cor ? 'ring-2 ring-white ring-offset-2 ring-offset-zinc-900' : ''
-                      }`}
-                      style={{ backgroundColor: cor }}
-                    />
-                  ))}
+            <div className="flex flex-col flex-1 min-h-0">
+              <div className="flex-1 overflow-y-auto space-y-4 pr-2">
+                <div>
+                  <Label htmlFor="titulo-anotacao" className="text-zinc-300">Título</Label>
+                  <Input
+                    id="titulo-anotacao"
+                    value={novaAnotacao.titulo}
+                    onChange={(e) => setNovaAnotacao({ ...novaAnotacao, titulo: e.target.value })}
+                    className="bg-zinc-800 border-zinc-700 text-white mt-1"
+                    placeholder="Ex: Anotações da aula 5"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="conteudo-anotacao" className="text-zinc-300">Conteúdo</Label>
+                  <textarea
+                    id="conteudo-anotacao"
+                    value={novaAnotacao.conteudo}
+                    onChange={(e) => setNovaAnotacao({ ...novaAnotacao, conteudo: e.target.value })}
+                    className="w-full bg-zinc-800 border-zinc-700 text-white mt-1 rounded-md p-3 min-h-[120px] border resize-none"
+                    placeholder="Digite suas anotações..."
+                  />
+                </div>
+                <div>
+                  <Label className="text-zinc-300">Cor</Label>
+                  <div className="flex gap-2 mt-2 flex-wrap">
+                    {cores.map((cor) => (
+                      <button
+                        key={cor}
+                        onClick={() => setNovaAnotacao({ ...novaAnotacao, cor })}
+                        className={`w-8 h-8 rounded-full ${
+                          novaAnotacao.cor === cor ? 'ring-2 ring-white ring-offset-2 ring-offset-zinc-900' : ''
+                        }`}
+                        style={{ backgroundColor: cor }}
+                      />
+                    ))}
+                  </div>
                 </div>
               </div>
-              <div className="flex gap-2 justify-end pt-4">
+              <div className="flex gap-2 justify-end pt-4 shrink-0 border-t border-zinc-800 mt-4">
                 <Button
                   variant="default"
                   onClick={fecharModalAnotacao}
@@ -679,75 +681,77 @@ export default function EstudosPage() {
               </div>
             </div>
           ) : (
-            <div className="space-y-4">
-              <p className="text-zinc-400 text-sm">
-                Cole seus textos brutos, transcrições ou bullet points e a IA irá criar uma anotação organizada em primeira pessoa.
-              </p>
+            <div className="flex flex-col flex-1 min-h-0">
+              <div className="flex-1 overflow-y-auto space-y-4 pr-2">
+                <p className="text-zinc-400 text-sm">
+                  Cole seus textos brutos, transcrições ou bullet points e a IA irá criar uma anotação organizada em primeira pessoa.
+                </p>
 
-              {erroIA && (
-                <div className="bg-red-500/10 border border-red-500/50 rounded-lg p-3 text-red-400 text-sm">
-                  {erroIA}
-                </div>
-              )}
+                {erroIA && (
+                  <div className="bg-red-500/10 border border-red-500/50 rounded-lg p-3 text-red-400 text-sm">
+                    {erroIA}
+                  </div>
+                )}
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Coluna esquerda - Texto original */}
-                <div>
-                  <Label className="text-zinc-300">Texto bruto</Label>
-                  <textarea
-                    value={textoOriginalIA}
-                    onChange={(e) => setTextoOriginalIA(e.target.value)}
-                    className="w-full bg-zinc-800 border-zinc-700 text-white mt-1 rounded-md p-3 min-h-[250px] border resize-none"
-                    placeholder="Cole suas anotações de reunião, transcrições ou bullet points aqui..."
-                    disabled={gerandoAnotacao}
-                  />
-                </div>
-
-                {/* Coluna direita - Anotação gerada */}
-                <div>
-                  <Label className="text-zinc-300">Anotação estruturada</Label>
-                  {anotacaoGeradaIA ? (
-                    <div className="mt-1 space-y-2">
-                      <Input
-                        value={anotacaoGeradaIA.title}
-                        onChange={(e) => setAnotacaoGeradaIA({ ...anotacaoGeradaIA, title: e.target.value })}
-                        className="bg-zinc-800 border-zinc-700 text-white"
-                        placeholder="Título da anotação"
-                      />
-                      <textarea
-                        value={anotacaoGeradaIA.content}
-                        onChange={(e) => setAnotacaoGeradaIA({ ...anotacaoGeradaIA, content: e.target.value })}
-                        className="w-full bg-zinc-800 border-zinc-700 text-white rounded-md p-3 min-h-[208px] border resize-none"
-                        placeholder="Conteúdo gerado..."
-                      />
-                    </div>
-                  ) : (
-                    <div className="w-full bg-zinc-800/50 border-zinc-700 text-zinc-500 mt-1 rounded-md p-3 min-h-[250px] border flex items-center justify-center text-center">
-                      <p className="text-sm italic">
-                        Sua anotação estruturada aparecerá aqui após você colar seu texto e clicar em &quot;Organizar&quot;.
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div>
-                <Label className="text-zinc-300">Cor</Label>
-                <div className="flex gap-2 mt-2">
-                  {cores.map((cor) => (
-                    <button
-                      key={cor}
-                      onClick={() => setNovaAnotacao({ ...novaAnotacao, cor })}
-                      className={`w-8 h-8 rounded-full ${
-                        novaAnotacao.cor === cor ? 'ring-2 ring-white ring-offset-2 ring-offset-zinc-900' : ''
-                      }`}
-                      style={{ backgroundColor: cor }}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Coluna esquerda - Texto original */}
+                  <div>
+                    <Label className="text-zinc-300">Texto bruto</Label>
+                    <textarea
+                      value={textoOriginalIA}
+                      onChange={(e) => setTextoOriginalIA(e.target.value)}
+                      className="w-full bg-zinc-800 border-zinc-700 text-white mt-1 rounded-md p-3 min-h-[200px] border resize-none"
+                      placeholder="Cole suas anotações de reunião, transcrições ou bullet points aqui..."
+                      disabled={gerandoAnotacao}
                     />
-                  ))}
+                  </div>
+
+                  {/* Coluna direita - Anotação gerada */}
+                  <div>
+                    <Label className="text-zinc-300">Anotação estruturada</Label>
+                    {anotacaoGeradaIA ? (
+                      <div className="mt-1 space-y-2">
+                        <Input
+                          value={anotacaoGeradaIA.title}
+                          onChange={(e) => setAnotacaoGeradaIA({ ...anotacaoGeradaIA, title: e.target.value })}
+                          className="bg-zinc-800 border-zinc-700 text-white"
+                          placeholder="Título da anotação"
+                        />
+                        <textarea
+                          value={anotacaoGeradaIA.content}
+                          onChange={(e) => setAnotacaoGeradaIA({ ...anotacaoGeradaIA, content: e.target.value })}
+                          className="w-full bg-zinc-800 border-zinc-700 text-white rounded-md p-3 min-h-[158px] border resize-none"
+                          placeholder="Conteúdo gerado..."
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-full bg-zinc-800/50 border-zinc-700 text-zinc-500 mt-1 rounded-md p-3 min-h-[200px] border flex items-center justify-center text-center">
+                        <p className="text-sm italic">
+                          Sua anotação estruturada aparecerá aqui após você colar seu texto e clicar em &quot;Organizar&quot;.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <Label className="text-zinc-300">Cor</Label>
+                  <div className="flex gap-2 mt-2 flex-wrap">
+                    {cores.map((cor) => (
+                      <button
+                        key={cor}
+                        onClick={() => setNovaAnotacao({ ...novaAnotacao, cor })}
+                        className={`w-8 h-8 rounded-full ${
+                          novaAnotacao.cor === cor ? 'ring-2 ring-white ring-offset-2 ring-offset-zinc-900' : ''
+                        }`}
+                        style={{ backgroundColor: cor }}
+                      />
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              <div className="flex gap-2 justify-end pt-4">
+              <div className="flex gap-2 justify-end pt-4 shrink-0 border-t border-zinc-800 mt-4">
                 <Button
                   variant="default"
                   onClick={fecharModalAnotacao}
@@ -790,54 +794,56 @@ export default function EstudosPage() {
 
       {/* Modal Visualizar/Editar Anotação */}
       <Dialog open={modalVisualizarAnotacao} onOpenChange={setModalVisualizarAnotacao}>
-        <DialogContent className="bg-zinc-900 border-zinc-800 max-w-2xl">
-          <DialogHeader>
+        <DialogContent className="bg-zinc-900 border-zinc-800 max-w-2xl h-[85vh] max-h-[600px] flex flex-col">
+          <DialogHeader className="flex-shrink-0">
             <DialogTitle className="text-white">
               {editandoAnotacao ? 'Editar Anotação' : 'Visualizar Anotação'}
             </DialogTitle>
           </DialogHeader>
           {anotacaoSelecionada && (
-            <div className="space-y-4">
+            <div className="flex flex-col flex-1 min-h-0">
               {editandoAnotacao ? (
-                <>
-                  <div>
-                    <Label htmlFor="titulo-editar" className="text-zinc-300">Título</Label>
-                    <Input
-                      id="titulo-editar"
-                      value={anotacaoSelecionada.titulo}
-                      onChange={(e) =>
-                        setAnotacaoSelecionada({ ...anotacaoSelecionada, titulo: e.target.value })
-                      }
-                      className="bg-zinc-800 border-zinc-700 text-white mt-1"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="conteudo-editar" className="text-zinc-300">Conteúdo</Label>
-                    <textarea
-                      id="conteudo-editar"
-                      value={anotacaoSelecionada.conteudo}
-                      onChange={(e) =>
-                        setAnotacaoSelecionada({ ...anotacaoSelecionada, conteudo: e.target.value })
-                      }
-                      className="w-full bg-zinc-800 border-zinc-700 text-white mt-1 rounded-md p-3 min-h-[200px]"
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-zinc-300">Cor</Label>
-                    <div className="flex gap-2 mt-2">
-                      {cores.map((cor) => (
-                        <button
-                          key={cor}
-                          onClick={() => setAnotacaoSelecionada({ ...anotacaoSelecionada, cor })}
-                          className={`w-8 h-8 rounded-full ${
-                            anotacaoSelecionada.cor === cor ? 'ring-2 ring-white ring-offset-2 ring-offset-zinc-900' : ''
-                          }`}
-                          style={{ backgroundColor: cor }}
-                        />
-                      ))}
+                <div className="flex flex-col flex-1 min-h-0">
+                  <div className="flex-1 overflow-y-auto space-y-4 pr-2">
+                    <div>
+                      <Label htmlFor="titulo-editar" className="text-zinc-300">Título</Label>
+                      <Input
+                        id="titulo-editar"
+                        value={anotacaoSelecionada.titulo}
+                        onChange={(e) =>
+                          setAnotacaoSelecionada({ ...anotacaoSelecionada, titulo: e.target.value })
+                        }
+                        className="bg-zinc-800 border-zinc-700 text-white mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="conteudo-editar" className="text-zinc-300">Conteúdo</Label>
+                      <textarea
+                        id="conteudo-editar"
+                        value={anotacaoSelecionada.conteudo}
+                        onChange={(e) =>
+                          setAnotacaoSelecionada({ ...anotacaoSelecionada, conteudo: e.target.value })
+                        }
+                        className="w-full bg-zinc-800 border-zinc-700 text-white mt-1 rounded-md p-3 min-h-[200px] border resize-none"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-zinc-300">Cor</Label>
+                      <div className="flex gap-2 mt-2 flex-wrap">
+                        {cores.map((cor) => (
+                          <button
+                            key={cor}
+                            onClick={() => setAnotacaoSelecionada({ ...anotacaoSelecionada, cor })}
+                            className={`w-8 h-8 rounded-full ${
+                              anotacaoSelecionada.cor === cor ? 'ring-2 ring-white ring-offset-2 ring-offset-zinc-900' : ''
+                            }`}
+                            style={{ backgroundColor: cor }}
+                          />
+                        ))}
+                      </div>
                     </div>
                   </div>
-                  <div className="flex gap-2 justify-end pt-4">
+                  <div className="flex gap-2 justify-end pt-4 flex-shrink-0 border-t border-zinc-800 mt-4">
                     <Button
                       variant="default"
                       onClick={() => setEditandoAnotacao(false)}
@@ -853,19 +859,19 @@ export default function EstudosPage() {
                       Salvar Alterações
                     </Button>
                   </div>
-                </>
+                </div>
               ) : (
-                <>
-                  <div className="space-y-3">
+                <div className="flex flex-col flex-1 min-h-0">
+                  <div className="flex-1 overflow-y-auto space-y-3 pr-2">
                     <div className="flex items-start gap-3">
                       <div
-                        className="w-10 h-10 rounded flex items-center justify-center"
+                        className="w-10 h-10 rounded flex items-center justify-center flex-shrink-0"
                         style={{ backgroundColor: anotacaoSelecionada.cor + '20', color: anotacaoSelecionada.cor }}
                       >
                         <StickyNote className="w-5 h-5" />
                       </div>
-                      <div className="flex-1">
-                        <h3 className="text-xl font-bold text-white mb-1">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-xl font-bold text-white mb-1 break-words">
                           {anotacaoSelecionada.titulo}
                         </h3>
                         {anotacaoSelecionada.curso && (
@@ -874,13 +880,13 @@ export default function EstudosPage() {
                       </div>
                     </div>
                     <div className="bg-zinc-800/50 rounded-lg p-4 border border-zinc-700/50">
-                      <p className="text-zinc-300 whitespace-pre-wrap">{anotacaoSelecionada.conteudo}</p>
+                      <p className="text-zinc-300 whitespace-pre-wrap break-words">{anotacaoSelecionada.conteudo}</p>
                     </div>
                     <p className="text-xs text-zinc-500">
                       Criada em {new Date(anotacaoSelecionada.createdAt).toLocaleDateString('pt-BR')}
                     </p>
                   </div>
-                  <div className="flex gap-2 justify-end pt-4 border-t border-zinc-800">
+                  <div className="flex gap-2 justify-end pt-4 flex-shrink-0 border-t border-zinc-800 mt-4">
                     <Button
                       variant="default"
                       onClick={excluirAnotacao}
@@ -897,7 +903,7 @@ export default function EstudosPage() {
                       Editar
                     </Button>
                   </div>
-                </>
+                </div>
               )}
             </div>
           )}
