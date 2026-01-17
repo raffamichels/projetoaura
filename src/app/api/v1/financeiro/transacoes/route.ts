@@ -10,6 +10,7 @@ import {
   sugerirCategoria,
 } from '@/lib/financeiro-helper';
 import { transacaoSchema } from '@/lib/validations/financeiro';
+import { logger } from '@/lib/logger';
 
 // GET - Listar transações do usuário
 export async function GET(req: NextRequest) {
@@ -66,7 +67,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ data: transacoes }, { status: 200 });
   } catch (error) {
-    console.error('Erro ao buscar transações:', error);
+    logger.error('Erro ao buscar transações', error, { endpoint: '/api/v1/financeiro/transacoes' });
     return NextResponse.json({ error: 'Erro interno' }, { status: 500 });
   }
 }
@@ -367,7 +368,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Tipo de transação inválido' }, { status: 400 });
 
   } catch (error) {
-    console.error('Erro ao criar transação:', error);
+    logger.error('Erro ao criar transação', error, { endpoint: '/api/v1/financeiro/transacoes' });
     return NextResponse.json({ error: 'Erro interno' }, { status: 500 });
   }
 }

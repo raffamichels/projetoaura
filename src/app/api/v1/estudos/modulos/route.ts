@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth/auth';
 import { prisma } from '@/lib/prisma';
+import { apiCreateRateLimiter, rateLimitResponse } from '@/lib/rateLimit';
+import { moduloSchema } from '@/lib/validations/estudos';
 
 // POST - Criar módulo
 export async function POST(req: NextRequest) {
@@ -19,15 +21,24 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 });
     }
 
-    const body = await req.json();
-    const { nome, descricao, cursoId, ordem } = body;
+    // Rate limiting
+    const rateLimitResult = await apiCreateRateLimiter.limit(`${user.id}:create`);
+    if (!rateLimitResult.success) {
+      return rateLimitResponse(rateLimitResult.resetTime);
+    }
 
-    if (!nome || !cursoId) {
+    const body = await req.json();
+
+    // Validar dados de entrada
+    const validationResult = moduloSchema.safeParse(body);
+    if (!validationResult.success) {
       return NextResponse.json(
-        { error: 'Nome e cursoId são obrigatórios' },
+        { error: 'Dados inválidos', details: validationResult.error.flatten().fieldErrors },
         { status: 400 }
       );
     }
+
+    const { nome, descricao, cursoId, ordem } = validationResult.data;
 
     // Verificar se o curso pertence ao usuário
     const curso = await prisma.curso.findFirst({

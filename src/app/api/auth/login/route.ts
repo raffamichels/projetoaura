@@ -8,6 +8,7 @@ import {
   getClientIP,
   rateLimitResponse,
 } from '@/lib/rateLimit';
+import { logger } from '@/lib/logger';
 
 export async function POST(req: NextRequest) {
   try {
@@ -89,7 +90,7 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Erro ao fazer login:', error);
+    logger.error('Erro ao fazer login', error, { endpoint: '/api/auth/login' });
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth/auth';
 import { prisma } from '@/lib/prisma';
+import { apiReadRateLimiter, apiUpdateRateLimiter, apiDeleteRateLimiter, rateLimitResponse } from '@/lib/rateLimit';
+import { cursoUpdateSchema } from '@/lib/validations/estudos';
 
 // GET - Buscar curso específico
 export async function GET(
@@ -21,6 +23,12 @@ export async function GET(
 
     if (!user) {
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 });
+    }
+
+    // Rate limiting
+    const rateLimitResult = await apiReadRateLimiter.limit(`${user.id}:read`);
+    if (!rateLimitResult.success) {
+      return rateLimitResponse(rateLimitResult.resetTime);
     }
 
     const curso = await prisma.curso.findFirst({
@@ -76,8 +84,24 @@ export async function PUT(
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 });
     }
 
+    // Rate limiting
+    const rateLimitResult = await apiUpdateRateLimiter.limit(`${user.id}:update`);
+    if (!rateLimitResult.success) {
+      return rateLimitResponse(rateLimitResult.resetTime);
+    }
+
     const body = await req.json();
-    const { nome, descricao, cor, icone, ativo, ordem } = body;
+
+    // Validar dados de entrada
+    const validationResult = cursoUpdateSchema.safeParse(body);
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { error: 'Dados inválidos', details: validationResult.error.flatten().fieldErrors },
+        { status: 400 }
+      );
+    }
+
+    const { nome, descricao, cor, icone, ordem } = validationResult.data;
 
     const cursoExistente = await prisma.curso.findFirst({
       where: { id, userId: user.id }
@@ -94,7 +118,6 @@ export async function PUT(
         ...(descricao !== undefined && { descricao }),
         ...(cor !== undefined && { cor }),
         ...(icone !== undefined && { icone }),
-        ...(ativo !== undefined && { ativo }),
         ...(ordem !== undefined && { ordem }),
       },
     });
@@ -128,6 +151,12 @@ export async function DELETE(
 
     if (!user) {
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 });
+    }
+
+    // Rate limiting
+    const rateLimitResult = await apiDeleteRateLimiter.limit(`${user.id}:delete`);
+    if (!rateLimitResult.success) {
+      return rateLimitResponse(rateLimitResult.resetTime);
     }
 
     const curso = await prisma.curso.findFirst({

@@ -16,8 +16,8 @@ export const transacaoSchema = z.object({
   data: z.string().refine((val) => !isNaN(Date.parse(val)), {
     message: 'Data inválida',
   }),
-  tipo: z.enum(['RECEITA', 'DESPESA'], {
-    errorMap: () => ({ message: 'Tipo deve ser RECEITA ou DESPESA' }),
+  tipo: z.enum(['RECEITA', 'DESPESA'] as const, {
+    message: 'Tipo deve ser RECEITA ou DESPESA',
   }),
   observacoes: z
     .string()
@@ -62,8 +62,8 @@ export const transacaoUpdateSchema = z.object({
     })
     .optional(),
   tipo: z
-    .enum(['RECEITA', 'DESPESA'], {
-      errorMap: () => ({ message: 'Tipo deve ser RECEITA ou DESPESA' }),
+    .enum(['RECEITA', 'DESPESA'] as const, {
+      message: 'Tipo deve ser RECEITA ou DESPESA',
     })
     .optional(),
   observacoes: z

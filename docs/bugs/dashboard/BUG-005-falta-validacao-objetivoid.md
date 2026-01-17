@@ -232,5 +232,12 @@ describe('POST /api/v1/financeiro/transacoes', () => {
 |--------|------|
 | Identificado | 2026-01-16 |
 | Reportado | 2026-01-16 |
-| Corrigido | Pendente |
-| Verificado | Pendente |
+| Corrigido | 2026-01-17 |
+| Verificado | 2026-01-17 |
+
+### Correção Implementada
+- Validação de ownership adicionada em `api/v1/financeiro/transacoes/route.ts`
+- Verifica se `objetivoId` pertence ao usuário autenticado
+- Verifica se objetivo está com status `EM_ANDAMENTO`
+- Validação similar adicionada para `categoriaId`
+- Mesmo padrão de segurança usado para `contaBancariaId` e `cartaoId`

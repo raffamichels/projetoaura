@@ -186,5 +186,12 @@ export async function POST(req: NextRequest) {
 |--------|------|
 | Identificado | 2026-01-16 |
 | Reportado | 2026-01-16 |
-| Corrigido | Pendente |
-| Verificado | Pendente |
+| Corrigido | 2026-01-17 |
+| Verificado | 2026-01-17 |
+
+### Correção Implementada
+- Schema Zod implementado em `src/lib/validations/financeiro.ts`
+- Validação de tipos, ranges e formatos aplicada na API
+- Valor: positivo, máximo 999999999.99
+- Parcelas: inteiro, mínimo 2, máximo 48
+- Todos os IDs validados como UUID

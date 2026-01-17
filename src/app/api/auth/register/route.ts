@@ -5,6 +5,7 @@ import { registerSchema } from '@/lib/validations/auth';
 import { generateVerificationToken } from '@/lib/tokens';
 import { sendVerificationEmail } from '@/lib/email/emailService';
 import { registerRateLimiter, getClientIP, rateLimitResponse } from '@/lib/rateLimit';
+import { logger } from '@/lib/logger';
 
 // Sanitizar nome removendo caracteres potencialmente perigosos
 function sanitizeName(name: string): string {
@@ -98,7 +99,7 @@ export async function POST(req: NextRequest) {
     );
 
   } catch (error) {
-    console.error('Erro ao criar usuário:', error);
+    logger.error('Erro ao criar usuário', error, { endpoint: '/api/auth/register' });
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }

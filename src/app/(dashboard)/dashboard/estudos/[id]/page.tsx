@@ -21,6 +21,7 @@ import {
   List,
   Maximize2,
   Minimize2,
+  Loader2,
 } from 'lucide-react';
 import RichTextEditor from '@/components/estudos/RichTextEditor';
 import { PomodoroTimer } from '@/components/PomodoroTimer';
@@ -84,6 +85,14 @@ export default function CursoDetalhePage() {
     conteudo: '',
   });
 
+  // Estados de loading para evitar múltiplos cliques (BUG-002)
+  const [criandoModulo, setCriandoModulo] = useState(false);
+  const [criandoPagina, setCriandoPagina] = useState(false);
+  const [salvandoPagina, setSalvandoPagina] = useState(false);
+  const [excluindoModulo, setExcluindoModulo] = useState(false);
+  const [excluindoPagina, setExcluindoPagina] = useState(false);
+  const [excluindoCurso, setExcluindoCurso] = useState(false);
+
   useEffect(() => {
     carregarCurso();
   }, [cursoId]);
@@ -104,6 +113,9 @@ export default function CursoDetalhePage() {
   };
 
   const criarModulo = async () => {
+    if (criandoModulo) return;
+
+    setCriandoModulo(true);
     try {
       const response = await fetch('/api/v1/estudos/modulos', {
         method: 'POST',
@@ -122,12 +134,15 @@ export default function CursoDetalhePage() {
       }
     } catch (error) {
       console.error('Erro ao criar módulo:', error);
+    } finally {
+      setCriandoModulo(false);
     }
   };
 
   const criarPagina = async () => {
-    if (!moduloSelecionado) return;
+    if (!moduloSelecionado || criandoPagina) return;
 
+    setCriandoPagina(true);
     try {
       const response = await fetch('/api/v1/estudos/paginas', {
         method: 'POST',
@@ -146,6 +161,8 @@ export default function CursoDetalhePage() {
       }
     } catch (error) {
       console.error('Erro ao criar página:', error);
+    } finally {
+      setCriandoPagina(false);
     }
   };
 
@@ -176,8 +193,9 @@ export default function CursoDetalhePage() {
   };
 
   const salvarPagina = async () => {
-    if (!paginaSelecionada) return;
+    if (!paginaSelecionada || salvandoPagina) return;
 
+    setSalvandoPagina(true);
     try {
       const response = await fetch(`/api/v1/estudos/paginas/${paginaSelecionada.id}`, {
         method: 'PUT',
@@ -196,6 +214,8 @@ export default function CursoDetalhePage() {
       }
     } catch (error) {
       console.error('Erro ao salvar página:', error);
+    } finally {
+      setSalvandoPagina(false);
     }
   };
 
@@ -206,8 +226,9 @@ export default function CursoDetalhePage() {
   };
 
   const confirmarExcluirModulo = async () => {
-    if (!itemParaExcluir) return;
+    if (!itemParaExcluir || excluindoModulo) return;
 
+    setExcluindoModulo(true);
     try {
       const response = await fetch(`/api/v1/estudos/modulos/${itemParaExcluir}`, {
         method: 'DELETE',
@@ -220,9 +241,12 @@ export default function CursoDetalhePage() {
         }
         carregarCurso();
         setItemParaExcluir(null);
+        setModalExcluirModulo(false);
       }
     } catch (error) {
       console.error('Erro ao excluir módulo:', error);
+    } finally {
+      setExcluindoModulo(false);
     }
   };
 
@@ -233,8 +257,9 @@ export default function CursoDetalhePage() {
   };
 
   const confirmarExcluirPagina = async () => {
-    if (!itemParaExcluir) return;
+    if (!itemParaExcluir || excluindoPagina) return;
 
+    setExcluindoPagina(true);
     try {
       const response = await fetch(`/api/v1/estudos/paginas/${itemParaExcluir}`, {
         method: 'DELETE',
@@ -248,9 +273,12 @@ export default function CursoDetalhePage() {
           carregarModulo(moduloSelecionado.id);
         }
         setItemParaExcluir(null);
+        setModalExcluirPagina(false);
       }
     } catch (error) {
       console.error('Erro ao excluir página:', error);
+    } finally {
+      setExcluindoPagina(false);
     }
   };
 
@@ -259,6 +287,9 @@ export default function CursoDetalhePage() {
   };
 
   const confirmarExcluirCurso = async () => {
+    if (excluindoCurso) return;
+
+    setExcluindoCurso(true);
     try {
       const response = await fetch(`/api/v1/estudos/cursos/${cursoId}`, {
         method: 'DELETE',
@@ -269,6 +300,8 @@ export default function CursoDetalhePage() {
       }
     } catch (error) {
       console.error('Erro ao excluir curso:', error);
+    } finally {
+      setExcluindoCurso(false);
     }
   };
 
@@ -565,10 +598,15 @@ export default function CursoDetalhePage() {
                           <div className="flex gap-2">
                             <Button
                               onClick={salvarPagina}
+                              disabled={salvandoPagina}
                               className="bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 shadow-lg shadow-green-500/20 rounded-xl"
                             >
-                              <Save className="w-4 h-4 mr-2" />
-                              {t('save')}
+                              {salvandoPagina ? (
+                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                              ) : (
+                                <Save className="w-4 h-4 mr-2" />
+                              )}
+                              {salvandoPagina ? t('saving') : t('save')}
                             </Button>
                             <Button
                               variant="default"
@@ -733,10 +771,17 @@ export default function CursoDetalhePage() {
               </Button>
               <Button
                 onClick={criarModulo}
-                disabled={!novoModulo.nome}
+                disabled={!novoModulo.nome || criandoModulo}
                 className="flex-1 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 rounded-xl h-11"
               >
-                Criar Módulo
+                {criandoModulo ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Criando...
+                  </>
+                ) : (
+                  'Criar Módulo'
+                )}
               </Button>
             </div>
           </div>
@@ -772,10 +817,17 @@ export default function CursoDetalhePage() {
               </Button>
               <Button
                 onClick={criarPagina}
-                disabled={!novaPagina.titulo}
+                disabled={!novaPagina.titulo || criandoPagina}
                 className="flex-1 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 rounded-xl h-11"
               >
-                Criar Página
+                {criandoPagina ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Criando...
+                  </>
+                ) : (
+                  'Criar Página'
+                )}
               </Button>
             </div>
           </div>

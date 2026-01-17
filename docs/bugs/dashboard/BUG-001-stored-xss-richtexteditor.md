@@ -164,5 +164,11 @@ const securityHeaders = [
 |--------|------|
 | Identificado | 2026-01-16 |
 | Reportado | 2026-01-16 |
-| Corrigido | Pendente |
-| Verificado | Pendente |
+| Corrigido | 2026-01-17 |
+| Verificado | 2026-01-17 |
+
+### Correção Implementada
+- DOMPurify configurado no `RichTextEditor.tsx` com whitelist de tags permitidas
+- Sanitização no backend em `api/v1/estudos/anotacoes/route.ts` antes de salvar
+- Tags perigosas (`script`, `iframe`, `object`, `embed`, `form`) bloqueadas
+- Atributos de eventos (`onerror`, `onload`, `onclick`, etc.) removidos

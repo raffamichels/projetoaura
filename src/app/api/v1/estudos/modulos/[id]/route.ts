@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth/auth';
 import { prisma } from '@/lib/prisma';
+import { apiReadRateLimiter, apiUpdateRateLimiter, apiDeleteRateLimiter, rateLimitResponse } from '@/lib/rateLimit';
+import { moduloUpdateSchema } from '@/lib/validations/estudos';
 
 // GET - Buscar módulo específico
 export async function GET(
@@ -21,6 +23,12 @@ export async function GET(
 
     if (!user) {
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 });
+    }
+
+    // Rate limiting
+    const rateLimitResult = await apiReadRateLimiter.limit(`${user.id}:read`);
+    if (!rateLimitResult.success) {
+      return rateLimitResponse(rateLimitResult.resetTime);
     }
 
     const modulo = await prisma.modulo.findFirst({
@@ -69,8 +77,24 @@ export async function PUT(
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 });
     }
 
+    // Rate limiting
+    const rateLimitResult = await apiUpdateRateLimiter.limit(`${user.id}:update`);
+    if (!rateLimitResult.success) {
+      return rateLimitResponse(rateLimitResult.resetTime);
+    }
+
     const body = await req.json();
-    const { nome, descricao, ordem } = body;
+
+    // Validar dados de entrada
+    const validationResult = moduloUpdateSchema.safeParse(body);
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { error: 'Dados inválidos', details: validationResult.error.flatten().fieldErrors },
+        { status: 400 }
+      );
+    }
+
+    const { nome, descricao, ordem } = validationResult.data;
 
     const moduloExistente = await prisma.modulo.findFirst({
       where: {
@@ -123,6 +147,12 @@ export async function DELETE(
 
     if (!user) {
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 });
+    }
+
+    // Rate limiting
+    const rateLimitResult = await apiDeleteRateLimiter.limit(`${user.id}:delete`);
+    if (!rateLimitResult.success) {
+      return rateLimitResponse(rateLimitResult.resetTime);
     }
 
     const modulo = await prisma.modulo.findFirst({

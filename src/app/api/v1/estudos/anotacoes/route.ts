@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth/auth';
 import { prisma } from '@/lib/prisma';
 import DOMPurify from 'isomorphic-dompurify';
+import { logger } from '@/lib/logger';
+import { apiReadRateLimiter, apiCreateRateLimiter, rateLimitResponse } from '@/lib/rateLimit';
+import { anotacaoSchema } from '@/lib/validations/estudos';
 
 // Configuração de sanitização para prevenir XSS
 const DOMPURIFY_CONFIG = {
@@ -41,6 +44,12 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 });
     }
 
+    // Rate limiting
+    const rateLimitResult = await apiReadRateLimiter.limit(`${user.id}:read`);
+    if (!rateLimitResult.success) {
+      return rateLimitResponse(rateLimitResult.resetTime);
+    }
+
     const { searchParams } = new URL(req.url);
     const cursoId = searchParams.get('cursoId');
 
@@ -63,7 +72,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ data: anotacoes }, { status: 200 });
   } catch (error) {
-    console.error('Erro ao buscar anotações:', error);
+    logger.error('Erro ao buscar anotações', error, { endpoint: '/api/v1/estudos/anotacoes' });
     return NextResponse.json({ error: 'Erro interno' }, { status: 500 });
   }
 }
@@ -85,15 +94,24 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 });
     }
 
-    const body = await req.json();
-    const { titulo, conteudo, cor, cursoId } = body;
+    // Rate limiting
+    const rateLimitResult = await apiCreateRateLimiter.limit(`${user.id}:create`);
+    if (!rateLimitResult.success) {
+      return rateLimitResponse(rateLimitResult.resetTime);
+    }
 
-    if (!titulo) {
+    const body = await req.json();
+
+    // Validar dados de entrada
+    const validationResult = anotacaoSchema.safeParse(body);
+    if (!validationResult.success) {
       return NextResponse.json(
-        { error: 'Título é obrigatório' },
+        { error: 'Dados inválidos', details: validationResult.error.flatten().fieldErrors },
         { status: 400 }
       );
     }
+
+    const { titulo, conteudo, cor, cursoId } = validationResult.data;
 
     // Se cursoId foi informado, verificar se pertence ao usuário
     if (cursoId) {
@@ -124,7 +142,7 @@ export async function POST(req: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('Erro ao criar anotação:', error);
+    logger.error('Erro ao criar anotação', error, { endpoint: '/api/v1/estudos/anotacoes' });
     return NextResponse.json({ error: 'Erro interno' }, { status: 500 });
   }
 }

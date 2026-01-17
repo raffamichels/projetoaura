@@ -173,5 +173,12 @@ export const logger = {
 |--------|------|
 | Identificado | 2026-01-16 |
 | Reportado | 2026-01-16 |
-| Corrigido | Pendente |
-| Verificado | Pendente |
+| Corrigido | 2026-01-17 |
+| Verificado | 2026-01-17 |
+
+### Correção Implementada
+- Logger estruturado criado em `src/lib/logger.ts`
+- Em desenvolvimento: logs detalhados com stack traces
+- Em produção: apenas mensagens sanitizadas (sem stack traces)
+- APIs críticas atualizadas para usar o logger (auth, financeiro, estudos)
+- Formato JSON estruturado para fácil integração com serviços de monitoramento

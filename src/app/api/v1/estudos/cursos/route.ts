@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth/auth';
 import { prisma } from '@/lib/prisma';
+import { apiReadRateLimiter, apiCreateRateLimiter, rateLimitResponse } from '@/lib/rateLimit';
+import { cursoSchema } from '@/lib/validations/estudos';
 
 // GET - Listar cursos
 export async function GET() {
@@ -17,6 +19,12 @@ export async function GET() {
 
     if (!user) {
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 });
+    }
+
+    // Rate limiting
+    const rateLimitResult = await apiReadRateLimiter.limit(`${user.id}:read`);
+    if (!rateLimitResult.success) {
+      return rateLimitResponse(rateLimitResult.resetTime);
     }
 
     const cursos = await prisma.curso.findMany({
@@ -53,23 +61,32 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 });
     }
 
-    const body = await req.json();
-    const { nome, descricao, cor, icone, ordem } = body;
+    // Rate limiting
+    const rateLimitResult = await apiCreateRateLimiter.limit(`${user.id}:create`);
+    if (!rateLimitResult.success) {
+      return rateLimitResponse(rateLimitResult.resetTime);
+    }
 
-    if (!nome) {
+    const body = await req.json();
+
+    // Validar dados de entrada
+    const validationResult = cursoSchema.safeParse(body);
+    if (!validationResult.success) {
       return NextResponse.json(
-        { error: 'Nome é obrigatório' },
+        { error: 'Dados inválidos', details: validationResult.error.flatten().fieldErrors },
         { status: 400 }
       );
     }
+
+    const { nome, descricao, cor, icone, ordem } = validationResult.data;
 
     const curso = await prisma.curso.create({
       data: {
         nome,
         descricao,
-        cor: cor || '#8B5CF6',
-        icone: icone || 'book-open',
-        ordem: ordem || 0,
+        cor,
+        icone,
+        ordem,
         userId: user.id,
       },
     });

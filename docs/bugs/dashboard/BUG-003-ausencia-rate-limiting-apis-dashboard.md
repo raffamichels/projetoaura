@@ -208,5 +208,14 @@ Para ambientes de produção em escala, considere:
 |--------|------|
 | Identificado | 2026-01-16 |
 | Reportado | 2026-01-16 |
-| Corrigido | Pendente |
-| Verificado | Pendente |
+| Corrigido | 2026-01-17 |
+| Verificado | 2026-01-17 |
+
+### Correção Implementada
+- Rate limiters adicionados em `src/lib/rateLimit.ts`:
+  - `apiReadRateLimiter`: 100 req/min para leitura
+  - `apiCreateRateLimiter`: 30 req/min para criação
+  - `apiUpdateRateLimiter`: 30 req/min para atualização
+  - `apiDeleteRateLimiter`: 20 req/min para deleção
+  - `apiHeavyRateLimiter`: 5 req/min para operações pesadas (AI)
+- Wrapper `withApiRateLimit()` disponível para uso nas APIs

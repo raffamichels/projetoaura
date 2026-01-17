@@ -81,6 +81,12 @@ export default function EstudosPage() {
   const [gerandoAnotacao, setGerandoAnotacao] = useState(false);
   const [erroIA, setErroIA] = useState<string | null>(null);
 
+  // Estados de loading para evitar múltiplos cliques (BUG-002)
+  const [criandoCurso, setCriandoCurso] = useState(false);
+  const [criandoAnotacao, setCriandoAnotacao] = useState(false);
+  const [editandoAnotacaoLoading, setEditandoAnotacaoLoading] = useState(false);
+  const [excluindoAnotacao, setExcluindoAnotacao] = useState(false);
+
   useEffect(() => {
     carregarDados();
   }, []);
@@ -110,6 +116,9 @@ export default function EstudosPage() {
   };
 
   const criarCurso = async () => {
+    if (criandoCurso) return;
+
+    setCriandoCurso(true);
     try {
       const response = await fetch('/api/v1/estudos/cursos', {
         method: 'POST',
@@ -124,10 +133,15 @@ export default function EstudosPage() {
       }
     } catch (error) {
       console.error('Erro ao criar curso:', error);
+    } finally {
+      setCriandoCurso(false);
     }
   };
 
   const criarAnotacao = async () => {
+    if (criandoAnotacao) return;
+
+    setCriandoAnotacao(true);
     try {
       const dadosAnotacao = tipoAnotacao === 'ia' && anotacaoGeradaIA
         ? { titulo: anotacaoGeradaIA.title, conteudo: anotacaoGeradaIA.content, cor: novaAnotacao.cor }
@@ -145,6 +159,8 @@ export default function EstudosPage() {
       }
     } catch (error) {
       console.error('Erro ao criar anotação:', error);
+    } finally {
+      setCriandoAnotacao(false);
     }
   };
 
@@ -228,8 +244,9 @@ export default function EstudosPage() {
   };
 
   const editarAnotacao = async () => {
-    if (!anotacaoSelecionada) return;
+    if (!anotacaoSelecionada || editandoAnotacaoLoading) return;
 
+    setEditandoAnotacaoLoading(true);
     try {
       const response = await fetch(`/api/v1/estudos/anotacoes/${anotacaoSelecionada.id}`, {
         method: 'PUT',
@@ -249,6 +266,8 @@ export default function EstudosPage() {
       }
     } catch (error) {
       console.error('Erro ao editar anotação:', error);
+    } finally {
+      setEditandoAnotacaoLoading(false);
     }
   };
 
@@ -258,8 +277,9 @@ export default function EstudosPage() {
   };
 
   const confirmarExcluirAnotacao = async () => {
-    if (!anotacaoSelecionada) return;
+    if (!anotacaoSelecionada || excluindoAnotacao) return;
 
+    setExcluindoAnotacao(true);
     try {
       const response = await fetch(`/api/v1/estudos/anotacoes/${anotacaoSelecionada.id}`, {
         method: 'DELETE',
@@ -273,6 +293,8 @@ export default function EstudosPage() {
       }
     } catch (error) {
       console.error('Erro ao excluir anotação:', error);
+    } finally {
+      setExcluindoAnotacao(false);
     }
   };
 
@@ -575,10 +597,17 @@ export default function EstudosPage() {
               </Button>
               <Button
                 onClick={criarCurso}
-                disabled={!novoCurso.nome}
+                disabled={!novoCurso.nome || criandoCurso}
                 className="bg-purple-600 hover:bg-purple-700"
               >
-                {t('createCourse')}
+                {criandoCurso ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    {t('creating')}
+                  </>
+                ) : (
+                  t('createCourse')
+                )}
               </Button>
             </div>
           </div>
@@ -675,10 +704,17 @@ export default function EstudosPage() {
                 </Button>
                 <Button
                   onClick={criarAnotacao}
-                  disabled={!novaAnotacao.titulo}
+                  disabled={!novaAnotacao.titulo || criandoAnotacao}
                   className="bg-purple-600 hover:bg-purple-700"
                 >
-                  {t('createNote')}
+                  {criandoAnotacao ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      {t('creating')}
+                    </>
+                  ) : (
+                    t('createNote')
+                  )}
                 </Button>
               </div>
             </div>
@@ -782,10 +818,17 @@ export default function EstudosPage() {
                 ) : (
                   <Button
                     onClick={criarAnotacao}
-                    disabled={!anotacaoGeradaIA.title}
+                    disabled={!anotacaoGeradaIA.title || criandoAnotacao}
                     className="bg-purple-600 hover:bg-purple-700"
                   >
-                    {t('createNote')}
+                    {criandoAnotacao ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        {t('creating')}
+                      </>
+                    ) : (
+                      t('createNote')
+                    )}
                   </Button>
                 )}
               </div>
@@ -855,10 +898,17 @@ export default function EstudosPage() {
                     </Button>
                     <Button
                       onClick={editarAnotacao}
-                      disabled={!anotacaoSelecionada.titulo}
+                      disabled={!anotacaoSelecionada.titulo || editandoAnotacaoLoading}
                       className="bg-purple-600 hover:bg-purple-700"
                     >
-                      {t('saveChanges')}
+                      {editandoAnotacaoLoading ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          {t('saving')}
+                        </>
+                      ) : (
+                        t('saveChanges')
+                      )}
                     </Button>
                   </div>
                 </div>

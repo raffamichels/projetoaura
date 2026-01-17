@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth/auth';
 import { prisma } from '@/lib/prisma';
+import { apiReadRateLimiter, rateLimitResponse } from '@/lib/rateLimit';
 
 // GET - Buscar conteúdo
 export async function GET(req: NextRequest) {
@@ -17,6 +18,12 @@ export async function GET(req: NextRequest) {
 
     if (!user) {
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 });
+    }
+
+    // Rate limiting (busca é mais pesada, usar limite de leitura)
+    const rateLimitResult = await apiReadRateLimiter.limit(`${user.id}:read`);
+    if (!rateLimitResult.success) {
+      return rateLimitResponse(rateLimitResult.resetTime);
     }
 
     const { searchParams } = new URL(req.url);
