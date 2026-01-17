@@ -12,6 +12,7 @@ import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import { UpgradeToPremiumModal } from '@/components/planos/UpgradeToPremiumModal';
 import { verificarAcessoRecurso } from '@/lib/planos-helper';
 import { RecursoPremium, PlanoUsuario } from '@/types/planos';
+import { useTranslations } from 'next-intl';
 
 interface Curso {
   id: string;
@@ -40,6 +41,7 @@ interface Anotacao {
 
 export default function EstudosPage() {
   const { data: session } = useSession();
+  const t = useTranslations('studies');
   const [cursos, setCursos] = useState<Curso[]>([]);
   const [anotacoes, setAnotacoes] = useState<Anotacao[]>([]);
   const [loading, setLoading] = useState(true);
@@ -284,7 +286,7 @@ export default function EstudosPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
-          <p className="text-zinc-400">Carregando...</p>
+          <p className="text-zinc-400">{t('loading')}</p>
         </div>
       </div>
     );
@@ -295,8 +297,8 @@ export default function EstudosPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white">Estudos</h1>
-          <p className="text-sm sm:text-base text-zinc-400">Organize seus materiais de estudo</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white">{t('title')}</h1>
+          <p className="text-sm sm:text-base text-zinc-400">{t('subtitle')}</p>
         </div>
         <div className="flex flex-wrap gap-2 sm:gap-3 w-full sm:w-auto">
           <Button
@@ -305,7 +307,7 @@ export default function EstudosPage() {
             className="flex-1 sm:flex-none border-zinc-700 hover:bg-zinc-800 h-auto py-2 text-sm"
           >
             <Search className="w-4 h-4 mr-1 sm:mr-2" />
-            <span className="hidden xs:inline">Buscar</span>
+            <span className="hidden xs:inline">{t('search')}</span>
           </Button>
           <Button
             onClick={() => setModalAnotacaoAberto(true)}
@@ -313,16 +315,16 @@ export default function EstudosPage() {
             className="flex-1 sm:flex-none border-zinc-700 hover:bg-zinc-800 h-auto py-2 text-sm"
           >
             <StickyNote className="w-4 h-4 mr-1 sm:mr-2" />
-            <span className="hidden xs:inline">Nova Anotação</span>
-            <span className="xs:hidden">Anotação</span>
+            <span className="hidden xs:inline">{t('newNote')}</span>
+            <span className="xs:hidden">{t('note')}</span>
           </Button>
           <Button
             onClick={() => setModalCursoAberto(true)}
             className="flex-1 sm:flex-none bg-purple-600 hover:bg-purple-700 h-auto py-2 text-sm"
           >
             <Plus className="w-4 h-4 mr-1 sm:mr-2" />
-            <span className="hidden xs:inline">Novo Curso</span>
-            <span className="xs:hidden">Curso</span>
+            <span className="hidden xs:inline">{t('newCourse')}</span>
+            <span className="xs:hidden">{t('course')}</span>
           </Button>
         </div>
       </div>
@@ -332,7 +334,7 @@ export default function EstudosPage() {
         <Card className="bg-zinc-900 border-zinc-800">
           <CardContent className="p-4">
             <Input
-              placeholder="Buscar em cursos, páginas e anotações..."
+              placeholder={t('searchPlaceholder')}
               value={termoBusca}
               onChange={(e) => {
                 setTermoBusca(e.target.value);
@@ -343,12 +345,12 @@ export default function EstudosPage() {
             {resultadosBusca && (
               <div className="mt-4 space-y-4">
                 {resultadosBusca.total === 0 ? (
-                  <p className="text-zinc-500 text-center py-4">Nenhum resultado encontrado</p>
+                  <p className="text-zinc-500 text-center py-4">{t('noResults')}</p>
                 ) : (
                   <>
                     {resultadosBusca.cursos.length > 0 && (
                       <div>
-                        <h3 className="text-sm font-semibold text-zinc-400 mb-2">Cursos</h3>
+                        <h3 className="text-sm font-semibold text-zinc-400 mb-2">{t('courses')}</h3>
                         {resultadosBusca.cursos.map((curso: any) => (
                           <div
                             key={curso.id}
@@ -365,7 +367,7 @@ export default function EstudosPage() {
                     )}
                     {resultadosBusca.paginas.length > 0 && (
                       <div>
-                        <h3 className="text-sm font-semibold text-zinc-400 mb-2">Páginas</h3>
+                        <h3 className="text-sm font-semibold text-zinc-400 mb-2">{t('pages')}</h3>
                         {resultadosBusca.paginas.map((pagina: any) => (
                           <div
                             key={pagina.id}
@@ -390,7 +392,7 @@ export default function EstudosPage() {
         <Card className="bg-zinc-900 border-zinc-800">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-zinc-400">
-              Total de Cursos
+              {t('totalCourses')}
             </CardTitle>
             <BookOpen className="w-4 h-4 text-purple-500" />
           </CardHeader>
@@ -402,7 +404,7 @@ export default function EstudosPage() {
         <Card className="bg-zinc-900 border-zinc-800">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-zinc-400">
-              Total de Módulos
+              {t('totalModules')}
             </CardTitle>
             <FileText className="w-4 h-4 text-blue-500" />
           </CardHeader>
@@ -416,7 +418,7 @@ export default function EstudosPage() {
         <Card className="bg-zinc-900 border-zinc-800">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-zinc-400">
-              Total de Anotações
+              {t('totalNotes')}
             </CardTitle>
             <StickyNote className="w-4 h-4 text-yellow-500" />
           </CardHeader>
@@ -428,18 +430,18 @@ export default function EstudosPage() {
 
       {/* Cursos */}
       <div>
-        <h2 className="text-lg sm:text-xl font-bold text-white mb-3 sm:mb-4">Meus Cursos</h2>
+        <h2 className="text-lg sm:text-xl font-bold text-white mb-3 sm:mb-4">{t('myCourses')}</h2>
         {cursos.length === 0 ? (
           <Card className="bg-zinc-900 border-zinc-800">
             <CardContent className="p-6 sm:p-8 text-center">
               <BookOpen className="w-10 h-10 sm:w-12 sm:h-12 text-zinc-600 mx-auto mb-3 sm:mb-4" />
-              <p className="text-sm sm:text-base text-zinc-400 mb-3 sm:mb-4">Você ainda não tem cursos cadastrados</p>
+              <p className="text-sm sm:text-base text-zinc-400 mb-3 sm:mb-4">{t('noCoursesYet')}</p>
               <Button
                 onClick={() => setModalCursoAberto(true)}
                 className="bg-purple-600 hover:bg-purple-700 h-auto py-2.5 text-sm sm:text-base"
               >
                 <Plus className="w-4 h-4 mr-2" />
-                Criar primeiro curso
+                {t('createFirstCourse')}
               </Button>
             </CardContent>
           </Card>
@@ -473,10 +475,10 @@ export default function EstudosPage() {
                 <CardContent>
                   <div className="flex gap-4 text-sm text-zinc-400">
                     <div>
-                      <span className="font-medium">{curso._count.modulos}</span> módulos
+                      <span className="font-medium">{curso._count.modulos}</span> {t('modules')}
                     </div>
                     <div>
-                      <span className="font-medium">{curso._count.anotacoes}</span> anotações
+                      <span className="font-medium">{curso._count.anotacoes}</span> {t('notes')}
                     </div>
                   </div>
                 </CardContent>
@@ -489,7 +491,7 @@ export default function EstudosPage() {
       {/* Anotações Recentes */}
       {anotacoes.length > 0 && (
         <div>
-          <h2 className="text-xl font-bold text-white mb-4">Anotações Recentes</h2>
+          <h2 className="text-xl font-bold text-white mb-4">{t('recentNotes')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {anotacoes.slice(0, 6).map((anotacao) => (
               <Card
@@ -525,31 +527,31 @@ export default function EstudosPage() {
       <Dialog open={modalCursoAberto} onOpenChange={setModalCursoAberto}>
         <DialogContent className="bg-zinc-900 border-zinc-800">
           <DialogHeader>
-            <DialogTitle className="text-white">Novo Curso</DialogTitle>
+            <DialogTitle className="text-white">{t('newCourseTitle')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="nome" className="text-zinc-300">Nome do Curso</Label>
+              <Label htmlFor="nome" className="text-zinc-300">{t('courseName')}</Label>
               <Input
                 id="nome"
                 value={novoCurso.nome}
                 onChange={(e) => setNovoCurso({ ...novoCurso, nome: e.target.value })}
                 className="bg-zinc-800 border-zinc-700 text-white mt-1"
-                placeholder="Ex: JavaScript Avançado"
+                placeholder={t('courseNamePlaceholder')}
               />
             </div>
             <div>
-              <Label htmlFor="descricao" className="text-zinc-300">Descrição (opcional)</Label>
+              <Label htmlFor="descricao" className="text-zinc-300">{t('descriptionOptional')}</Label>
               <Input
                 id="descricao"
                 value={novoCurso.descricao}
                 onChange={(e) => setNovoCurso({ ...novoCurso, descricao: e.target.value })}
                 className="bg-zinc-800 border-zinc-700 text-white mt-1"
-                placeholder="Ex: Conceitos avançados de JavaScript"
+                placeholder={t('descriptionPlaceholder')}
               />
             </div>
             <div>
-              <Label className="text-zinc-300">Cor</Label>
+              <Label className="text-zinc-300">{t('color')}</Label>
               <div className="flex gap-2 mt-2">
                 {cores.map((cor) => (
                   <button
@@ -569,14 +571,14 @@ export default function EstudosPage() {
                 onClick={() => setModalCursoAberto(false)}
                 className="border-zinc-700"
               >
-                Cancelar
+                {t('cancel')}
               </Button>
               <Button
                 onClick={criarCurso}
                 disabled={!novoCurso.nome}
                 className="bg-purple-600 hover:bg-purple-700"
               >
-                Criar Curso
+                {t('createCourse')}
               </Button>
             </div>
           </div>
@@ -587,7 +589,7 @@ export default function EstudosPage() {
       <Dialog open={modalAnotacaoAberto} onOpenChange={fecharModalAnotacao}>
         <DialogContent className="bg-zinc-900 border-zinc-800 max-w-4xl h-[90vh] max-h-[700px] flex flex-col">
           <DialogHeader className="shrink-0">
-            <DialogTitle className="text-white">Nova Anotação</DialogTitle>
+            <DialogTitle className="text-white">{t('newNoteTitle')}</DialogTitle>
           </DialogHeader>
 
           {/* Tabs para selecionar tipo */}
@@ -601,7 +603,7 @@ export default function EstudosPage() {
               }`}
             >
               <StickyNote className="w-4 h-4 inline-block mr-2" />
-              Anotação Livre
+              {t('freeNote')}
             </button>
             <div className="relative flex-1">
               {/* Coroa indicando recurso premium - aparece apenas para usuários FREE */}
@@ -615,10 +617,10 @@ export default function EstudosPage() {
                     ? 'bg-purple-600 text-white'
                     : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
                 }`}
-                title={!isPremium ? 'Premium - Clique para fazer upgrade' : 'Anotação com IA'}
+                title={!isPremium ? t('premiumClickToUpgrade') : t('aiNote')}
               >
                 <Sparkles className="w-4 h-4 inline-block mr-2" />
-                Anotação com IA
+                {t('aiNote')}
               </button>
             </div>
           </div>
@@ -628,27 +630,27 @@ export default function EstudosPage() {
             <div className="flex flex-col flex-1 min-h-0">
               <div className="flex-1 overflow-y-auto space-y-4 pr-2">
                 <div>
-                  <Label htmlFor="titulo-anotacao" className="text-zinc-300">Título</Label>
+                  <Label htmlFor="titulo-anotacao" className="text-zinc-300">{t('title')}</Label>
                   <Input
                     id="titulo-anotacao"
                     value={novaAnotacao.titulo}
                     onChange={(e) => setNovaAnotacao({ ...novaAnotacao, titulo: e.target.value })}
                     className="bg-zinc-800 border-zinc-700 text-white mt-1"
-                    placeholder="Ex: Anotações da aula 5"
+                    placeholder={t('titlePlaceholder')}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="conteudo-anotacao" className="text-zinc-300">Conteúdo</Label>
+                  <Label htmlFor="conteudo-anotacao" className="text-zinc-300">{t('content')}</Label>
                   <textarea
                     id="conteudo-anotacao"
                     value={novaAnotacao.conteudo}
                     onChange={(e) => setNovaAnotacao({ ...novaAnotacao, conteudo: e.target.value })}
                     className="w-full bg-zinc-800 border-zinc-700 text-white mt-1 rounded-md p-3 min-h-[120px] border resize-none"
-                    placeholder="Digite suas anotações..."
+                    placeholder={t('contentPlaceholder')}
                   />
                 </div>
                 <div>
-                  <Label className="text-zinc-300">Cor</Label>
+                  <Label className="text-zinc-300">{t('color')}</Label>
                   <div className="flex gap-2 mt-2 flex-wrap">
                     {cores.map((cor) => (
                       <button
@@ -669,14 +671,14 @@ export default function EstudosPage() {
                   onClick={fecharModalAnotacao}
                   className="border-zinc-700"
                 >
-                  Cancelar
+                  {t('cancel')}
                 </Button>
                 <Button
                   onClick={criarAnotacao}
                   disabled={!novaAnotacao.titulo}
                   className="bg-purple-600 hover:bg-purple-700"
                 >
-                  Criar Anotação
+                  {t('createNote')}
                 </Button>
               </div>
             </div>
@@ -684,7 +686,7 @@ export default function EstudosPage() {
             <div className="flex flex-col flex-1 min-h-0">
               <div className="flex-1 overflow-y-auto space-y-4 pr-2">
                 <p className="text-zinc-400 text-sm">
-                  Cole seus textos brutos, transcrições ou bullet points e a IA irá criar uma anotação organizada em primeira pessoa.
+                  {t('aiNoteDescription')}
                 </p>
 
                 {erroIA && (
@@ -696,38 +698,38 @@ export default function EstudosPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Coluna esquerda - Texto original */}
                   <div>
-                    <Label className="text-zinc-300">Texto bruto</Label>
+                    <Label className="text-zinc-300">{t('rawText')}</Label>
                     <textarea
                       value={textoOriginalIA}
                       onChange={(e) => setTextoOriginalIA(e.target.value)}
                       className="w-full bg-zinc-800 border-zinc-700 text-white mt-1 rounded-md p-3 min-h-[200px] border resize-none"
-                      placeholder="Cole suas anotações de reunião, transcrições ou bullet points aqui..."
+                      placeholder={t('rawTextPlaceholder')}
                       disabled={gerandoAnotacao}
                     />
                   </div>
 
                   {/* Coluna direita - Anotação gerada */}
                   <div>
-                    <Label className="text-zinc-300">Anotação estruturada</Label>
+                    <Label className="text-zinc-300">{t('structuredNote')}</Label>
                     {anotacaoGeradaIA ? (
                       <div className="mt-1 space-y-2">
                         <Input
                           value={anotacaoGeradaIA.title}
                           onChange={(e) => setAnotacaoGeradaIA({ ...anotacaoGeradaIA, title: e.target.value })}
                           className="bg-zinc-800 border-zinc-700 text-white"
-                          placeholder="Título da anotação"
+                          placeholder={t('noteTitle')}
                         />
                         <textarea
                           value={anotacaoGeradaIA.content}
                           onChange={(e) => setAnotacaoGeradaIA({ ...anotacaoGeradaIA, content: e.target.value })}
                           className="w-full bg-zinc-800 border-zinc-700 text-white rounded-md p-3 min-h-[158px] border resize-none"
-                          placeholder="Conteúdo gerado..."
+                          placeholder={t('generatedContent')}
                         />
                       </div>
                     ) : (
                       <div className="w-full bg-zinc-800/50 border-zinc-700 text-zinc-500 mt-1 rounded-md p-3 min-h-[200px] border flex items-center justify-center text-center">
                         <p className="text-sm italic">
-                          Sua anotação estruturada aparecerá aqui após você colar seu texto e clicar em &quot;Organizar&quot;.
+                          {t('structuredNotePreview')}
                         </p>
                       </div>
                     )}
@@ -735,7 +737,7 @@ export default function EstudosPage() {
                 </div>
 
                 <div>
-                  <Label className="text-zinc-300">Cor</Label>
+                  <Label className="text-zinc-300">{t('color')}</Label>
                   <div className="flex gap-2 mt-2 flex-wrap">
                     {cores.map((cor) => (
                       <button
@@ -757,7 +759,7 @@ export default function EstudosPage() {
                   onClick={fecharModalAnotacao}
                   className="border-zinc-700"
                 >
-                  Cancelar
+                  {t('cancel')}
                 </Button>
                 {!anotacaoGeradaIA ? (
                   <Button
@@ -768,12 +770,12 @@ export default function EstudosPage() {
                     {gerandoAnotacao ? (
                       <>
                         <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Organizando...
+                        {t('organizing')}
                       </>
                     ) : (
                       <>
                         <Sparkles className="w-4 h-4 mr-2" />
-                        Organizar
+                        {t('organize')}
                       </>
                     )}
                   </Button>
@@ -783,7 +785,7 @@ export default function EstudosPage() {
                     disabled={!anotacaoGeradaIA.title}
                     className="bg-purple-600 hover:bg-purple-700"
                   >
-                    Criar Anotação
+                    {t('createNote')}
                   </Button>
                 )}
               </div>
@@ -797,7 +799,7 @@ export default function EstudosPage() {
         <DialogContent className="bg-zinc-900 border-zinc-800 max-w-2xl h-[85vh] max-h-[600px] flex flex-col">
           <DialogHeader className="flex-shrink-0">
             <DialogTitle className="text-white">
-              {editandoAnotacao ? 'Editar Anotação' : 'Visualizar Anotação'}
+              {editandoAnotacao ? t('editNote') : t('viewNote')}
             </DialogTitle>
           </DialogHeader>
           {anotacaoSelecionada && (
@@ -806,7 +808,7 @@ export default function EstudosPage() {
                 <div className="flex flex-col flex-1 min-h-0">
                   <div className="flex-1 overflow-y-auto space-y-4 pr-2">
                     <div>
-                      <Label htmlFor="titulo-editar" className="text-zinc-300">Título</Label>
+                      <Label htmlFor="titulo-editar" className="text-zinc-300">{t('title')}</Label>
                       <Input
                         id="titulo-editar"
                         value={anotacaoSelecionada.titulo}
@@ -817,7 +819,7 @@ export default function EstudosPage() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="conteudo-editar" className="text-zinc-300">Conteúdo</Label>
+                      <Label htmlFor="conteudo-editar" className="text-zinc-300">{t('content')}</Label>
                       <textarea
                         id="conteudo-editar"
                         value={anotacaoSelecionada.conteudo}
@@ -828,7 +830,7 @@ export default function EstudosPage() {
                       />
                     </div>
                     <div>
-                      <Label className="text-zinc-300">Cor</Label>
+                      <Label className="text-zinc-300">{t('color')}</Label>
                       <div className="flex gap-2 mt-2 flex-wrap">
                         {cores.map((cor) => (
                           <button
@@ -849,14 +851,14 @@ export default function EstudosPage() {
                       onClick={() => setEditandoAnotacao(false)}
                       className="border-zinc-700"
                     >
-                      Cancelar
+                      {t('cancel')}
                     </Button>
                     <Button
                       onClick={editarAnotacao}
                       disabled={!anotacaoSelecionada.titulo}
                       className="bg-purple-600 hover:bg-purple-700"
                     >
-                      Salvar Alterações
+                      {t('saveChanges')}
                     </Button>
                   </div>
                 </div>
@@ -883,7 +885,7 @@ export default function EstudosPage() {
                       <p className="text-zinc-300 whitespace-pre-wrap break-words">{anotacaoSelecionada.conteudo}</p>
                     </div>
                     <p className="text-xs text-zinc-500">
-                      Criada em {new Date(anotacaoSelecionada.createdAt).toLocaleDateString('pt-BR')}
+                      {t('createdAt')} {new Date(anotacaoSelecionada.createdAt).toLocaleDateString('pt-BR')}
                     </p>
                   </div>
                   <div className="flex gap-2 justify-end pt-4 flex-shrink-0 border-t border-zinc-800 mt-4">
@@ -893,14 +895,14 @@ export default function EstudosPage() {
                       className="border-zinc-700 hover:bg-red-500/20 hover:text-red-400 hover:border-red-500/50"
                     >
                       <Trash2 className="w-4 h-4 mr-2" />
-                      Excluir
+                      {t('delete')}
                     </Button>
                     <Button
                       onClick={() => setEditandoAnotacao(true)}
                       className="bg-purple-600 hover:bg-purple-700"
                     >
                       <Edit className="w-4 h-4 mr-2" />
-                      Editar
+                      {t('edit')}
                     </Button>
                   </div>
                 </div>
@@ -915,10 +917,10 @@ export default function EstudosPage() {
         open={modalExcluirAnotacao}
         onClose={() => setModalExcluirAnotacao(false)}
         onConfirm={confirmarExcluirAnotacao}
-        title="Excluir Anotação"
-        description="Tem certeza que deseja excluir esta anotação? Todo o conteúdo será perdido permanentemente. Esta ação não pode ser desfeita."
-        confirmText="Excluir Anotação"
-        cancelText="Cancelar"
+        title={t('deleteNote')}
+        description={t('deleteNoteConfirmation')}
+        confirmText={t('deleteNote')}
+        cancelText={t('cancel')}
         variant="danger"
       />
 
@@ -926,8 +928,8 @@ export default function EstudosPage() {
       <UpgradeToPremiumModal
         open={showUpgradeModal}
         onClose={() => setShowUpgradeModal(false)}
-        recurso="Anotações com IA"
-        descricao="A geração de anotações organizadas com inteligência artificial está disponível apenas para usuários Premium."
+        recurso={t('aiNotesFeature')}
+        descricao={t('aiNotesDescription')}
       />
     </div>
   );

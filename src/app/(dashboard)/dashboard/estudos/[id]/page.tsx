@@ -25,6 +25,7 @@ import {
 import RichTextEditor from '@/components/estudos/RichTextEditor';
 import { PomodoroTimer } from '@/components/PomodoroTimer';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
+import { useTranslations } from 'next-intl';
 
 interface Modulo {
   id: string;
@@ -55,6 +56,7 @@ interface Curso {
 export default function CursoDetalhePage() {
   const params = useParams();
   const router = useRouter();
+  const t = useTranslations('courseDetail');
   const cursoId = params.id as string;
 
   const [curso, setCurso] = useState<Curso | null>(null);
@@ -278,7 +280,7 @@ export default function CursoDetalhePage() {
             <div className="animate-spin rounded-full h-16 w-16 border-4 border-purple-500/20 border-t-purple-500 mx-auto mb-4"></div>
             <Sparkles className="w-6 h-6 text-purple-400 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 animate-pulse" />
           </div>
-          <p className="text-zinc-400 font-medium">Carregando seu curso...</p>
+          <p className="text-zinc-400 font-medium">{t('loadingCourse')}</p>
         </div>
       </div>
     );
@@ -291,7 +293,7 @@ export default function CursoDetalhePage() {
           <div className="w-20 h-20 rounded-2xl bg-zinc-800/50 flex items-center justify-center mx-auto mb-4">
             <BookOpen className="w-10 h-10 text-zinc-600" />
           </div>
-          <p className="text-zinc-400">Curso não encontrado</p>
+          <p className="text-zinc-400">{t('courseNotFound')}</p>
         </div>
       </div>
     );
@@ -310,7 +312,7 @@ export default function CursoDetalhePage() {
               className="text-zinc-400 hover:text-white hover:bg-zinc-800/50 rounded-xl h-auto py-2 px-3 text-sm flex-shrink-0"
             >
               <ChevronLeft className="w-4 h-4 mr-1 sm:mr-2" />
-              Voltar
+              {t('back')}
             </Button>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 sm:gap-3">
@@ -336,11 +338,11 @@ export default function CursoDetalhePage() {
               <PomodoroTimer />
               <div className="flex items-center gap-2">
                 <div className="px-2.5 py-1 rounded-lg bg-zinc-800/50 border border-zinc-700/50">
-                  <span className="text-xs text-zinc-500 block">Módulos</span>
+                  <span className="text-xs text-zinc-500 block">{t('modules')}</span>
                   <p className="text-sm font-bold text-white">{curso.modulos.length}</p>
                 </div>
                 <div className="px-2.5 py-1 rounded-lg bg-zinc-800/50 border border-zinc-700/50">
-                  <span className="text-xs text-zinc-500 block">Páginas</span>
+                  <span className="text-xs text-zinc-500 block">{t('pages')}</span>
                   <p className="text-sm font-bold text-white">
                     {curso.modulos.reduce((acc, m) => acc + (m._count?.paginas || 0), 0)}
                   </p>
@@ -349,7 +351,7 @@ export default function CursoDetalhePage() {
                   onClick={excluirCurso}
                   variant="ghost"
                   className="hover:bg-red-500/20 hover:text-red-400 text-zinc-400 rounded-lg h-auto py-1.5 px-2"
-                  title="Excluir curso"
+                  title={t('deleteCourse')}
                 >
                   <Trash2 className="w-4 h-4" />
                 </Button>
@@ -359,11 +361,11 @@ export default function CursoDetalhePage() {
           {/* Mobile stats row */}
           <div className="flex sm:hidden items-center gap-2 mt-2 w-full">
             <div className="flex-1 px-2.5 py-1 rounded-lg bg-zinc-800/50 border border-zinc-700/50">
-              <span className="text-xs text-zinc-500 block">Módulos</span>
+              <span className="text-xs text-zinc-500 block">{t('modules')}</span>
               <p className="text-sm font-bold text-white">{curso.modulos.length}</p>
             </div>
             <div className="flex-1 px-2.5 py-1 rounded-lg bg-zinc-800/50 border border-zinc-700/50">
-              <span className="text-xs text-zinc-500 block">Páginas</span>
+              <span className="text-xs text-zinc-500 block">{t('pages')}</span>
               <p className="text-sm font-bold text-white">
                 {curso.modulos.reduce((acc, m) => acc + (m._count?.paginas || 0), 0)}
               </p>
@@ -372,7 +374,7 @@ export default function CursoDetalhePage() {
               onClick={excluirCurso}
               variant="ghost"
               className="hover:bg-red-500/20 hover:text-red-400 text-zinc-400 rounded-lg h-auto py-1.5 px-2"
-              title="Excluir curso"
+              title={t('deleteCourse')}
             >
               <Trash2 className="w-4 h-4" />
             </Button>
@@ -393,7 +395,7 @@ export default function CursoDetalhePage() {
               className="w-full bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 shadow-lg shadow-purple-500/20 rounded-xl h-12"
             >
               <Plus className="w-5 h-5 mr-2" />
-              <span className="font-semibold">Novo Módulo</span>
+              <span className="font-semibold">{t('newModule')}</span>
             </Button>
           </div>
 
@@ -401,7 +403,7 @@ export default function CursoDetalhePage() {
             <div className="flex items-center gap-2 mb-3">
               <List className="w-4 h-4 text-zinc-500" />
               <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">
-                Conteúdo do Curso
+                {t('courseContent')}
               </span>
             </div>
             <div className="space-y-2">
@@ -428,7 +430,7 @@ export default function CursoDetalhePage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
                         <span className="text-xs font-semibold text-zinc-500">
-                          Módulo {index + 1}
+                          {t('module')} {index + 1}
                         </span>
                       </div>
                       <h3 className="text-sm font-semibold text-white truncate mb-1">
@@ -440,7 +442,7 @@ export default function CursoDetalhePage() {
                       <div className="mt-2 flex items-center gap-2">
                         <div className="flex items-center gap-1 text-xs text-zinc-500">
                           <FileText className="w-3 h-3" />
-                          <span>{modulo._count?.paginas || 0} páginas</span>
+                          <span>{modulo._count?.paginas || 0} {t('pagesCount')}</span>
                         </div>
                       </div>
                     </div>
@@ -448,7 +450,7 @@ export default function CursoDetalhePage() {
                   <button
                     onClick={(e) => excluirModulo(modulo.id, e)}
                     className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 p-2 hover:bg-red-500/20 rounded-lg transition-all"
-                    title="Excluir módulo"
+                    title={t('deleteModule')}
                   >
                     <Trash2 className="w-4 h-4 text-red-400" />
                   </button>
@@ -459,9 +461,9 @@ export default function CursoDetalhePage() {
                   <div className="w-16 h-16 rounded-2xl bg-zinc-800/50 flex items-center justify-center mx-auto mb-4">
                     <FolderOpen className="w-8 h-8 text-zinc-600" />
                   </div>
-                  <p className="text-zinc-500 text-sm mb-3">Nenhum módulo ainda</p>
+                  <p className="text-zinc-500 text-sm mb-3">{t('noModulesYet')}</p>
                   <p className="text-xs text-zinc-600">
-                    Organize seu conteúdo criando módulos
+                    {t('organizeContentByModules')}
                   </p>
                 </div>
               )}
@@ -488,7 +490,7 @@ export default function CursoDetalhePage() {
                     size="sm"
                   >
                     <Plus className="w-4 h-4 mr-2" />
-                    <span className="font-semibold">Nova Página</span>
+                    <span className="font-semibold">{t('newPage')}</span>
                   </Button>
                 </div>
                 <div className="p-4 space-y-2">
@@ -514,7 +516,7 @@ export default function CursoDetalhePage() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <span className="text-xs text-zinc-500 block mb-0.5">
-                            Página {index + 1}
+                            {t('page')} {index + 1}
                           </span>
                           <span className="text-sm font-medium text-white truncate block">
                             {pagina.titulo}
@@ -524,7 +526,7 @@ export default function CursoDetalhePage() {
                       <button
                         onClick={(e) => excluirPagina(pagina.id, e)}
                         className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 p-1.5 hover:bg-red-500/20 rounded-lg transition-all"
-                        title="Excluir página"
+                        title={t('deletePage')}
                       >
                         <Trash2 className="w-3.5 h-3.5 text-red-400" />
                       </button>
@@ -535,8 +537,8 @@ export default function CursoDetalhePage() {
                       <div className="w-14 h-14 rounded-xl bg-zinc-800/50 flex items-center justify-center mx-auto mb-3">
                         <FileText className="w-7 h-7 text-zinc-600" />
                       </div>
-                      <p className="text-zinc-500 text-sm mb-2">Nenhuma página</p>
-                      <p className="text-xs text-zinc-600">Crie sua primeira página</p>
+                      <p className="text-zinc-500 text-sm mb-2">{t('noPages')}</p>
+                      <p className="text-xs text-zinc-600">{t('createFirstPage')}</p>
                     </div>
                   )}
                 </div>
@@ -558,7 +560,7 @@ export default function CursoDetalhePage() {
                               })
                             }
                             className="text-3xl font-bold bg-zinc-900/50 border-zinc-700/50 text-white h-14 rounded-xl px-5"
-                            placeholder="Título da página"
+                            placeholder={t('pageTitle')}
                           />
                           <div className="flex gap-2">
                             <Button
@@ -566,7 +568,7 @@ export default function CursoDetalhePage() {
                               className="bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 shadow-lg shadow-green-500/20 rounded-xl"
                             >
                               <Save className="w-4 h-4 mr-2" />
-                              Salvar
+                              {t('save')}
                             </Button>
                             <Button
                               variant="default"
@@ -577,7 +579,7 @@ export default function CursoDetalhePage() {
                               className="border-zinc-700/50 hover:bg-zinc-800/50 rounded-xl"
                             >
                               <X className="w-4 h-4 mr-2" />
-                              Cancelar
+                              {t('cancel')}
                             </Button>
                           </div>
                         </div>
@@ -587,7 +589,7 @@ export default function CursoDetalhePage() {
                             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 mb-3">
                               <Sparkles className="w-3 h-3 text-blue-400" />
                               <span className="text-xs font-medium text-blue-400">
-                                Conteúdo do Curso
+                                {t('courseContentBadge')}
                               </span>
                             </div>
                             <h1 className="text-4xl font-bold text-white mb-2">
@@ -599,7 +601,7 @@ export default function CursoDetalhePage() {
                               onClick={() => setPaginaAmpliada(!paginaAmpliada)}
                               variant="default"
                               className="border-zinc-700/50 hover:bg-zinc-800/50 rounded-xl"
-                              title={paginaAmpliada ? "Reduzir visualização" : "Ampliar visualização"}
+                              title={paginaAmpliada ? t('reduceView') : t('expandView')}
                             >
                               {paginaAmpliada ? (
                                 <Minimize2 className="w-4 h-4" />
@@ -612,7 +614,7 @@ export default function CursoDetalhePage() {
                               className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 shadow-lg shadow-blue-500/20 rounded-xl"
                             >
                               <Edit className="w-4 h-4 mr-2" />
-                              Editar
+                              {t('edit')}
                             </Button>
                           </div>
                         </div>
@@ -668,9 +670,9 @@ export default function CursoDetalhePage() {
                         <FileText className="w-12 h-12 text-zinc-600" />
                       </div>
                       <h3 className="text-xl font-bold text-white mb-2">
-                        Selecione uma página
+                        {t('selectPage')}
                       </h3>
-                      <p className="text-zinc-500">Escolha uma página para visualizar o conteúdo</p>
+                      <p className="text-zinc-500">{t('selectPageToView')}</p>
                     </div>
                   </div>
                 )}
@@ -682,8 +684,8 @@ export default function CursoDetalhePage() {
                 <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-purple-500/20 to-blue-500/20 flex items-center justify-center mx-auto mb-6 border border-purple-500/20">
                   <FolderOpen className="w-12 h-12 text-purple-400" />
                 </div>
-                <h3 className="text-xl font-bold text-white mb-2">Selecione um módulo</h3>
-                <p className="text-zinc-500">Escolha um módulo para começar a estudar</p>
+                <h3 className="text-xl font-bold text-white mb-2">{t('selectModule')}</h3>
+                <p className="text-zinc-500">{t('selectModuleToStudy')}</p>
               </div>
             </div>
           )}
