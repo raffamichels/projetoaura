@@ -4,15 +4,32 @@ import { prisma } from '@/lib/prisma';
 import { registerSchema } from '@/lib/validations/auth';
 import { generateVerificationToken } from '@/lib/tokens';
 import { sendVerificationEmail } from '@/lib/email/emailService';
+import { registerRateLimiter, getClientIP, rateLimitResponse } from '@/lib/rateLimit';
+
+// Sanitizar nome removendo caracteres potencialmente perigosos
+function sanitizeName(name: string): string {
+  return name
+    .replace(/<[^>]*>/g, '') // Remove tags HTML
+    .replace(/[<>\"'&]/g, '') // Remove caracteres especiais
+    .trim();
+}
 
 export async function POST(req: NextRequest) {
   try {
-    // 1. Pegar dados do body
+    // 1. Rate limiting por IP
+    const clientIP = getClientIP(req);
+    const ipLimit = await registerRateLimiter.limit(clientIP);
+
+    if (!ipLimit.success) {
+      return rateLimitResponse(ipLimit.resetTime);
+    }
+
+    // 2. Pegar dados do body
     const body = await req.json();
 
-    // 2. Validar dados
+    // 3. Validar dados
     const validation = registerSchema.safeParse(body);
-    
+
     if (!validation.success) {
       return NextResponse.json(
         { error: 'Dados inválidos', details: validation.error.issues },
@@ -22,50 +39,62 @@ export async function POST(req: NextRequest) {
 
     const { name, email, password } = validation.data;
 
-    // 3. Verificar se email já existe
+    // 4. Sanitizar nome para prevenir XSS
+    const sanitizedName = sanitizeName(name);
+    const normalizedEmail = email.toLowerCase();
+
+    // 5. Verificar se email já existe
     const existingUser = await prisma.user.findUnique({
-      where: { email },
+      where: { email: normalizedEmail },
     });
 
+    // 6. Resposta genérica para prevenir enumeração de usuários
+    // Mesmo status e mensagem independente se email existe ou não
+    const genericSuccessMessage = 'Se o email for válido, você receberá instruções para ativar sua conta.';
+
     if (existingUser) {
+      // Se usuário já existe e não verificou email, reenvia verificação
+      if (!existingUser.emailVerified) {
+        try {
+          const verificationToken = await generateVerificationToken(normalizedEmail);
+          await sendVerificationEmail(normalizedEmail, verificationToken.token, existingUser.name || sanitizedName);
+        } catch {
+          // Silencia erro de email para não vazar informação
+        }
+      }
+
+      // Delay artificial para equalizar timing de resposta
+      await new Promise(resolve => setTimeout(resolve, Math.random() * 300 + 200));
+
+      // Retorna mesma mensagem de sucesso (não revela que email existe)
       return NextResponse.json(
-        { error: 'Email já cadastrado' },
-        { status: 409 }
+        { message: genericSuccessMessage },
+        { status: 200 }
       );
     }
 
-    // 4. Criptografar senha
+    // 7. Criptografar senha
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // 5. Criar usuário (emailVerified = null)
-    const user = await prisma.user.create({
+    // 8. Criar usuário (emailVerified = null)
+    await prisma.user.create({
       data: {
-        name,
-        email,
+        name: sanitizedName,
+        email: normalizedEmail,
         password: hashedPassword,
-      },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        plano: true,
-        createdAt: true,
       },
     });
 
-    // 6. Gerar token de verificação
-    const verificationToken = await generateVerificationToken(email);
+    // 9. Gerar token de verificação
+    const verificationToken = await generateVerificationToken(normalizedEmail);
 
-    // 7. Enviar email de verificação
-    await sendVerificationEmail(email, verificationToken.token, name);
+    // 10. Enviar email de verificação
+    await sendVerificationEmail(normalizedEmail, verificationToken.token, sanitizedName);
 
-    // 8. Retornar sucesso
+    // 11. Retornar mesma mensagem genérica de sucesso
     return NextResponse.json(
-      {
-        message: 'Usuário criado com sucesso! Verifique seu email para ativar sua conta.',
-        user
-      },
-      { status: 201 }
+      { message: genericSuccessMessage },
+      { status: 200 }
     );
 
   } catch (error) {

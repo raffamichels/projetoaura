@@ -8,6 +8,7 @@ import TextAlign from '@tiptap/extension-text-align';
 import Underline from '@tiptap/extension-underline';
 import Highlight from '@tiptap/extension-highlight';
 import { ResizableImage } from './ResizableImage';
+import DOMPurify from 'isomorphic-dompurify';
 import {
   Bold,
   Italic,
@@ -26,6 +27,27 @@ import {
   Highlighter,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+
+// Configuração de sanitização para prevenir XSS
+const DOMPURIFY_CONFIG = {
+  ALLOWED_TAGS: [
+    'p', 'br', 'strong', 'b', 'em', 'i', 'u', 's', 'strike',
+    'h1', 'h2', 'h3', 'ul', 'ol', 'li', 'blockquote', 'code', 'pre',
+    'img', 'a', 'span', 'div', 'mark'
+  ],
+  ALLOWED_ATTR: [
+    'href', 'src', 'alt', 'class', 'style', 'target', 'rel',
+    'data-width', 'data-height', 'data-align', 'width', 'height'
+  ],
+  FORBID_TAGS: ['script', 'iframe', 'object', 'embed', 'form', 'input', 'button'],
+  FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover', 'onfocus', 'onblur'],
+  ALLOW_DATA_ATTR: true,
+};
+
+// Função para sanitizar HTML
+function sanitizeHTML(html: string): string {
+  return DOMPurify.sanitize(html, DOMPURIFY_CONFIG);
+}
 
 interface RichTextEditorProps {
   content: string;
@@ -55,7 +77,10 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
     content,
     immediatelyRender: false,
     onUpdate: ({ editor }) => {
-      onChange(editor.getHTML());
+      // Sanitizar HTML antes de enviar para prevenir XSS
+      const html = editor.getHTML();
+      const sanitizedHtml = sanitizeHTML(html);
+      onChange(sanitizedHtml);
     },
     editorProps: {
       attributes: {

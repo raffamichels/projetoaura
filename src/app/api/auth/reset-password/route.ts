@@ -2,10 +2,10 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import bcrypt from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
-import { getPasswordResetTokenByToken, deletePasswordResetToken } from '@/lib/tokens';
+import { resetPasswordRateLimiter, getClientIP, rateLimitResponse } from '@/lib/rateLimit';
 
 const resetPasswordSchema = z.object({
-  token: z.string(),
+  token: z.string().min(1, 'Token é obrigatório'),
   password: z.string().min(8, 'Senha deve ter no mínimo 8 caracteres')
     .regex(/[A-Z]/, 'Senha deve conter pelo menos uma letra maiúscula')
     .regex(/[a-z]/, 'Senha deve conter pelo menos uma letra minúscula')
@@ -14,6 +14,15 @@ const resetPasswordSchema = z.object({
 
 export async function POST(req: Request) {
   try {
+    // 1. Rate limiting por IP
+    const clientIP = getClientIP(req);
+    const ipLimit = await resetPasswordRateLimiter.limit(clientIP);
+
+    if (!ipLimit.success) {
+      return rateLimitResponse(ipLimit.resetTime);
+    }
+
+    // 2. Validar dados
     const body = await req.json();
     const validatedFields = resetPasswordSchema.safeParse(body);
 
@@ -26,54 +35,67 @@ export async function POST(req: Request) {
 
     const { token, password } = validatedFields.data;
 
-    // Busca token
-    const resetToken = await getPasswordResetTokenByToken(token);
+    // 3. Usar transação atômica para prevenir race condition
+    // Deleta o token PRIMEIRO e retorna os dados em uma única operação
+    const result = await prisma.$transaction(async (tx) => {
+      // Tenta deletar o token (atômico - só uma requisição consegue)
+      const deletedToken = await tx.passwordResetToken.delete({
+        where: { token }
+      }).catch(() => null);
 
-    if (!resetToken) {
+      // Se token não existe ou já foi deletado
+      if (!deletedToken) {
+        return { success: false, error: 'Token inválido ou já utilizado' };
+      }
+
+      // Verifica expiração
+      if (new Date() > deletedToken.expires) {
+        return { success: false, error: 'Token expirado. Solicite um novo link de redefinição.' };
+      }
+
+      // Busca usuário
+      const user = await tx.user.findUnique({
+        where: { email: deletedToken.email }
+      });
+
+      if (!user) {
+        return { success: false, error: 'Usuário não encontrado' };
+      }
+
+      // Hash da nova senha
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      // Atualiza senha
+      await tx.user.update({
+        where: { id: user.id },
+        data: { password: hashedPassword }
+      });
+
+      return { success: true };
+    });
+
+    // 4. Retornar resposta baseada no resultado da transação
+    if (!result.success) {
       return NextResponse.json(
-        { error: 'Token inválido ou expirado' },
+        { error: result.error },
         { status: 400 }
       );
     }
-
-    // Verifica expiração
-    if (new Date() > resetToken.expires) {
-      await deletePasswordResetToken(resetToken.id);
-      return NextResponse.json(
-        { error: 'Token expirado. Solicite um novo link de redefinição.' },
-        { status: 400 }
-      );
-    }
-
-    // Busca usuário
-    const user = await prisma.user.findUnique({
-      where: { email: resetToken.email }
-    });
-
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Usuário não encontrado' },
-        { status: 404 }
-      );
-    }
-
-    // Hash da nova senha
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Atualiza senha
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { password: hashedPassword }
-    });
-
-    // Remove token usado
-    await deletePasswordResetToken(resetToken.id);
 
     return NextResponse.json(
       { message: 'Senha redefinida com sucesso!' },
       { status: 200 }
     );
+
   } catch (error) {
+    // Tratar erro de constraint (token já deletado por outra requisição)
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'P2025') {
+      return NextResponse.json(
+        { error: 'Token inválido ou já utilizado' },
+        { status: 400 }
+      );
+    }
+
     console.error('Erro ao redefinir senha:', error);
     return NextResponse.json(
       { error: 'Erro ao redefinir senha' },

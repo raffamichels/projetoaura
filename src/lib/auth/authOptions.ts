@@ -28,11 +28,20 @@ export const authOptions = {
           return null;
         }
 
+        const normalizedEmail = (credentials.email as string).toLowerCase();
+
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email as string }
+          where: { email: normalizedEmail }
         });
 
         if (!user) {
+          return null;
+        }
+
+        // Verificar se usuário tem senha (não é conta OAuth)
+        if (!user.password || user.password === '') {
+          // Usuário OAuth tentando login com senha
+          // Retorna null com mesmo comportamento de senha incorreta
           return null;
         }
 

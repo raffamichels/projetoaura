@@ -1,6 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth/auth';
 import { prisma } from '@/lib/prisma';
+import DOMPurify from 'isomorphic-dompurify';
+
+// Configuração de sanitização para prevenir XSS
+const DOMPURIFY_CONFIG = {
+  ALLOWED_TAGS: [
+    'p', 'br', 'strong', 'b', 'em', 'i', 'u', 's', 'strike',
+    'h1', 'h2', 'h3', 'ul', 'ol', 'li', 'blockquote', 'code', 'pre',
+    'img', 'a', 'span', 'div', 'mark'
+  ],
+  ALLOWED_ATTR: [
+    'href', 'src', 'alt', 'class', 'style', 'target', 'rel',
+    'data-width', 'data-height', 'data-align', 'width', 'height'
+  ],
+  FORBID_TAGS: ['script', 'iframe', 'object', 'embed', 'form', 'input', 'button'],
+  FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover', 'onfocus', 'onblur'],
+  ALLOW_DATA_ATTR: true,
+};
+
+// Função para sanitizar HTML
+function sanitizeHTML(html: string): string {
+  return DOMPurify.sanitize(html, DOMPURIFY_CONFIG);
+}
 
 // GET - Listar anotações
 export async function GET(req: NextRequest) {
@@ -84,10 +106,13 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // Sanitizar conteúdo HTML para prevenir XSS
+    const conteudoSanitizado = conteudo ? sanitizeHTML(conteudo) : '';
+
     const anotacao = await prisma.anotacao.create({
       data: {
         titulo,
-        conteudo: conteudo || '',
+        conteudo: conteudoSanitizado,
         cor: cor || '#FBBF24',
         cursoId,
         userId: user.id,

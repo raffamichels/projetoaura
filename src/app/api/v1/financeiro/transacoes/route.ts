@@ -2,13 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth/auth';
 import { prisma } from '@/lib/prisma';
 import { registrarAtividade } from '@/lib/atividades-helper';
-import { 
-  gerarGrupoParcelaId, 
-  gerarDatasParcelas, 
+import {
+  gerarGrupoParcelaId,
+  gerarDatasParcelas,
   calcularValorParcela,
   formatarDescricaoParcela,
   sugerirCategoria,
 } from '@/lib/financeiro-helper';
+import { transacaoSchema } from '@/lib/validations/financeiro';
 
 // GET - Listar transações do usuário
 export async function GET(req: NextRequest) {
@@ -88,7 +89,17 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { 
+
+    // Validar dados com Zod (previne Mass Assignment e valida tipos/ranges)
+    const validation = transacaoSchema.safeParse(body);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: 'Dados inválidos', details: validation.error.issues },
+        { status: 400 }
+      );
+    }
+
+    const {
       descricao,
       valor,
       data,
@@ -101,23 +112,7 @@ export async function POST(req: NextRequest) {
       contaBancariaId,
       cartaoId,
       objetivoId,
-    } = body;
-
-    // Validações básicas
-    if (!descricao || !valor || !data || !tipo) {
-      return NextResponse.json(
-        { error: 'Campos obrigatórios: descricao, valor, data, tipo' },
-        { status: 400 }
-      );
-    }
-
-    // VALIDAÇÃO CRÍTICA: Conta bancária é OBRIGATÓRIA
-    if (!contaBancariaId) {
-      return NextResponse.json(
-        { error: 'Conta bancária é obrigatória para toda transação' },
-        { status: 400 }
-      );
-    }
+    } = validation.data;
 
     // Validar se a conta existe e pertence ao usuário
     const conta = await prisma.contaBancaria.findFirst({
@@ -138,6 +133,39 @@ export async function POST(req: NextRequest) {
       if (!cartao) {
         return NextResponse.json(
           { error: 'Cartão não encontrado ou não pertence ao usuário' },
+          { status: 404 }
+        );
+      }
+    }
+
+    // CORREÇÃO BUG-005: Validar objetivo se fornecido (previne IDOR)
+    if (objetivoId) {
+      const objetivo = await prisma.objetivoFinanceiro.findFirst({
+        where: { id: objetivoId, userId: user.id },
+      });
+      if (!objetivo) {
+        return NextResponse.json(
+          { error: 'Objetivo financeiro não encontrado ou não pertence ao usuário' },
+          { status: 404 }
+        );
+      }
+      // Verificar se objetivo está ativo
+      if (objetivo.status !== 'EM_ANDAMENTO') {
+        return NextResponse.json(
+          { error: 'Objetivo financeiro não está ativo' },
+          { status: 400 }
+        );
+      }
+    }
+
+    // Validar categoria se fornecida (previne IDOR)
+    if (categoriaId) {
+      const categoriaExiste = await prisma.categoria.findFirst({
+        where: { id: categoriaId, userId: user.id },
+      });
+      if (!categoriaExiste) {
+        return NextResponse.json(
+          { error: 'Categoria não encontrada ou não pertence ao usuário' },
           { status: 404 }
         );
       }
