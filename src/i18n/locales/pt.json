@@ -325,5 +325,11 @@
     "confirm": "Confirmar",
     "cancel": "Cancelar",
     "processing": "Processando..."
+  },
+  "notifications": {
+    "title": "Notificações",
+    "subtitle": "Fique por dentro",
+    "comingSoon": "Em breve",
+    "comingSoonDescription": "Este recurso será lançado em breve. Aguarde novidades!"
   }
 }

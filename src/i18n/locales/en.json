@@ -325,5 +325,11 @@
     "confirm": "Confirm",
     "cancel": "Cancel",
     "processing": "Processing..."
+  },
+  "notifications": {
+    "title": "Notifications",
+    "subtitle": "Stay updated",
+    "comingSoon": "Coming soon",
+    "comingSoonDescription": "This feature will be released soon. Stay tuned!"
   }
 }

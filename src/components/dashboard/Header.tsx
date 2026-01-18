@@ -24,6 +24,7 @@ import {
 import { Sidebar } from './Sidebar';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
+import { NotificationBell } from '@/components/ui/NotificationBell';
 
 export function Header() {
   const { data: session } = useSession();
@@ -76,10 +77,7 @@ export function Header() {
           <LanguageSwitcher />
 
           {/* Notificações */}
-          <Button variant="ghost" size="icon" className="relative hover:bg-zinc-800 h-8 w-8 sm:h-9 sm:w-9">
-            <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
-            <span className="absolute top-1 right-1 sm:top-1.5 sm:right-1.5 w-1.5 h-1.5 sm:w-2 sm:h-2 bg-red-500 rounded-full"></span>
-          </Button>
+          <NotificationBell />
 
           {/* User Menu */}
           <DropdownMenu>
