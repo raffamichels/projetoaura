@@ -320,5 +320,40 @@ export function UnsavedChangesModal({
 |--------|------|
 | Identificado | 2026-01-17 |
 | Reportado | 2026-01-17 |
-| Correção Pendente | - |
+| **Corrigido** | 2026-01-17 |
 | Verificado | - |
+
+---
+
+## Correção Implementada
+
+**Data da Correção:** 2026-01-17
+
+### Ações Realizadas:
+
+1. **Página de Estudos (`src/app/(dashboard)/dashboard/estudos/page.tsx`)**:
+   - Adicionados estados para controlar modais de confirmação de saída
+   - Implementada função `isCursoDirty` para detectar se o formulário de curso tem dados não salvos
+   - Implementada função `isAnotacaoDirty` para detectar se o formulário de anotação tem dados não salvos
+   - Criadas funções `handleFecharModalCurso` e `handleFecharModalAnotacao` que verificam se há dados não salvos antes de fechar
+   - Adicionados modais de confirmação usando `ConfirmModal` com variante "warning"
+
+2. **Página de Detalhes do Curso (`src/app/(dashboard)/dashboard/estudos/[id]/page.tsx`)**:
+   - Adicionados estados para controlar modais de confirmação de saída
+   - Implementadas funções `isModuloDirty`, `isPaginaModalDirty` e `isPaginaEdicaoDirty` para detectar alterações não salvas
+   - Criadas funções `handleFecharModalModulo` e `handleFecharModalPagina` para modais de criação
+   - Implementado sistema de navegação segura com `handleSelectModulo` e `handleSelectPagina` que verifica alterações antes de trocar de módulo/página durante edição
+   - Adicionado estado `conteudoOriginalPagina` para rastrear o conteúdo original e detectar mudanças
+   - Adicionados modais de confirmação para todas as situações de perda de dados
+
+3. **Traduções adicionadas** (`pt.json` e `en.json`):
+   - `unsavedChangesTitle`: Título do modal de confirmação
+   - `unsavedChangesDescription`: Descrição para modais de criação
+   - `unsavedChangesDescriptionPage`: Descrição específica para edição de página
+   - `discardChanges`: Botão de descartar alterações
+   - `continueEditing`: Botão de continuar editando
+
+### Comportamento Implementado:
+- Modal de curso/anotação/módulo/página vazio: fecha normalmente sem confirmação
+- Modal com dados preenchidos: exibe modal de confirmação antes de fechar
+- Durante edição de página: ao clicar em outro módulo/página, exibe confirmação antes de navegar

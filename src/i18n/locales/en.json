@@ -235,9 +235,15 @@
     "saveChanges": "Save Changes",
     "deleteNote": "Delete Note",
     "deleteNoteConfirmation": "Are you sure you want to delete this note? All content will be permanently lost. This action cannot be undone.",
+    "creating": "Creating...",
+    "saving": "Saving...",
     "aiNotesFeature": "AI Notes",
     "aiNotesDescription": "AI-powered organized note generation is available only for Premium users.",
-    "premiumClickToUpgrade": "Premium - Click to upgrade"
+    "premiumClickToUpgrade": "Premium - Click to upgrade",
+    "unsavedChangesTitle": "Unsaved changes",
+    "unsavedChangesDescription": "You have changes that haven't been saved yet. If you leave now, all entered information will be lost.",
+    "discardChanges": "Discard changes",
+    "continueEditing": "Continue editing"
   },
   "courseDetail": {
     "back": "Back",
@@ -260,7 +266,9 @@
     "selectPage": "Select a page",
     "selectPageToView": "Choose a page to view the content",
     "courseContentBadge": "Course Content",
+    "edit": "Edit",
     "save": "Save",
+    "saving": "Saving...",
     "cancel": "Cancel",
     "pageTitle": "Page title",
     "reduceView": "Reduce view",
@@ -280,7 +288,12 @@
     "deleteModule": "Delete Module",
     "deleteModuleConfirmation": "Are you sure you want to delete this module? All pages within it will be permanently deleted. This action cannot be undone.",
     "deletePage": "Delete Page",
-    "deletePageConfirmation": "Are you sure you want to delete this page? All content will be permanently lost. This action cannot be undone."
+    "deletePageConfirmation": "Are you sure you want to delete this page? All content will be permanently lost. This action cannot be undone.",
+    "unsavedChangesTitle": "Unsaved changes",
+    "unsavedChangesDescription": "You have changes that haven't been saved yet. If you leave now, all entered information will be lost.",
+    "unsavedChangesDescriptionPage": "You are editing a page and have unsaved changes. If you continue, all changes will be lost.",
+    "discardChanges": "Discard changes",
+    "continueEditing": "Continue editing"
   },
   "richTextEditor": {
     "undo": "Undo",

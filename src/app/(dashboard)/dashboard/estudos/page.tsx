@@ -47,6 +47,8 @@ export default function EstudosPage() {
   const [loading, setLoading] = useState(true);
   const [modalCursoAberto, setModalCursoAberto] = useState(false);
   const [modalAnotacaoAberto, setModalAnotacaoAberto] = useState(false);
+  const [modalConfirmarSaidaCurso, setModalConfirmarSaidaCurso] = useState(false);
+  const [modalConfirmarSaidaAnotacao, setModalConfirmarSaidaAnotacao] = useState(false);
   const [modalVisualizarAnotacao, setModalVisualizarAnotacao] = useState(false);
   const [modalExcluirAnotacao, setModalExcluirAnotacao] = useState(false);
   const [anotacaoSelecionada, setAnotacaoSelecionada] = useState<Anotacao | null>(null);
@@ -211,6 +213,40 @@ export default function EstudosPage() {
     setTipoAnotacao('ia');
   };
 
+  // Verificar se o modal de curso tem dados não salvos
+  const isCursoDirty = novoCurso.nome.length > 0 || novoCurso.descricao.length > 0;
+
+  // Verificar se o modal de anotação tem dados não salvos
+  const isAnotacaoDirty =
+    novaAnotacao.titulo.length > 0 ||
+    novaAnotacao.conteudo.length > 0 ||
+    textoOriginalIA.length > 0 ||
+    anotacaoGeradaIA !== null;
+
+  const handleFecharModalCurso = (open: boolean) => {
+    if (!open && isCursoDirty) {
+      setModalConfirmarSaidaCurso(true);
+    } else {
+      setModalCursoAberto(open);
+    }
+  };
+
+  const confirmarFecharCurso = () => {
+    setModalConfirmarSaidaCurso(false);
+    setModalCursoAberto(false);
+    setNovoCurso({ nome: '', descricao: '', cor: '#8B5CF6' });
+  };
+
+  const handleFecharModalAnotacao = (open: boolean) => {
+    if (!open && isAnotacaoDirty) {
+      setModalConfirmarSaidaAnotacao(true);
+    } else if (!open) {
+      fecharModalAnotacao();
+    } else {
+      setModalAnotacaoAberto(open);
+    }
+  };
+
   const fecharModalAnotacao = () => {
     setModalAnotacaoAberto(false);
     setNovaAnotacao({ titulo: '', conteudo: '', cor: '#FBBF24' });
@@ -218,6 +254,11 @@ export default function EstudosPage() {
     setTextoOriginalIA('');
     setAnotacaoGeradaIA(null);
     setErroIA(null);
+  };
+
+  const confirmarFecharAnotacao = () => {
+    setModalConfirmarSaidaAnotacao(false);
+    fecharModalAnotacao();
   };
 
   const buscarConteudo = async (query: string) => {
@@ -546,7 +587,7 @@ export default function EstudosPage() {
       )}
 
       {/* Modal Novo Curso */}
-      <Dialog open={modalCursoAberto} onOpenChange={setModalCursoAberto}>
+      <Dialog open={modalCursoAberto} onOpenChange={handleFecharModalCurso}>
         <DialogContent className="bg-zinc-900 border-zinc-800">
           <DialogHeader>
             <DialogTitle className="text-white">{t('newCourseTitle')}</DialogTitle>
@@ -590,7 +631,7 @@ export default function EstudosPage() {
             <div className="flex gap-2 justify-end pt-4">
               <Button
                 variant="default"
-                onClick={() => setModalCursoAberto(false)}
+                onClick={() => handleFecharModalCurso(false)}
                 className="border-zinc-700"
               >
                 {t('cancel')}
@@ -615,7 +656,7 @@ export default function EstudosPage() {
       </Dialog>
 
       {/* Modal Nova Anotação */}
-      <Dialog open={modalAnotacaoAberto} onOpenChange={fecharModalAnotacao}>
+      <Dialog open={modalAnotacaoAberto} onOpenChange={handleFecharModalAnotacao}>
         <DialogContent className="bg-zinc-900 border-zinc-800 max-w-4xl h-[90vh] max-h-[700px] flex flex-col">
           <DialogHeader className="shrink-0">
             <DialogTitle className="text-white">{t('newNoteTitle')}</DialogTitle>
@@ -697,7 +738,7 @@ export default function EstudosPage() {
               <div className="flex gap-2 justify-end pt-4 shrink-0 border-t border-zinc-800 mt-4">
                 <Button
                   variant="default"
-                  onClick={fecharModalAnotacao}
+                  onClick={() => handleFecharModalAnotacao(false)}
                   className="border-zinc-700"
                 >
                   {t('cancel')}
@@ -792,7 +833,7 @@ export default function EstudosPage() {
               <div className="flex gap-2 justify-end pt-4 shrink-0 border-t border-zinc-800 mt-4">
                 <Button
                   variant="default"
-                  onClick={fecharModalAnotacao}
+                  onClick={() => handleFecharModalAnotacao(false)}
                   className="border-zinc-700"
                 >
                   {t('cancel')}
@@ -980,6 +1021,30 @@ export default function EstudosPage() {
         onClose={() => setShowUpgradeModal(false)}
         recurso={t('aiNotesFeature')}
         descricao={t('aiNotesDescription')}
+      />
+
+      {/* Modal Confirmar Saída do Curso */}
+      <ConfirmModal
+        open={modalConfirmarSaidaCurso}
+        onClose={() => setModalConfirmarSaidaCurso(false)}
+        onConfirm={confirmarFecharCurso}
+        title={t('unsavedChangesTitle')}
+        description={t('unsavedChangesDescription')}
+        confirmText={t('discardChanges')}
+        cancelText={t('continueEditing')}
+        variant="warning"
+      />
+
+      {/* Modal Confirmar Saída da Anotação */}
+      <ConfirmModal
+        open={modalConfirmarSaidaAnotacao}
+        onClose={() => setModalConfirmarSaidaAnotacao(false)}
+        onConfirm={confirmarFecharAnotacao}
+        title={t('unsavedChangesTitle')}
+        description={t('unsavedChangesDescription')}
+        confirmText={t('discardChanges')}
+        cancelText={t('continueEditing')}
+        variant="warning"
       />
     </div>
   );

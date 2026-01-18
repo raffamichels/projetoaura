@@ -74,6 +74,13 @@ export default function CursoDetalhePage() {
   const [modalExcluirModulo, setModalExcluirModulo] = useState(false);
   const [modalExcluirPagina, setModalExcluirPagina] = useState(false);
   const [itemParaExcluir, setItemParaExcluir] = useState<string | null>(null);
+  const [modalConfirmarSaidaModulo, setModalConfirmarSaidaModulo] = useState(false);
+  const [modalConfirmarSaidaPagina, setModalConfirmarSaidaPagina] = useState(false);
+  const [modalConfirmarSaidaEdicao, setModalConfirmarSaidaEdicao] = useState(false);
+  const [navegacaoPendente, setNavegacaoPendente] = useState<{ tipo: 'modulo' | 'pagina'; id: string } | null>(null);
+
+  // Estado para rastrear conteúdo original da página (para detectar mudanças)
+  const [conteudoOriginalPagina, setConteudoOriginalPagina] = useState<{ titulo: string; conteudo: string } | null>(null);
 
   const [novoModulo, setNovoModulo] = useState({
     nome: '',
@@ -185,10 +192,81 @@ export default function CursoDetalhePage() {
       if (response.ok) {
         const data = await response.json();
         setPaginaSelecionada(data.data);
+        setConteudoOriginalPagina({ titulo: data.data.titulo, conteudo: data.data.conteudo });
         setEditandoPagina(false);
       }
     } catch (error) {
       console.error('Erro ao carregar página:', error);
+    }
+  };
+
+  // Verificar se o modal de módulo tem dados não salvos
+  const isModuloDirty = novoModulo.nome.length > 0 || novoModulo.descricao.length > 0;
+
+  // Verificar se o modal de página tem dados não salvos
+  const isPaginaModalDirty = novaPagina.titulo.length > 0;
+
+  // Verificar se a página em edição tem alterações não salvas
+  const isPaginaEdicaoDirty = editandoPagina && paginaSelecionada && conteudoOriginalPagina &&
+    (paginaSelecionada.titulo !== conteudoOriginalPagina.titulo ||
+     paginaSelecionada.conteudo !== conteudoOriginalPagina.conteudo);
+
+  const handleFecharModalModulo = (open: boolean) => {
+    if (!open && isModuloDirty) {
+      setModalConfirmarSaidaModulo(true);
+    } else {
+      setModalModuloAberto(open);
+    }
+  };
+
+  const confirmarFecharModulo = () => {
+    setModalConfirmarSaidaModulo(false);
+    setModalModuloAberto(false);
+    setNovoModulo({ nome: '', descricao: '' });
+  };
+
+  const handleFecharModalPagina = (open: boolean) => {
+    if (!open && isPaginaModalDirty) {
+      setModalConfirmarSaidaPagina(true);
+    } else {
+      setModalPaginaAberto(open);
+    }
+  };
+
+  const confirmarFecharPagina = () => {
+    setModalConfirmarSaidaPagina(false);
+    setModalPaginaAberto(false);
+    setNovaPagina({ titulo: '', conteudo: '' });
+  };
+
+  // Função para navegar com verificação de alterações não salvas
+  const handleSelectModulo = (moduloId: string) => {
+    if (isPaginaEdicaoDirty) {
+      setNavegacaoPendente({ tipo: 'modulo', id: moduloId });
+      setModalConfirmarSaidaEdicao(true);
+    } else {
+      carregarModulo(moduloId);
+    }
+  };
+
+  const handleSelectPagina = (paginaId: string) => {
+    if (isPaginaEdicaoDirty) {
+      setNavegacaoPendente({ tipo: 'pagina', id: paginaId });
+      setModalConfirmarSaidaEdicao(true);
+    } else {
+      carregarPagina(paginaId);
+    }
+  };
+
+  const confirmarNavegacao = () => {
+    setModalConfirmarSaidaEdicao(false);
+    if (navegacaoPendente) {
+      if (navegacaoPendente.tipo === 'modulo') {
+        carregarModulo(navegacaoPendente.id);
+      } else {
+        carregarPagina(navegacaoPendente.id);
+      }
+      setNavegacaoPendente(null);
     }
   };
 
@@ -443,7 +521,7 @@ export default function CursoDetalhePage() {
               {curso.modulos.map((modulo, index) => (
                 <div
                   key={modulo.id}
-                  onClick={() => carregarModulo(modulo.id)}
+                  onClick={() => handleSelectModulo(modulo.id)}
                   className={`group relative cursor-pointer rounded-xl p-4 transition-all duration-200 ${
                     moduloSelecionado?.id === modulo.id
                       ? 'bg-gradient-to-r from-purple-500/20 to-blue-500/20 border-2 border-purple-500/30 shadow-lg shadow-purple-500/10'
@@ -530,7 +608,7 @@ export default function CursoDetalhePage() {
                   {moduloSelecionado.paginas?.map((pagina, index) => (
                     <div
                       key={pagina.id}
-                      onClick={() => carregarPagina(pagina.id)}
+                      onClick={() => handleSelectPagina(pagina.id)}
                       className={`group relative cursor-pointer rounded-xl p-3 transition-all duration-200 ${
                         paginaSelecionada?.id === pagina.id
                           ? 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border-2 border-blue-500/30 shadow-lg shadow-blue-500/10'
@@ -731,7 +809,7 @@ export default function CursoDetalhePage() {
       </div>
 
       {/* Modal Novo Módulo */}
-      <Dialog open={modalModuloAberto} onOpenChange={setModalModuloAberto}>
+      <Dialog open={modalModuloAberto} onOpenChange={handleFecharModalModulo}>
         <DialogContent className="bg-zinc-900 border-zinc-800 rounded-2xl">
           <DialogHeader>
             <DialogTitle className="text-white text-xl">Criar Novo Módulo</DialogTitle>
@@ -764,10 +842,10 @@ export default function CursoDetalhePage() {
             <div className="flex gap-3 pt-4">
               <Button
                 variant="default"
-                onClick={() => setModalModuloAberto(false)}
+                onClick={() => handleFecharModalModulo(false)}
                 className="flex-1 border-zinc-700 hover:bg-zinc-800 rounded-xl h-11"
               >
-                Cancelar
+                {t('cancel')}
               </Button>
               <Button
                 onClick={criarModulo}
@@ -777,10 +855,10 @@ export default function CursoDetalhePage() {
                 {criandoModulo ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Criando...
+                    {t('saving')}
                   </>
                 ) : (
-                  'Criar Módulo'
+                  t('createModule')
                 )}
               </Button>
             </div>
@@ -789,7 +867,7 @@ export default function CursoDetalhePage() {
       </Dialog>
 
       {/* Modal Nova Página */}
-      <Dialog open={modalPaginaAberto} onOpenChange={setModalPaginaAberto}>
+      <Dialog open={modalPaginaAberto} onOpenChange={handleFecharModalPagina}>
         <DialogContent className="bg-zinc-900 border-zinc-800 rounded-2xl">
           <DialogHeader>
             <DialogTitle className="text-white text-xl">Criar Nova Página</DialogTitle>
@@ -810,10 +888,10 @@ export default function CursoDetalhePage() {
             <div className="flex gap-3 pt-4">
               <Button
                 variant="default"
-                onClick={() => setModalPaginaAberto(false)}
+                onClick={() => handleFecharModalPagina(false)}
                 className="flex-1 border-zinc-700 hover:bg-zinc-800 rounded-xl h-11"
               >
-                Cancelar
+                {t('cancel')}
               </Button>
               <Button
                 onClick={criarPagina}
@@ -823,10 +901,10 @@ export default function CursoDetalhePage() {
                 {criandoPagina ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Criando...
+                    {t('saving')}
                   </>
                 ) : (
-                  'Criar Página'
+                  t('createPage')
                 )}
               </Button>
             </div>
@@ -869,11 +947,50 @@ export default function CursoDetalhePage() {
           setItemParaExcluir(null);
         }}
         onConfirm={confirmarExcluirPagina}
-        title="Excluir Página"
-        description="Tem certeza que deseja excluir esta página? Todo o conteúdo será perdido permanentemente. Esta ação não pode ser desfeita."
-        confirmText="Excluir Página"
-        cancelText="Cancelar"
+        title={t('deletePage')}
+        description={t('deletePageConfirmation')}
+        confirmText={t('deletePage')}
+        cancelText={t('cancel')}
         variant="danger"
+      />
+
+      {/* Modal Confirmar Saída do Módulo */}
+      <ConfirmModal
+        open={modalConfirmarSaidaModulo}
+        onClose={() => setModalConfirmarSaidaModulo(false)}
+        onConfirm={confirmarFecharModulo}
+        title={t('unsavedChangesTitle')}
+        description={t('unsavedChangesDescription')}
+        confirmText={t('discardChanges')}
+        cancelText={t('continueEditing')}
+        variant="warning"
+      />
+
+      {/* Modal Confirmar Saída da Página */}
+      <ConfirmModal
+        open={modalConfirmarSaidaPagina}
+        onClose={() => setModalConfirmarSaidaPagina(false)}
+        onConfirm={confirmarFecharPagina}
+        title={t('unsavedChangesTitle')}
+        description={t('unsavedChangesDescription')}
+        confirmText={t('discardChanges')}
+        cancelText={t('continueEditing')}
+        variant="warning"
+      />
+
+      {/* Modal Confirmar Saída da Edição de Página */}
+      <ConfirmModal
+        open={modalConfirmarSaidaEdicao}
+        onClose={() => {
+          setModalConfirmarSaidaEdicao(false);
+          setNavegacaoPendente(null);
+        }}
+        onConfirm={confirmarNavegacao}
+        title={t('unsavedChangesTitle')}
+        description={t('unsavedChangesDescriptionPage')}
+        confirmText={t('discardChanges')}
+        cancelText={t('continueEditing')}
+        variant="warning"
       />
     </div>
   );

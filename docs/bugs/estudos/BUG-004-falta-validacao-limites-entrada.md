@@ -391,5 +391,34 @@ export function sanitizeString(str: string): string {
 |--------|------|
 | Identificado | 2026-01-17 |
 | Reportado | 2026-01-17 |
-| Correção Pendente | - |
+| **Corrigido** | 2026-01-17 |
 | Verificado | - |
+
+---
+
+## Correção Implementada
+
+**Data da Correção:** 2026-01-17
+
+### Ações Realizadas:
+
+1. **Criado arquivo de validações Zod**: `src/lib/validations/estudos.ts`
+   - Schema `cursoSchema` com limites para nome (100 chars), descrição (500 chars), cor (hex válido)
+   - Schema `moduloSchema` com limites para nome (100 chars), descrição (500 chars)
+   - Schema `paginaSchema` com limites para título (200 chars), conteúdo (500KB)
+   - Schema `anotacaoSchema` com limites para título (200 chars), conteúdo (100KB)
+   - Schema `buscaSchema` com limites para termo de busca (2-100 chars)
+
+2. **Validação aplicada em todas as APIs**:
+   - `src/app/api/v1/estudos/cursos/route.ts` (POST)
+   - `src/app/api/v1/estudos/cursos/[id]/route.ts` (PUT)
+   - `src/app/api/v1/estudos/modulos/route.ts` (POST)
+   - `src/app/api/v1/estudos/modulos/[id]/route.ts` (PUT)
+   - `src/app/api/v1/estudos/paginas/route.ts` (POST)
+   - `src/app/api/v1/estudos/paginas/[id]/route.ts` (PUT)
+   - `src/app/api/v1/estudos/anotacoes/route.ts` (POST)
+   - `src/app/api/v1/estudos/anotacoes/[id]/route.ts` (PUT)
+
+3. **Validação de formato de cor**: Regex para aceitar apenas códigos hexadecimais válidos (#FFF ou #FFFFFF)
+
+4. **Schemas de update parciais**: Criados schemas com `.partial()` para permitir atualizações parciais

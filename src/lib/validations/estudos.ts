@@ -46,7 +46,7 @@ export const moduloSchema = z.object({
     .max(500, 'Descrição deve ter no máximo 500 caracteres')
     .optional()
     .nullable(),
-  cursoId: z.string().uuid('ID do curso inválido'),
+  cursoId: z.string().min(1, 'ID do curso é obrigatório'),
   ordem: z.number().int().min(0).max(1000).optional().default(0),
 });
 
@@ -63,7 +63,7 @@ export const paginaSchema = z.object({
     .max(500000, 'Conteúdo muito grande (máximo 500KB)')
     .optional()
     .default(''),
-  moduloId: z.string().uuid('ID do módulo inválido'),
+  moduloId: z.string().min(1, 'ID do módulo é obrigatório'),
   ordem: z.number().int().min(0).max(1000).optional().default(0),
 });
 
@@ -85,7 +85,7 @@ export const anotacaoSchema = z.object({
     .regex(hexColorRegex, 'Cor deve ser um código hexadecimal válido')
     .optional()
     .default('#FBBF24'),
-  cursoId: z.string().uuid('ID do curso inválido').optional().nullable(),
+  cursoId: z.string().min(1, 'ID do curso é obrigatório').optional().nullable(),
 });
 
 export const anotacaoUpdateSchema = anotacaoSchema.partial();

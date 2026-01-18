@@ -235,9 +235,15 @@
     "saveChanges": "Salvar Alterações",
     "deleteNote": "Excluir Anotação",
     "deleteNoteConfirmation": "Tem certeza que deseja excluir esta anotação? Todo o conteúdo será perdido permanentemente. Esta ação não pode ser desfeita.",
+    "creating": "Criando...",
+    "saving": "Salvando...",
     "aiNotesFeature": "Anotações com IA",
     "aiNotesDescription": "A geração de anotações organizadas com inteligência artificial está disponível apenas para usuários Premium.",
-    "premiumClickToUpgrade": "Premium - Clique para fazer upgrade"
+    "premiumClickToUpgrade": "Premium - Clique para fazer upgrade",
+    "unsavedChangesTitle": "Alterações não salvas",
+    "unsavedChangesDescription": "Você tem alterações que ainda não foram salvas. Se sair agora, todas as informações digitadas serão perdidas.",
+    "discardChanges": "Descartar alterações",
+    "continueEditing": "Continuar editando"
   },
   "courseDetail": {
     "back": "Voltar",
@@ -260,7 +266,9 @@
     "selectPage": "Selecione uma página",
     "selectPageToView": "Escolha uma página para visualizar o conteúdo",
     "courseContentBadge": "Conteúdo do Curso",
+    "edit": "Editar",
     "save": "Salvar",
+    "saving": "Salvando...",
     "cancel": "Cancelar",
     "pageTitle": "Título da página",
     "reduceView": "Reduzir visualização",
@@ -280,7 +288,12 @@
     "deleteModule": "Excluir Módulo",
     "deleteModuleConfirmation": "Tem certeza que deseja excluir este módulo? Todas as páginas dentro dele serão excluídas permanentemente. Esta ação não pode ser desfeita.",
     "deletePage": "Excluir Página",
-    "deletePageConfirmation": "Tem certeza que deseja excluir esta página? Todo o conteúdo será perdido permanentemente. Esta ação não pode ser desfeita."
+    "deletePageConfirmation": "Tem certeza que deseja excluir esta página? Todo o conteúdo será perdido permanentemente. Esta ação não pode ser desfeita.",
+    "unsavedChangesTitle": "Alterações não salvas",
+    "unsavedChangesDescription": "Você tem alterações que ainda não foram salvas. Se sair agora, todas as informações digitadas serão perdidas.",
+    "unsavedChangesDescriptionPage": "Você está editando uma página e tem alterações não salvas. Se continuar, todas as alterações serão perdidas.",
+    "discardChanges": "Descartar alterações",
+    "continueEditing": "Continuar editando"
   },
   "richTextEditor": {
     "undo": "Desfazer",
