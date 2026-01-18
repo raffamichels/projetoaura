@@ -8,7 +8,7 @@ import TextAlign from '@tiptap/extension-text-align';
 import Underline from '@tiptap/extension-underline';
 import Highlight from '@tiptap/extension-highlight';
 import { ResizableImage } from './ResizableImage';
-import DOMPurify from 'isomorphic-dompurify';
+import DOMPurify from 'dompurify';
 import {
   Bold,
   Italic,
