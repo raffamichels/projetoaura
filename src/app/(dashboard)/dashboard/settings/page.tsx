@@ -16,7 +16,6 @@ import {
   Smartphone,
   CheckCircle2,
   AlertCircle,
-  Download,
   Crown,
   CreditCard,
   Laptop,
@@ -26,7 +25,6 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -102,10 +100,6 @@ export default function SettingsPage() {
 
   // States
   const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('dark');
-  const [emailNotifs, setEmailNotifs] = useState(true);
-  const [marketingNotifs, setMarketingNotifs] = useState(false);
-  const [publicProfile, setPublicProfile] = useState(false);
-  const [dataSharing, setDataSharing] = useState(true);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -426,30 +420,38 @@ export default function SettingsPage() {
                   <Label className="text-base text-zinc-200 mb-4 block">Tema da Interface</Label>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     {[
-                      { id: 'light', label: 'Claro', icon: Sun },
-                      { id: 'dark', label: 'Escuro', icon: Moon },
-                      { id: 'system', label: 'Sistema', icon: Monitor },
+                      { id: 'light', label: 'Claro', icon: Sun, comingSoon: true },
+                      { id: 'dark', label: 'Escuro', icon: Moon, comingSoon: false },
+                      { id: 'system', label: 'Sistema', icon: Monitor, comingSoon: true },
                     ].map((t) => {
                       const Icon = t.icon;
                       const isSelected = theme === t.id;
+                      const isDisabled = t.comingSoon;
                       return (
                         <div
                           key={t.id}
-                          onClick={() => setTheme(t.id as 'light' | 'dark' | 'system')}
+                          onClick={() => !isDisabled && setTheme(t.id as 'light' | 'dark' | 'system')}
                           className={cn(
-                            "cursor-pointer rounded-xl border-2 p-4 transition-all hover:bg-zinc-900",
-                            isSelected
+                            "rounded-xl border-2 p-4 transition-all",
+                            isDisabled
+                              ? "cursor-not-allowed opacity-60 border-zinc-800"
+                              : "cursor-pointer hover:bg-zinc-900",
+                            isSelected && !isDisabled
                               ? "border-aura-500 bg-zinc-900 ring-1 ring-aura-500/20"
-                              : "border-zinc-800 hover:border-zinc-700"
+                              : !isDisabled && "border-zinc-800 hover:border-zinc-700"
                           )}
                         >
                           <div className="flex items-center justify-between mb-3">
-                            <div className={cn("p-2 rounded-full", isSelected ? "bg-aura-500/20 text-aura-400" : "bg-zinc-800 text-zinc-400")}>
+                            <div className={cn("p-2 rounded-full", isSelected && !isDisabled ? "bg-aura-500/20 text-aura-400" : "bg-zinc-800 text-zinc-400")}>
                               <Icon className="w-5 h-5" />
                             </div>
-                            {isSelected && <CheckCircle2 className="w-5 h-5 text-aura-500" />}
+                            {isDisabled ? (
+                              <Badge variant="outline" className="bg-zinc-900 border-zinc-700 text-zinc-400 text-xs">Em Breve</Badge>
+                            ) : (
+                              isSelected && <CheckCircle2 className="w-5 h-5 text-aura-500" />
+                            )}
                           </div>
-                          <span className={cn("font-medium", isSelected ? "text-white" : "text-zinc-400")}>{t.label}</span>
+                          <span className={cn("font-medium", isSelected && !isDisabled ? "text-white" : "text-zinc-400")}>{t.label}</span>
                         </div>
                       )
                     })}
@@ -463,22 +465,17 @@ export default function SettingsPage() {
               <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                 <SectionHeader title="Notificações" description="Escolha o que você quer receber." />
 
-                <SettingsCard className="divide-y divide-zinc-800/50">
-                  <SettingRow
-                    label="Emails de Segurança"
-                    desc="Receba alertas sobre logins e mudanças de senha."
-                    action={<Switch checked={true} disabled />}
-                  />
-                  <SettingRow
-                    label="Novidades e Atualizações"
-                    desc="Fique por dentro das novas funcionalidades do Aura."
-                    action={<Switch checked={emailNotifs} onCheckedChange={setEmailNotifs} />}
-                  />
-                  <SettingRow
-                    label="Marketing e Parceiros"
-                    desc="Receba ofertas exclusivas dos nossos parceiros."
-                    action={<Switch checked={marketingNotifs} onCheckedChange={setMarketingNotifs} />}
-                  />
+                <SettingsCard className="flex flex-col items-center justify-center py-12 text-center">
+                  <div className="p-4 rounded-full bg-zinc-800/50 mb-4">
+                    <Bell className="w-8 h-8 text-zinc-500" />
+                  </div>
+                  <h3 className="text-lg font-medium text-zinc-200 mb-2">Em Breve</h3>
+                  <p className="text-sm text-zinc-500 max-w-sm">
+                    As configurações de notificações estarão disponíveis em uma atualização futura.
+                  </p>
+                  <Badge variant="outline" className="mt-4 bg-zinc-900 border-zinc-700 text-zinc-400">
+                    Em Desenvolvimento
+                  </Badge>
                 </SettingsCard>
               </div>
             )}
@@ -488,32 +485,18 @@ export default function SettingsPage() {
               <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                 <SectionHeader title="Privacidade" description="Gerencie como seus dados são usados." />
 
-                <SettingsCard className="divide-y divide-zinc-800/50">
-                  <SettingRow
-                    label="Perfil Público"
-                    desc="Permitir que pessoas fora da sua organização vejam seu perfil básico."
-                    action={<Switch checked={publicProfile} onCheckedChange={setPublicProfile} />}
-                  />
-                  <SettingRow
-                    label="Coleta de Dados de Uso"
-                    desc="Ajude-nos a melhorar o Aura enviando dados anônimos de uso."
-                    action={<Switch checked={dataSharing} onCheckedChange={setDataSharing} />}
-                  />
+                <SettingsCard className="flex flex-col items-center justify-center py-12 text-center">
+                  <div className="p-4 rounded-full bg-zinc-800/50 mb-4">
+                    <Shield className="w-8 h-8 text-zinc-500" />
+                  </div>
+                  <h3 className="text-lg font-medium text-zinc-200 mb-2">Em Breve</h3>
+                  <p className="text-sm text-zinc-500 max-w-sm">
+                    As configurações de privacidade estarão disponíveis em uma atualização futura.
+                  </p>
+                  <Badge variant="outline" className="mt-4 bg-zinc-900 border-zinc-700 text-zinc-400">
+                    Em Desenvolvimento
+                  </Badge>
                 </SettingsCard>
-
-                 <SettingsCard>
-                    <div className="flex flex-col gap-4">
-                      <div className="flex items-center justify-between">
-                         <div>
-                            <h4 className="text-sm font-medium text-zinc-200">Exportar Dados</h4>
-                            <p className="text-xs text-zinc-500">Baixe uma cópia dos seus dados em formato JSON.</p>
-                         </div>
-                         <Button variant="outline" size="sm" className="border-zinc-700 text-zinc-300 hover:bg-zinc-800">
-                           <Download className="w-4 h-4 mr-2" /> Download
-                         </Button>
-                      </div>
-                    </div>
-                 </SettingsCard>
               </div>
             )}
 

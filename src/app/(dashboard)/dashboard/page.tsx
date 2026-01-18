@@ -18,6 +18,7 @@ import { Badge } from '@/components/ui/badge';
 import { startOfDay, endOfDay, parseISO, isWithinInterval } from 'date-fns';
 import { AtividadesRecentes } from '@/components/dashboard/AtividadesRecentes';
 import { useTranslations } from 'next-intl';
+import { usePlano } from '@/hooks/usePlano';
 
 export default function DashboardPage() {
   const t = useTranslations('dashboard');
@@ -27,6 +28,7 @@ export default function DashboardPage() {
   const router = useRouter();
   const [compromissosHoje, setCompromissosHoje] = useState(0);
   const [loadingCompromissos, setLoadingCompromissos] = useState(true);
+  const { ehFree } = usePlano();
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -363,29 +365,31 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Upgrade Banner */}
-      <Card className="bg-gradient-to-r from-aura-500/10 via-blue-500/10 to-purple-500/10 border-aura-500/20">
-        <CardContent className="p-4 sm:p-6">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4">
-            <div className="flex-1 text-center md:text-left">
-              <h3 className="text-lg sm:text-xl font-bold text-white mb-1 sm:mb-2">
-                {t('unlockPotential')}
-              </h3>
-              <p className="text-gray-400 text-xs sm:text-sm">
-                {t('accessPremiumFeatures')}
-              </p>
+      {/* Upgrade Banner - Only show for free plan */}
+      {ehFree && (
+        <Card className="bg-gradient-to-r from-aura-500/10 via-blue-500/10 to-purple-500/10 border-aura-500/20">
+          <CardContent className="p-4 sm:p-6">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4">
+              <div className="flex-1 text-center md:text-left">
+                <h3 className="text-lg sm:text-xl font-bold text-white mb-1 sm:mb-2">
+                  {t('unlockPotential')}
+                </h3>
+                <p className="text-gray-400 text-xs sm:text-sm">
+                  {t('accessPremiumFeatures')}
+                </p>
+              </div>
+              <Button
+                onClick={() => router.push('/premium')}
+                className="w-full md:w-auto bg-gradient-to-r from-aura-500 to-blue-500 hover:from-aura-600 hover:to-blue-600 shadow-lg shadow-aura-500/25 text-sm sm:text-base h-auto py-2.5 sm:py-2"
+              >
+                <CheckCircle2 className="w-4 h-4 mr-2" />
+                <span className="hidden sm:inline">{t('upgradeToPremium')}</span>
+                <span className="sm:hidden">{t('upgradePremium')}</span>
+              </Button>
             </div>
-            <Button
-              onClick={() => router.push('/premium')}
-              className="w-full md:w-auto bg-gradient-to-r from-aura-500 to-blue-500 hover:from-aura-600 hover:to-blue-600 shadow-lg shadow-aura-500/25 text-sm sm:text-base h-auto py-2.5 sm:py-2"
-            >
-              <CheckCircle2 className="w-4 h-4 mr-2" />
-              <span className="hidden sm:inline">{t('upgradeToPremium')}</span>
-              <span className="sm:hidden">{t('upgradePremium')}</span>
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

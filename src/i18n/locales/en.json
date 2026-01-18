@@ -181,7 +181,7 @@
     "upgrade": "Upgrade"
   },
   "studies": {
-    "title": "Studies",
+    "pageTitle": "Studies",
     "subtitle": "Organize your study materials",
     "search": "Search",
     "newNote": "New Note",

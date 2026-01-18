@@ -181,7 +181,7 @@
     "upgrade": "Fazer Upgrade"
   },
   "studies": {
-    "title": "Estudos",
+    "pageTitle": "Estudos",
     "subtitle": "Organize seus materiais de estudo",
     "search": "Buscar",
     "newNote": "Nova Anotação",

@@ -360,7 +360,7 @@ export default function EstudosPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white">{t('title')}</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white">{t('pageTitle')}</h1>
           <p className="text-sm sm:text-base text-zinc-400">{t('subtitle')}</p>
         </div>
         <div className="flex flex-wrap gap-2 sm:gap-3 w-full sm:w-auto">

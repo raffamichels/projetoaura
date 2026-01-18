@@ -127,7 +127,7 @@ export function Header() {
               {/* Menu Items */}
               <div className="p-2">
                 <DropdownMenuItem
-                  className="cursor-pointer hover:bg-zinc-800 rounded-lg px-3 py-2.5 flex items-center gap-3 transition-colors"
+                  className="cursor-pointer hover:bg-zinc-800 focus:bg-zinc-800 rounded-lg px-3 py-2.5 flex items-center gap-3 transition-colors"
                   onClick={() => router.push('/dashboard/perfil')}
                 >
                   <div className="p-1.5 bg-aura-500/10 rounded-lg">
@@ -140,7 +140,7 @@ export function Header() {
                 </DropdownMenuItem>
 
                 <DropdownMenuItem
-                  className="cursor-pointer hover:bg-zinc-800 rounded-lg px-3 py-2.5 flex items-center gap-3 transition-colors"
+                  className="cursor-pointer hover:bg-zinc-800 focus:bg-zinc-800 rounded-lg px-3 py-2.5 flex items-center gap-3 transition-colors"
                   onClick={() => router.push('/dashboard/settings')}
                 >
                   <div className="p-1.5 bg-blue-500/10 rounded-lg">
@@ -160,7 +160,7 @@ export function Header() {
                 <>
                   <div className="p-2">
                     <DropdownMenuItem
-                      className="cursor-pointer hover:bg-gradient-to-r hover:from-yellow-500/20 hover:to-orange-500/20 rounded-lg px-3 py-2.5 flex items-center gap-3 transition-all border border-yellow-500/20"
+                      className="cursor-pointer hover:bg-gradient-to-r hover:from-yellow-500/20 hover:to-orange-500/20 focus:bg-gradient-to-r focus:from-yellow-500/20 focus:to-orange-500/20 rounded-lg px-3 py-2.5 flex items-center gap-3 transition-all border border-yellow-500/20"
                       onClick={() => router.push('/premium')}
                     >
                       <div className="p-1.5 bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-lg">
@@ -179,7 +179,7 @@ export function Header() {
               {/* Logout */}
               <div className="p-2">
                 <DropdownMenuItem
-                  className="cursor-pointer hover:bg-red-500/10 rounded-lg px-3 py-2.5 flex items-center gap-3 transition-colors group"
+                  className="cursor-pointer hover:bg-red-500/10 focus:bg-red-500/10 rounded-lg px-3 py-2.5 flex items-center gap-3 transition-colors group"
                   onClick={() => signOut({ callbackUrl: '/login' })}
                 >
                   <div className="p-1.5 bg-red-500/10 rounded-lg group-hover:bg-red-500/20 transition-colors">

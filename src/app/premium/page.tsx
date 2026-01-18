@@ -2,28 +2,20 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 import {
-  Calendar,
-  Wallet,
-  BookOpen,
-  Library,
-  Target,
-  Dumbbell,
-  Plane,
-  Sparkles,
-  TrendingUp,
-  Users,
   Shield,
-  Zap,
   Check,
   ChevronDown,
   Star,
   ArrowRight,
-  Lock,
   ArrowLeft,
+  Crown,
+  Infinity,
+  Headphones,
+  Eye,
+  Download,
+  BarChart3,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -33,17 +25,9 @@ import { toast } from "sonner";
 export default function PremiumPage() {
   const router = useRouter();
   const { data: session } = useSession();
-  const [email, setEmail] = useState("");
-  const [nome, setNome] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
 
   const handleAssinarClick = () => {
-    console.log('Botão clicado!', { plano: session?.user?.plano });
-
-    // Verificar se o usuário já é premium
     if (session?.user?.plano === 'PREMIUM') {
-      console.log('Usuário é premium, mostrando toast');
       toast.info('Você já é um assinante Premium!', {
         description: 'Acesse o dashboard para gerenciar sua assinatura.',
         action: {
@@ -54,602 +38,425 @@ export default function PremiumPage() {
       return;
     }
 
-    console.log('Redirecionando para checkout');
-    // Se não for premium, redirecionar para checkout
     router.push('/premium/checkout');
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+  const premiumFeatures = [
+    {
+      icon: Infinity,
+      title: "Módulos Ilimitados",
+      description: "Acesso completo a todos os módulos sem nenhum limite de uso.",
+    },
+    {
+      icon: Shield,
+      title: "Backup Automático",
+      description: "Seus dados são salvos automaticamente na nuvem todos os dias.",
+    },
+    {
+      icon: Headphones,
+      title: "Suporte Prioritário",
+      description: "Atendimento rápido e dedicado para resolver suas dúvidas.",
+    },
+    {
+      icon: BarChart3,
+      title: "Relatórios Avançados",
+      description: "Análises detalhadas e insights sobre sua produtividade.",
+    },
+    {
+      icon: Download,
+      title: "Exportação Completa",
+      description: "Exporte seus dados em PDF, Excel e outros formatos.",
+    },
+    {
+      icon: Eye,
+      title: "Acesso Antecipado",
+      description: "Seja o primeiro a testar novos recursos e funcionalidades.",
+    },
+  ];
 
-    try {
-      const response = await fetch("/api/waitlist", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, nome }),
-      });
+  const comparisonData = [
+    { feature: "Compromissos na Agenda", free: "10/mês", premium: "Ilimitado" },
+    { feature: "Transações Financeiras", free: "20/mês", premium: "Ilimitado" },
+    { feature: "Cursos Ativos", free: "1", premium: "Ilimitado" },
+    { feature: "Itens na Biblioteca", free: "10", premium: "Ilimitado" },
+    { feature: "Backup de Dados", free: "—", premium: "Diário" },
+    { feature: "Relatórios", free: "Básico", premium: "Avançado" },
+    { feature: "Exportação", free: "—", premium: "PDF/Excel" },
+    { feature: "Suporte", free: "Comunidade", premium: "Prioritário" },
+    { feature: "Novos Recursos", free: "—", premium: "Acesso Antecipado" },
+    { feature: "Anúncios", free: "Sim", premium: "Sem Anúncios" },
+  ];
 
-      if (response.ok) {
-        setSubmitted(true);
-        setEmail("");
-        setNome("");
-      }
-    } catch (error) {
-      console.error("Erro ao adicionar à lista de espera:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const testimonials = [
+    {
+      name: "Rafael Mendes",
+      role: "Desenvolvedor",
+      text: "O Premium vale cada centavo. Os relatórios avançados me ajudaram a entender onde estava perdendo tempo.",
+    },
+    {
+      name: "Julia Oliveira",
+      role: "Estudante",
+      text: "Com o desconto de estudante, ficou super acessível. Consigo gerenciar todos os meus cursos sem limite!",
+    },
+    {
+      name: "Pedro Costa",
+      role: "Empreendedor",
+      text: "A exportação em PDF é perfeita para apresentar relatórios financeiros aos meus sócios.",
+    },
+  ];
+
+  const faqs = [
+    {
+      question: "Posso testar o Premium antes de assinar?",
+      answer: "Sim! Oferecemos 7 dias de teste grátis para você experimentar todos os recursos Premium sem compromisso.",
+    },
+    {
+      question: "Como funciona o pagamento?",
+      answer: "Aceitamos cartão de crédito, débito e PIX. O pagamento é processado de forma segura e você pode cancelar a qualquer momento.",
+    },
+    {
+      question: "Existe desconto para pagamento anual?",
+      answer: "Sim! No plano anual você economiza 16%, pagando apenas R$ 129/ano em vez de R$ 154,80.",
+    },
+    {
+      question: "O que acontece se eu cancelar?",
+      answer: "Você continua com acesso Premium até o fim do período pago. Depois, sua conta volta para o plano gratuito e seus dados são mantidos.",
+    },
+  ];
+
+  const isPremium = session?.user?.plano === 'PREMIUM';
 
   return (
-    <div className="relative bg-black text-white">
+    <div className="min-h-screen bg-[#0A0A0F] text-white overflow-x-hidden">
+      {/* Gradient Orbs Background */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 -left-40 w-80 h-80 bg-violet-600/30 rounded-full blur-[120px] animate-pulse-slow" />
+        <div className="absolute top-1/4 -right-40 w-96 h-96 bg-blue-600/20 rounded-full blur-[120px] animate-pulse-slow" style={{ animationDelay: '2s' }} />
+        <div className="absolute bottom-1/4 left-1/4 w-64 h-64 bg-amber-600/20 rounded-full blur-[120px] animate-pulse-slow" style={{ animationDelay: '4s' }} />
+      </div>
+
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-lg border-b border-gray-800">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-[#0A0A0F]/80 backdrop-blur-xl border-b border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
-                <Sparkles className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+          <div className="flex justify-between items-center h-20">
+            {/* Logo */}
+            <Link href="/" className="flex items-center">
+              <span className="text-3xl font-bold bg-gradient-to-r from-purple-400 via-fuchsia-400 to-blue-400 bg-clip-text text-transparent animate-gradient">
                 Aura
               </span>
-            </div>
-            <nav className="flex items-center space-x-4 md:space-x-8">
-              <a href="#recursos" className="text-gray-300 hover:text-purple-400 transition hidden md:inline">
+            </Link>
+
+            {/* Navigation */}
+            <nav className="hidden md:flex items-center gap-8">
+              <a href="#recursos" className="text-sm text-gray-400 hover:text-white transition-colors">
                 Recursos
               </a>
-              <a href="#precos" className="text-gray-300 hover:text-purple-400 transition hidden md:inline">
-                Preços
+              <a href="#comparativo" className="text-sm text-gray-400 hover:text-white transition-colors">
+                Comparativo
               </a>
-              <a href="#faq" className="text-gray-300 hover:text-purple-400 transition hidden md:inline">
+              <a href="#faq" className="text-sm text-gray-400 hover:text-white transition-colors">
                 FAQ
               </a>
-              <Button
-                variant="default"
-                size="sm"
-                onClick={() => router.push('/dashboard')}
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Voltar ao Dashboard
-              </Button>
             </nav>
+
+            {/* Back Button */}
+            <Button
+              variant="ghost"
+              className="text-gray-300 hover:text-white hover:bg-white/5"
+              onClick={() => router.push('/dashboard')}
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Voltar ao Dashboard
+            </Button>
           </div>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
+      <section className="relative pt-32 pb-20 md:pt-44 md:pb-32 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center max-w-4xl mx-auto">
-            <Badge className="mb-4 bg-purple-900/30 text-purple-300 hover:bg-purple-900/50">
-              <Sparkles className="w-3 h-3 mr-1" />
-              Lançamento em breve - Entre para a lista de espera
-            </Badge>
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20 mb-8 animate-fade-in">
+              <Crown className="w-4 h-4 text-amber-400" />
+              <span className="text-sm text-amber-300">Desbloqueie todo o potencial do Aura</span>
+            </div>
 
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
-              Organize sua vida em um só lugar
+            {/* Main Headline */}
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 animate-fade-in-delay-1">
+              <span className="text-white">Aura</span>
+              <br />
+              <span className="bg-gradient-to-r from-amber-400 via-orange-400 to-rose-400 bg-clip-text text-transparent">
+                Premium
+              </span>
             </h1>
 
-            <p className="text-xl md:text-2xl text-gray-300 mb-12 leading-relaxed">
-              Aura é a plataforma completa de gerenciamento pessoal que reúne{" "}
-              <span className="text-purple-400 font-semibold">agenda</span>,{" "}
-              <span className="text-purple-400 font-semibold">finanças</span>,{" "}
-              <span className="text-purple-400 font-semibold">estudos</span> e muito mais.
+            {/* Subheadline */}
+            <p className="text-lg md:text-xl text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed animate-fade-in-delay-2">
+              Remova todos os limites e tenha acesso completo a todos os módulos,
+              relatórios avançados, suporte prioritário e muito mais.
             </p>
 
-            {/* Waitlist Form */}
-            {!submitted ? (
-              <form onSubmit={handleSubmit} className="max-w-md mx-auto mb-8">
-                <div className="flex flex-col gap-3">
-                  <Input
-                    type="text"
-                    placeholder="Seu nome"
-                    value={nome}
-                    onChange={(e) => setNome(e.target.value)}
-                    className="h-14 text-lg"
-                  />
-                  <Input
-                    type="email"
-                    placeholder="Seu melhor e-mail"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    className="h-14 text-lg"
-                  />
-                  <Button
-                    type="submit"
-                    size="lg"
-                    disabled={loading}
-                    className="h-14 text-lg bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-                  >
-                    {loading ? "Aguarde..." : "Quero ser um dos primeiros"}
-                    <ArrowRight className="w-5 h-5 ml-2" />
-                  </Button>
+            {/* Pricing CTA */}
+            <div className="max-w-sm mx-auto animate-fade-in-delay-3">
+              <div className="p-8 rounded-2xl bg-gradient-to-br from-amber-500/10 to-orange-500/10 border border-amber-500/30">
+                <div className="mb-4">
+                  <span className="text-5xl font-bold bg-gradient-to-r from-amber-400 to-orange-400 bg-clip-text text-transparent">
+                    R$ 12,90
+                  </span>
+                  <span className="text-gray-400">/mês</span>
                 </div>
-                <p className="text-sm text-gray-400 mt-3">
-                  <Lock className="w-3 h-3 inline mr-1" />
-                  Seus dados estão seguros. Sem spam.
-                </p>
-              </form>
-            ) : (
-              <div className="max-w-md mx-auto mb-8 p-6 bg-green-900/20 border border-green-800 rounded-lg">
-                <div className="flex items-center justify-center mb-2">
-                  <div className="w-12 h-12 bg-green-900/50 rounded-full flex items-center justify-center">
-                    <Check className="w-6 h-6 text-green-400" />
-                  </div>
-                </div>
-                <h3 className="text-xl font-semibold text-green-300 mb-2">
-                  Você está na lista!
-                </h3>
-                <p className="text-green-400">
-                  Prepare-se para transformar sua produtividade. Avisaremos assim que o Aura estiver disponível.
-                </p>
-              </div>
-            )}
+                <p className="text-sm text-gray-500 mb-6">ou R$ 129/ano (economize 16%)</p>
 
-            {/* Social Proof */}
-            <div className="flex items-center justify-center gap-2 text-sm text-gray-400">
-              <div className="flex -space-x-2">
-                {[1, 2, 3, 4].map((i) => (
-                  <div
-                    key={i}
-                    className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 border-2 border-gray-900"
-                  />
-                ))}
+                {isPremium ? (
+                  <Button
+                    className="w-full h-12 bg-emerald-600 hover:bg-emerald-700 text-white"
+                    onClick={() => router.push('/dashboard/assinatura')}
+                  >
+                    <Check className="w-4 h-4 mr-2" />
+                    Você já é Premium
+                  </Button>
+                ) : (
+                  <Button
+                    className="w-full h-12 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-medium shadow-lg shadow-amber-500/25"
+                    onClick={handleAssinarClick}
+                  >
+                    Assinar Premium
+                    <Star className="w-4 h-4 ml-2" />
+                  </Button>
+                )}
+
+                <p className="text-xs text-gray-500 mt-4">
+                  7 dias de teste grátis • Cancele quando quiser
+                </p>
               </div>
-              <span>
-                <strong className="text-purple-400">500+</strong> pessoas já na lista de espera
-              </span>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-zinc-900">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {[
-              { number: "7+", label: "Módulos integrados" },
-              { number: "1", label: "Plataforma única" },
-              { number: "100%", label: "Seus dados privados" },
-              { number: "R$ 12,90", label: "Por mês no Premium" },
-            ].map((stat, i) => (
-              <div key={i} className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-purple-400 mb-2">
-                  {stat.number}
-                </div>
-                <div className="text-sm text-gray-400">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Features Section */}
-      <section id="recursos" className="py-20 px-4 sm:px-6 lg:px-8">
+      <section id="recursos" className="py-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
+          {/* Section Header */}
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              Tudo que você precisa,{" "}
-              <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                em um só lugar
+            <Badge className="mb-4 bg-amber-500/10 text-amber-300 border-amber-500/20 hover:bg-amber-500/20">
+              Recursos Premium
+            </Badge>
+            <h2 className="text-3xl md:text-5xl font-bold mb-4">
+              Tudo que você precisa para{" "}
+              <span className="bg-gradient-to-r from-amber-400 to-orange-400 bg-clip-text text-transparent">
+                alcançar seus objetivos
               </span>
             </h2>
-            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-              Pare de usar dezenas de aplicativos diferentes. Com o Aura, você gerencia toda a sua vida de forma integrada.
-            </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                icon: Calendar,
-                title: "Agenda Inteligente",
-                description: "Organize compromissos, defina lembretes e nunca mais perca um evento importante.",
-                color: "from-blue-500 to-cyan-500",
-              },
-              {
-                icon: Wallet,
-                title: "Controle Financeiro",
-                description: "Gerencie receitas, despesas, objetivos financeiros e tenha visão completa das suas finanças.",
-                color: "from-green-500 to-emerald-500",
-              },
-              {
-                icon: BookOpen,
-                title: "Gestão de Estudos",
-                description: "Organize cursos, acompanhe progresso e maximize seu aprendizado com técnicas comprovadas.",
-                color: "from-purple-500 to-pink-500",
-              },
-              {
-                icon: Library,
-                title: "Biblioteca Pessoal",
-                description: "Gerencie livros e filmes, salve citações favoritas e acompanhe seu consumo cultural.",
-                color: "from-orange-500 to-red-500",
-              },
-              {
-                icon: Target,
-                title: "Metas e Hábitos",
-                description: "Defina objetivos SMART, rastreie hábitos diários e gamifique seu progresso.",
-                color: "from-yellow-500 to-orange-500",
-                badge: "Em breve",
-              },
-              {
-                icon: Dumbbell,
-                title: "Treinos e Saúde",
-                description: "Planeje treinos, registre exercícios e acompanhe sua evolução física.",
-                color: "from-red-500 to-pink-500",
-                badge: "Em breve",
-              },
-            ].map((feature, i) => (
-              <Card
+          {/* Features Grid */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {premiumFeatures.map((feature, i) => (
+              <div
                 key={i}
-                className="relative overflow-hidden bg-zinc-900/50 border-gray-800 hover:shadow-xl hover:shadow-purple-500/10 transition-all duration-300 hover:-translate-y-1"
+                className="group relative p-6 rounded-2xl bg-gradient-to-br from-amber-500/5 to-orange-500/5 border border-white/5 hover:border-amber-500/20 transition-all duration-300 hover:-translate-y-1"
               >
-                <CardContent className="p-6">
-                  {feature.badge && (
-                    <Badge className="absolute top-4 right-4 bg-purple-900/30 text-purple-300">
-                      {feature.badge}
-                    </Badge>
-                  )}
-                  <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${feature.color} flex items-center justify-center mb-4`}>
-                    <feature.icon className="w-6 h-6 text-white" />
-                  </div>
-                  <h3 className="text-xl font-semibold mb-2 text-white">{feature.title}</h3>
-                  <p className="text-gray-300">{feature.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Benefits Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-purple-600 to-pink-600 text-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              Por que escolher o Aura?
-            </h2>
-            <p className="text-xl text-purple-100 max-w-2xl mx-auto">
-              Uma solução completa para pessoas que valorizam produtividade e organização
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              {
-                icon: Zap,
-                title: "Produtividade 10x",
-                description: "Economize horas toda semana gerenciando tudo em um único lugar",
-              },
-              {
-                icon: Shield,
-                title: "Dados Seguros",
-                description: "Seus dados são criptografados e protegidos com os mais altos padrões de segurança",
-              },
-              {
-                icon: Users,
-                title: "Compartilhamento Familiar",
-                description: "Gerencie finanças e compromissos com toda a família",
-              },
-              {
-                icon: TrendingUp,
-                title: "Insights Inteligentes",
-                description: "Receba sugestões personalizadas baseadas nos seus hábitos",
-              },
-            ].map((benefit, i) => (
-              <div key={i} className="text-center">
-                <div className="w-16 h-16 mx-auto mb-4 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm">
-                  <benefit.icon className="w-8 h-8" />
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center mb-4 shadow-lg">
+                  <feature.icon className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-lg font-semibold mb-2">{benefit.title}</h3>
-                <p className="text-purple-100">{benefit.description}</p>
+                <h3 className="text-xl font-semibold text-white mb-2">{feature.title}</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">{feature.description}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Pricing Section */}
-      <section id="precos" className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+      {/* Comparison Section */}
+      <section id="comparativo" className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-transparent via-amber-950/10 to-transparent">
+        <div className="max-w-4xl mx-auto">
+          {/* Section Header */}
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              Planos transparentes,{" "}
-              <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                sem surpresas
+            <Badge className="mb-4 bg-violet-500/10 text-violet-300 border-violet-500/20 hover:bg-violet-500/20">
+              Comparativo
+            </Badge>
+            <h2 className="text-3xl md:text-5xl font-bold mb-4">
+              Free vs{" "}
+              <span className="bg-gradient-to-r from-amber-400 to-orange-400 bg-clip-text text-transparent">
+                Premium
               </span>
             </h2>
-            <p className="text-xl text-gray-300">
-              Escolha o plano ideal para você
-            </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {/* Free Plan */}
-            <Card className="bg-zinc-900/50 border-gray-800">
-              <CardContent className="p-8">
-                <h3 className="text-2xl font-bold mb-2 text-white">Free</h3>
-                <div className="mb-6">
-                  <span className="text-4xl font-bold text-white">R$ 0</span>
-                  <span className="text-gray-400">/mês</span>
-                </div>
-                <ul className="space-y-3 mb-8">
-                  {[
-                    "Agenda básica (10 compromissos/mês)",
-                    "Financeiro básico (20 transações/mês)",
-                    "1 curso ativo",
-                    "Biblioteca limitada",
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-start">
-                      <Check className="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                      <span className="text-gray-300">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-                <Button
-                  className="w-full"
-                  variant="default"
-                  onClick={() => router.push('/dashboard')}
-                >
-                  Você já está no Free!
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Premium Plan */}
-            <Card className="bg-zinc-900/50 border-purple-500 relative shadow-xl shadow-purple-500/20">
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-white">
-                  Mais popular
+          {/* Comparison Table */}
+          <div className="rounded-2xl bg-white/5 border border-white/10 overflow-hidden">
+            {/* Table Header */}
+            <div className="grid grid-cols-3 gap-4 p-6 bg-white/5 border-b border-white/10">
+              <div className="text-sm font-medium text-gray-400">Recurso</div>
+              <div className="text-center text-sm font-medium text-gray-400">Free</div>
+              <div className="text-center">
+                <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0">
+                  Premium
                 </Badge>
               </div>
-              <CardContent className="p-8">
-                <h3 className="text-2xl font-bold mb-2 text-white">Premium</h3>
-                <div className="mb-6">
-                  <span className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                    R$ 12,90
-                  </span>
-                  <span className="text-gray-400">/mês</span>
-                  <p className="text-sm text-gray-400 mt-1">
-                    ou R$ 129/ano (economize 16%)
-                  </p>
+            </div>
+
+            {/* Table Body */}
+            <div className="divide-y divide-white/5">
+              {comparisonData.map((item, i) => (
+                <div key={i} className="grid grid-cols-3 gap-4 p-4 hover:bg-white/5 transition-colors">
+                  <div className="text-sm text-white">{item.feature}</div>
+                  <div className="text-center text-sm text-gray-500">{item.free}</div>
+                  <div className="text-center text-sm text-amber-400 font-medium">{item.premium}</div>
                 </div>
-                <ul className="space-y-3 mb-8">
-                  {[
-                    "Todos os módulos ilimitados",
-                    "Backup automático de dados",
-                    "Suporte prioritário",
-                    "Relatórios avançados",
-                    "Exportação em PDF/Excel",
-                    "Sem anúncios",
-                    "Acesso antecipado a novos recursos",
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-start">
-                      <Check className="w-5 h-5 text-purple-400 mr-2 flex-shrink-0 mt-0.5" />
-                      <span className="text-gray-300">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-                <Button
-                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-                  onClick={handleAssinarClick}
-                >
-                  Assinar Agora
-                  <Star className="w-4 h-4 ml-2" />
-                </Button>
-              </CardContent>
-            </Card>
+              ))}
+            </div>
+          </div>
+
+          {/* CTA */}
+          <div className="text-center mt-12">
+            {!isPremium && (
+              <Button
+                className="h-12 px-8 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-medium shadow-lg shadow-amber-500/25"
+                onClick={handleAssinarClick}
+              >
+                Fazer Upgrade Agora
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            )}
           </div>
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-zinc-900">
+      {/* Testimonials Section */}
+      <section className="py-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
+          {/* Section Header */}
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              O que dizem nossos{" "}
-              <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                beta testers
+            <Badge className="mb-4 bg-emerald-500/10 text-emerald-300 border-emerald-500/20 hover:bg-emerald-500/20">
+              Depoimentos
+            </Badge>
+            <h2 className="text-3xl md:text-5xl font-bold mb-4">
+              O que nossos usuários{" "}
+              <span className="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
+                Premium dizem
               </span>
             </h2>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                name: "Ana Silva",
-                role: "Empreendedora",
-                text: "Finalmente consigo ter uma visão completa da minha vida. O módulo financeiro me ajudou a economizar mais de R$ 2.000 em 3 meses!",
-                rating: 5,
-              },
-              {
-                name: "Carlos Santos",
-                role: "Estudante de Medicina",
-                text: "Organizei todos os meus estudos no Aura. A produtividade aumentou muito e consigo acompanhar meu progresso de forma visual.",
-                rating: 5,
-              },
-              {
-                name: "Mariana Costa",
-                role: "Designer",
-                text: "Simplesmente incrível. Cancelei 5 assinaturas de apps diferentes e agora uso só o Aura. Vale cada centavo do Premium!",
-                rating: 5,
-              },
-            ].map((testimonial, i) => (
-              <Card key={i} className="bg-black/50 border-gray-800">
-                <CardContent className="p-6">
-                  <div className="flex mb-4">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                    ))}
+          {/* Testimonials Grid */}
+          <div className="grid md:grid-cols-3 gap-6">
+            {testimonials.map((testimonial, i) => (
+              <div key={i} className="p-6 rounded-2xl bg-white/5 border border-white/10">
+                {/* Stars */}
+                <div className="flex gap-1 mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
+                  ))}
+                </div>
+
+                {/* Quote */}
+                <p className="text-gray-300 mb-6 text-sm leading-relaxed">
+                  "{testimonial.text}"
+                </p>
+
+                {/* Author */}
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-400 flex items-center justify-center text-sm font-semibold text-white">
+                    {testimonial.name.charAt(0)}
                   </div>
-                  <p className="text-gray-300 mb-4">
-                    "{testimonial.text}"
-                  </p>
-                  <div className="flex items-center">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 mr-3" />
-                    <div>
-                      <div className="font-semibold text-white">{testimonial.name}</div>
-                      <div className="text-sm text-gray-400">{testimonial.role}</div>
-                    </div>
+                  <div>
+                    <div className="font-medium text-white text-sm">{testimonial.name}</div>
+                    <div className="text-xs text-gray-500">{testimonial.role}</div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
       {/* FAQ Section */}
-      <section id="faq" className="py-20 px-4 sm:px-6 lg:px-8">
+      <section id="faq" className="py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-transparent via-violet-950/20 to-transparent">
         <div className="max-w-3xl mx-auto">
+          {/* Section Header */}
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              Perguntas frequentes
+            <Badge className="mb-4 bg-cyan-500/10 text-cyan-300 border-cyan-500/20 hover:bg-cyan-500/20">
+              FAQ
+            </Badge>
+            <h2 className="text-3xl md:text-5xl font-bold mb-4">
+              Perguntas sobre o{" "}
+              <span className="bg-gradient-to-r from-amber-400 to-orange-400 bg-clip-text text-transparent">
+                Premium
+              </span>
             </h2>
           </div>
 
-          <div className="space-y-6">
-            {[
-              {
-                q: "Quando o Aura estará disponível?",
-                a: "Estamos finalizando os testes beta e planejamos o lançamento oficial para fevereiro de 2026. Quem estiver na lista de espera terá acesso prioritário!",
-              },
-              {
-                q: "Meus dados estarão seguros?",
-                a: "Absolutamente. Utilizamos criptografia de ponta a ponta e seguimos os mais rigorosos padrões de segurança (LGPD compliant). Seus dados são seus e jamais serão compartilhados.",
-              },
-              {
-                q: "Posso usar no celular?",
-                a: "Sim! O Aura é totalmente responsivo e funciona perfeitamente em qualquer dispositivo. Apps nativos para iOS e Android estão previstos para o segundo semestre de 2026.",
-              },
-              {
-                q: "Posso cancelar a qualquer momento?",
-                a: "Sim, sem burocracia. Você pode cancelar sua assinatura Premium a qualquer momento e continuar usando o plano gratuito.",
-              },
-              {
-                q: "Existe desconto para estudantes?",
-                a: "Sim! Estudantes terão 50% de desconto no plano Premium. Os detalhes serão divulgados no lançamento.",
-              },
-            ].map((faq, i) => (
+          {/* FAQ Items */}
+          <div className="space-y-4">
+            {faqs.map((faq, i) => (
               <details
                 key={i}
-                className="group bg-zinc-900 rounded-lg border border-gray-800 p-6 cursor-pointer hover:border-purple-500/50 transition-colors"
+                className="group p-6 rounded-2xl bg-white/5 border border-white/10 cursor-pointer hover:border-white/20 transition-colors"
               >
-                <summary className="flex justify-between items-center font-semibold text-lg text-white">
-                  {faq.q}
-                  <ChevronDown className="w-5 h-5 text-purple-400 group-open:rotate-180 transition-transform" />
+                <summary className="flex justify-between items-center font-medium text-white list-none">
+                  {faq.question}
+                  <ChevronDown className="w-5 h-5 text-gray-500 group-open:rotate-180 transition-transform" />
                 </summary>
-                <p className="mt-4 text-gray-300">{faq.a}</p>
+                <p className="mt-4 text-gray-400 text-sm leading-relaxed">{faq.answer}</p>
               </details>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Final CTA */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-purple-600 to-pink-600 text-white">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Pronto para transformar sua vida?
-          </h2>
-          <p className="text-xl text-purple-100 mb-8">
-            Junte-se a centenas de pessoas que já estão na lista de espera do Aura
-          </p>
+      {/* Final CTA Section */}
+      <section className="py-24 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="relative p-12 md:p-16 rounded-3xl overflow-hidden">
+            {/* Background Gradient */}
+            <div className="absolute inset-0 bg-gradient-to-br from-amber-500 via-orange-500 to-rose-500" />
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSIxIi8+PC9nPjwvZz48L3N2Zz4=')] opacity-30" />
 
-          {!submitted ? (
-            <form onSubmit={handleSubmit} className="max-w-md mx-auto">
-              <div className="flex flex-col gap-3">
-                <Input
-                  type="text"
-                  placeholder="Seu nome"
-                  value={nome}
-                  onChange={(e) => setNome(e.target.value)}
-                  className="h-14 text-lg bg-white/10 border-white/20 text-white placeholder:text-white/60"
-                />
-                <Input
-                  type="email"
-                  placeholder="Seu melhor e-mail"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="h-14 text-lg bg-white/10 border-white/20 text-white placeholder:text-white/60"
-                />
-                <Button
-                  type="submit"
-                  size="lg"
-                  disabled={loading}
-                  className="h-14 text-lg bg-white text-purple-600 hover:bg-purple-50"
-                >
-                  {loading ? "Aguarde..." : "Garantir meu lugar"}
-                  <ArrowRight className="w-5 h-5 ml-2" />
-                </Button>
-              </div>
-            </form>
-          ) : (
-            <div className="max-w-md mx-auto p-6 bg-white/10 border border-white/20 rounded-lg backdrop-blur-sm">
-              <Check className="w-12 h-12 mx-auto mb-4" />
-              <h3 className="text-2xl font-semibold mb-2">Bem-vindo ao futuro!</h3>
-              <p className="text-purple-100">
-                Fique de olho na sua caixa de entrada. Em breve você receberá novidades exclusivas.
+            {/* Content */}
+            <div className="relative text-center">
+              <Crown className="w-16 h-16 mx-auto mb-6 text-white/90" />
+              <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
+                Pronto para o próximo nível?
+              </h2>
+              <p className="text-lg text-white/80 mb-8 max-w-xl mx-auto">
+                Desbloqueie todo o potencial do Aura e transforme sua produtividade hoje.
               </p>
+
+              {isPremium ? (
+                <Button
+                  className="h-12 px-8 bg-white text-amber-600 hover:bg-white/90 font-medium"
+                  onClick={() => router.push('/dashboard')}
+                >
+                  Ir para o Dashboard
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              ) : (
+                <Button
+                  className="h-12 px-8 bg-white text-amber-600 hover:bg-white/90 font-medium"
+                  onClick={handleAssinarClick}
+                >
+                  Começar Agora — R$ 12,90/mês
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              )}
             </div>
-          )}
+          </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-4 sm:px-6 lg:px-8 bg-gray-900 text-gray-300">
+      <footer className="py-12 px-4 sm:px-6 lg:px-8 border-t border-white/5">
         <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
-            <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
-                  <Sparkles className="w-5 h-5 text-white" />
-                </div>
-                <span className="text-xl font-bold text-white">Aura</span>
-              </div>
-              <p className="text-sm">
-                Organize sua vida em um só lugar.
-              </p>
-            </div>
-
-            <div>
-              <h4 className="font-semibold text-white mb-4">Produto</h4>
-              <ul className="space-y-2 text-sm">
-                <li><a href="#recursos" className="hover:text-purple-400 transition">Recursos</a></li>
-                <li><a href="#precos" className="hover:text-purple-400 transition">Preços</a></li>
-                <li><a href="#faq" className="hover:text-purple-400 transition">FAQ</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-semibold text-white mb-4">Empresa</h4>
-              <ul className="space-y-2 text-sm">
-                <li><a href="#" className="hover:text-purple-400 transition">Sobre</a></li>
-                <li><a href="#" className="hover:text-purple-400 transition">Blog</a></li>
-                <li><a href="#" className="hover:text-purple-400 transition">Carreiras</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-semibold text-white mb-4">Legal</h4>
-              <ul className="space-y-2 text-sm">
-                <li><a href="#" className="hover:text-purple-400 transition">Privacidade</a></li>
-                <li><a href="#" className="hover:text-purple-400 transition">Termos</a></li>
-                <li><a href="#" className="hover:text-purple-400 transition">LGPD</a></li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="border-t border-gray-800 pt-8 text-sm text-center">
-            <p>&copy; 2026 Aura. Todos os direitos reservados.</p>
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <span className="text-2xl font-bold bg-gradient-to-r from-purple-400 via-fuchsia-400 to-blue-400 bg-clip-text text-transparent animate-gradient">
+              Aura
+            </span>
+            <p className="text-sm text-gray-500">
+              © 2026 Aura. Todos os direitos reservados.
+            </p>
           </div>
         </div>
       </footer>

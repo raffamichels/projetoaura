@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useState, useEffect } from 'react';
+import { usePlano } from '@/hooks/usePlano';
 
 interface SidebarProps {
   isMobile?: boolean;
@@ -32,6 +33,7 @@ export function Sidebar({ isMobile = false, onNavigate }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const t = useTranslations('sidebar');
   const tCommon = useTranslations('common');
+  const { ehFree } = usePlano();
 
   const menuItems = [
     { icon: LayoutDashboard, label: t('dashboard'), href: '/dashboard' },
@@ -69,13 +71,15 @@ export function Sidebar({ isMobile = false, onNavigate }: SidebarProps) {
             </span>
           </h1>
         )}
-        <button
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className="text-gray-400 hover:text-white transition-colors p-1 hover:bg-zinc-800 rounded"
-          aria-label={isCollapsed ? t('expandSidebar') : t('collapseSidebar')}
-        >
-          {isCollapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
-        </button>
+        {!isMobile && (
+          <button
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="text-gray-400 hover:text-white transition-colors p-1 hover:bg-zinc-800 rounded"
+            aria-label={isCollapsed ? t('expandSidebar') : t('collapseSidebar')}
+          >
+            {isCollapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
+          </button>
+        )}
       </div>
 
 
@@ -122,8 +126,8 @@ export function Sidebar({ isMobile = false, onNavigate }: SidebarProps) {
         })}
       </nav>
 
-      {/* Upgrade Card */}
-      {!isCollapsed && (
+      {/* Upgrade Card - Only show for free plan */}
+      {ehFree && !isCollapsed && (
         <div className="p-4 border-t border-zinc-800">
           <div className="bg-gradient-to-br from-aura-500/10 to-blue-500/10 border border-aura-500/20 rounded-xl p-4">
             <div className="flex items-center gap-2 mb-2">
@@ -142,7 +146,7 @@ export function Sidebar({ isMobile = false, onNavigate }: SidebarProps) {
         </div>
       )}
 
-      {isCollapsed && (
+      {ehFree && isCollapsed && (
         <div className="p-4 border-t border-zinc-800 flex justify-center">
           <button
             onClick={() => router.push('/premium')}
@@ -154,14 +158,14 @@ export function Sidebar({ isMobile = false, onNavigate }: SidebarProps) {
       )}
 
       {/* Settings */}
-      <div className="p-4 border-t border-zinc-800">
+      <div className={`border-t border-zinc-800 ${isCollapsed ? 'p-2 flex justify-center' : 'px-4 py-2'}`}>
         <Link
           href="/dashboard/settings"
           onClick={onNavigate}
-          className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:text-white hover:bg-zinc-800/50 transition-all ${isCollapsed ? 'justify-center' : ''}`}
+          className={`flex items-center rounded-lg text-gray-400 hover:text-white hover:bg-zinc-800/50 transition-all ${isCollapsed ? 'justify-center p-2.5' : 'w-full gap-3 px-3 py-2.5'}`}
           title={isCollapsed ? t('settings') : ''}
         >
-          <Settings className="w-5 h-5" />
+          <Settings className="w-5 h-5 shrink-0" />
           {!isCollapsed && (
             <span className="font-medium text-sm">{t('settings')}</span>
           )}

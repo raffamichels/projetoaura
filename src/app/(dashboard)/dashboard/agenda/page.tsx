@@ -26,6 +26,7 @@ type ViewType = 'day' | 'week' | 'month' | 'year';
 function AgendaPageContent() {
   const searchParams = useSearchParams();
   const t = useTranslations('agenda');
+  const tCommon = useTranslations('common');
 
   // Detectar se é dispositivo móvel e definir view padrão
   const [view, setView] = useState<ViewType>(() => {
@@ -209,7 +210,7 @@ function AgendaPageContent() {
                 <p className="text-xl font-semibold text-white mb-2">
                   {view === 'month' ? t('monthView') : t('yearView')}
                 </p>
-                <p className="text-gray-400">{t('common.comingSoon', { ns: 'common' })}</p>
+                <p className="text-gray-400">{tCommon('comingSoon')}</p>
               </div>
             </div>
           </>
