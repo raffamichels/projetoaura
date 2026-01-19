@@ -1,0 +1,67 @@
+import { z } from 'zod';
+
+// Validação de cor hexadecimal
+const hexColorRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+
+// Validação de horário (HH:MM)
+const timeRegex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
+
+// Schema para Hábito
+export const habitoSchema = z.object({
+  nome: z
+    .string()
+    .min(1, 'Nome é obrigatório')
+    .max(100, 'Nome deve ter no máximo 100 caracteres'),
+  descricao: z
+    .string()
+    .max(500, 'Descrição deve ter no máximo 500 caracteres')
+    .optional()
+    .nullable()
+    .transform((val) => (val === '' ? null : val)),
+  horario: z
+    .string()
+    .optional()
+    .nullable()
+    .transform((val) => (val === '' ? null : val))
+    .refine((val) => val === null || val === undefined || timeRegex.test(val), {
+      message: 'Horário deve estar no formato HH:MM',
+    }),
+  diasSemana: z
+    .array(z.number().min(0).max(6))
+    .optional()
+    .default([]),
+  cor: z
+    .string()
+    .regex(hexColorRegex, 'Cor deve ser um código hexadecimal válido')
+    .optional()
+    .default('#8B5CF6'),
+  icone: z
+    .string()
+    .max(50, 'Ícone inválido')
+    .optional()
+    .default('target'),
+});
+
+export const habitoUpdateSchema = habitoSchema.partial();
+
+// Schema para Registro de Hábito
+export const registroHabitoSchema = z.object({
+  data: z
+    .string()
+    .or(z.date())
+    .transform((val) => (typeof val === 'string' ? new Date(val) : val)),
+  completado: z
+    .boolean()
+    .optional()
+    .default(true),
+  notas: z
+    .string()
+    .max(500, 'Notas devem ter no máximo 500 caracteres')
+    .optional()
+    .nullable(),
+});
+
+// Tipos TypeScript gerados automaticamente
+export type HabitoInput = z.infer<typeof habitoSchema>;
+export type HabitoUpdateInput = z.infer<typeof habitoUpdateSchema>;
+export type RegistroHabitoInput = z.infer<typeof registroHabitoSchema>;

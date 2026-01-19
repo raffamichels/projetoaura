@@ -9,16 +9,12 @@ import {
   Wallet,
   BookOpen,
   Library,
-  Target,
-  Dumbbell,
-  Plane,
   Settings,
   Crown,
-  Film,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Heart
 } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
 import { useState, useEffect } from 'react';
 import { usePlano } from '@/hooks/usePlano';
 
@@ -32,18 +28,15 @@ export function Sidebar({ isMobile = false, onNavigate }: SidebarProps) {
   const router = useRouter();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const t = useTranslations('sidebar');
-  const tCommon = useTranslations('common');
   const { ehFree } = usePlano();
 
   const menuItems = [
     { icon: LayoutDashboard, label: t('dashboard'), href: '/dashboard' },
+    { icon: Heart, label: t('habits'), href: '/dashboard/habitos' },
     { icon: Calendar, label: t('agenda'), href: '/dashboard/agenda'},
     { icon: Wallet, label: t('financial'), href: '/dashboard/financeiro' },
     { icon: BookOpen, label: t('studies'), href: '/dashboard/estudos' },
     { icon: Library, label: t('library'), href: '/dashboard/biblioteca' },
-    { icon: Target, label: t('goals'), href: '/dashboard/metas', badge: tCommon('comingSoon'), premium: true },
-    { icon: Dumbbell, label: t('workouts'), href: '/dashboard/treinos', badge: tCommon('comingSoon'), premium: true },
-    { icon: Plane, label: t('travels'), href: '/dashboard/viagens', badge: tCommon('comingSoon'), premium: true },
   ];
 
   useEffect(() => {
@@ -106,20 +99,7 @@ export function Sidebar({ isMobile = false, onNavigate }: SidebarProps) {
             >
               <Icon className="w-5 h-5 flex-shrink-0" />
               {!isCollapsed && (
-                <>
-                  <span className="flex-1 font-medium text-sm">{item.label}</span>
-                  {item.premium && (
-                    <Crown className="w-4 h-4 text-yellow-500" />
-                  )}
-                  {item.badge && (
-                    <Badge variant="secondary" className="text-xs bg-zinc-800 text-gray-400 border-0">
-                      {item.badge}
-                    </Badge>
-                  )}
-                </>
-              )}
-              {isCollapsed && item.premium && (
-                <Crown className="w-3 h-3 text-yellow-500 absolute -top-1 -right-1" />
+                <span className="flex-1 font-medium text-sm">{item.label}</span>
               )}
             </Link>
           );

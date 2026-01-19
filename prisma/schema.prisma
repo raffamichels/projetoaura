@@ -90,6 +90,14 @@ enum TipoDocumento {
   OUTRO
 }
 
+enum StatusHabito {
+  ATIVO
+  PAUSADO
+  CONCLUIDO
+  ABANDONADO
+}
+
+
 model User {
   id            String        @id @default(cuid())
   email         String        @unique
@@ -131,6 +139,8 @@ model User {
   citacoes           Citacao[]
   viagens            Viagem[]
   documentosViagem   DocumentoViagem[]
+  habitos            Habito[]
+  registrosHabitos   RegistroHabito[]
 
   @@map("users")
 }
@@ -788,4 +798,63 @@ model DocumentoViagem {
   @@map("documentos_viagem")
   @@index([userId, tipo])
   @@index([userId, dataValidade])
+}
+
+// ============================================
+// MODELOS DE GERENCIAMENTO DE HÁBITOS
+// ============================================
+
+model Habito {
+  id                  String           @id @default(cuid())
+  nome                String
+  descricao           String?
+
+  // Horário específico (opcional)
+  horario             String?
+
+  // Dias da semana (0=Dom, 1=Seg, ..., 6=Sab) - vazio = todos os dias
+  diasSemana          Int[]
+
+  // Status
+  status              StatusHabito     @default(ATIVO)
+
+  // Gamificação
+  sequenciaAtual      Int              @default(0)
+  maiorSequencia      Int              @default(0)
+  totalCompletados    Int              @default(0)
+
+  // Visual
+  cor                 String           @default("#8B5CF6")
+  icone               String           @default("target")
+
+  userId              String
+  user                User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  registros           RegistroHabito[]
+
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  @@map("habitos")
+  @@index([userId, status])
+}
+
+model RegistroHabito {
+  id           String    @id @default(cuid())
+  data         DateTime  @db.Date
+  completado   Boolean   @default(false)
+  horaCompleto DateTime?
+  notas        String?
+
+  habitoId     String
+  habito       Habito    @relation(fields: [habitoId], references: [id], onDelete: Cascade)
+
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt    DateTime  @default(now())
+
+  @@unique([habitoId, data])
+  @@map("registros_habitos")
+  @@index([userId, data])
 }
