@@ -7,6 +7,7 @@ import { TextStyle } from '@tiptap/extension-text-style';
 import TextAlign from '@tiptap/extension-text-align';
 import Underline from '@tiptap/extension-underline';
 import Highlight from '@tiptap/extension-highlight';
+import { Extension } from '@tiptap/core';
 import { ResizableImage } from './ResizableImage';
 import DOMPurify from 'dompurify';
 import {
@@ -49,6 +50,70 @@ function sanitizeHTML(html: string): string {
   return DOMPurify.sanitize(html, DOMPURIFY_CONFIG);
 }
 
+// Extensão customizada para indentação com Tab e comportamento de Backspace em listas
+const ListKeyboardShortcuts = Extension.create({
+  name: 'listKeyboardShortcuts',
+
+  addKeyboardShortcuts() {
+    return {
+      Tab: ({ editor }) => {
+        // Se estiver em uma lista, aumenta a indentação do item
+        if (editor.isActive('listItem')) {
+          // Tenta criar lista aninhada (sink)
+          const sinkResult = editor.chain().focus().sinkListItem('listItem').run();
+          if (sinkResult) return true;
+        }
+
+        // Caso contrário, insere 4 espaços (indentação estilo VS Code)
+        editor.chain().focus().insertContent('    ').run();
+        return true;
+      },
+      'Shift-Tab': ({ editor }) => {
+        // Se estiver em uma lista, diminui a indentação
+        if (editor.isActive('listItem')) {
+          return editor.chain().focus().liftListItem('listItem').run();
+        }
+        return false;
+      },
+      Backspace: ({ editor }) => {
+        // Verifica se estamos em um item de lista
+        if (!editor.isActive('listItem')) {
+          return false; // Deixa o comportamento padrão
+        }
+
+        const { selection } = editor.state;
+        const { $from } = selection;
+
+        // Verifica se o cursor está no início do item de lista
+        // e se o item está vazio ou o cursor está na posição 0 do texto
+        const isAtStart = $from.parentOffset === 0;
+
+        if (isAtStart) {
+          // Primeiro tenta diminuir a indentação (lift)
+          const liftResult = editor.chain().focus().liftListItem('listItem').run();
+
+          // Se não conseguiu fazer lift (já está no nível mais externo),
+          // converte para parágrafo normal
+          if (!liftResult) {
+            // Verifica se é bulletList ou orderedList e remove
+            if (editor.isActive('bulletList')) {
+              editor.chain().focus().toggleBulletList().run();
+              return true;
+            }
+            if (editor.isActive('orderedList')) {
+              editor.chain().focus().toggleOrderedList().run();
+              return true;
+            }
+          }
+          return true;
+        }
+
+        return false; // Deixa o comportamento padrão do Backspace
+      },
+    };
+  },
+});
+
 interface RichTextEditorProps {
   content: string;
   onChange: (content: string) => void;
@@ -62,6 +127,16 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
         heading: {
           levels: [1, 2, 3],
         },
+        // Habilita bulletList com inputRules para * e -
+        bulletList: {
+          keepMarks: true,
+          keepAttributes: true,
+        },
+        listItem: {
+          HTMLAttributes: {
+            class: 'text-zinc-300',
+          },
+        },
       }),
       TextStyle,
       Color,
@@ -73,6 +148,7 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
         types: ['heading', 'paragraph'],
       }),
       ResizableImage,
+      ListKeyboardShortcuts,
     ],
     content,
     immediatelyRender: false,
@@ -218,6 +294,51 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
         .ProseMirror img[data-resize] {
           resize: both;
           overflow: hidden;
+        }
+
+        /* Estilos para bullet points */
+        .ProseMirror ul {
+          list-style-type: disc;
+          padding-left: 1.5em;
+          margin: 0.5em 0;
+        }
+
+        .ProseMirror ul li {
+          color: #d4d4d8;
+        }
+
+        .ProseMirror ul li::marker {
+          color: #a78bfa;
+        }
+
+        .ProseMirror ol {
+          list-style-type: decimal;
+          padding-left: 1.5em;
+          margin: 0.5em 0;
+        }
+
+        .ProseMirror ol li::marker {
+          color: #a78bfa;
+        }
+
+        /* Listas aninhadas */
+        .ProseMirror ul ul,
+        .ProseMirror ol ul {
+          list-style-type: circle;
+        }
+
+        .ProseMirror ul ul ul,
+        .ProseMirror ol ul ul,
+        .ProseMirror ul ol ul,
+        .ProseMirror ol ol ul {
+          list-style-type: square;
+        }
+
+        /* Indentação consistente para listas aninhadas */
+        .ProseMirror li > ul,
+        .ProseMirror li > ol {
+          margin-top: 0.25em;
+          margin-bottom: 0.25em;
         }
       `}</style>
       {/* Toolbar */}
