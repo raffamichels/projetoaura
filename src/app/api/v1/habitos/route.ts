@@ -3,6 +3,11 @@ import { auth } from '@/lib/auth/auth';
 import { prisma } from '@/lib/prisma';
 import { apiReadRateLimiter, apiCreateRateLimiter, rateLimitResponse } from '@/lib/rateLimit';
 import { habitoSchema } from '@/lib/validations/habitos';
+import {
+  getInicioDoDiaNoTimezone,
+  getDiaSemanaNoTimezone,
+  getTimezoneFromRequest,
+} from '@/lib/timezone';
 
 // GET - Listar hábitos do usuário com registro do dia especificado
 export async function GET(req: NextRequest) {
@@ -27,16 +32,19 @@ export async function GET(req: NextRequest) {
       return rateLimitResponse(rateLimitResult.resetTime);
     }
 
-    // Obter parâmetro de dia da semana (opcional)
+    // Obter parâmetros
     const { searchParams } = new URL(req.url);
     const diaSemanaParam = searchParams.get('diaSemana');
+    const timezoneParam = searchParams.get('timezone');
 
-    // Data de hoje (início do dia)
-    const hoje = new Date();
-    hoje.setHours(0, 0, 0, 0);
+    // Usar timezone do cliente ou fallback para o padrão
+    const timezone = getTimezoneFromRequest(timezoneParam);
 
-    // Dia da semana atual (0=Dom, 1=Seg, ..., 6=Sab)
-    const diaSemanaAtual = hoje.getDay();
+    // Data de hoje no timezone do usuário (início do dia)
+    const hoje = getInicioDoDiaNoTimezone(timezone);
+
+    // Dia da semana atual no timezone do usuário (0=Dom, 1=Seg, ..., 6=Sab)
+    const diaSemanaAtual = getDiaSemanaNoTimezone(timezone);
 
     // Usar o dia passado como parâmetro ou o dia atual
     const diaSemanaFiltro = diaSemanaParam !== null ? parseInt(diaSemanaParam, 10) : diaSemanaAtual;

@@ -70,7 +70,9 @@ export function StreakCalendar({ dados }: StreakCalendarProps) {
 
   const formatarData = (dataStr: string) => {
     if (!dataStr) return '';
-    const data = new Date(dataStr + 'T00:00:00');
+    // Parse YYYY-MM-DD manualmente para evitar problemas de timezone
+    const [ano, mes, dia] = dataStr.split('-').map(Number);
+    const data = new Date(ano, mes - 1, dia);
     return data.toLocaleDateString('pt-BR', {
       day: 'numeric',
       month: 'short',

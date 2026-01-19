@@ -3,6 +3,13 @@ import { auth } from '@/lib/auth/auth';
 import { prisma } from '@/lib/prisma';
 import { apiCreateRateLimiter, rateLimitResponse } from '@/lib/rateLimit';
 import { registroHabitoSchema } from '@/lib/validations/habitos';
+import {
+  getInicioDoDiaNoTimezone,
+  getTimezoneFromRequest,
+  normalizarParaInicioDoDia,
+  subtrairDias,
+  diferencaEmDias,
+} from '@/lib/timezone';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -52,11 +59,13 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
       );
     }
 
-    const { data, completado, notas } = validationResult.data;
+    const { data, completado, notas, timezone: timezoneBody } = validationResult.data;
 
-    // Normalizar data para início do dia
-    const dataRegistro = new Date(data);
-    dataRegistro.setHours(0, 0, 0, 0);
+    // Usar timezone do cliente ou fallback para o padrão
+    const timezone = getTimezoneFromRequest(timezoneBody || null);
+
+    // Normalizar data para início do dia no timezone do usuário
+    const dataRegistro = normalizarParaInicioDoDia(new Date(data));
 
     // Verificar se já existe registro para este dia
     const registroExistente = await prisma.registroHabito.findUnique({
@@ -94,8 +103,8 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
       });
     }
 
-    // Recalcular sequência
-    const { sequenciaAtual, maiorSequencia, totalCompletados } = await calcularSequencia(id);
+    // Recalcular sequência (passando timezone para cálculos corretos)
+    const { sequenciaAtual, maiorSequencia, totalCompletados } = await calcularSequencia(id, timezone);
 
     // Atualizar hábito com nova sequência
     const habitoAtualizado = await prisma.habito.update({
@@ -123,7 +132,7 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
 }
 
 // Função auxiliar para calcular sequência
-async function calcularSequencia(habitoId: string): Promise<{
+async function calcularSequencia(habitoId: string, timezone: string): Promise<{
   sequenciaAtual: number;
   maiorSequencia: number;
   totalCompletados: number;
@@ -144,23 +153,21 @@ async function calcularSequencia(habitoId: string): Promise<{
   }
 
   // Calcular sequência atual (dias consecutivos até hoje)
+  // Usar timezone do usuário para determinar "hoje"
   let sequenciaAtual = 0;
-  const hoje = new Date();
-  hoje.setHours(0, 0, 0, 0);
+  const hoje = getInicioDoDiaNoTimezone(timezone);
 
   let dataEsperada = new Date(hoje);
 
   for (const registro of registros) {
-    const dataRegistro = new Date(registro.data);
-    dataRegistro.setHours(0, 0, 0, 0);
+    const dataRegistro = normalizarParaInicioDoDia(new Date(registro.data));
 
     // Verificar se é o dia esperado ou o dia anterior (para permitir completar no mesmo dia)
-    const diffDias = Math.floor((dataEsperada.getTime() - dataRegistro.getTime()) / (1000 * 60 * 60 * 24));
+    const diffDias = diferencaEmDias(dataEsperada, dataRegistro);
 
     if (diffDias === 0 || diffDias === 1) {
       sequenciaAtual++;
-      dataEsperada = new Date(dataRegistro);
-      dataEsperada.setDate(dataEsperada.getDate() - 1);
+      dataEsperada = subtrairDias(dataRegistro, 1);
     } else {
       break;
     }
@@ -177,13 +184,12 @@ async function calcularSequencia(habitoId: string): Promise<{
   );
 
   for (const registro of registrosOrdenados) {
-    const dataRegistro = new Date(registro.data);
-    dataRegistro.setHours(0, 0, 0, 0);
+    const dataRegistro = normalizarParaInicioDoDia(new Date(registro.data));
 
     if (dataAnterior === null) {
       sequenciaTemp = 1;
     } else {
-      const diffDias = Math.floor((dataRegistro.getTime() - dataAnterior.getTime()) / (1000 * 60 * 60 * 24));
+      const diffDias = diferencaEmDias(dataRegistro, dataAnterior);
 
       if (diffDias === 1) {
         sequenciaTemp++;

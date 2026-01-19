@@ -1,7 +1,16 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth/auth';
 import { prisma } from '@/lib/prisma';
 import { apiReadRateLimiter, rateLimitResponse } from '@/lib/rateLimit';
+import {
+  getInicioDoDiaNoTimezone,
+  getDiaSemanaNoTimezone,
+  getTimezoneFromRequest,
+  formatarDataString,
+  subtrairDias,
+  normalizarParaInicioDoDia,
+  diferencaEmDias,
+} from '@/lib/timezone';
 
 // Função auxiliar para verificar se um hábito deve ser feito em um determinado dia
 function habitoDeveSerFeitoNoDia(diasSemana: number[], diaSemana: number): boolean {
@@ -11,7 +20,7 @@ function habitoDeveSerFeitoNoDia(diasSemana: number[], diaSemana: number): boole
 }
 
 // GET - Buscar estatísticas gerais de hábitos
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
     const session = await auth();
 
@@ -33,10 +42,14 @@ export async function GET() {
       return rateLimitResponse(rateLimitResult.resetTime);
     }
 
-    // Data de hoje
-    const hoje = new Date();
-    hoje.setHours(0, 0, 0, 0);
-    const diaSemanaHoje = hoje.getDay();
+    // Obter timezone do cliente
+    const { searchParams } = new URL(req.url);
+    const timezoneParam = searchParams.get('timezone');
+    const timezone = getTimezoneFromRequest(timezoneParam);
+
+    // Data de hoje no timezone do usuário
+    const hoje = getInicioDoDiaNoTimezone(timezone);
+    const diaSemanaHoje = getDiaSemanaNoTimezone(timezone);
 
     // Buscar todos os hábitos ativos com seus registros
     const habitosAtivos = await prisma.habito.findMany({
@@ -67,7 +80,8 @@ export async function GET() {
       : hoje;
 
     // Calcular quantos dias desde o primeiro hábito
-    const diasDesdeInicio = Math.floor((hoje.getTime() - new Date(primeiroHabitoCriado).setHours(0, 0, 0, 0)) / (1000 * 60 * 60 * 24)) + 1;
+    const dataPrimeiroHabito = normalizarParaInicioDoDia(new Date(primeiroHabitoCriado));
+    const diasDesdeInicio = diferencaEmDias(hoje, dataPrimeiroHabito) + 1;
 
     // Usar no máximo 90 dias, ou menos se tiver menos tempo de uso
     const diasParaAnalise = Math.min(diasDesdeInicio, 90);
@@ -85,7 +99,8 @@ export async function GET() {
     // Calcular sequência global (dias consecutivos com TODOS os hábitos completados)
     const { sequenciaAtual, maiorSequencia } = await calcularSequenciaGlobal(
       user.id,
-      habitosAtivos
+      habitosAtivos,
+      timezone
     );
 
     // Total de completados (todos os tempos, todos os hábitos)
@@ -100,8 +115,7 @@ export async function GET() {
       : 0;
 
     // Buscar dados dos últimos 7 dias para gráfico
-    const seteDiasAtras = new Date(hoje);
-    seteDiasAtras.setDate(seteDiasAtras.getDate() - 6);
+    const seteDiasAtras = subtrairDias(hoje, 6);
 
     const registrosUltimos7Dias = await prisma.registroHabito.groupBy({
       by: ['data'],
@@ -121,9 +135,7 @@ export async function GET() {
     // Formatar dados para gráfico
     const dadosGrafico = [];
     for (let i = 6; i >= 0; i--) {
-      const data = new Date(hoje);
-      data.setDate(data.getDate() - i);
-      data.setHours(0, 0, 0, 0);
+      const data = subtrairDias(hoje, i);
       const diaSemana = data.getDay();
 
       // Contar quantos hábitos devem ser feitos neste dia
@@ -132,21 +144,19 @@ export async function GET() {
       ).length;
 
       const registro = registrosUltimos7Dias.find(r => {
-        const dataRegistro = new Date(r.data);
-        dataRegistro.setHours(0, 0, 0, 0);
+        const dataRegistro = normalizarParaInicioDoDia(new Date(r.data));
         return dataRegistro.getTime() === data.getTime();
       });
 
       dadosGrafico.push({
-        data: data.toISOString().split('T')[0],
+        data: formatarDataString(data),
         completados: registro?._count.id || 0,
         total: habitosNesteDia,
       });
     }
 
     // Buscar dados do período calculado para calendário e tendências
-    const dataInicioPeriodo = new Date(hoje);
-    dataInicioPeriodo.setDate(dataInicioPeriodo.getDate() - (diasParaAnalise - 1));
+    const dataInicioPeriodo = subtrairDias(hoje, diasParaAnalise - 1);
 
     const registrosPeriodo = await prisma.registroHabito.findMany({
       where: {
@@ -166,7 +176,7 @@ export async function GET() {
     // Agrupar registros por data para o calendário
     const registrosPorDataCalendario = new Map<string, Set<string>>();
     for (const reg of registrosPeriodo) {
-      const dataStr = new Date(reg.data).toISOString().split('T')[0];
+      const dataStr = formatarDataString(normalizarParaInicioDoDia(new Date(reg.data)));
       if (!registrosPorDataCalendario.has(dataStr)) {
         registrosPorDataCalendario.set(dataStr, new Set());
       }
@@ -179,11 +189,9 @@ export async function GET() {
     let diasCompletosTotal = 0;
 
     for (let i = diasParaAnalise - 1; i >= 0; i--) {
-      const data = new Date(hoje);
-      data.setDate(data.getDate() - i);
-      data.setHours(0, 0, 0, 0);
+      const data = subtrairDias(hoje, i);
       const diaSemana = data.getDay();
-      const dataStr = data.toISOString().split('T')[0];
+      const dataStr = formatarDataString(data);
 
       // Quantos hábitos devem ser feitos neste dia
       const habitosNesteDia = habitosAtivos.filter(h =>
@@ -224,14 +232,14 @@ export async function GET() {
     // Dados semanais para gráfico de tendência (usar semanas do período calculado)
     const semanasParaAnalise = Math.min(Math.ceil(diasParaAnalise / 7), 12);
     const tendenciaSemanal = [];
+    const diaSemanaHojeNum = hoje.getDay();
+
     for (let semana = semanasParaAnalise - 1; semana >= 0; semana--) {
-      const inicioSemana = new Date(hoje);
-      inicioSemana.setDate(inicioSemana.getDate() - (semana * 7) - hoje.getDay());
-      inicioSemana.setHours(0, 0, 0, 0);
+      let inicioSemana = subtrairDias(hoje, (semana * 7) + diaSemanaHojeNum);
 
       // Não incluir semanas antes do início do período
       if (inicioSemana < dataInicioPeriodo) {
-        inicioSemana.setTime(dataInicioPeriodo.getTime());
+        inicioSemana = new Date(dataInicioPeriodo);
       }
 
       let completadosSemana = 0;
@@ -244,7 +252,7 @@ export async function GET() {
         if (dataAtual > hoje || dataAtual < dataInicioPeriodo) continue;
 
         const diaSemana = dataAtual.getDay();
-        const dataStr = dataAtual.toISOString().split('T')[0];
+        const dataStr = formatarDataString(dataAtual);
 
         const habitosNesteDia = habitosAtivos.filter(h =>
           habitoDeveSerFeitoNoDia(h.diasSemana, diaSemana)
@@ -260,7 +268,7 @@ export async function GET() {
 
       tendenciaSemanal.push({
         semana: semanasParaAnalise - semana,
-        dataInicio: inicioSemana.toISOString().split('T')[0],
+        dataInicio: formatarDataString(inicioSemana),
         completados: completadosSemana,
         total: totalSemana,
         taxa: taxaSemana,
@@ -283,11 +291,10 @@ export async function GET() {
       let total = 0;
 
       for (let i = diasParaAnalise - 1; i >= 0; i--) {
-        const data = new Date(hoje);
-        data.setDate(data.getDate() - i);
+        const data = subtrairDias(hoje, i);
         if (data.getDay() !== diaSemana) continue;
 
-        const dataStr = data.toISOString().split('T')[0];
+        const dataStr = formatarDataString(data);
         const habitosNesteDia = habitosAtivos.filter(h =>
           habitoDeveSerFeitoNoDia(h.diasSemana, diaSemana)
         );
@@ -346,18 +353,16 @@ export async function GET() {
 // Calcular sequência global: dias consecutivos em que TODOS os hábitos do dia foram completados
 async function calcularSequenciaGlobal(
   userId: string,
-  habitosAtivos: { id: string; diasSemana: number[] }[]
+  habitosAtivos: { id: string; diasSemana: number[] }[],
+  timezone: string
 ): Promise<{ sequenciaAtual: number; maiorSequencia: number }> {
   if (habitosAtivos.length === 0) {
     return { sequenciaAtual: 0, maiorSequencia: 0 };
   }
 
-  // Buscar todos os registros dos últimos 365 dias
-  const hoje = new Date();
-  hoje.setHours(0, 0, 0, 0);
-
-  const umAnoAtras = new Date(hoje);
-  umAnoAtras.setDate(umAnoAtras.getDate() - 365);
+  // Buscar todos os registros dos últimos 365 dias no timezone do usuário
+  const hoje = getInicioDoDiaNoTimezone(timezone);
+  const umAnoAtras = subtrairDias(hoje, 365);
 
   const registros = await prisma.registroHabito.findMany({
     where: {
@@ -377,7 +382,7 @@ async function calcularSequenciaGlobal(
   // Agrupar registros por data
   const registrosPorData = new Map<string, Set<string>>();
   for (const reg of registros) {
-    const dataStr = new Date(reg.data).toISOString().split('T')[0];
+    const dataStr = formatarDataString(normalizarParaInicioDoDia(new Date(reg.data)));
     if (!registrosPorData.has(dataStr)) {
       registrosPorData.set(dataStr, new Set());
     }
@@ -387,7 +392,7 @@ async function calcularSequenciaGlobal(
   // Função para verificar se um dia está completo
   const diaCompleto = (data: Date): boolean => {
     const diaSemana = data.getDay();
-    const dataStr = data.toISOString().split('T')[0];
+    const dataStr = formatarDataString(data);
 
     // Quais hábitos devem ser feitos neste dia?
     const habitosNesteDia = habitosAtivos.filter(h =>
@@ -414,14 +419,14 @@ async function calcularSequenciaGlobal(
 
     // Se não há hábitos para este dia, pula para o dia anterior
     if (habitosNesteDia.length === 0) {
-      dataAtual.setDate(dataAtual.getDate() - 1);
+      dataAtual = subtrairDias(dataAtual, 1);
       if (dataAtual < umAnoAtras) break;
       continue;
     }
 
     if (diaCompleto(dataAtual)) {
       sequenciaAtual++;
-      dataAtual.setDate(dataAtual.getDate() - 1);
+      dataAtual = subtrairDias(dataAtual, 1);
       if (dataAtual < umAnoAtras) break;
     } else {
       break;
@@ -434,9 +439,7 @@ async function calcularSequenciaGlobal(
 
   // Iterar todos os dias do período
   for (let i = 365; i >= 0; i--) {
-    const data = new Date(hoje);
-    data.setDate(data.getDate() - i);
-    data.setHours(0, 0, 0, 0);
+    const data = subtrairDias(hoje, i);
 
     const diaSemana = data.getDay();
     const habitosNesteDia = habitosAtivos.filter(h =>

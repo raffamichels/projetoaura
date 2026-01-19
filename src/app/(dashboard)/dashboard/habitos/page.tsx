@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -103,9 +103,21 @@ export default function HabitosPage() {
   const [habitos, setHabitos] = useState<Habito[]>([]);
   const [estatisticas, setEstatisticas] = useState<Estatisticas | null>(null);
 
+  // Obter timezone do usuário (executado apenas no cliente)
+  const timezone = useMemo(() => {
+    if (typeof window !== 'undefined') {
+      return Intl.DateTimeFormat().resolvedOptions().timeZone;
+    }
+    return 'America/Sao_Paulo'; // Fallback
+  }, []);
+
   // Dia da semana selecionado (null = dia atual)
   const [diaSelecionado, setDiaSelecionado] = useState<number | null>(null);
-  const [diaAtual, setDiaAtual] = useState<number>(new Date().getDay());
+  const [diaAtual, setDiaAtual] = useState<number>(() => {
+    // Calcular dia da semana no timezone local
+    const now = new Date();
+    return now.getDay();
+  });
 
   // Modal states
   const [modalHabitoAberto, setModalHabitoAberto] = useState(false);
@@ -132,14 +144,19 @@ export default function HabitosPage() {
     try {
       setLoading(true);
 
-      // Construir URL com parâmetro de dia da semana se necessário
-      const habitosUrl = diaSelecionado !== null
-        ? `/api/v1/habitos?diaSemana=${diaSelecionado}`
-        : '/api/v1/habitos';
+      // Construir URL com parâmetro de dia da semana e timezone
+      const params = new URLSearchParams();
+      params.set('timezone', timezone);
+      if (diaSelecionado !== null) {
+        params.set('diaSemana', diaSelecionado.toString());
+      }
+
+      const habitosUrl = `/api/v1/habitos?${params.toString()}`;
+      const estatisticasUrl = `/api/v1/habitos/estatisticas?timezone=${encodeURIComponent(timezone)}`;
 
       const [habitosRes, estatisticasRes] = await Promise.all([
         fetch(habitosUrl),
-        fetch('/api/v1/habitos/estatisticas'),
+        fetch(estatisticasUrl),
       ]);
 
       if (habitosRes.ok) {
@@ -160,7 +177,7 @@ export default function HabitosPage() {
     } finally {
       setLoading(false);
     }
-  }, [diaSelecionado]);
+  }, [diaSelecionado, timezone]);
 
   useEffect(() => {
     carregarDados();
@@ -217,6 +234,7 @@ export default function HabitosPage() {
         body: JSON.stringify({
           data: new Date().toISOString(),
           completado: !habito.completadoHoje,
+          timezone, // Enviar timezone do cliente
         }),
       });
 

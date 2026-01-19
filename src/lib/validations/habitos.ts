@@ -59,6 +59,10 @@ export const registroHabitoSchema = z.object({
     .max(500, 'Notas devem ter no máximo 500 caracteres')
     .optional()
     .nullable(),
+  timezone: z
+    .string()
+    .optional()
+    .nullable(),
 });
 
 // Tipos TypeScript gerados automaticamente
