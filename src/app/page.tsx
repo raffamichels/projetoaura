@@ -41,12 +41,32 @@ export default function LandingPage() {
   const [submitted, setSubmitted] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [showOrbs, setShowOrbs] = useState(false);
 
+  // Performance: Lazy load orbs após first paint
   useEffect(() => {
+    const timeout = setTimeout(() => setShowOrbs(true), 100);
+    return () => clearTimeout(timeout);
+  }, []);
+
+  // Performance: Scroll listener otimizado com RAF throttle
+  useEffect(() => {
+    let ticking = false;
+    let lastKnownScrollY = 0;
+
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      lastKnownScrollY = window.scrollY;
+
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setScrolled(lastKnownScrollY > 20);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
-    window.addEventListener("scroll", handleScroll);
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -202,12 +222,14 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-[#0A0A0F] text-white overflow-x-hidden">
-      {/* Gradient Orbs Background */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 -left-40 w-80 h-80 bg-violet-600/30 rounded-full blur-[120px] animate-pulse-slow" />
-        <div className="absolute top-1/4 -right-40 w-96 h-96 bg-blue-600/20 rounded-full blur-[120px] animate-pulse-slow" style={{ animationDelay: '2s' }} />
-        <div className="absolute bottom-1/4 left-1/4 w-64 h-64 bg-cyan-600/20 rounded-full blur-[120px] animate-pulse-slow" style={{ animationDelay: '4s' }} />
-      </div>
+      {/* Gradient Orbs Background - Performance Optimized */}
+      {showOrbs && (
+        <div className="fixed inset-0 overflow-hidden pointer-events-none orb-container">
+          <div className="absolute top-0 -left-40 w-80 h-80 bg-violet-600/30 rounded-full blur-3xl animate-pulse-slow will-change-opacity" />
+          <div className="absolute top-1/4 -right-40 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl animate-pulse-slow will-change-opacity animation-delay-2000" />
+          <div className="absolute bottom-1/4 left-1/4 w-64 h-64 bg-cyan-600/20 rounded-full blur-3xl animate-pulse-slow will-change-opacity animation-delay-4000" />
+        </div>
+      )}
 
       {/* Header */}
       <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-[#0A0A0F]/80 backdrop-blur-xl border-b border-white/5' : ''}`}>
@@ -392,8 +414,8 @@ export default function LandingPage() {
         {/* Hero Visual/Mockup */}
         <div className="mt-20 max-w-6xl mx-auto px-4 animate-fade-in-delay-5">
           <div className="relative">
-            {/* Glow Effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-violet-600/20 via-blue-600/20 to-cyan-600/20 rounded-2xl blur-3xl" />
+            {/* Glow Effect - Performance Optimized */}
+            <div className="absolute inset-0 bg-gradient-to-r from-violet-600/20 via-blue-600/20 to-cyan-600/20 rounded-2xl blur-2xl will-change-opacity" />
 
             {/* Dashboard Preview */}
             <div className="relative bg-gradient-to-br from-white/[0.08] to-white/[0.02] rounded-2xl border border-white/10 p-2 shadow-2xl">
@@ -615,7 +637,7 @@ export default function LandingPage() {
 
             {/* Right Visual */}
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-violet-600/20 to-blue-600/20 rounded-3xl blur-3xl" />
+              <div className="absolute inset-0 bg-gradient-to-br from-violet-600/20 to-blue-600/20 rounded-3xl blur-2xl will-change-opacity" />
               <div className="relative grid grid-cols-2 gap-4">
                 {[
                   { icon: Clock, label: "Economia de tempo", value: "5h/semana" },

@@ -8,18 +8,11 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="h-screen text-white flex overflow-hidden relative" style={{
-      background: 'linear-gradient(135deg, #0a0a0a 0%, #050505 50%, #0a0a0a 100%)'
-    }}>
-      {/* Subtle noise texture */}
-      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{
-        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' /%3E%3C/svg%3E")`,
-      }} />
-      {/* Very subtle grid */}
-      <div className="absolute inset-0 opacity-[0.02] pointer-events-none" style={{
-        backgroundImage: 'linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)',
-        backgroundSize: '50px 50px'
-      }} />
+    <div className="h-screen text-white flex overflow-hidden relative bg-gradient-to-br from-[#0a0a0a] via-[#050505] to-[#0a0a0a]">
+      {/* Performance: Using CSS class instead of inline SVG filter */}
+      <div className="noise-texture absolute inset-0" />
+      {/* Very subtle grid - optimized with contain */}
+      <div className="absolute inset-0 opacity-[0.02] pointer-events-none grid-pattern" />
       {/* Sidebar - Desktop */}
       <Sidebar />
 
@@ -28,8 +21,8 @@ export default function DashboardLayout({
         {/* Header */}
         <Header />
 
-        {/* Page Content */}
-        <main className="flex-1 overflow-auto">
+        {/* Page Content - Performance Optimized Scroll */}
+        <main className="flex-1 overflow-auto scroll-container">
           {children}
         </main>
       </div>

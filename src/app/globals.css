@@ -463,3 +463,103 @@ html {
   transform: translateY(-4px);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
+
+/* ========================================
+   PERFORMANCE OPTIMIZATIONS
+   ======================================== */
+
+/* CSS Containment for animation containers */
+.orb-container {
+  contain: strict;
+  content-visibility: auto;
+}
+
+/* Will-change utilities for GPU acceleration */
+.will-change-opacity {
+  will-change: opacity;
+}
+
+.will-change-transform {
+  will-change: transform;
+}
+
+/* Animation delays without inline styles */
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+/* Optimized backdrop blur with containment */
+.backdrop-blur-optimized {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  contain: layout paint;
+}
+
+/* Passive scroll optimization hint */
+.scroll-container {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  .animate-pulse-slow,
+  .animate-float,
+  .animate-shimmer,
+  .animate-gradient,
+  .animate-fade-in,
+  .animate-slide-up,
+  .animate-scale-in {
+    animation: none !important;
+  }
+
+  .transition-all,
+  .transition-colors,
+  .transition-transform {
+    transition: none !important;
+  }
+}
+
+/* GPU-accelerated gradient animation replacement */
+@keyframes gradient-transform {
+  0%, 100% {
+    transform: translateX(0) scale(1);
+  }
+  50% {
+    transform: translateX(-5%) scale(1.02);
+  }
+}
+
+.animate-gradient-optimized {
+  animation: gradient-transform 4s ease infinite;
+  will-change: transform;
+}
+
+/* Optimized noise texture using CSS instead of inline SVG */
+.noise-texture {
+  position: relative;
+}
+
+.noise-texture::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  pointer-events: none;
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAUVBMVEWFhYWDg4N3d3dtbW17e3t1dXWBgYGHh4d5eXlZWVlra2t1dXV3d3d5eXl7e3t9fX1/f3+BgYGDg4OFhYWHh4eJiYmLi4uNjY2Pj4+RkZGTk5OVlZWXl5cAAAAXRSTlMAQObYZgAAABdJREFUeF7t1LERADAIAzDQ/v9yKQiJhYGBBZD0JqRfbXUbAAAAASUVORK5CYII=");
+  background-repeat: repeat;
+}
+
+/* Grid pattern for dashboard background */
+.grid-pattern {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  contain: strict;
+  pointer-events: none;
+}
