@@ -31,6 +31,7 @@ export default function DetalheMidiaPage() {
 
   const [formData, setFormData] = useState({
     nota: 0,
+    status: 'PROXIMO' as StatusLeitura,
     resenhaGeradaIA: '',
     impressoesIniciais: '',
     principaisAprendizados: '',
@@ -53,6 +54,7 @@ export default function DetalheMidiaPage() {
         setMidia(data.data);
         setFormData({
           nota: data.data.nota || 0,
+          status: data.data.status || 'PROXIMO',
           resenhaGeradaIA: data.data.resenhaGeradaIA || '',
           impressoesIniciais: data.data.impressoesIniciais || '',
           principaisAprendizados: data.data.principaisAprendizados || '',
@@ -195,6 +197,7 @@ export default function DetalheMidiaPage() {
                   setEditando(false);
                   setFormData({
                     nota: midia.nota || 0,
+                    status: midia.status || 'PROXIMO',
                     resenhaGeradaIA: midia.resenhaGeradaIA || '',
                     impressoesIniciais: midia.impressoesIniciais || '',
                     principaisAprendizados: midia.principaisAprendizados || '',
@@ -273,16 +276,29 @@ export default function DetalheMidiaPage() {
 
               {/* Status e Avaliação */}
               <div className="flex flex-wrap items-center gap-3 sm:gap-4">
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-800 border border-zinc-700">
-                  <div className={`w-2 h-2 rounded-full ${
-                    midia.status === 'CONCLUIDO' ? 'bg-green-400' :
-                    midia.status === 'EM_ANDAMENTO' ? 'bg-blue-400' :
-                    midia.status === 'PAUSADO' ? 'bg-yellow-400' : 'bg-zinc-400'
-                  }`} />
-                  <span className={`text-xs sm:text-sm font-medium ${statusInfo.className}`}>
-                    {statusInfo.label}
-                  </span>
-                </div>
+                {editando ? (
+                  <select
+                    value={formData.status}
+                    onChange={(e) => setFormData({ ...formData, status: e.target.value as StatusLeitura })}
+                    className="px-3 py-1.5 rounded-full bg-zinc-800 border border-zinc-700 text-xs sm:text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  >
+                    <option value="PROXIMO">Próximo</option>
+                    <option value="EM_ANDAMENTO">Em andamento</option>
+                    <option value="PAUSADO">Pausado</option>
+                    <option value="CONCLUIDO">Concluído</option>
+                  </select>
+                ) : (
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-800 border border-zinc-700">
+                    <div className={`w-2 h-2 rounded-full ${
+                      midia.status === 'CONCLUIDO' ? 'bg-green-400' :
+                      midia.status === 'EM_ANDAMENTO' ? 'bg-blue-400' :
+                      midia.status === 'PAUSADO' ? 'bg-yellow-400' : 'bg-zinc-400'
+                    }`} />
+                    <span className={`text-xs sm:text-sm font-medium ${statusInfo.className}`}>
+                      {statusInfo.label}
+                    </span>
+                  </div>
+                )}
 
                 {/* Avaliação */}
                 <div className="flex items-center gap-2">
@@ -372,8 +388,8 @@ export default function DetalheMidiaPage() {
         </CardContent>
       </Card>
 
-      {/* Resenha Gerada por IA */}
-      {(midia.resenhaGeradaIA || editando) && (
+      {/* Resenha Gerada por IA - só mostra se já existir texto */}
+      {midia.resenhaGeradaIA && (
         <Card className="bg-zinc-900 border-zinc-800">
           <CardHeader className="flex flex-row items-center justify-between p-4 sm:p-6">
             <CardTitle className="text-sm sm:text-base md:text-lg text-white flex items-center gap-2">
@@ -428,28 +444,26 @@ export default function DetalheMidiaPage() {
         </Card>
       )}
 
-      {/* Reflexões e Aprendizados */}
-      <div className="space-y-3 sm:space-y-4">
-        <h2 className="text-base sm:text-lg md:text-xl font-bold text-white">Reflexões e Aprendizados</h2>
-
+      {/* Anotações */}
+      <div className="space-y-2">
         <Card className="bg-zinc-900 border-zinc-800">
-          <CardHeader className="p-4 sm:p-6">
-            <CardTitle className="text-sm sm:text-base md:text-lg text-white">Impressões Iniciais</CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 sm:p-6 pt-0">
+          <CardContent className="p-3 sm:p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Impressões Iniciais</span>
+            </div>
             {editando ? (
               <Textarea
                 value={formData.impressoesIniciais}
                 onChange={(e) =>
                   setFormData({ ...formData, impressoesIniciais: e.target.value })
                 }
-                className="bg-zinc-800 border-zinc-700 text-white min-h-25 text-sm sm:text-base"
-                placeholder="Suas primeiras impressões sobre o conteúdo..."
+                className="bg-zinc-800 border-zinc-700 text-white min-h-16 text-sm resize-none"
+                placeholder="Suas primeiras impressões..."
               />
             ) : (
-              <p className="text-zinc-300 whitespace-pre-wrap text-sm sm:text-base">
+              <p className="text-zinc-300 whitespace-pre-wrap text-sm">
                 {midia.impressoesIniciais || (
-                  <span className="text-zinc-500 italic text-xs sm:text-sm">Nenhuma impressão registrada ainda.</span>
+                  <span className="text-zinc-500 italic text-xs">Nenhuma impressão registrada.</span>
                 )}
               </p>
             )}
@@ -457,23 +471,23 @@ export default function DetalheMidiaPage() {
         </Card>
 
         <Card className="bg-zinc-900 border-zinc-800">
-          <CardHeader className="p-4 sm:p-6">
-            <CardTitle className="text-sm sm:text-base md:text-lg text-white">Principais Aprendizados</CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 sm:p-6 pt-0">
+          <CardContent className="p-3 sm:p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Principais Aprendizados</span>
+            </div>
             {editando ? (
               <Textarea
                 value={formData.principaisAprendizados}
                 onChange={(e) =>
                   setFormData({ ...formData, principaisAprendizados: e.target.value })
                 }
-                className="bg-zinc-800 border-zinc-700 text-white min-h-25 text-sm sm:text-base"
-                placeholder="O que você aprendeu com este conteúdo..."
+                className="bg-zinc-800 border-zinc-700 text-white min-h-16 text-sm resize-none"
+                placeholder="O que você aprendeu..."
               />
             ) : (
-              <p className="text-zinc-300 whitespace-pre-wrap text-sm sm:text-base">
+              <p className="text-zinc-300 whitespace-pre-wrap text-sm">
                 {midia.principaisAprendizados || (
-                  <span className="text-zinc-500 italic text-xs sm:text-sm">Nenhum aprendizado registrado ainda.</span>
+                  <span className="text-zinc-500 italic text-xs">Nenhum aprendizado registrado.</span>
                 )}
               </p>
             )}
@@ -481,23 +495,23 @@ export default function DetalheMidiaPage() {
         </Card>
 
         <Card className="bg-zinc-900 border-zinc-800">
-          <CardHeader className="p-4 sm:p-6">
-            <CardTitle className="text-sm sm:text-base md:text-lg text-white">Trechos Memoráveis</CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 sm:p-6 pt-0">
+          <CardContent className="p-3 sm:p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Trechos Memoráveis</span>
+            </div>
             {editando ? (
               <Textarea
                 value={formData.trechosMemoraveis}
                 onChange={(e) =>
                   setFormData({ ...formData, trechosMemoraveis: e.target.value })
                 }
-                className="bg-zinc-800 border-zinc-700 text-white min-h-25 text-sm sm:text-base"
-                placeholder="Trechos que você gostaria de lembrar..."
+                className="bg-zinc-800 border-zinc-700 text-white min-h-16 text-sm resize-none"
+                placeholder="Trechos marcantes..."
               />
             ) : (
-              <p className="text-zinc-300 whitespace-pre-wrap text-sm sm:text-base">
+              <p className="text-zinc-300 whitespace-pre-wrap text-sm">
                 {midia.trechosMemoraveis || (
-                  <span className="text-zinc-500 italic text-xs sm:text-sm">Nenhum trecho registrado ainda.</span>
+                  <span className="text-zinc-500 italic text-xs">Nenhum trecho registrado.</span>
                 )}
               </p>
             )}
@@ -505,21 +519,21 @@ export default function DetalheMidiaPage() {
         </Card>
 
         <Card className="bg-zinc-900 border-zinc-800">
-          <CardHeader className="p-4 sm:p-6">
-            <CardTitle className="text-sm sm:text-base md:text-lg text-white">Reflexão</CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 sm:p-6 pt-0">
+          <CardContent className="p-3 sm:p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Reflexão</span>
+            </div>
             {editando ? (
               <Textarea
                 value={formData.reflexao}
                 onChange={(e) => setFormData({ ...formData, reflexao: e.target.value })}
-                className="bg-zinc-800 border-zinc-700 text-white min-h-25 text-sm sm:text-base"
-                placeholder="Suas reflexões sobre o conteúdo..."
+                className="bg-zinc-800 border-zinc-700 text-white min-h-16 text-sm resize-none"
+                placeholder="Suas reflexões..."
               />
             ) : (
-              <p className="text-zinc-300 whitespace-pre-wrap text-sm sm:text-base">
+              <p className="text-zinc-300 whitespace-pre-wrap text-sm">
                 {midia.reflexao || (
-                  <span className="text-zinc-500 italic text-xs sm:text-sm">Nenhuma reflexão registrada ainda.</span>
+                  <span className="text-zinc-500 italic text-xs">Nenhuma reflexão registrada.</span>
                 )}
               </p>
             )}
@@ -527,23 +541,23 @@ export default function DetalheMidiaPage() {
         </Card>
 
         <Card className="bg-zinc-900 border-zinc-800">
-          <CardHeader className="p-4 sm:p-6">
-            <CardTitle className="text-sm sm:text-base md:text-lg text-white">Aprendizados Práticos</CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 sm:p-6 pt-0">
+          <CardContent className="p-3 sm:p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Aprendizados Práticos</span>
+            </div>
             {editando ? (
               <Textarea
                 value={formData.aprendizadosPraticos}
                 onChange={(e) =>
                   setFormData({ ...formData, aprendizadosPraticos: e.target.value })
                 }
-                className="bg-zinc-800 border-zinc-700 text-white min-h-25 text-sm sm:text-base"
-                placeholder="Como você pode aplicar o que aprendeu..."
+                className="bg-zinc-800 border-zinc-700 text-white min-h-16 text-sm resize-none"
+                placeholder="Como aplicar o que aprendeu..."
               />
             ) : (
-              <p className="text-zinc-300 whitespace-pre-wrap text-sm sm:text-base">
+              <p className="text-zinc-300 whitespace-pre-wrap text-sm">
                 {midia.aprendizadosPraticos || (
-                  <span className="text-zinc-500 italic text-xs sm:text-sm">Nenhum aprendizado prático registrado ainda.</span>
+                  <span className="text-zinc-500 italic text-xs">Nenhum aprendizado prático registrado.</span>
                 )}
               </p>
             )}
@@ -551,23 +565,23 @@ export default function DetalheMidiaPage() {
         </Card>
 
         <Card className="bg-zinc-900 border-zinc-800">
-          <CardHeader className="p-4 sm:p-6">
-            <CardTitle className="text-sm sm:text-base md:text-lg text-white">Considerações Finais</CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 sm:p-6 pt-0">
+          <CardContent className="p-3 sm:p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Considerações Finais</span>
+            </div>
             {editando ? (
               <Textarea
                 value={formData.consideracoesFinais}
                 onChange={(e) =>
                   setFormData({ ...formData, consideracoesFinais: e.target.value })
                 }
-                className="bg-zinc-800 border-zinc-700 text-white min-h-25 text-sm sm:text-base"
-                placeholder="Suas considerações finais sobre o conteúdo..."
+                className="bg-zinc-800 border-zinc-700 text-white min-h-16 text-sm resize-none"
+                placeholder="Suas considerações finais..."
               />
             ) : (
-              <p className="text-zinc-300 whitespace-pre-wrap text-sm sm:text-base">
+              <p className="text-zinc-300 whitespace-pre-wrap text-sm">
                 {midia.consideracoesFinais || (
-                  <span className="text-zinc-500 italic text-xs sm:text-sm">Nenhuma consideração final registrada ainda.</span>
+                  <span className="text-zinc-500 italic text-xs">Nenhuma consideração final registrada.</span>
                 )}
               </p>
             )}
