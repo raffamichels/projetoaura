@@ -65,7 +65,11 @@ export function TrendChart({ dados }: TrendChartProps) {
               fontSize: '12px',
             }}
             labelFormatter={(semana) => `${t('week')} ${semana}`}
-            formatter={(value: number) => [`${value}%`, t('successRate')]}
+            // Correção aplicada abaixo: aceita number | undefined e usa fallback
+            formatter={(value: number | undefined) => [
+              `${value ?? 0}%`, 
+              t('successRate')
+            ]}
           />
           <Area
             type="monotone"
