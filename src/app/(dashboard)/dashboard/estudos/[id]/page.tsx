@@ -285,9 +285,21 @@ export default function CursoDetalhePage() {
       });
 
       if (response.ok) {
+        // Atualiza o conteúdo original para refletir as alterações salvas
+        setConteudoOriginalPagina({
+          titulo: paginaSelecionada.titulo,
+          conteudo: paginaSelecionada.conteudo,
+        });
         setEditandoPagina(false);
+
+        // Atualiza a lista de páginas do módulo sem resetar a página selecionada
         if (moduloSelecionado) {
-          carregarModulo(moduloSelecionado.id);
+          const moduloResponse = await fetch(`/api/v1/estudos/modulos/${moduloSelecionado.id}`);
+          if (moduloResponse.ok) {
+            const moduloData = await moduloResponse.json();
+            setModuloSelecionado(moduloData.data);
+            // Não reseta paginaSelecionada - mantém a página atual aberta
+          }
         }
       }
     } catch (error) {
