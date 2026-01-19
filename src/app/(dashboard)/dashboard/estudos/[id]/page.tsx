@@ -794,6 +794,51 @@ export default function CursoDetalhePage() {
                               margin-left: 0;
                               margin-right: auto;
                             }
+
+                            /* Estilos para bullet points no modo de visualização */
+                            .prose ul {
+                              list-style-type: disc;
+                              padding-left: 1.5em;
+                              margin: 0.5em 0;
+                            }
+
+                            .prose ul li {
+                              color: #d4d4d8;
+                            }
+
+                            .prose ul li::marker {
+                              color: #a78bfa;
+                            }
+
+                            .prose ol {
+                              list-style-type: decimal;
+                              padding-left: 1.5em;
+                              margin: 0.5em 0;
+                            }
+
+                            .prose ol li::marker {
+                              color: #a78bfa;
+                            }
+
+                            /* Listas aninhadas */
+                            .prose ul ul,
+                            .prose ol ul {
+                              list-style-type: circle;
+                            }
+
+                            .prose ul ul ul,
+                            .prose ol ul ul,
+                            .prose ul ol ul,
+                            .prose ol ol ul {
+                              list-style-type: square;
+                            }
+
+                            /* Indentação consistente para listas aninhadas */
+                            .prose li > ul,
+                            .prose li > ol {
+                              margin-top: 0.25em;
+                              margin-bottom: 0.25em;
+                            }
                           `}</style>
                           <div
                             className="prose prose-invert max-w-none prose-headings:text-white prose-p:text-zinc-300 prose-strong:text-white prose-a:text-blue-400"
