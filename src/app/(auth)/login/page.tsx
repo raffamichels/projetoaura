@@ -2,12 +2,16 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Mail, Lock, ArrowRight } from 'lucide-react';
 
 export default function LoginPage() {
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -32,8 +36,8 @@ export default function LoginPage() {
             return;
         }
 
-         // Login com sucesso - redireciona para dashboard
-        window.location.href = '/dashboard';
+         // Login com sucesso - redireciona para a URL original ou dashboard
+        window.location.href = callbackUrl;
 
     } catch {
         setError('Erro ao conectar com o servidor');
@@ -182,7 +186,7 @@ export default function LoginPage() {
             type="button"
             onClick={async () => {
               const { signIn } = await import('next-auth/react');
-              signIn('google', { callbackUrl: '/dashboard' });
+              signIn('google', { callbackUrl });
             }}
             variant="outline"
             className="w-full bg-white/5 hover:bg-white/10 border-white/10 text-white font-semibold h-10 sm:h-11 rounded-xl transition-all duration-200 hover:border-white/20 group text-sm"
