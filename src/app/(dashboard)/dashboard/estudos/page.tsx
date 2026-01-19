@@ -398,6 +398,7 @@ export default function EstudosPage() {
           <CardContent className="p-4">
             <Input
               placeholder={t('searchPlaceholder')}
+              autoComplete="off"
               value={termoBusca}
               onChange={(e) => {
                 setTermoBusca(e.target.value);
@@ -597,6 +598,7 @@ export default function EstudosPage() {
               <Label htmlFor="nome" className="text-zinc-300">{t('courseName')}</Label>
               <Input
                 id="nome"
+                autoComplete="off"
                 value={novoCurso.nome}
                 onChange={(e) => setNovoCurso({ ...novoCurso, nome: e.target.value })}
                 className="bg-zinc-800 border-zinc-700 text-white mt-1"
@@ -607,6 +609,7 @@ export default function EstudosPage() {
               <Label htmlFor="descricao" className="text-zinc-300">{t('descriptionOptional')}</Label>
               <Input
                 id="descricao"
+                autoComplete="off"
                 value={novoCurso.descricao}
                 onChange={(e) => setNovoCurso({ ...novoCurso, descricao: e.target.value })}
                 className="bg-zinc-800 border-zinc-700 text-white mt-1"
@@ -703,6 +706,7 @@ export default function EstudosPage() {
                   <Label htmlFor="titulo-anotacao" className="text-zinc-300">{t('title')}</Label>
                   <Input
                     id="titulo-anotacao"
+                    autoComplete="off"
                     value={novaAnotacao.titulo}
                     onChange={(e) => setNovaAnotacao({ ...novaAnotacao, titulo: e.target.value })}
                     className="bg-zinc-800 border-zinc-700 text-white mt-1"
@@ -713,6 +717,7 @@ export default function EstudosPage() {
                   <Label htmlFor="conteudo-anotacao" className="text-zinc-300">{t('content')}</Label>
                   <textarea
                     id="conteudo-anotacao"
+                    autoComplete="off"
                     value={novaAnotacao.conteudo}
                     onChange={(e) => setNovaAnotacao({ ...novaAnotacao, conteudo: e.target.value })}
                     className="w-full bg-zinc-800 border-zinc-700 text-white mt-1 rounded-md p-3 min-h-[120px] border resize-none"
@@ -777,6 +782,7 @@ export default function EstudosPage() {
                   <div>
                     <Label className="text-zinc-300">{t('rawText')}</Label>
                     <textarea
+                      autoComplete="off"
                       value={textoOriginalIA}
                       onChange={(e) => setTextoOriginalIA(e.target.value)}
                       className="w-full bg-zinc-800 border-zinc-700 text-white mt-1 rounded-md p-3 min-h-[200px] border resize-none"
@@ -791,12 +797,14 @@ export default function EstudosPage() {
                     {anotacaoGeradaIA ? (
                       <div className="mt-1 space-y-2">
                         <Input
+                          autoComplete="off"
                           value={anotacaoGeradaIA.title}
                           onChange={(e) => setAnotacaoGeradaIA({ ...anotacaoGeradaIA, title: e.target.value })}
                           className="bg-zinc-800 border-zinc-700 text-white"
                           placeholder={t('noteTitle')}
                         />
                         <textarea
+                          autoComplete="off"
                           value={anotacaoGeradaIA.content}
                           onChange={(e) => setAnotacaoGeradaIA({ ...anotacaoGeradaIA, content: e.target.value })}
                           className="w-full bg-zinc-800 border-zinc-700 text-white rounded-md p-3 min-h-[158px] border resize-none"
@@ -895,6 +903,7 @@ export default function EstudosPage() {
                       <Label htmlFor="titulo-editar" className="text-zinc-300">{t('title')}</Label>
                       <Input
                         id="titulo-editar"
+                        autoComplete="off"
                         value={anotacaoSelecionada.titulo}
                         onChange={(e) =>
                           setAnotacaoSelecionada({ ...anotacaoSelecionada, titulo: e.target.value })
@@ -906,6 +915,7 @@ export default function EstudosPage() {
                       <Label htmlFor="conteudo-editar" className="text-zinc-300">{t('content')}</Label>
                       <textarea
                         id="conteudo-editar"
+                        autoComplete="off"
                         value={anotacaoSelecionada.conteudo}
                         onChange={(e) =>
                           setAnotacaoSelecionada({ ...anotacaoSelecionada, conteudo: e.target.value })
