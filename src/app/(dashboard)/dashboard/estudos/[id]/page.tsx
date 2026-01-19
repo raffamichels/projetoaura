@@ -687,6 +687,18 @@ export default function CursoDetalhePage() {
                           />
                           <div className="flex gap-2">
                             <Button
+                              onClick={() => setPaginaAmpliada(!paginaAmpliada)}
+                              variant="default"
+                              className="border-zinc-700/50 hover:bg-zinc-800/50 rounded-xl"
+                              title={paginaAmpliada ? t('reduceView') : t('expandView')}
+                            >
+                              {paginaAmpliada ? (
+                                <Minimize2 className="w-4 h-4" />
+                              ) : (
+                                <Maximize2 className="w-4 h-4" />
+                              )}
+                            </Button>
+                            <Button
                               onClick={salvarPagina}
                               disabled={salvandoPagina}
                               className="bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 shadow-lg shadow-green-500/20 rounded-xl"
