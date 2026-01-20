@@ -3,15 +3,11 @@
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Compromisso, TipoRecorrencia } from '@/types/compromisso';
-import { RecorrenciaConfig } from '@/components/features/agenda/RecorrenciaConfig';
-import { Checkbox } from '@/components/ui/checkbox';
 import { UpgradeToPremiumModal } from '@/components/planos/UpgradeToPremiumModal';
 import { verificarAcessoRecurso } from '@/lib/planos-helper';
 import { RecursoPremium, PlanoUsuario } from '@/types/planos';
-import { Crown } from 'lucide-react';
+import { Crown, Clock, Tag, AlignLeft, RefreshCw, Calendar } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 interface CompromissoFormProps {
@@ -34,20 +30,27 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
     { value: 'lazer', label: t('leisure'), cor: '#EC4899' },
     { value: 'outro', label: t('other'), cor: '#6B7280' },
   ];
-  
+
+  const tiposRecorrencia = [
+    { value: 'diario', label: t('daily') },
+    { value: 'semanal', label: t('weekly') },
+    { value: 'mensal', label: t('monthly') },
+    { value: 'anual', label: t('yearly') },
+  ];
+
   const [titulo, setTitulo] = useState(initialData?.titulo || '');
   const [descricao, setDescricao] = useState(initialData?.descricao || '');
   const [data, setData] = useState(
-    initialData 
-      ? initialData.data.split('T')[0] 
-      : initialDate 
-        ? initialDate.toISOString().split('T')[0] 
+    initialData
+      ? initialData.data.split('T')[0]
+      : initialDate
+        ? initialDate.toISOString().split('T')[0]
         : ''
   );
   const [horaInicio, setHoraInicio] = useState(initialData?.horaInicio || initialHour || '');
   const [horaFim, setHoraFim] = useState(initialData?.horaFim || '');
   const [categoria, setCategoria] = useState(initialData?.categoria || 'trabalho');
-  
+
   // Estados de recorrência
   const [isRecorrente, setIsRecorrente] = useState(initialData?.isRecorrente || false);
   const [tipoRecorrencia, setTipoRecorrencia] = useState<TipoRecorrencia>(
@@ -100,10 +103,10 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
     setLoading(true);
 
     try {
-      const url = isEditMode 
+      const url = isEditMode
         ? `/api/v1/agenda/compromissos/${initialData.id}`
         : '/api/v1/agenda/compromissos';
-      
+
       const method = isEditMode ? 'PUT' : 'POST';
 
       const payload = {
@@ -148,189 +151,228 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4 md:space-y-5">
-      {/* Título */}
-      <div className="space-y-1.5 sm:space-y-2">
-        <Label htmlFor="titulo" className="text-gray-300 text-sm sm:text-base">
-          {t('titleLabel')}
-        </Label>
-        <Input
-          id="titulo"
-          value={titulo}
-          onChange={(e) => setTitulo(e.target.value)}
-          placeholder={t('titlePlaceholder')}
-          required
-          className="bg-zinc-800/50 border-zinc-700 text-white text-sm sm:text-base h-9 sm:h-10"
-        />
-      </div>
-
-      {/* Descrição */}
-      <div className="space-y-1.5 sm:space-y-2">
-        <Label htmlFor="descricao" className="text-gray-300 text-sm sm:text-base">
-          {t('descriptionLabel')}
-        </Label>
-        <textarea
-          id="descricao"
-          value={descricao}
-          onChange={(e) => setDescricao(e.target.value)}
-          placeholder={t('descriptionPlaceholder')}
-          rows={3}
-          className="w-full px-2 sm:px-3 py-1.5 sm:py-2 bg-zinc-800/50 border border-zinc-700 rounded-lg text-white text-sm sm:text-base placeholder:text-gray-500 focus:border-aura-500 focus:ring-1 focus:ring-aura-500 resize-none"
-        />
-      </div>
-
-      {/* Data */}
-      <div className="space-y-1.5 sm:space-y-2">
-        <Label htmlFor="data" className="text-gray-300 text-sm sm:text-base">
-          {t('dateLabel')}
-        </Label>
-        <Input
-          id="data"
-          type="date"
-          value={data}
-          onChange={(e) => setData(e.target.value)}
-          required
-          className="bg-zinc-800/50 border-zinc-700 text-white text-sm sm:text-base h-9 sm:h-10"
-        />
-      </div>
-
-      {/* Horários */}
-      <div className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-4">
-        <div className="space-y-1.5 sm:space-y-2">
-          <Label htmlFor="horaInicio" className="text-gray-300 text-sm sm:text-base">
-            {t('startTimeLabel')}
-          </Label>
-          <Input
-            id="horaInicio"
-            type="time"
-            value={horaInicio}
-            onChange={(e) => setHoraInicio(e.target.value)}
-            required
-            className="bg-zinc-800/50 border-zinc-700 text-white text-sm sm:text-base h-9 sm:h-10"
-          />
-        </div>
-        <div className="space-y-1.5 sm:space-y-2">
-          <Label htmlFor="horaFim" className="text-gray-300 text-sm sm:text-base">
-            {t('endTimeLabel')}
-          </Label>
-          <Input
-            id="horaFim"
-            type="time"
-            value={horaFim}
-            onChange={(e) => setHoraFim(e.target.value)}
-            className="bg-zinc-800/50 border-zinc-700 text-white text-sm sm:text-base h-9 sm:h-10"
-          />
-        </div>
-      </div>
-
-      {/* Categoria */}
-      <div className="space-y-1.5 sm:space-y-2">
-        <Label className="text-gray-300 text-sm sm:text-base">{t('categoryLabel')}</Label>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 sm:gap-2">
-          {categorias.map((cat) => (
-            <button
-              key={cat.value}
-              type="button"
-              onClick={() => setCategoria(cat.value)}
-              className={`
-                px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg border text-xs sm:text-sm font-medium transition-all
-                ${categoria === cat.value
-                  ? 'border-2 scale-105'
-                  : 'border-zinc-700 hover:border-zinc-600'
-                }
-              `}
-              style={{
-                borderColor: categoria === cat.value ? cat.cor : undefined,
-                backgroundColor: categoria === cat.value ? `${cat.cor}20` : undefined,
-                color: categoria === cat.value ? cat.cor : undefined,
-              }}
-            >
-              {cat.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Configuração de Recorrência */}
-      <RecorrenciaConfig
-        isRecorrente={isRecorrente}
-        tipoRecorrencia={tipoRecorrencia}
-        intervaloRecorrencia={intervaloRecorrencia}
-        dataFimRecorrencia={dataFimRecorrencia}
-        onRecorrenteChange={setIsRecorrente}
-        onTipoChange={setTipoRecorrencia}
-        onIntervaloChange={setIntervaloRecorrencia}
-        onDataFimChange={setDataFimRecorrencia}
+    <form onSubmit={handleSubmit} className="space-y-1">
+      {/* Título - campo principal destacado */}
+      <input
+        type="text"
+        value={titulo}
+        onChange={(e) => setTitulo(e.target.value)}
+        placeholder={t('titlePlaceholder')}
+        required
+        className="w-full bg-transparent border-none text-white text-lg font-medium placeholder:text-gray-500 focus:outline-none focus:ring-0 py-2"
+        autoFocus
       />
 
-      {/* Sincronização com Google Calendar */}
-      {hasGoogleAuth && (
-        <div className="space-y-2 sm:space-y-3 p-3 sm:p-4 bg-zinc-800/30 border border-zinc-700 rounded-lg">
-          <div className="flex items-start space-x-2 sm:space-x-3">
-            <Checkbox
-              id="syncWithGoogle"
-              checked={syncWithGoogle}
-              disabled={!canSyncGoogle}
-              onCheckedChange={(checked) => {
-                if (!canSyncGoogle) {
-                  setShowUpgradeModal(true);
-                  return;
-                }
-                setSyncWithGoogle(checked as boolean);
-              }}
-              className="mt-0.5"
+      <div className="border-t border-zinc-800" />
+
+      {/* Lista de campos com ícones */}
+      <div className="space-y-0.5">
+        {/* Data e Hora */}
+        <div className="flex items-center gap-3 py-2.5 px-1 hover:bg-zinc-800/30 rounded-lg transition-colors">
+          <Clock className="w-5 h-5 text-gray-400 flex-shrink-0" />
+          <div className="flex items-center gap-2 flex-1 flex-wrap">
+            <input
+              type="date"
+              value={data}
+              onChange={(e) => setData(e.target.value)}
+              required
+              className="bg-zinc-800/50 border border-zinc-700 rounded-md px-2 py-1 text-sm text-white focus:border-purple-500 focus:outline-none"
             />
-            <div className="flex-1">
-              <Label
-                htmlFor="syncWithGoogle"
-                className={`text-xs sm:text-sm font-medium cursor-pointer flex items-center gap-2 ${
-                  !canSyncGoogle ? 'text-gray-500' : 'text-gray-300'
-                }`}
-              >
-                <svg className="w-3 h-3 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 0C5.383 0 0 5.383 0 12s5.383 12 12 12 12-5.383 12-12S18.617 0 12 0zm0 23C5.935 23 1 18.065 1 12S5.935 1 12 1s11 4.935 11 11-4.935 11-11 11z"/>
-                  <path d="M12 4.5c-4.136 0-7.5 3.364-7.5 7.5s3.364 7.5 7.5 7.5 7.5-3.364 7.5-7.5-3.364-7.5-7.5-7.5zm0 13.5c-3.309 0-6-2.691-6-6s2.691-6 6-6 6 2.691 6 6-2.691 6-6 6z"/>
-                </svg>
-                {t('sendToGoogleCalendar')}
-                {!canSyncGoogle && (
-                  <Crown className="w-3 h-3 sm:w-4 sm:h-4 text-purple-400" />
-                )}
-              </Label>
-              <p className="text-[10px] sm:text-xs text-gray-400 mt-1">
-                {!canSyncGoogle
-                  ? t('premiumFeatureOnly')
-                  : syncWithGoogle
-                  ? t('willBeSynced')
-                  : t('activateToAddGoogle')}
-              </p>
-            </div>
+            <input
+              type="time"
+              value={horaInicio}
+              onChange={(e) => setHoraInicio(e.target.value)}
+              required
+              className="bg-zinc-800/50 border border-zinc-700 rounded-md px-2 py-1 text-sm text-white focus:border-purple-500 focus:outline-none w-24"
+            />
+            <span className="text-gray-500">-</span>
+            <input
+              type="time"
+              value={horaFim}
+              onChange={(e) => setHoraFim(e.target.value)}
+              className="bg-zinc-800/50 border border-zinc-700 rounded-md px-2 py-1 text-sm text-white focus:border-purple-500 focus:outline-none w-24"
+            />
           </div>
         </div>
-      )}
+
+        {/* Categoria */}
+        <div className="flex items-center gap-3 py-2.5 px-1 hover:bg-zinc-800/30 rounded-lg transition-colors">
+          <Tag className="w-5 h-5 text-gray-400 flex-shrink-0" />
+          <div className="flex items-center gap-1.5 flex-wrap">
+            {categorias.map((cat) => (
+              <button
+                key={cat.value}
+                type="button"
+                onClick={() => setCategoria(cat.value)}
+                className={`
+                  px-2.5 py-1 rounded-full text-xs font-medium transition-all
+                  ${categoria === cat.value
+                    ? 'ring-2 ring-offset-1 ring-offset-zinc-900'
+                    : 'opacity-60 hover:opacity-100'
+                  }
+                `}
+                style={{
+                  backgroundColor: `${cat.cor}25`,
+                  color: cat.cor,
+                  '--tw-ring-color': categoria === cat.value ? cat.cor : undefined,
+                } as React.CSSProperties}
+              >
+                {cat.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Descrição */}
+        <div className="flex items-start gap-3 py-2.5 px-1 hover:bg-zinc-800/30 rounded-lg transition-colors">
+          <AlignLeft className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" />
+          <textarea
+            value={descricao}
+            onChange={(e) => setDescricao(e.target.value)}
+            placeholder={t('descriptionPlaceholder')}
+            rows={2}
+            className="flex-1 bg-transparent border-none text-sm text-white placeholder:text-gray-500 focus:outline-none resize-none"
+          />
+        </div>
+
+        {/* Recorrência */}
+        <div className="flex items-start gap-3 py-2.5 px-1 hover:bg-zinc-800/30 rounded-lg transition-colors">
+          <RefreshCw className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" />
+          <div className="flex-1 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-300">{t('recurringAppointment')}</span>
+              <button
+                type="button"
+                onClick={() => setIsRecorrente(!isRecorrente)}
+                className={`
+                  relative w-9 h-5 rounded-full transition-colors
+                  ${isRecorrente ? 'bg-purple-500' : 'bg-zinc-600'}
+                `}
+              >
+                <span
+                  className={`
+                    absolute top-0.5 w-4 h-4 bg-white rounded-full transition-transform
+                    ${isRecorrente ? 'left-[18px]' : 'left-0.5'}
+                  `}
+                />
+              </button>
+            </div>
+
+            {isRecorrente && (
+              <div className="space-y-2 pt-1">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {tiposRecorrencia.map((tipo) => (
+                    <button
+                      key={tipo.value}
+                      type="button"
+                      onClick={() => setTipoRecorrencia(tipo.value as TipoRecorrencia)}
+                      className={`
+                        px-2.5 py-1 rounded-md text-xs font-medium transition-all border
+                        ${tipoRecorrencia === tipo.value
+                          ? 'border-purple-500 bg-purple-500/20 text-purple-400'
+                          : 'border-zinc-700 text-gray-400 hover:border-zinc-600'
+                        }
+                      `}
+                    >
+                      {tipo.label}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="text-gray-400">{t('every')}</span>
+                  <input
+                    type="number"
+                    min="1"
+                    max="365"
+                    value={intervaloRecorrencia}
+                    onChange={(e) => setIntervaloRecorrencia(parseInt(e.target.value) || 1)}
+                    className="w-14 bg-zinc-800/50 border border-zinc-700 rounded-md px-2 py-1 text-white text-center focus:border-purple-500 focus:outline-none"
+                  />
+                  <span className="text-gray-400">
+                    {tipoRecorrencia === 'diario' && t('daily').toLowerCase()}
+                    {tipoRecorrencia === 'semanal' && t('weekly').toLowerCase()}
+                    {tipoRecorrencia === 'mensal' && t('monthly').toLowerCase()}
+                    {tipoRecorrencia === 'anual' && t('yearly').toLowerCase()}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <Calendar className="w-4 h-4 text-gray-500" />
+                  <span className="text-gray-400">{t('endsOn')}</span>
+                  <input
+                    type="date"
+                    value={dataFimRecorrencia}
+                    onChange={(e) => setDataFimRecorrencia(e.target.value)}
+                    className="bg-zinc-800/50 border border-zinc-700 rounded-md px-2 py-1 text-white focus:border-purple-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Google Calendar */}
+        {hasGoogleAuth && (
+          <div className="flex items-center gap-3 py-2.5 px-1 hover:bg-zinc-800/30 rounded-lg transition-colors">
+            <svg className="w-5 h-5 text-gray-400 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19.5 3h-15A1.5 1.5 0 003 4.5v15A1.5 1.5 0 004.5 21h15a1.5 1.5 0 001.5-1.5v-15A1.5 1.5 0 0019.5 3zm-9 15H6v-4.5h4.5V18zm0-6H6v-4.5h4.5V12zm6 6h-4.5v-4.5H18V18zm0-6h-4.5v-4.5H18V12z"/>
+            </svg>
+            <div className="flex items-center justify-between flex-1">
+              <div className="flex items-center gap-2">
+                <span className={`text-sm ${!canSyncGoogle ? 'text-gray-500' : 'text-gray-300'}`}>
+                  {t('sendToGoogleCalendar')}
+                </span>
+                {!canSyncGoogle && <Crown className="w-4 h-4 text-purple-400" />}
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  if (!canSyncGoogle) {
+                    setShowUpgradeModal(true);
+                    return;
+                  }
+                  setSyncWithGoogle(!syncWithGoogle);
+                }}
+                className={`
+                  relative w-9 h-5 rounded-full transition-colors
+                  ${syncWithGoogle && canSyncGoogle ? 'bg-purple-500' : 'bg-zinc-600'}
+                  ${!canSyncGoogle && 'opacity-50 cursor-not-allowed'}
+                `}
+              >
+                <span
+                  className={`
+                    absolute top-0.5 w-4 h-4 bg-white rounded-full transition-transform
+                    ${syncWithGoogle && canSyncGoogle ? 'left-[18px]' : 'left-0.5'}
+                  `}
+                />
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Aviso sobre recorrência ao editar */}
       {isEditMode && initialData?.isRecorrente && (
-        <div className="p-2 sm:p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
-          <p className="text-[10px] sm:text-xs text-yellow-400">
+        <div className="mx-1 p-2 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+          <p className="text-xs text-yellow-400">
             ⚠️ {t('recurringEditWarning')}
           </p>
         </div>
       )}
 
       {/* Botões */}
-      <div className="flex gap-2 sm:gap-3 pt-3 sm:pt-4">
+      <div className="flex justify-end gap-2 pt-3 border-t border-zinc-800 mt-3">
         <Button
           type="button"
-          variant="default"
+          variant="ghost"
           onClick={onClose}
-          className="flex-1 h-9 sm:h-10 text-sm sm:text-base"
+          className="px-4 h-9 text-sm text-gray-400 hover:text-white"
           disabled={loading}
         >
           {t('cancel')}
         </Button>
         <Button
           type="submit"
-          className="flex-1 bg-purple-600 hover:bg-purple-700 h-9 sm:h-10 text-sm sm:text-base"
+          className="px-6 h-9 text-sm bg-purple-600 hover:bg-purple-700 text-white rounded-full"
           disabled={loading}
         >
           {loading
