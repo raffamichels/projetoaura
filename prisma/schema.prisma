@@ -99,14 +99,16 @@ enum StatusHabito {
 
 
 model User {
-  id            String        @id @default(cuid())
-  email         String        @unique
-  name          String?
-  password      String
-  emailVerified DateTime?
-  image         String?
-  plano         PlanoUsuario  @default(FREE)
-  planoExpiraEm DateTime?
+  id                String        @id @default(cuid())
+  email             String        @unique
+  username          String?       @unique
+  usernameChangedAt DateTime?
+  name              String?
+  password          String
+  emailVerified     DateTime?
+  image             String?
+  plano             PlanoUsuario  @default(FREE)
+  planoExpiraEm     DateTime?
 
   // Integração Google Calendar
   googleAccessToken           String?     @db.Text

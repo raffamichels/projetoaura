@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import {
@@ -48,32 +49,47 @@ export function Sidebar({ isMobile = false, onNavigate }: SidebarProps) {
   return (
     <aside className={`${isMobile ? 'flex' : 'hidden lg:flex'} flex-col h-screen fixed left-0 top-0 border-r border-zinc-800 bg-zinc-900/50 backdrop-blur-xl transition-all duration-300 z-40 ${isCollapsed ? 'w-20' : 'w-64'}`}>
       {/* Logo */}
-      <div className="p-6 border-b border-zinc-800 bg-zinc-900 flex items-center justify-between">
-        <div className={`${isCollapsed ? 'hidden' : 'block'}`}>
-          <h1 className="text-2xl font-extrabold">
-            <span className="bg-gradient-to-r from-aura-400 via-blue-400 to-purple-400 bg-clip-text text-transparent drop-shadow-md">
-              Aura
-            </span>
-          </h1>
-          <p className="text-xs text-gray-500 mt-1">{t('personalManagement')}</p>
-        </div>
-        {isCollapsed && (
-          <h1 className="text-2xl font-extrabold mx-auto">
-            <span className="bg-gradient-to-r from-aura-400 via-blue-400 to-purple-400 bg-clip-text text-transparent drop-shadow-md">
-              A
-            </span>
-          </h1>
+      <div className={`border-b border-zinc-800 bg-zinc-900 flex items-center ${isCollapsed ? 'p-4 justify-center' : 'p-6 justify-between'}`}>
+        {!isCollapsed && (
+          <Link href="/dashboard" className="hover:opacity-80 transition-opacity">
+            <h1 className="text-2xl font-extrabold">
+              <span className="bg-gradient-to-r from-aura-400 via-blue-400 to-purple-400 bg-clip-text text-transparent drop-shadow-md">
+                Aura
+              </span>
+            </h1>
+            <p className="text-xs text-gray-500">{t('personalManagement')}</p>
+          </Link>
         )}
-        {!isMobile && (
+        {isCollapsed && (
+          <Link href="/dashboard" className="hover:opacity-80 transition-opacity">
+            <Image
+              src="/images/logo-sem-fundo.png"
+              alt="Aura Logo"
+              width={96}
+              height={96}
+              className="w-12 h-12 flex-shrink-0 object-contain"
+            />
+          </Link>
+        )}
+        {!isMobile && !isCollapsed && (
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="text-gray-400 hover:text-white transition-colors p-1 hover:bg-zinc-800 rounded"
-            aria-label={isCollapsed ? t('expandSidebar') : t('collapseSidebar')}
+            className="text-gray-400 hover:text-white transition-colors p-1 hover:bg-zinc-800 rounded flex-shrink-0"
+            aria-label={t('collapseSidebar')}
           >
-            {isCollapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
+            <ChevronLeft className="w-5 h-5" />
           </button>
         )}
       </div>
+      {!isMobile && isCollapsed && (
+        <button
+          onClick={() => setIsCollapsed(false)}
+          className="text-gray-400 hover:text-white transition-colors p-2 hover:bg-zinc-800 mx-auto mt-2"
+          aria-label={t('expandSidebar')}
+        >
+          <ChevronRight className="w-5 h-5" />
+        </button>
+      )}
 
 
       {/* Menu */}

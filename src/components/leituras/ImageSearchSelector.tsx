@@ -107,7 +107,7 @@ export function ImageSearchSelector({
   };
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       {buscando && (
         <div className="flex items-center gap-2 text-purple-400 text-sm">
           <Loader2 className="w-4 h-4 animate-spin" />
@@ -134,7 +134,7 @@ export function ImageSearchSelector({
       )}
 
       {mostrarSugestoes && (
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           <div className="flex items-center justify-between">
             <Label className="text-zinc-300">
               Selecione uma capa ({sugestoes.length} {sugestoes.length === 1 ? 'resultado' : 'resultados'})
@@ -156,7 +156,7 @@ export function ImageSearchSelector({
               <p className="text-xs text-zinc-500 mt-1">Tente um termo de busca diferente</p>
             </div>
           ) : (
-            <div className="grid grid-cols-3 gap-3 max-h-[400px] overflow-y-auto p-1">
+            <div className="grid grid-cols-4 gap-2 max-h-45 overflow-y-auto p-1">
               {sugestoes.map((sugestao) => (
                 <button
                   key={sugestao.id}
@@ -206,12 +206,12 @@ export function ImageSearchSelector({
       {/* Preview da capa atual */}
       {capaAtual && (
         <div>
-          <Label className="text-zinc-300">Preview da Capa Selecionada</Label>
-          <div className="mt-2 relative inline-block">
+          <Label className="text-zinc-300 text-xs">Capa Selecionada</Label>
+          <div className="mt-1 relative inline-block">
             <img
               src={capaAtual}
               alt="Preview da capa"
-              className="w-32 h-48 object-cover rounded-lg border border-zinc-700"
+              className="w-20 h-28 object-cover rounded-md border border-zinc-700"
             />
             <Button
               type="button"

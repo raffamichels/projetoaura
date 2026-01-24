@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
-import { registerSchema } from '@/lib/validations/auth';
+import { registerSchema, RESERVED_USERNAMES } from '@/lib/validations/auth';
 import { generateVerificationToken } from '@/lib/tokens';
 import { sendVerificationEmail } from '@/lib/email/emailService';
 import { registerRateLimiter, getClientIP, rateLimitResponse } from '@/lib/rateLimit';
@@ -13,6 +13,11 @@ function sanitizeName(name: string): string {
     .replace(/<[^>]*>/g, '') // Remove tags HTML
     .replace(/[<>\"'&]/g, '') // Remove caracteres especiais
     .trim();
+}
+
+// Sanitizar username (já normalizado pelo Zod, mas garantir)
+function sanitizeUsername(username: string): string {
+  return username.toLowerCase().trim();
 }
 
 export async function POST(req: NextRequest) {
@@ -38,18 +43,39 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { name, email, password } = validation.data;
+    const { name, email, password, username } = validation.data;
 
-    // 4. Sanitizar nome para prevenir XSS
+    // 4. Sanitizar dados para prevenir XSS
     const sanitizedName = sanitizeName(name);
+    const sanitizedUsername = sanitizeUsername(username);
     const normalizedEmail = email.toLowerCase();
 
-    // 5. Verificar se email já existe
+    // 5. Verificar se username é reservado (dupla verificação)
+    if (RESERVED_USERNAMES.includes(sanitizedUsername)) {
+      return NextResponse.json(
+        { error: 'Este username não está disponível' },
+        { status: 400 }
+      );
+    }
+
+    // 6. Verificar se username já existe
+    const existingUsername = await prisma.user.findUnique({
+      where: { username: sanitizedUsername },
+    });
+
+    if (existingUsername) {
+      return NextResponse.json(
+        { error: 'Este username já está em uso' },
+        { status: 400 }
+      );
+    }
+
+    // 7. Verificar se email já existe
     const existingUser = await prisma.user.findUnique({
       where: { email: normalizedEmail },
     });
 
-    // 6. Resposta genérica para prevenir enumeração de usuários
+    // 8. Resposta genérica para prevenir enumeração de usuários
     // Mesmo status e mensagem independente se email existe ou não
     const genericSuccessMessage = 'Se o email for válido, você receberá instruções para ativar sua conta.';
 
@@ -74,25 +100,27 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 7. Criptografar senha
+    // 9. Criptografar senha
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // 8. Criar usuário (emailVerified = null)
+    // 10. Criar usuário (emailVerified = null)
     await prisma.user.create({
       data: {
         name: sanitizedName,
+        username: sanitizedUsername,
         email: normalizedEmail,
         password: hashedPassword,
+        usernameChangedAt: new Date(),
       },
     });
 
-    // 9. Gerar token de verificação
+    // 11. Gerar token de verificação
     const verificationToken = await generateVerificationToken(normalizedEmail);
 
-    // 10. Enviar email de verificação
+    // 12. Enviar email de verificação
     await sendVerificationEmail(normalizedEmail, verificationToken.token, sanitizedName);
 
-    // 11. Retornar mesma mensagem genérica de sucesso
+    // 13. Retornar mesma mensagem genérica de sucesso
     return NextResponse.json(
       { message: genericSuccessMessage },
       { status: 200 }

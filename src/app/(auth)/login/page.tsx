@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -42,7 +43,7 @@ export default function LoginPage() {
 };
 
   return (
-    <div className="min-h-screen relative overflow-hidden flex items-center justify-center p-3 sm:p-4" style={{
+    <div className="min-h-screen md:h-screen relative overflow-hidden flex items-center justify-center p-3 sm:p-4" style={{
       background: 'linear-gradient(135deg, #0f0f0f 0%, #0a0a0a 50%, #0f0f0f 100%)'
     }}>
       {/* Subtle noise texture */}
@@ -71,18 +72,20 @@ export default function LoginPage() {
       {/* Conteúdo */}
       <div className="relative z-10 w-full max-w-md">
         {/* Logo */}
-        <div className="text-center mb-6">
-          <h1 className="text-4xl sm:text-5xl font-bold mb-2 tracking-tight">
-            <span className="bg-gradient-to-r from-purple-400 via-fuchsia-400 to-blue-400 bg-clip-text text-transparent animate-gradient">
-              Aura
-            </span>
-          </h1>
-          <p className="text-gray-400 text-xs sm:text-sm font-light">Transforme sua rotina em conquistas</p>
+        <div className="text-center mb-2">
+          <Image
+            src="/images/logo-sem-fundo.png"
+            alt="Aura Logo"
+            width={280}
+            height={280}
+            className="w-56 h-56 sm:w-64 sm:h-64 md:w-40 md:h-40 lg:w-44 lg:h-44 mx-auto -mb-16 md:-mb-10"
+          />
+          <p className="text-gray-400 text-sm sm:text-base font-light">Transforme sua rotina em conquistas</p>
         </div>
 
         {/* Card de Login - Glassmorphism */}
-        <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-5 sm:p-6 shadow-2xl shadow-purple-900/20 hover:shadow-purple-800/30 transition-all duration-300">
-          <div className="mb-5">
+        <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-5 sm:p-6 md:p-5 shadow-2xl shadow-purple-900/20 hover:shadow-purple-800/30 transition-all duration-300">
+          <div className="mb-5 md:mb-4">
             <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">Bem-vindo de volta</h2>
             <p className="text-gray-400 text-xs sm:text-sm">Continue sua jornada de produtividade</p>
           </div>
@@ -168,7 +171,7 @@ export default function LoginPage() {
           </form>
 
           {/* Divider */}
-          <div className="relative my-5">
+          <div className="relative my-5 md:my-4">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-white/10"></div>
             </div>
@@ -209,7 +212,7 @@ export default function LoginPage() {
           </Button>
 
           {/* Link para Registro */}
-          <div className="text-center mt-5">
+          <div className="text-center mt-5 md:mt-4">
             <p className="text-xs sm:text-sm text-gray-400">
               Novo por aqui?{' '}
               <Link
@@ -224,7 +227,7 @@ export default function LoginPage() {
         </div>
 
         {/* Footer */}
-        <div className="text-center mt-4 text-xs text-gray-500">
+        <div className="text-center mt-4 md:mt-2 text-xs text-gray-500 md:hidden">
           <p>© 2025 Aura. Feito com dedicação para sua produtividade.</p>
         </div>
       </div>

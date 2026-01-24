@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
@@ -21,7 +21,10 @@ import {
   Laptop,
   Camera,
   Loader2,
-  Trash2
+  Trash2,
+  AtSign,
+  Check,
+  X
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -32,6 +35,9 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { PlanoManager } from '@/components/planos/PlanoManager';
 import { cn } from '@/lib/utils';
+import { ImageCropModal } from '@/components/settings/ImageCropModal';
+import { ChangePasswordModal } from '@/components/settings/ChangePasswordModal';
+import { DeleteAccountModal } from '@/components/settings/DeleteAccountModal';
 
 // --- Types ---
 type SettingsTab = 'account' | 'appearance' | 'notifications' | 'privacy' | 'billing';
@@ -98,6 +104,12 @@ export default function SettingsPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
 
+  // Modal states
+  const [imageToCrop, setImageToCrop] = useState<string | null>(null);
+  const [showCropModal, setShowCropModal] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
   // States
   const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('dark');
 
@@ -105,9 +117,138 @@ export default function SettingsPage() {
   const [formData, setFormData] = useState({
     name: session?.user?.name || '',
     email: session?.user?.email || '',
-    username: 'jdoe',
     phone: '',
   });
+
+  // Username state
+  const [newUsername, setNewUsername] = useState('');
+  const [usernameError, setUsernameError] = useState('');
+  const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
+  const [checkingUsername, setCheckingUsername] = useState(false);
+  const [updatingUsername, setUpdatingUsername] = useState(false);
+  const [canChangeUsername, setCanChangeUsername] = useState(true);
+  const [nextChangeDate, setNextChangeDate] = useState<Date | null>(null);
+
+  // Verificar quando pode alterar username
+  useEffect(() => {
+    const checkCanChange = async () => {
+      try {
+        const response = await fetch('/api/v1/perfil');
+        const data = await response.json();
+
+        if (data.data?.usernameChangedAt) {
+          const lastChange = new Date(data.data.usernameChangedAt);
+          const nextChange = new Date(lastChange.getTime() + 30 * 24 * 60 * 60 * 1000);
+          const now = new Date();
+
+          if (now < nextChange) {
+            setCanChangeUsername(false);
+            setNextChangeDate(nextChange);
+          }
+        }
+      } catch (error) {
+        console.error('Erro ao verificar data de alteração:', error);
+      }
+    };
+
+    if (session?.user?.username) {
+      checkCanChange();
+    }
+  }, [session?.user?.username]);
+
+  // Validação de formato de username
+  const validateUsernameFormat = (value: string): string => {
+    if (value.length === 0) return '';
+    if (value.length < 3) return 'Mínimo 3 caracteres';
+    if (value.length > 30) return 'Máximo 30 caracteres';
+    if (!/^[a-zA-Z0-9_.]+$/.test(value)) return 'Apenas letras, números, _ e .';
+    if (value.startsWith('.') || value.endsWith('.')) return 'Não pode começar/terminar com ponto';
+    if (value.includes('..')) return 'Pontos consecutivos não permitidos';
+    return '';
+  };
+
+  // Verificar disponibilidade de username
+  const checkUsernameAvailability = useCallback(async (value: string) => {
+    if (!value || value.length < 3 || validateUsernameFormat(value)) {
+      setUsernameAvailable(null);
+      return;
+    }
+
+    setCheckingUsername(true);
+    try {
+      const res = await fetch(`/api/v1/username/check?username=${encodeURIComponent(value)}`);
+      const data = await res.json();
+      setUsernameAvailable(data.available);
+      if (!data.available && data.message) {
+        setUsernameError(data.message);
+      }
+    } catch {
+      setUsernameAvailable(null);
+    } finally {
+      setCheckingUsername(false);
+    }
+  }, []);
+
+  // Debounce para verificação de username
+  useEffect(() => {
+    const formatError = validateUsernameFormat(newUsername);
+    setUsernameError(formatError);
+
+    if (formatError || newUsername.length < 3) {
+      setUsernameAvailable(null);
+      return;
+    }
+
+    // Verificar se é igual ao atual
+    if (newUsername === session?.user?.username) {
+      setUsernameError('O novo username deve ser diferente do atual');
+      setUsernameAvailable(null);
+      return;
+    }
+
+    const timeoutId = setTimeout(() => {
+      checkUsernameAvailability(newUsername);
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [newUsername, checkUsernameAvailability, session?.user?.username]);
+
+  const handleNewUsernameChange = (value: string) => {
+    const normalized = value.toLowerCase().replace(/\s/g, '');
+    setNewUsername(normalized);
+  };
+
+  const handleUpdateUsername = async () => {
+    if (!canChangeUsername || !usernameAvailable || usernameError) {
+      return;
+    }
+
+    setUpdatingUsername(true);
+    try {
+      const response = await fetch('/api/v1/username/update', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: newUsername }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        await update({ username: newUsername });
+        setNewUsername('');
+        setUsernameAvailable(null);
+        setCanChangeUsername(false);
+        setNextChangeDate(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000));
+        toast.success('Username atualizado com sucesso!');
+      } else {
+        toast.error(data.error || 'Erro ao atualizar username');
+      }
+    } catch {
+      toast.error('Erro ao atualizar username');
+    } finally {
+      setUpdatingUsername(false);
+    }
+  };
 
   // Helpers
   const getInitials = (name?: string | null) => {
@@ -141,16 +282,28 @@ export default function SettingsPage() {
     fileInputRef.current?.click();
   };
 
-  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Criar URL da imagem para o modal de crop
+    const imageUrl = URL.createObjectURL(file);
+    setImageToCrop(imageUrl);
+    setShowCropModal(true);
+
+    // Limpar o input para permitir selecionar a mesma imagem novamente
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handleCropComplete = async (croppedBlob: Blob) => {
     setUploadingAvatar(true);
     const loadingToast = toast.loading('Enviando foto...');
 
     try {
       const formDataUpload = new FormData();
-      formDataUpload.append('avatar', file);
+      formDataUpload.append('avatar', croppedBlob, 'avatar.jpg');
 
       const response = await fetch('/api/v1/perfil/avatar', {
         method: 'POST',
@@ -169,6 +322,11 @@ export default function SettingsPage() {
       toast.error('Erro ao enviar foto. Tente novamente.', { id: loadingToast });
     } finally {
       setUploadingAvatar(false);
+      // Limpar URL da imagem
+      if (imageToCrop) {
+        URL.revokeObjectURL(imageToCrop);
+        setImageToCrop(null);
+      }
     }
   };
 
@@ -336,15 +494,6 @@ export default function SettingsPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="username" className="text-zinc-300">Username</Label>
-                      <Input
-                        id="username"
-                        value={formData.username}
-                        onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                        className="bg-zinc-950/50 border-zinc-800 focus-visible:ring-aura-500/50 text-zinc-100"
-                      />
-                    </div>
-                    <div className="space-y-2">
                       <Label htmlFor="email" className="text-zinc-300">Email Principal</Label>
                       <div className="relative">
                         <Mail className="absolute left-3 top-2.5 h-4 w-4 text-zinc-500" />
@@ -378,36 +527,88 @@ export default function SettingsPage() {
                   </div>
                 </SettingsCard>
 
-                <SectionHeader title="Segurança" description="Gerencie suas credenciais e acesso." />
+                {/* Username Section */}
+                <SettingsCard>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-lg font-medium text-zinc-100 flex items-center gap-2">
+                          <AtSign className="w-5 h-5" />
+                          Username
+                        </h3>
+                        <p className="text-sm text-zinc-400 mt-1">Seu identificador único no Aura</p>
+                      </div>
+                      {session?.user?.username && (
+                        <Badge variant="outline" className="border-zinc-700 text-zinc-300 gap-1 px-3">
+                          @{session.user.username}
+                        </Badge>
+                      )}
+                    </div>
 
-                <SettingsCard className="space-y-1">
-                   <SettingRow
-                    label="Senha"
-                    desc="Última alteração há 3 meses."
-                    action={<Button variant="outline" size="sm" className="border-zinc-700 text-zinc-300">Redefinir</Button>}
-                   />
-                   <Separator className="bg-zinc-800/50" />
-                   <SettingRow
-                    label="Autenticação em Dois Fatores"
-                    desc="Adicione uma camada extra de segurança à sua conta."
-                    action={<Badge variant="outline" className="bg-zinc-900 border-zinc-700 text-zinc-400">Em Breve</Badge>}
-                   />
-                </SettingsCard>
+                    <Separator className="bg-zinc-800" />
 
-                {/* Danger Zone */}
-                <div className="pt-6">
-                  <div className="bg-red-950/10 border border-red-900/30 rounded-xl p-6">
-                    <h3 className="text-red-400 font-medium flex items-center gap-2 mb-2">
-                      <AlertCircle className="w-4 h-4" /> Zona de Perigo
-                    </h3>
-                    <p className="text-sm text-red-400/70 mb-4">
-                      A exclusão da sua conta é irreversível. Todos os seus dados serão perdidos.
-                    </p>
-                    <Button variant="ghost" className="text-red-400 hover:text-red-300 hover:bg-red-950/30 w-full sm:w-auto justify-start px-0 sm:px-4">
-                      Excluir minha conta
-                    </Button>
+                    {!canChangeUsername ? (
+                      <div className="flex items-center gap-3 p-4 bg-zinc-900/50 rounded-xl border border-zinc-800">
+                        <AlertCircle className="w-5 h-5 text-yellow-500 flex-shrink-0" />
+                        <div>
+                          <p className="text-sm text-zinc-300">
+                            Você poderá alterar seu username novamente em:
+                          </p>
+                          <p className="text-sm font-medium text-zinc-100">
+                            {nextChangeDate?.toLocaleDateString('pt-BR', {
+                              day: '2-digit',
+                              month: 'long',
+                              year: 'numeric',
+                            })}
+                          </p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        <Label className="text-zinc-300">Novo username</Label>
+                        <div className="flex gap-3">
+                          <div className="relative flex-1">
+                            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500">@</div>
+                            <Input
+                              value={newUsername}
+                              onChange={(e) => handleNewUsernameChange(e.target.value)}
+                              placeholder="novo_username"
+                              className="pl-7 pr-10 bg-zinc-950/50 border-zinc-800 text-zinc-100"
+                            />
+                            <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                              {checkingUsername && <Loader2 className="w-4 h-4 text-zinc-400 animate-spin" />}
+                              {!checkingUsername && usernameAvailable === true && <Check className="w-4 h-4 text-green-500" />}
+                              {!checkingUsername && usernameAvailable === false && <X className="w-4 h-4 text-red-500" />}
+                            </div>
+                          </div>
+                          <Button
+                            onClick={handleUpdateUsername}
+                            disabled={updatingUsername || !usernameAvailable || !!usernameError}
+                            className="bg-white text-black hover:bg-zinc-200"
+                          >
+                            {updatingUsername ? (
+                              <>
+                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                Salvando...
+                              </>
+                            ) : (
+                              'Alterar'
+                            )}
+                          </Button>
+                        </div>
+                        {usernameError && (
+                          <p className="text-xs text-red-400">{usernameError}</p>
+                        )}
+                        {!usernameError && usernameAvailable === true && (
+                          <p className="text-xs text-green-400">Username disponível!</p>
+                        )}
+                        <p className="text-xs text-zinc-500">
+                          Atenção: Após alterar, você deverá aguardar 30 dias para alterar novamente.
+                        </p>
+                      </div>
+                    )}
                   </div>
-                </div>
+                </SettingsCard>
               </div>
             )}
 
@@ -483,20 +684,54 @@ export default function SettingsPage() {
             {/* --- PRIVACY TAB --- */}
             {activeTab === 'privacy' && (
               <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <SectionHeader title="Privacidade" description="Gerencie como seus dados são usados." />
+                <SectionHeader title="Segurança" description="Gerencie suas credenciais e acesso." />
 
-                <SettingsCard className="flex flex-col items-center justify-center py-12 text-center">
-                  <div className="p-4 rounded-full bg-zinc-800/50 mb-4">
-                    <Shield className="w-8 h-8 text-zinc-500" />
-                  </div>
-                  <h3 className="text-lg font-medium text-zinc-200 mb-2">Em Breve</h3>
-                  <p className="text-sm text-zinc-500 max-w-sm">
-                    As configurações de privacidade estarão disponíveis em uma atualização futura.
-                  </p>
-                  <Badge variant="outline" className="mt-4 bg-zinc-900 border-zinc-700 text-zinc-400">
-                    Em Desenvolvimento
-                  </Badge>
+                <SettingsCard className="space-y-1">
+                   <SettingRow
+                    label="Senha"
+                    desc="Altere sua senha de acesso."
+                    action={
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="border-zinc-700 text-zinc-300"
+                        onClick={() => setShowPasswordModal(true)}
+                      >
+                        Redefinir
+                      </Button>
+                    }
+                   />
+                   <Separator className="bg-zinc-800/50" />
+                   <SettingRow
+                    label="Autenticação em Dois Fatores"
+                    desc="Adicione uma camada extra de segurança à sua conta."
+                    action={<Badge variant="outline" className="bg-zinc-900 border-zinc-700 text-zinc-400">Em Breve</Badge>}
+                   />
                 </SettingsCard>
+
+                {/* Danger Zone - Discreto */}
+                <div className="pt-6">
+                  <div className="border border-zinc-800 rounded-xl p-5">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      <div>
+                        <h3 className="text-sm font-medium text-zinc-400 mb-1">
+                          Encerrar conta
+                        </h3>
+                        <p className="text-xs text-zinc-500">
+                          Esta ação é permanente e não pode ser desfeita.
+                        </p>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setShowDeleteModal(true)}
+                        className="text-zinc-500 hover:text-zinc-400 hover:bg-zinc-900 text-xs"
+                      >
+                        Excluir conta
+                      </Button>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
 
@@ -520,6 +755,32 @@ export default function SettingsPage() {
           </main>
         </div>
       </div>
+
+      {/* Modais */}
+      {imageToCrop && (
+        <ImageCropModal
+          isOpen={showCropModal}
+          onClose={() => {
+            setShowCropModal(false);
+            if (imageToCrop) {
+              URL.revokeObjectURL(imageToCrop);
+              setImageToCrop(null);
+            }
+          }}
+          imageSrc={imageToCrop}
+          onCropComplete={handleCropComplete}
+        />
+      )}
+
+      <ChangePasswordModal
+        isOpen={showPasswordModal}
+        onClose={() => setShowPasswordModal(false)}
+      />
+
+      <DeleteAccountModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+      />
     </div>
   );
 }

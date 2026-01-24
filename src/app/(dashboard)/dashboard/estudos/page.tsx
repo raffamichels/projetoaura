@@ -660,98 +660,181 @@ export default function EstudosPage() {
 
       {/* Modal Nova Anotação */}
       <Dialog open={modalAnotacaoAberto} onOpenChange={handleFecharModalAnotacao}>
-        <DialogContent className="bg-zinc-900 border-zinc-800 max-w-4xl h-[90vh] max-h-[700px] flex flex-col">
-          <DialogHeader className="shrink-0">
-            <DialogTitle className="text-white">{t('newNoteTitle')}</DialogTitle>
+        <DialogContent className={`bg-zinc-900 border-zinc-800 text-white p-6 transition-all ${tipoAnotacao === 'ia' ? 'max-w-4xl' : 'max-w-xl'}`}>
+          <DialogHeader>
+            <DialogTitle>{t('newNoteTitle')}</DialogTitle>
           </DialogHeader>
 
-          {/* Tabs para selecionar tipo */}
-          <div className="flex gap-2 mb-4 shrink-0">
-            <button
-              onClick={() => setTipoAnotacao('livre')}
-              className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors ${
-                tipoAnotacao === 'livre'
-                  ? 'bg-purple-600 text-white'
-                  : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
-              }`}
-            >
-              <StickyNote className="w-4 h-4 inline-block mr-2" />
-              {t('freeNote')}
-            </button>
-            <div className="relative flex-1">
-              {/* Coroa indicando recurso premium - aparece apenas para usuários FREE */}
-              {!isPremium && (
-                <Crown className="w-3 h-3 text-yellow-400 absolute -top-1 -right-1 z-10" />
-              )}
-              <button
-                onClick={handleAnotacaoComIAClick}
-                className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${
-                  tipoAnotacao === 'ia'
-                    ? 'bg-purple-600 text-white'
-                    : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
-                }`}
-                title={!isPremium ? t('premiumClickToUpgrade') : t('aiNote')}
-              >
-                <Sparkles className="w-4 h-4 inline-block mr-2" />
-                {t('aiNote')}
-              </button>
-            </div>
-          </div>
+          <div className="space-y-1">
+            {/* Título - campo principal destacado */}
+            <input
+              type="text"
+              value={tipoAnotacao === 'ia' && anotacaoGeradaIA ? anotacaoGeradaIA.title : novaAnotacao.titulo}
+              onChange={(e) => {
+                if (tipoAnotacao === 'ia' && anotacaoGeradaIA) {
+                  setAnotacaoGeradaIA({ ...anotacaoGeradaIA, title: e.target.value });
+                } else {
+                  setNovaAnotacao({ ...novaAnotacao, titulo: e.target.value });
+                }
+              }}
+              placeholder={t('titlePlaceholder')}
+              className="w-full bg-transparent border-none text-white text-lg font-medium placeholder:text-zinc-500 focus:outline-none focus:ring-0 py-2"
+              autoFocus
+            />
 
-          {/* Conteúdo baseado no tipo selecionado */}
-          {tipoAnotacao === 'livre' ? (
-            <div className="flex flex-col flex-1 min-h-0">
-              <div className="flex-1 overflow-y-auto space-y-4 pr-2">
-                <div>
-                  <Label htmlFor="titulo-anotacao" className="text-zinc-300">{t('title')}</Label>
-                  <Input
-                    id="titulo-anotacao"
-                    autoComplete="off"
-                    value={novaAnotacao.titulo}
-                    onChange={(e) => setNovaAnotacao({ ...novaAnotacao, titulo: e.target.value })}
-                    className="bg-zinc-800 border-zinc-700 text-white mt-1"
-                    placeholder={t('titlePlaceholder')}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="conteudo-anotacao" className="text-zinc-300">{t('content')}</Label>
-                  <textarea
-                    id="conteudo-anotacao"
-                    autoComplete="off"
-                    value={novaAnotacao.conteudo}
-                    onChange={(e) => setNovaAnotacao({ ...novaAnotacao, conteudo: e.target.value })}
-                    className="w-full bg-zinc-800 border-zinc-700 text-white mt-1 rounded-md p-3 min-h-[120px] border resize-none"
-                    placeholder={t('contentPlaceholder')}
-                  />
-                </div>
-                <div>
-                  <Label className="text-zinc-300">{t('color')}</Label>
-                  <div className="flex gap-2 mt-2 flex-wrap">
-                    {cores.map((cor) => (
-                      <button
-                        key={cor}
-                        onClick={() => setNovaAnotacao({ ...novaAnotacao, cor })}
-                        className={`w-8 h-8 rounded-full ${
-                          novaAnotacao.cor === cor ? 'ring-2 ring-white ring-offset-2 ring-offset-zinc-900' : ''
-                        }`}
-                        style={{ backgroundColor: cor }}
-                      />
-                    ))}
+            <div className="border-t border-zinc-800" />
+
+            <div className="space-y-0.5">
+              {/* Tipo de anotação */}
+              <div className="flex items-center gap-3 py-2.5 px-1 hover:bg-zinc-800/30 rounded-lg transition-colors">
+                <StickyNote className="w-5 h-5 text-zinc-400 shrink-0" />
+                <div className="flex items-center justify-between flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-zinc-300">{t('aiNote')}</span>
+                    {!isPremium && <Crown className="w-3 h-3 text-yellow-400" />}
                   </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!isPremium && tipoAnotacao === 'livre') {
+                        setShowUpgradeModal(true);
+                        return;
+                      }
+                      setTipoAnotacao(tipoAnotacao === 'livre' ? 'ia' : 'livre');
+                    }}
+                    className={`relative w-9 h-5 rounded-full transition-colors ${tipoAnotacao === 'ia' ? 'bg-purple-500' : 'bg-zinc-600'}`}
+                  >
+                    <span className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition-transform ${tipoAnotacao === 'ia' ? 'left-4.5' : 'left-0.5'}`} />
+                  </button>
                 </div>
               </div>
-              <div className="flex gap-2 justify-end pt-4 shrink-0 border-t border-zinc-800 mt-4">
+
+              {/* Conteúdo - modo livre */}
+              {tipoAnotacao === 'livre' && (
+                <div className="flex items-start gap-3 py-2.5 px-1 hover:bg-zinc-800/30 rounded-lg transition-colors">
+                  <FileText className="w-5 h-5 text-zinc-400 shrink-0 mt-0.5" />
+                  <textarea
+                    value={novaAnotacao.conteudo}
+                    onChange={(e) => setNovaAnotacao({ ...novaAnotacao, conteudo: e.target.value })}
+                    placeholder={t('contentPlaceholder')}
+                    rows={4}
+                    className="flex-1 bg-transparent border-none text-sm text-white placeholder:text-zinc-500 focus:outline-none resize-none"
+                  />
+                </div>
+              )}
+
+              {/* Conteúdo - modo IA com duas colunas */}
+              {tipoAnotacao === 'ia' && (
+                <>
+                  {erroIA && (
+                    <div className="mx-1 p-2 bg-red-500/10 border border-red-500/50 rounded-lg text-red-400 text-sm">
+                      {erroIA}
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-2.5 px-1">
+                    {/* Coluna esquerda - Texto de entrada */}
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 text-zinc-400">
+                        <Sparkles className="w-4 h-4" />
+                        <span className="text-xs font-medium">{t('rawText')}</span>
+                      </div>
+                      <textarea
+                        value={textoOriginalIA}
+                        onChange={(e) => setTextoOriginalIA(e.target.value)}
+                        placeholder={t('rawTextPlaceholder')}
+                        className="w-full bg-zinc-800/50 border border-zinc-700 rounded-lg p-3 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-purple-500 resize-none min-h-[200px]"
+                        disabled={gerandoAnotacao}
+                      />
+                    </div>
+
+                    {/* Coluna direita - Texto de saída */}
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 text-zinc-400">
+                        <FileText className="w-4 h-4" />
+                        <span className="text-xs font-medium">{t('structuredNote')}</span>
+                      </div>
+                      {anotacaoGeradaIA ? (
+                        <textarea
+                          value={anotacaoGeradaIA.content}
+                          onChange={(e) => setAnotacaoGeradaIA({ ...anotacaoGeradaIA, content: e.target.value })}
+                          placeholder={t('generatedContent')}
+                          className="w-full bg-zinc-800/50 border border-zinc-700 rounded-lg p-3 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-purple-500 resize-none min-h-[200px]"
+                        />
+                      ) : (
+                        <div className="w-full bg-zinc-800/30 border border-zinc-700/50 rounded-lg p-3 min-h-[200px] flex items-center justify-center">
+                          <p className="text-sm text-zinc-500 italic text-center">
+                            {t('structuredNotePreview')}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* Cor */}
+              <div className="flex items-center gap-3 py-2.5 px-1 hover:bg-zinc-800/30 rounded-lg transition-colors">
+                <div
+                  className="w-5 h-5 rounded-full shrink-0"
+                  style={{ backgroundColor: novaAnotacao.cor }}
+                />
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {cores.map((cor) => (
+                    <button
+                      key={cor}
+                      type="button"
+                      onClick={() => setNovaAnotacao({ ...novaAnotacao, cor })}
+                      className={`w-6 h-6 rounded-full transition-all ${
+                        novaAnotacao.cor === cor ? 'ring-2 ring-white ring-offset-1 ring-offset-zinc-900' : 'opacity-60 hover:opacity-100'
+                      }`}
+                      style={{ backgroundColor: cor }}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Botões */}
+            <div className="flex justify-end gap-2 pt-3 border-t border-zinc-800 mt-3">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => handleFecharModalAnotacao(false)}
+                className="px-4 h-9 text-sm text-zinc-400 hover:text-white"
+                disabled={criandoAnotacao || gerandoAnotacao}
+              >
+                {t('cancel')}
+              </Button>
+              {tipoAnotacao === 'ia' && !anotacaoGeradaIA ? (
                 <Button
-                  variant="default"
-                  onClick={() => handleFecharModalAnotacao(false)}
-                  className="border-zinc-700"
+                  type="button"
+                  onClick={gerarAnotacaoComIA}
+                  disabled={!textoOriginalIA.trim() || gerandoAnotacao}
+                  className="px-6 h-9 text-sm bg-purple-600 hover:bg-purple-700 text-white rounded-full font-medium"
                 >
-                  {t('cancel')}
+                  {gerandoAnotacao ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      {t('organizing')}
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-4 h-4 mr-2" />
+                      {t('organize')}
+                    </>
+                  )}
                 </Button>
+              ) : (
                 <Button
+                  type="button"
                   onClick={criarAnotacao}
-                  disabled={!novaAnotacao.titulo || criandoAnotacao}
-                  className="bg-purple-600 hover:bg-purple-700"
+                  disabled={
+                    (tipoAnotacao === 'livre' && !novaAnotacao.titulo) ||
+                    (tipoAnotacao === 'ia' && anotacaoGeradaIA && !anotacaoGeradaIA.title) ||
+                    criandoAnotacao
+                  }
+                  className="px-6 h-9 text-sm bg-purple-600 hover:bg-purple-700 text-white rounded-full font-medium"
                 >
                   {criandoAnotacao ? (
                     <>
@@ -762,127 +845,9 @@ export default function EstudosPage() {
                     t('createNote')
                   )}
                 </Button>
-              </div>
+              )}
             </div>
-          ) : (
-            <div className="flex flex-col flex-1 min-h-0">
-              <div className="flex-1 overflow-y-auto space-y-4 pr-2">
-                <p className="text-zinc-400 text-sm">
-                  {t('aiNoteDescription')}
-                </p>
-
-                {erroIA && (
-                  <div className="bg-red-500/10 border border-red-500/50 rounded-lg p-3 text-red-400 text-sm">
-                    {erroIA}
-                  </div>
-                )}
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Coluna esquerda - Texto original */}
-                  <div>
-                    <Label className="text-zinc-300">{t('rawText')}</Label>
-                    <textarea
-                      autoComplete="off"
-                      value={textoOriginalIA}
-                      onChange={(e) => setTextoOriginalIA(e.target.value)}
-                      className="w-full bg-zinc-800 border-zinc-700 text-white mt-1 rounded-md p-3 min-h-[200px] border resize-none"
-                      placeholder={t('rawTextPlaceholder')}
-                      disabled={gerandoAnotacao}
-                    />
-                  </div>
-
-                  {/* Coluna direita - Anotação gerada */}
-                  <div>
-                    <Label className="text-zinc-300">{t('structuredNote')}</Label>
-                    {anotacaoGeradaIA ? (
-                      <div className="mt-1 space-y-2">
-                        <Input
-                          autoComplete="off"
-                          value={anotacaoGeradaIA.title}
-                          onChange={(e) => setAnotacaoGeradaIA({ ...anotacaoGeradaIA, title: e.target.value })}
-                          className="bg-zinc-800 border-zinc-700 text-white"
-                          placeholder={t('noteTitle')}
-                        />
-                        <textarea
-                          autoComplete="off"
-                          value={anotacaoGeradaIA.content}
-                          onChange={(e) => setAnotacaoGeradaIA({ ...anotacaoGeradaIA, content: e.target.value })}
-                          className="w-full bg-zinc-800 border-zinc-700 text-white rounded-md p-3 min-h-[158px] border resize-none"
-                          placeholder={t('generatedContent')}
-                        />
-                      </div>
-                    ) : (
-                      <div className="w-full bg-zinc-800/50 border-zinc-700 text-zinc-500 mt-1 rounded-md p-3 min-h-[200px] border flex items-center justify-center text-center">
-                        <p className="text-sm italic">
-                          {t('structuredNotePreview')}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <div>
-                  <Label className="text-zinc-300">{t('color')}</Label>
-                  <div className="flex gap-2 mt-2 flex-wrap">
-                    {cores.map((cor) => (
-                      <button
-                        key={cor}
-                        onClick={() => setNovaAnotacao({ ...novaAnotacao, cor })}
-                        className={`w-8 h-8 rounded-full ${
-                          novaAnotacao.cor === cor ? 'ring-2 ring-white ring-offset-2 ring-offset-zinc-900' : ''
-                        }`}
-                        style={{ backgroundColor: cor }}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex gap-2 justify-end pt-4 shrink-0 border-t border-zinc-800 mt-4">
-                <Button
-                  variant="default"
-                  onClick={() => handleFecharModalAnotacao(false)}
-                  className="border-zinc-700"
-                >
-                  {t('cancel')}
-                </Button>
-                {!anotacaoGeradaIA ? (
-                  <Button
-                    onClick={gerarAnotacaoComIA}
-                    disabled={!textoOriginalIA.trim() || gerandoAnotacao}
-                    className="bg-purple-600 hover:bg-purple-700"
-                  >
-                    {gerandoAnotacao ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        {t('organizing')}
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles className="w-4 h-4 mr-2" />
-                        {t('organize')}
-                      </>
-                    )}
-                  </Button>
-                ) : (
-                  <Button
-                    onClick={criarAnotacao}
-                    disabled={!anotacaoGeradaIA.title || criandoAnotacao}
-                    className="bg-purple-600 hover:bg-purple-700"
-                  >
-                    {criandoAnotacao ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        {t('creating')}
-                      </>
-                    ) : (
-                      t('createNote')
-                    )}
-                  </Button>
-                )}
-              </div>
-            </div>
-          )}
+          </div>
         </DialogContent>
       </Dialog>
 

@@ -1,31 +1,101 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Mail, Lock, User, ArrowRight, Shield } from 'lucide-react';
+import { Mail, Lock, User, ArrowRight, Shield, AtSign, Check, X, Loader2 } from 'lucide-react';
 
 export default function RegisterPage() {
   const router = useRouter();
   const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // Estados para validação de username
+  const [usernameError, setUsernameError] = useState('');
+  const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
+  const [checkingUsername, setCheckingUsername] = useState(false);
+
+  // Validação de formato local
+  const validateUsernameFormat = (value: string): string => {
+    if (value.length === 0) return '';
+    if (value.length < 3) return 'Mínimo 3 caracteres';
+    if (value.length > 30) return 'Máximo 30 caracteres';
+    if (!/^[a-zA-Z0-9_.]+$/.test(value)) return 'Apenas letras, números, _ e .';
+    if (value.startsWith('.') || value.endsWith('.')) return 'Não pode começar/terminar com ponto';
+    if (value.includes('..')) return 'Pontos consecutivos não permitidos';
+    return '';
+  };
+
+  // Verificar disponibilidade com debounce
+  const checkUsernameAvailability = useCallback(async (value: string) => {
+    if (!value || value.length < 3 || validateUsernameFormat(value)) {
+      setUsernameAvailable(null);
+      return;
+    }
+
+    setCheckingUsername(true);
+    try {
+      const res = await fetch(`/api/v1/username/check?username=${encodeURIComponent(value)}`);
+      const data = await res.json();
+      setUsernameAvailable(data.available);
+      if (!data.available && data.message) {
+        setUsernameError(data.message);
+      }
+    } catch {
+      setUsernameAvailable(null);
+    } finally {
+      setCheckingUsername(false);
+    }
+  }, []);
+
+  // Debounce para verificação de username
+  useEffect(() => {
+    const formatError = validateUsernameFormat(username);
+    setUsernameError(formatError);
+
+    if (formatError || username.length < 3) {
+      setUsernameAvailable(null);
+      return;
+    }
+
+    const timeoutId = setTimeout(() => {
+      checkUsernameAvailability(username);
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [username, checkUsernameAvailability]);
+
+  const handleUsernameChange = (value: string) => {
+    // Normalizar para lowercase e remover espaços
+    const normalized = value.toLowerCase().replace(/\s/g, '');
+    setUsername(normalized);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    // Validar username antes de enviar
+    if (!username || usernameError || usernameAvailable === false) {
+      setError('Por favor, escolha um username válido e disponível');
+      return;
+    }
+
     setLoading(true);
 
     try {
       const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ name, username, email, password }),
       });
 
       const data = await response.json();
@@ -37,7 +107,7 @@ export default function RegisterPage() {
       }
 
       // Sucesso - redireciona para login
-      alert('Conta criada com sucesso! Faça login para continuar.');
+      alert('Conta criada com sucesso! Verifique seu email para ativar sua conta.');
       router.push('/login');
 
     } catch {
@@ -46,8 +116,11 @@ export default function RegisterPage() {
     }
   };
 
+  const isFormValid = name && username && email && password &&
+                      !usernameError && usernameAvailable === true;
+
   return (
-    <div className="min-h-screen relative overflow-hidden flex items-center justify-center p-3 sm:p-4" style={{
+    <div className="min-h-screen md:h-screen relative overflow-hidden flex items-center justify-center p-3 sm:p-4" style={{
       background: 'linear-gradient(135deg, #0f0f0f 0%, #0a0a0a 50%, #0f0f0f 100%)'
     }}>
       {/* Subtle noise texture */}
@@ -76,25 +149,27 @@ export default function RegisterPage() {
       {/* Conteúdo */}
       <div className="relative z-10 w-full max-w-md">
         {/* Logo */}
-        <div className="text-center mb-5">
-          <h1 className="text-4xl sm:text-5xl font-bold mb-2 tracking-tight">
-            <span className="bg-gradient-to-r from-purple-400 via-fuchsia-400 to-blue-400 bg-clip-text text-transparent animate-gradient">
-              Aura
-            </span>
-          </h1>
-          <p className="text-gray-400 text-xs sm:text-sm font-light">Comece sua jornada de produtividade</p>
+        <div className="text-center mb-2">
+          <Image
+            src="/images/logo-sem-fundo.png"
+            alt="Aura Logo"
+            width={280}
+            height={280}
+            className="w-56 h-56 sm:w-64 sm:h-64 md:w-36 md:h-36 lg:w-40 lg:h-40 mx-auto -mb-16 md:-mb-8"
+          />
+          <p className="text-gray-400 text-sm sm:text-base font-light">Comece sua jornada de produtividade</p>
         </div>
 
         {/* Card de Registro - Glassmorphism */}
-        <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-5 sm:p-6 shadow-2xl shadow-purple-900/20 hover:shadow-purple-800/30 transition-all duration-300">
-          <div className="mb-4">
+        <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-5 sm:p-6 md:p-4 shadow-2xl shadow-purple-900/20 hover:shadow-purple-800/30 transition-all duration-300">
+          <div className="mb-4 md:mb-3">
             <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">Criar sua conta</h2>
             <p className="text-gray-400 text-xs sm:text-sm">Junte-se a milhares de usuários produtivos</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-3">
+          <form onSubmit={handleSubmit} className="space-y-3 md:space-y-2">
             {/* Nome */}
-            <div className="space-y-1.5">
+            <div className="space-y-1.5 md:space-y-1">
               <Label htmlFor="name" className="text-gray-300 text-xs sm:text-sm font-medium flex items-center gap-2">
                 <User className="w-3.5 h-3.5" />
                 Nome completo
@@ -107,14 +182,49 @@ export default function RegisterPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
-                  className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 h-10 sm:h-11 rounded-xl transition-all hover:bg-white/10 text-sm"
+                  className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 h-10 sm:h-11 md:h-9 rounded-xl transition-all hover:bg-white/10 text-sm"
                 />
                 <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-500/0 via-purple-500/5 to-blue-500/0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
               </div>
             </div>
 
+            {/* Username */}
+            <div className="space-y-1.5 md:space-y-1">
+              <Label htmlFor="username" className="text-gray-300 text-xs sm:text-sm font-medium flex items-center gap-2">
+                <AtSign className="w-3.5 h-3.5" />
+                Username
+              </Label>
+              <div className="relative group">
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">@</div>
+                <Input
+                  id="username"
+                  type="text"
+                  placeholder="seu_username"
+                  value={username}
+                  onChange={(e) => handleUsernameChange(e.target.value)}
+                  required
+                  className="pl-7 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 h-10 sm:h-11 md:h-9 rounded-xl transition-all hover:bg-white/10 text-sm pr-10"
+                />
+                <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                  {checkingUsername && <Loader2 className="w-4 h-4 text-gray-400 animate-spin" />}
+                  {!checkingUsername && usernameAvailable === true && <Check className="w-4 h-4 text-green-500" />}
+                  {!checkingUsername && usernameAvailable === false && <X className="w-4 h-4 text-red-500" />}
+                </div>
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-500/0 via-purple-500/5 to-blue-500/0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+              </div>
+              {usernameError && (
+                <p className="text-xs text-red-400">{usernameError}</p>
+              )}
+              {!usernameError && usernameAvailable === true && (
+                <p className="text-xs text-green-400">Username disponível!</p>
+              )}
+              {!usernameError && username.length === 0 && (
+                <p className="text-xs text-gray-500">Letras, números, _ e . (3-30 caracteres)</p>
+              )}
+            </div>
+
             {/* Email */}
-            <div className="space-y-1.5">
+            <div className="space-y-1.5 md:space-y-1">
               <Label htmlFor="email" className="text-gray-300 text-xs sm:text-sm font-medium flex items-center gap-2">
                 <Mail className="w-3.5 h-3.5" />
                 Email
@@ -127,14 +237,14 @@ export default function RegisterPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 h-10 sm:h-11 rounded-xl transition-all hover:bg-white/10 text-sm"
+                  className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 h-10 sm:h-11 md:h-9 rounded-xl transition-all hover:bg-white/10 text-sm"
                 />
                 <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-500/0 via-purple-500/5 to-blue-500/0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
               </div>
             </div>
 
             {/* Senha */}
-            <div className="space-y-1.5">
+            <div className="space-y-1.5 md:space-y-1">
               <Label htmlFor="password" className="text-gray-300 text-xs sm:text-sm font-medium flex items-center gap-2">
                 <Lock className="w-3.5 h-3.5" />
                 Senha
@@ -148,7 +258,7 @@ export default function RegisterPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   minLength={8}
-                  className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 h-10 sm:h-11 rounded-xl transition-all hover:bg-white/10 text-sm"
+                  className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 h-10 sm:h-11 md:h-9 rounded-xl transition-all hover:bg-white/10 text-sm"
                 />
                 <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-500/0 via-purple-500/5 to-blue-500/0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
               </div>
@@ -171,8 +281,8 @@ export default function RegisterPage() {
             {/* Botão */}
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-purple-600 via-fuchsia-600 to-blue-600 hover:from-purple-500 hover:via-fuchsia-500 hover:to-blue-500 text-white font-semibold h-10 sm:h-11 rounded-xl shadow-lg shadow-purple-900/50 transition-all duration-300 hover:shadow-purple-800/60 hover:scale-[1.02] active:scale-[0.98] group mt-4 text-sm"
-              disabled={loading}
+              className="w-full bg-gradient-to-r from-purple-600 via-fuchsia-600 to-blue-600 hover:from-purple-500 hover:via-fuchsia-500 hover:to-blue-500 text-white font-semibold h-10 sm:h-11 md:h-9 rounded-xl shadow-lg shadow-purple-900/50 transition-all duration-300 hover:shadow-purple-800/60 hover:scale-[1.02] active:scale-[0.98] group mt-4 md:mt-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              disabled={loading || !isFormValid}
             >
               {loading ? (
                 <div className="flex items-center gap-2">
@@ -189,7 +299,7 @@ export default function RegisterPage() {
           </form>
 
           {/* Termos */}
-          <p className="text-xs text-gray-500 text-center mt-3">
+          <p className="text-xs text-gray-500 text-center mt-3 md:mt-2">
             Ao criar uma conta, você concorda com nossos{' '}
             <button className="text-purple-400 hover:text-purple-300 transition-colors font-medium">
               Termos de Uso
@@ -201,7 +311,7 @@ export default function RegisterPage() {
           </p>
 
           {/* Link para Login */}
-          <div className="text-center mt-4 pt-4 border-t border-white/10">
+          <div className="text-center mt-4 pt-4 md:mt-3 md:pt-3 border-t border-white/10">
             <p className="text-xs sm:text-sm text-gray-400">
               Já tem uma conta?{' '}
               <Link
@@ -216,7 +326,7 @@ export default function RegisterPage() {
         </div>
 
         {/* Footer */}
-        <div className="text-center mt-4 text-xs text-gray-500">
+        <div className="text-center mt-4 md:mt-2 text-xs text-gray-500 md:hidden">
           <p>© 2025 Aura. Feito com dedicação para sua produtividade.</p>
         </div>
       </div>

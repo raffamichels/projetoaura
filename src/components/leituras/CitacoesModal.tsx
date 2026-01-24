@@ -38,7 +38,7 @@ export function CitacoesModal({ aberto, onFechar, onSucesso, midias }: CitacoesM
 
       if (res.ok) {
         onSucesso();
-        // Permanece na aba "Nova" após criar citação
+        onFechar();
       } else {
         const error = await res.json();
         alert(error.error || 'Erro ao criar citação');
@@ -47,10 +47,6 @@ export function CitacoesModal({ aberto, onFechar, onSucesso, midias }: CitacoesM
     } finally {
       setCarregando(false);
     }
-  };
-
-  const handleVoltar = () => {
-    setAbaAtiva('nova');
   };
 
   return (
@@ -62,10 +58,10 @@ export function CitacoesModal({ aberto, onFechar, onSucesso, midias }: CitacoesM
 
         <Tabs value={abaAtiva} onValueChange={(value) => setAbaAtiva(value as 'nova' | 'gerenciar')} className="flex-1 flex flex-col min-h-0">
           <TabsList className="grid w-full grid-cols-2 bg-zinc-800/50">
-            <TabsTrigger value="nova" className="data-[state=active]:bg-purple-600 text-xs sm:text-sm">
+            <TabsTrigger value="nova" className="data-[state=active]:bg-purple-600 text-white text-xs sm:text-sm">
               Nova
             </TabsTrigger>
-            <TabsTrigger value="gerenciar" className="data-[state=active]:bg-purple-600 text-xs sm:text-sm">
+            <TabsTrigger value="gerenciar" className="data-[state=active]:bg-purple-600 text-white text-xs sm:text-sm">
               Gerenciar
             </TabsTrigger>
           </TabsList>
@@ -73,9 +69,8 @@ export function CitacoesModal({ aberto, onFechar, onSucesso, midias }: CitacoesM
           <TabsContent value="nova" className="flex-1 overflow-y-auto mt-3 sm:mt-4">
             <NovaCitacaoForm
               onSubmit={handleSubmit}
-              onCancel={onFechar}
               midias={midias}
-              loading={carregando}
+              isSubmitting={carregando}
             />
           </TabsContent>
 
@@ -85,7 +80,6 @@ export function CitacoesModal({ aberto, onFechar, onSucesso, midias }: CitacoesM
               onFechar={onFechar}
               onAtualizar={onSucesso}
               modoEmbutido={true}
-              onVoltar={handleVoltar}
             />
           </TabsContent>
         </Tabs>

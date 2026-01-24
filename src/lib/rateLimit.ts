@@ -108,6 +108,9 @@ export const apiDeleteRateLimiter = new RateLimiter(20, 60 * 1000);
 // Operações pesadas (AI, export): 5 por minuto
 export const apiHeavyRateLimiter = new RateLimiter(5, 60 * 1000);
 
+// Verificação de username: 30 por minuto por IP (para verificação em tempo real)
+export const usernameCheckRateLimiter = new RateLimiter(30, 60 * 1000);
+
 // Função helper para extrair IP da requisição
 export function getClientIP(request: Request): string {
   const forwarded = request.headers.get('x-forwarded-for');

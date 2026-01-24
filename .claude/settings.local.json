@@ -28,7 +28,11 @@
       "Bash(dir:*)",
       "Bash(powershell -Command:*)",
       "Bash(npx eslint:*)",
-      "Bash(npm uninstall:*)"
+      "Bash(npm uninstall:*)",
+      "Bash(where:*)",
+      "Bash(python:*)",
+      "Bash(pip install:*)",
+      "Bash(npm ls:*)"
     ]
   }
 }

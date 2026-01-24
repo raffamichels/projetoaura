@@ -54,6 +54,7 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-hook-form": "^7.69.0",
+    "react-image-crop": "^11.0.10",
     "recharts": "^3.6.0",
     "resend": "^6.7.0",
     "sanitize-html": "^2.17.0",

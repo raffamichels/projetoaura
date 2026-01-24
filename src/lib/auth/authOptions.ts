@@ -57,6 +57,8 @@ export const authOptions = {
         return {
           id: user.id,
           email: user.email,
+          username: user.username,
+          usernameChangedAt: user.usernameChangedAt,
           name: user.name,
           image: user.image,
           emailVerified: user.emailVerified,
@@ -89,12 +91,13 @@ export const authOptions = {
             : null;
 
           if (!existingUser) {
-            // Criar novo usuário com dados do Google
+            // Criar novo usuário com dados do Google (SEM username - será solicitado depois)
             const newUser = await prisma.user.create({
               data: {
                 email: user.email!,
                 name: user.name || user.email!.split('@')[0],
                 password: '', // Senha vazia para login via Google
+                username: null, // Username será definido na página choose-username
                 emailVerified: new Date(),
                 image: user.image,
                 googleAccessToken: account.access_token,
@@ -105,6 +108,8 @@ export const authOptions = {
 
             // IMPORTANTE: Atualizar o user.id para o ID real do banco de dados
             user.id = newUser.id;
+            user.username = newUser.username;
+            user.usernameChangedAt = newUser.usernameChangedAt;
             user.plano = newUser.plano;
             user.planoExpiraEm = newUser.planoExpiraEm;
           } else {
@@ -122,6 +127,8 @@ export const authOptions = {
 
             // IMPORTANTE: Atualizar o user.id para o ID real do banco de dados
             user.id = updatedUser.id;
+            user.username = updatedUser.username;
+            user.usernameChangedAt = updatedUser.usernameChangedAt;
             user.plano = updatedUser.plano;
             user.planoExpiraEm = updatedUser.planoExpiraEm;
           }
@@ -136,6 +143,8 @@ export const authOptions = {
       if (token && session.user) {
         session.user.id = token.id as string;
         session.user.email = token.email as string;
+        session.user.username = token.username as string | null | undefined;
+        session.user.usernameChangedAt = token.usernameChangedAt as Date | null | undefined;
         session.user.name = token.name as string | null | undefined;
         session.user.image = token.image as string | null | undefined;
         session.user.emailVerified = (token.emailVerified as Date | null | undefined) ?? null;
@@ -151,6 +160,8 @@ export const authOptions = {
         // Primeira vez que o usuário faz login
         token.id = user.id;
         token.email = user.email;
+        token.username = user.username;
+        token.usernameChangedAt = user.usernameChangedAt;
         token.name = user.name;
         token.image = user.image;
         token.emailVerified = user.emailVerified;
@@ -176,6 +187,8 @@ export const authOptions = {
             select: {
               id: true,
               email: true,
+              username: true,
+              usernameChangedAt: true,
               name: true,
               image: true,
               emailVerified: true,
@@ -189,6 +202,8 @@ export const authOptions = {
           if (dbUser) {
             token.id = dbUser.id;
             token.email = dbUser.email;
+            token.username = dbUser.username;
+            token.usernameChangedAt = dbUser.usernameChangedAt;
             token.name = dbUser.name;
             token.image = dbUser.image;
             token.emailVerified = dbUser.emailVerified;

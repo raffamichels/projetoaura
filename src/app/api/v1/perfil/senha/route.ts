@@ -25,9 +25,18 @@ export async function PUT(request: Request) {
       );
     }
 
-    if (novaSenha.length < 6) {
+    // Validar requisitos de senha (mesmas regras do cadastro)
+    if (novaSenha.length < 8) {
       return NextResponse.json(
-        { error: 'Nova senha deve ter no mínimo 6 caracteres' },
+        { error: 'Nova senha deve ter no mínimo 8 caracteres' },
+        { status: 400 }
+      );
+    }
+
+    const senhaRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/;
+    if (!senhaRegex.test(novaSenha)) {
+      return NextResponse.json(
+        { error: 'Senha deve conter: letra maiúscula, minúscula e número' },
         { status: 400 }
       );
     }

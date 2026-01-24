@@ -3,8 +3,6 @@
 import { useState, FormEvent, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
   TipoMidia,
   StatusLeitura,
@@ -15,6 +13,7 @@ import {
 } from '@/types/midia';
 import { ImageSearchSelector } from './ImageSearchSelector';
 import { StarRating } from '@/components/ui/star-rating';
+import { Book, Film, User, Building, Globe, Calendar, Clock, Tag, Palette } from 'lucide-react';
 
 interface NovaMidiaModalProps {
   aberto: boolean;
@@ -22,10 +21,48 @@ interface NovaMidiaModalProps {
   onSucesso: () => void;
 }
 
+type FormData = {
+  tipo: TipoMidia;
+  titulo: string;
+  capa: string;
+  cor: string;
+  autor: string;
+  editora: string;
+  genero: string;
+  fonte: FonteLivro;
+  diretor: string;
+  duracao: string;
+  anoLancamento: string;
+  idioma: string;
+  status: StatusLeitura;
+  nota: string;
+  dataInicio: string;
+  dataConclusao: string;
+};
+
+type Payload = {
+  tipo: TipoMidia;
+  titulo: string;
+  capa: string | null;
+  cor: string;
+  status: StatusLeitura;
+  idioma: string | null;
+  nota: number | null;
+  dataInicio: string | null;
+  dataConclusao: string | null;
+  autor?: string | null;
+  editora?: string | null;
+  genero?: string | null;
+  fonte?: FonteLivro | null;
+  diretor?: string | null;
+  duracao?: number | null;
+  anoLancamento?: number | null;
+};
+
 export function NovaMidiaModal({ aberto, onFechar, onSucesso }: NovaMidiaModalProps) {
   const [carregando, setCarregando] = useState(false);
   const [tipoAnterior, setTipoAnterior] = useState(TipoMidia.LIVRO);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     tipo: TipoMidia.LIVRO,
     titulo: '',
     capa: '',
@@ -44,10 +81,9 @@ export function NovaMidiaModal({ aberto, onFechar, onSucesso }: NovaMidiaModalPr
     dataConclusao: '',
   });
 
-  // Limpa a capa quando o modal fecha
+  // Limpa o formulário quando o modal fecha
   useEffect(() => {
     if (!aberto) {
-      // Quando o modal fecha, limpa todo o formulário
       limparFormulario();
     }
   }, [aberto]);
@@ -87,7 +123,7 @@ export function NovaMidiaModal({ aberto, onFechar, onSucesso }: NovaMidiaModalPr
     setCarregando(true);
 
     try {
-      const payload: any = {
+      const payload: Payload = {
         tipo: formData.tipo,
         titulo: formData.titulo,
         capa: formData.capa || null,
@@ -137,141 +173,169 @@ export function NovaMidiaModal({ aberto, onFechar, onSucesso }: NovaMidiaModalPr
 
   return (
     <Dialog open={aberto} onOpenChange={onFechar}>
-      <DialogContent className="bg-zinc-900 border-zinc-800 text-white max-w-2xl max-h-[90vh] overflow-y-auto p-4 sm:p-6">
-        <DialogHeader>
-          <DialogTitle className="text-white text-base sm:text-lg">Adicionar {formData.tipo === TipoMidia.LIVRO ? 'Livro' : 'Filme'}</DialogTitle>
+      <DialogContent className="bg-zinc-900 border-zinc-800 text-white max-w-md p-0 max-h-[90vh] overflow-y-auto">
+        <DialogHeader className="px-5 pt-4 pb-3">
+          <DialogTitle className="text-white text-base flex items-center gap-2">
+            {formData.tipo === TipoMidia.LIVRO ? (
+              <Book className="w-4 h-4 text-purple-400" />
+            ) : (
+              <Film className="w-4 h-4 text-purple-400" />
+            )}
+            Adicionar {formData.tipo === TipoMidia.LIVRO ? 'Livro' : 'Filme'}
+          </DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+        <form onSubmit={handleSubmit} className="px-5 pb-5">
           {/* Tipo */}
-          <div>
-            <Label className="text-zinc-300 text-sm sm:text-base">Tipo</Label>
-            <div className="grid grid-cols-2 gap-2 mt-2">
-              <Button
+          <div className="flex items-center gap-3 py-1.5 px-1 hover:bg-zinc-800/30 rounded-lg transition-colors mb-2">
+            {formData.tipo === TipoMidia.LIVRO ? (
+              <Book className="w-5 h-5 text-gray-400 shrink-0" />
+            ) : (
+              <Film className="w-5 h-5 text-gray-400 shrink-0" />
+            )}
+            <div className="flex items-center gap-1.5 flex-wrap flex-1">
+              <button
                 type="button"
-                variant="default"
                 onClick={() => setFormData({ ...formData, tipo: TipoMidia.LIVRO })}
-                className={`text-sm sm:text-base ${formData.tipo === TipoMidia.LIVRO ? 'bg-purple-600 hover:bg-purple-700' : 'border-zinc-700'}`}
+                className={`
+                  px-3 py-1.5 rounded-full text-sm font-medium transition-all flex items-center gap-2
+                  ${formData.tipo === TipoMidia.LIVRO
+                    ? 'bg-purple-500/20 text-purple-400 ring-2 ring-purple-500 ring-offset-1 ring-offset-zinc-900'
+                    : 'bg-zinc-800/50 text-gray-400 hover:bg-zinc-700/50'
+                  }
+                `}
               >
-                📚 Livro
-              </Button>
-              <Button
+                <Book className="w-4 h-4" />
+                Livro
+              </button>
+              <button
                 type="button"
-                variant="default"
                 onClick={() => setFormData({ ...formData, tipo: TipoMidia.FILME })}
-                className={`text-sm sm:text-base ${formData.tipo === TipoMidia.FILME ? 'bg-purple-600 hover:bg-purple-700' : 'border-zinc-700'}`}
+                className={`
+                  px-3 py-1.5 rounded-full text-sm font-medium transition-all flex items-center gap-2
+                  ${formData.tipo === TipoMidia.FILME
+                    ? 'bg-purple-500/20 text-purple-400 ring-2 ring-purple-500 ring-offset-1 ring-offset-zinc-900'
+                    : 'bg-zinc-800/50 text-gray-400 hover:bg-zinc-700/50'
+                  }
+                `}
               >
-                🎬 Filme
-              </Button>
+                <Film className="w-4 h-4" />
+                Filme
+              </button>
             </div>
           </div>
 
-          {/* Título */}
-          <div>
-            <Label htmlFor="titulo" className="text-zinc-300 text-sm sm:text-base">
-              Título <span className="text-red-400">*</span>
-            </Label>
-            <Input
-              id="titulo"
+          <div className="border-t border-zinc-800 mb-2" />
+
+          {/* Título - campo principal */}
+          <div className="mb-3">
+            <input
+              type="text"
               value={formData.titulo}
               onChange={(e) => setFormData({ ...formData, titulo: e.target.value })}
-              className="bg-zinc-800 border-zinc-700 text-white mt-1 text-sm sm:text-base"
+              placeholder={`Título do ${formData.tipo === TipoMidia.LIVRO ? 'livro' : 'filme'}`}
               required
+              className="w-full bg-transparent border-none text-white text-base font-medium placeholder:text-gray-500 focus:outline-none focus:ring-0 py-1.5"
+              autoFocus
             />
           </div>
 
-          {/* Campos específicos de Livro */}
-          {formData.tipo === TipoMidia.LIVRO && (
-            <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                <div>
-                  <Label htmlFor="autor" className="text-zinc-300 text-sm sm:text-base">Autor</Label>
-                  <Input
-                    id="autor"
+          {/* Lista de campos com ícones */}
+          <div className="space-y-0.5">
+            {/* Campos específicos de Livro */}
+            {formData.tipo === TipoMidia.LIVRO && (
+              <>
+                {/* Autor */}
+                <div className="flex items-center gap-3 py-1.5 px-1 hover:bg-zinc-800/30 rounded-lg transition-colors">
+                  <User className="w-5 h-5 text-gray-400 shrink-0" />
+                  <input
+                    type="text"
                     value={formData.autor}
                     onChange={(e) => setFormData({ ...formData, autor: e.target.value })}
-                    className="bg-zinc-800 border-zinc-700 text-white mt-1 text-sm sm:text-base"
+                    placeholder="Autor"
+                    className="flex-1 bg-transparent border-none text-sm text-white placeholder:text-gray-500 focus:outline-none"
                   />
                 </div>
-                <div>
-                  <Label htmlFor="editora" className="text-zinc-300 text-sm sm:text-base">Editora</Label>
-                  <Input
-                    id="editora"
+
+                {/* Editora */}
+                <div className="flex items-center gap-3 py-1.5 px-1 hover:bg-zinc-800/30 rounded-lg transition-colors">
+                  <Building className="w-5 h-5 text-gray-400 shrink-0" />
+                  <input
+                    type="text"
                     value={formData.editora}
                     onChange={(e) => setFormData({ ...formData, editora: e.target.value })}
-                    className="bg-zinc-800 border-zinc-700 text-white mt-1 text-sm sm:text-base"
+                    placeholder="Editora"
+                    className="flex-1 bg-transparent border-none text-sm text-white placeholder:text-gray-500 focus:outline-none"
                   />
                 </div>
-              </div>
 
-              <div>
-                <Label htmlFor="fonte" className="text-zinc-300 text-sm sm:text-base">Fonte</Label>
-                <select
-                  id="fonte"
-                  value={formData.fonte}
-                  onChange={(e) => setFormData({ ...formData, fonte: e.target.value as FonteLivro })}
-                  className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md text-white mt-1 text-sm sm:text-base"
-                >
-                  <option value={FonteLivro.FISICO}>Físico</option>
-                  <option value={FonteLivro.DIGITAL}>Digital</option>
-                  <option value={FonteLivro.KINDLE}>Kindle</option>
-                  <option value={FonteLivro.EMPRESTADO}>Emprestado</option>
-                </select>
-              </div>
-            </>
-          )}
+                {/* Fonte */}
+                <div className="flex items-center gap-3 py-1.5 px-1 hover:bg-zinc-800/30 rounded-lg transition-colors">
+                  <Book className="w-5 h-5 text-gray-400 shrink-0" />
+                  <select
+                    value={formData.fonte}
+                    onChange={(e) => setFormData({ ...formData, fonte: e.target.value as FonteLivro })}
+                    className="flex-1 bg-zinc-900 border-none text-sm text-white focus:outline-none appearance-none"
+                  >
+                    <option value={FonteLivro.FISICO}>Físico</option>
+                    <option value={FonteLivro.DIGITAL}>Digital</option>
+                    <option value={FonteLivro.KINDLE}>Kindle</option>
+                    <option value={FonteLivro.EMPRESTADO}>Emprestado</option>
+                  </select>
+                </div>
+              </>
+            )}
 
-          {/* Campos específicos de Filme */}
-          {formData.tipo === TipoMidia.FILME && (
-            <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                <div>
-                  <Label htmlFor="diretor" className="text-zinc-300 text-sm sm:text-base">Diretor</Label>
-                  <Input
-                    id="diretor"
+            {/* Campos específicos de Filme */}
+            {formData.tipo === TipoMidia.FILME && (
+              <>
+                {/* Diretor */}
+                <div className="flex items-center gap-3 py-1.5 px-1 hover:bg-zinc-800/30 rounded-lg transition-colors">
+                  <User className="w-5 h-5 text-gray-400 shrink-0" />
+                  <input
+                    type="text"
                     value={formData.diretor}
                     onChange={(e) => setFormData({ ...formData, diretor: e.target.value })}
-                    className="bg-zinc-800 border-zinc-700 text-white mt-1 text-sm sm:text-base"
+                    placeholder="Diretor"
+                    className="flex-1 bg-transparent border-none text-sm text-white placeholder:text-gray-500 focus:outline-none"
                   />
                 </div>
-                <div>
-                  <Label htmlFor="anoLancamento" className="text-zinc-300 text-sm sm:text-base">Ano de Lançamento</Label>
-                  <Input
-                    id="anoLancamento"
+
+                {/* Ano de Lançamento */}
+                <div className="flex items-center gap-3 py-1.5 px-1 hover:bg-zinc-800/30 rounded-lg transition-colors">
+                  <Calendar className="w-5 h-5 text-gray-400 shrink-0" />
+                  <input
                     type="number"
                     value={formData.anoLancamento}
                     onChange={(e) => setFormData({ ...formData, anoLancamento: e.target.value })}
-                    className="bg-zinc-800 border-zinc-700 text-white mt-1 text-sm sm:text-base"
-                    placeholder="Ex: 2023"
+                    placeholder="Ano de Lançamento"
+                    className="flex-1 bg-transparent border-none text-sm text-white placeholder:text-gray-500 focus:outline-none"
                   />
                 </div>
-              </div>
 
-              <div>
-                <Label htmlFor="duracao" className="text-zinc-300 text-sm sm:text-base">Duração (minutos)</Label>
-                <Input
-                  id="duracao"
-                  type="number"
-                  value={formData.duracao}
-                  onChange={(e) => setFormData({ ...formData, duracao: e.target.value })}
-                  className="bg-zinc-800 border-zinc-700 text-white mt-1 text-sm sm:text-base"
-                  placeholder="Ex: 120"
-                />
-              </div>
-            </>
-          )}
+                {/* Duração */}
+                <div className="flex items-center gap-3 py-1.5 px-1 hover:bg-zinc-800/30 rounded-lg transition-colors">
+                  <Clock className="w-5 h-5 text-gray-400 shrink-0" />
+                  <input
+                    type="number"
+                    value={formData.duracao}
+                    onChange={(e) => setFormData({ ...formData, duracao: e.target.value })}
+                    placeholder="Duração (minutos)"
+                    className="flex-1 bg-transparent border-none text-sm text-white placeholder:text-gray-500 focus:outline-none"
+                  />
+                </div>
+              </>
+            )}
 
-          {/* Campos comuns */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-            <div>
-              <Label htmlFor="genero" className="text-zinc-300 text-sm sm:text-base">Gênero</Label>
+            {/* Gênero */}
+            <div className="flex items-center gap-3 py-1.5 px-1 hover:bg-zinc-800/30 rounded-lg transition-colors">
+              <Tag className="w-5 h-5 text-gray-400 shrink-0" />
               <select
-                id="genero"
                 value={formData.genero}
                 onChange={(e) => setFormData({ ...formData, genero: e.target.value })}
-                className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md text-white mt-1 text-sm sm:text-base"
+                className="flex-1 bg-zinc-900 border-none text-sm text-white focus:outline-none appearance-none"
               >
-                <option value="">Selecione...</option>
+                <option value="">Selecione um gênero...</option>
                 {generos.map((g) => (
                   <option key={g} value={g}>
                     {g}
@@ -280,26 +344,25 @@ export function NovaMidiaModal({ aberto, onFechar, onSucesso }: NovaMidiaModalPr
               </select>
             </div>
 
-            <div>
-              <Label htmlFor="idioma" className="text-zinc-300 text-sm sm:text-base">Idioma</Label>
-              <Input
-                id="idioma"
+            {/* Idioma */}
+            <div className="flex items-center gap-3 py-1.5 px-1 hover:bg-zinc-800/30 rounded-lg transition-colors">
+              <Globe className="w-5 h-5 text-gray-400 shrink-0" />
+              <input
+                type="text"
                 value={formData.idioma}
                 onChange={(e) => setFormData({ ...formData, idioma: e.target.value })}
-                className="bg-zinc-800 border-zinc-700 text-white mt-1 text-sm sm:text-base"
-                placeholder="Ex: Português"
+                placeholder="Idioma (ex: Português)"
+                className="flex-1 bg-transparent border-none text-sm text-white placeholder:text-gray-500 focus:outline-none"
               />
             </div>
-          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-            <div>
-              <Label htmlFor="status" className="text-zinc-300 text-sm sm:text-base">Status</Label>
+            {/* Status */}
+            <div className="flex items-center gap-3 py-1.5 px-1 hover:bg-zinc-800/30 rounded-lg transition-colors">
+              <Tag className="w-5 h-5 text-gray-400 shrink-0" />
               <select
-                id="status"
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value as StatusLeitura })}
-                className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md text-white mt-1 text-sm sm:text-base"
+                className="flex-1 bg-zinc-900 border-none text-sm text-white focus:outline-none appearance-none"
               >
                 <option value={StatusLeitura.PROXIMO}>Próximo</option>
                 <option value={StatusLeitura.EM_ANDAMENTO}>Em andamento</option>
@@ -308,59 +371,92 @@ export function NovaMidiaModal({ aberto, onFechar, onSucesso }: NovaMidiaModalPr
               </select>
             </div>
 
-            <div>
-              <Label className="text-zinc-300 text-sm sm:text-base mb-2 block">Avaliação</Label>
-              <StarRating
-                value={parseInt(formData.nota) || 0}
-                onChange={(nota) => setFormData({ ...formData, nota: nota.toString() })}
-                size="lg"
-                showLabel
+            {/* Avaliação */}
+            <div className="flex items-center gap-3 py-1.5 px-1 hover:bg-zinc-800/30 rounded-lg transition-colors">
+              <div className="w-5 h-5 text-gray-400 shrink-0 flex items-center justify-center">
+                ★
+              </div>
+              <div className="flex-1">
+                <StarRating
+                  value={parseInt(formData.nota) || 0}
+                  onChange={(nota) => setFormData({ ...formData, nota: nota.toString() })}
+                  size="sm"
+                  showLabel
+                />
+              </div>
+            </div>
+
+            {/* Datas */}
+            <div className="flex items-center gap-3 py-1.5 px-1 hover:bg-zinc-800/30 rounded-lg transition-colors">
+              <Calendar className="w-5 h-5 text-gray-400 shrink-0" />
+              <div className="flex items-center gap-2 flex-1 flex-wrap">
+                <input
+                  type="date"
+                  value={formData.dataInicio}
+                  onChange={(e) => setFormData({ ...formData, dataInicio: e.target.value })}
+                  placeholder="Data de Início"
+                  className="bg-zinc-800/50 border border-zinc-700 rounded-md px-2 py-1 text-sm text-white focus:border-purple-500 focus:outline-none flex-1 min-w-0"
+                />
+                <span className="text-gray-500 text-sm">-</span>
+                <input
+                  type="date"
+                  value={formData.dataConclusao}
+                  onChange={(e) => setFormData({ ...formData, dataConclusao: e.target.value })}
+                  placeholder="Data de Conclusão"
+                  className="bg-zinc-800/50 border border-zinc-700 rounded-md px-2 py-1 text-sm text-white focus:border-purple-500 focus:outline-none flex-1 min-w-0"
+                />
+              </div>
+            </div>
+
+            {/* Cor */}
+            <div className="flex items-center gap-3 py-1.5 px-1 hover:bg-zinc-800/30 rounded-lg transition-colors">
+              <Palette className="w-5 h-5 text-gray-400 shrink-0" />
+              <div className="flex items-center gap-1.5 flex-wrap flex-1">
+                {CORES_MIDIA.map((cor) => (
+                  <button
+                    key={cor}
+                    type="button"
+                    onClick={() => setFormData({ ...formData, cor })}
+                    className={`w-6 h-6 rounded-full transition-all ${
+                      formData.cor === cor ? 'ring-2 ring-white ring-offset-1 ring-offset-zinc-900' : ''
+                    }`}
+                    style={{ backgroundColor: cor }}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Busca de Capa */}
+            <div className="pt-2 border-t border-zinc-800">
+              <ImageSearchSelector
+                tipo={formData.tipo === TipoMidia.LIVRO ? 'livro' : 'filme'}
+                titulo={formData.titulo}
+                capaAtual={formData.capa}
+                onSelecionarCapa={(url) => setFormData({ ...formData, capa: url })}
               />
             </div>
           </div>
 
-          {/* Busca de Capa Automática */}
-          <ImageSearchSelector
-            tipo={formData.tipo === TipoMidia.LIVRO ? 'livro' : 'filme'}
-            titulo={formData.titulo}
-            capaAtual={formData.capa}
-            onSelecionarCapa={(url) => setFormData({ ...formData, capa: url })}
-          />
-
-          <div>
-            <Label className="text-zinc-300 text-sm sm:text-base">Cor</Label>
-            <div className="flex flex-wrap gap-2 mt-2">
-              {CORES_MIDIA.map((cor) => (
-                <button
-                  key={cor}
-                  type="button"
-                  className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full transition-all ${
-                    formData.cor === cor ? 'ring-2 ring-white ring-offset-2 ring-offset-zinc-900' : ''
-                  }`}
-                  style={{ backgroundColor: cor }}
-                  onClick={() => setFormData({ ...formData, cor })}
-                />
-              ))}
-            </div>
-          </div>
-
           {/* Botões */}
-          <div className="flex flex-col-reverse sm:flex-row gap-2 justify-end pt-3 sm:pt-4">
+          <div className="flex justify-end gap-2 pt-3 border-t border-zinc-800 mt-3">
             <Button
               type="button"
-              variant="default"
+              variant="ghost"
               onClick={onFechar}
+              className="px-4 h-9 text-sm text-gray-400 hover:text-white"
               disabled={carregando}
-              className="border-zinc-700 w-full sm:w-auto text-sm sm:text-base"
             >
               Cancelar
             </Button>
             <Button
               type="submit"
+              className="px-6 h-9 text-sm bg-purple-600 hover:bg-purple-700 text-white rounded-full"
               disabled={carregando}
-              className="bg-purple-600 hover:bg-purple-700 w-full sm:w-auto text-sm sm:text-base"
             >
-              {carregando ? 'Criando...' : `Criar ${formData.tipo === TipoMidia.LIVRO ? 'Livro' : 'Filme'}`}
+              {carregando 
+                ? `Criando${formData.tipo === TipoMidia.LIVRO ? ' livro' : ' filme'}...` 
+                : `Criar ${formData.tipo === TipoMidia.LIVRO ? 'Livro' : 'Filme'}`
+              }
             </Button>
           </div>
         </form>
