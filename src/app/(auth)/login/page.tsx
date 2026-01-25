@@ -23,17 +23,22 @@ export default function LoginPage() {
     try {
         const { signIn } = await import('next-auth/react');
 
+        console.log('Chamando signIn...'); // DEBUG
         const result = await signIn('credentials', {
           email,
           password,
           redirect: false,
         });
+        console.log('Resultado signIn:', result); // DEBUG
+
         if (result?.error) {
+            console.log('Erro no signIn:', result.error); // DEBUG
             setError('Email ou senha incorretos');
             setLoading(false);
             return;
         }
 
+        console.log('Login OK, redirecionando para /dashboard...'); // DEBUG
          // Login com sucesso - redireciona para dashboard
         window.location.href = '/dashboard';
 

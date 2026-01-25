@@ -10,6 +10,9 @@ export async function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
+  // DEBUG - remover depois
+  console.log('MIDDLEWARE:', pathname, 'token:', token ? `id=${token.id}, username=${token.username}` : 'null');
+
   // Rotas protegidas do dashboard
   const isDashboardRoute = pathname.startsWith('/dashboard');
 
