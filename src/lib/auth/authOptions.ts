@@ -75,6 +75,11 @@ export const authOptions = {
   },
   session: {
     strategy: 'jwt',
+    maxAge: 24 * 60 * 60, // 24 horas
+    updateAge: 60 * 60, // Atualiza a sessão se for mais antiga que 1 hora
+  },
+  jwt: {
+    maxAge: 24 * 60 * 60, // 24 horas
   },
   callbacks: {
     async signIn({ user, account, profile }) {
@@ -171,47 +176,54 @@ export const authOptions = {
         token.updatedAt = user.updatedAt;
         token.lastUpdated = Date.now();
       } else {
-        // Atualizar dados do usuário do banco periodicamente (a cada 30 segundos)
+        // Atualizar dados do usuário do banco apenas quando explicitamente solicitado
+        // ou se o plano não estiver definido (primeira carga após login)
         const now = Date.now();
         const lastUpdated = (token.lastUpdated as number) || 0;
-        const thirtySeconds = 30 * 1000; // 30 segundos em milissegundos
+        const fiveMinutes = 5 * 60 * 1000;
 
         const shouldUpdate =
           trigger === 'update' ||
           !token.plano ||
-          (now - lastUpdated) > thirtySeconds;
+          (now - lastUpdated) > fiveMinutes;
 
-        if (shouldUpdate) {
-          const dbUser = await prisma.user.findUnique({
-            where: { id: token.id as string },
-            select: {
-              id: true,
-              email: true,
-              username: true,
-              usernameChangedAt: true,
-              name: true,
-              image: true,
-              emailVerified: true,
-              plano: true,
-              planoExpiraEm: true,
-              createdAt: true,
-              updatedAt: true,
-            },
-          });
+        if (shouldUpdate && token.id) {
+          try {
+            const dbUser = await prisma.user.findUnique({
+              where: { id: token.id as string },
+              select: {
+                id: true,
+                email: true,
+                username: true,
+                usernameChangedAt: true,
+                name: true,
+                image: true,
+                emailVerified: true,
+                plano: true,
+                planoExpiraEm: true,
+                createdAt: true,
+                updatedAt: true,
+              },
+            });
 
-          if (dbUser) {
-            token.id = dbUser.id;
-            token.email = dbUser.email;
-            token.username = dbUser.username;
-            token.usernameChangedAt = dbUser.usernameChangedAt;
-            token.name = dbUser.name;
-            token.image = dbUser.image;
-            token.emailVerified = dbUser.emailVerified;
-            token.plano = dbUser.plano;
-            token.planoExpiraEm = dbUser.planoExpiraEm;
-            token.createdAt = dbUser.createdAt;
-            token.updatedAt = dbUser.updatedAt;
-            token.lastUpdated = now;
+            if (dbUser) {
+              token.id = dbUser.id;
+              token.email = dbUser.email;
+              token.username = dbUser.username;
+              token.usernameChangedAt = dbUser.usernameChangedAt;
+              token.name = dbUser.name;
+              token.image = dbUser.image;
+              token.emailVerified = dbUser.emailVerified;
+              token.plano = dbUser.plano;
+              token.planoExpiraEm = dbUser.planoExpiraEm;
+              token.createdAt = dbUser.createdAt;
+              token.updatedAt = dbUser.updatedAt;
+              token.lastUpdated = now;
+            }
+          } catch (error) {
+            // Se falhar ao buscar do banco, mantém o token atual
+            // Isso evita invalidar a sessão por erro de conexão
+            console.error('Erro ao atualizar dados do usuário no JWT:', error);
           }
         }
       }
@@ -220,4 +232,17 @@ export const authOptions = {
   },
   secret: process.env.NEXTAUTH_SECRET,
   trustHost: true, // Required for Vercel deployment
+  cookies: {
+    sessionToken: {
+      name: process.env.NODE_ENV === 'production'
+        ? '__Secure-authjs.session-token'
+        : 'authjs.session-token',
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: process.env.NODE_ENV === 'production',
+      },
+    },
+  },
 } satisfies NextAuthConfig;
