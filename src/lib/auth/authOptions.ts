@@ -219,4 +219,5 @@ export const authOptions = {
     }
   },
   secret: process.env.NEXTAUTH_SECRET,
+  trustHost: true, // Required for Vercel deployment
 } satisfies NextAuthConfig;
