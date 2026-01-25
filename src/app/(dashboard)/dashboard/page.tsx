@@ -30,12 +30,6 @@ export default function DashboardPage() {
   const [loadingCompromissos, setLoadingCompromissos] = useState(true);
   const { ehFree } = usePlano();
 
-  useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/login');
-    }
-  }, [status, router]);
-
   // Buscar compromissos de hoje
   useEffect(() => {
     if (session) {
