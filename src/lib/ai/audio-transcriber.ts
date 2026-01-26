@@ -45,8 +45,14 @@ export async function transcribeAudio({
   const audioBuffer = await audioResponse.arrayBuffer();
   const audioBase64 = Buffer.from(audioBuffer).toString('base64');
 
-  // Detectar o tipo MIME do áudio
-  const contentType = audioResponse.headers.get('content-type') || 'audio/webm';
+  // Detectar o tipo MIME do áudio e normalizar para formato aceito pelo Gemini
+  let contentType = audioResponse.headers.get('content-type') || 'audio/webm';
+
+  // Normalizar mime types com codecs para o formato base (Gemini não aceita codecs no mime_type)
+  // Ex: "audio/webm;codecs=opus" -> "audio/webm"
+  if (contentType.includes(';')) {
+    contentType = contentType.split(';')[0].trim();
+  }
 
   console.log(`📊 Áudio baixado: ${(audioBuffer.byteLength / (1024 * 1024)).toFixed(2)}MB, tipo: ${contentType}`);
 

@@ -24,18 +24,53 @@ export function AudioPlayer({
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(initialDuration || 0);
   const [isLoading, setIsLoading] = useState(true);
+  const animationFrameRef = useRef<number | null>(null);
+  const isPlayingRef = useRef(false);
+
+  // Manter ref sincronizada com estado
+  useEffect(() => {
+    isPlayingRef.current = isPlaying;
+  }, [isPlaying]);
+
+  // Usar requestAnimationFrame para atualização mais suave do progresso
+  useEffect(() => {
+    const updateProgress = () => {
+      const audio = audioRef.current;
+      if (audio && isPlayingRef.current) {
+        setCurrentTime(audio.currentTime);
+        animationFrameRef.current = requestAnimationFrame(updateProgress);
+      }
+    };
+
+    if (isPlaying) {
+      animationFrameRef.current = requestAnimationFrame(updateProgress);
+    }
+
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
+      }
+    };
+  }, [isPlaying]);
 
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
     const handleLoadedMetadata = () => {
-      setDuration(audio.duration);
+      // Só usa a duração do áudio se não foi passada via props
+      if (!initialDuration && audio.duration && isFinite(audio.duration)) {
+        setDuration(audio.duration);
+      }
       setIsLoading(false);
     };
 
     const handleTimeUpdate = () => {
-      setCurrentTime(audio.currentTime);
+      // Backup para o requestAnimationFrame
+      if (!animationFrameRef.current) {
+        setCurrentTime(audio.currentTime);
+      }
     };
 
     const handleEnded = () => {
@@ -47,18 +82,27 @@ export function AudioPlayer({
       setIsLoading(false);
     };
 
+    const handleDurationChange = () => {
+      // Alguns formatos (como WebM) podem atualizar a duração após carregar
+      if (!initialDuration && audio.duration && isFinite(audio.duration)) {
+        setDuration(audio.duration);
+      }
+    };
+
     audio.addEventListener('loadedmetadata', handleLoadedMetadata);
     audio.addEventListener('timeupdate', handleTimeUpdate);
     audio.addEventListener('ended', handleEnded);
     audio.addEventListener('canplay', handleCanPlay);
+    audio.addEventListener('durationchange', handleDurationChange);
 
     return () => {
       audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
       audio.removeEventListener('timeupdate', handleTimeUpdate);
       audio.removeEventListener('ended', handleEnded);
       audio.removeEventListener('canplay', handleCanPlay);
+      audio.removeEventListener('durationchange', handleDurationChange);
     };
-  }, []);
+  }, [initialDuration]);
 
   const formatTime = (seconds: number) => {
     if (isNaN(seconds) || !isFinite(seconds)) return '00:00';
@@ -141,8 +185,8 @@ export function AudioPlayer({
             className="h-1.5 bg-zinc-700 rounded-full cursor-pointer group"
           >
             <div
-              className="h-full bg-purple-500 rounded-full transition-all group-hover:bg-purple-400"
-              style={{ width: `${progressPercent}%` }}
+              className="h-full bg-purple-500 rounded-full group-hover:bg-purple-400"
+              style={{ width: `${progressPercent}%`, transition: 'background-color 0.2s' }}
             />
           </div>
         </div>
@@ -173,8 +217,8 @@ export function AudioPlayer({
         className="h-2 bg-zinc-700 rounded-full cursor-pointer group mb-3"
       >
         <div
-          className="h-full bg-purple-500 rounded-full transition-all relative group-hover:bg-purple-400"
-          style={{ width: `${progressPercent}%` }}
+          className="h-full bg-purple-500 rounded-full relative group-hover:bg-purple-400"
+          style={{ width: `${progressPercent}%`, transition: 'background-color 0.2s' }}
         >
           {/* Indicador de posição */}
           <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity" />

@@ -10,6 +10,7 @@ const MAX_FILE_SIZE = 100 * 1024 * 1024;
 // Tipos de áudio permitidos
 const ALLOWED_MIME_TYPES = [
   'audio/webm',
+  'audio/webm;codecs=opus', // Formato preferido do MediaRecorder
   'audio/mp4',
   'audio/mpeg',
   'audio/ogg',
