@@ -53,6 +53,7 @@ export async function GET(req: NextRequest) {
       where: {
         userId: user.id,
         status: 'ATIVO',
+        dataEncerramento: null, // Não mostrar hábitos encerrados
       },
       include: {
         registros: {
@@ -60,6 +61,14 @@ export async function GET(req: NextRequest) {
             data: hoje,
           },
           take: 1,
+        },
+        categoria: {
+          select: {
+            id: true,
+            nome: true,
+            cor: true,
+            icone: true,
+          },
         },
       },
       orderBy: [
@@ -92,6 +101,13 @@ export async function GET(req: NextRequest) {
       totalCompletados: habito.totalCompletados,
       cor: habito.cor,
       icone: habito.icone,
+      categoriaId: habito.categoriaId,
+      categoria: habito.categoria ? {
+        id: habito.categoria.id,
+        nome: habito.categoria.nome,
+        cor: habito.categoria.cor,
+        icone: habito.categoria.icone,
+      } : null,
       completadoHoje: isVisualizandoHoje && habito.registros.length > 0 && habito.registros[0].completado,
     }));
 
@@ -140,7 +156,24 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { nome, descricao, horario, diasSemana, cor, icone } = validationResult.data;
+    const { nome, descricao, horario, diasSemana, cor, icone, categoriaId } = validationResult.data;
+
+    // Verificar se a categoria existe e pertence ao usuário (se fornecida)
+    if (categoriaId) {
+      const categoriaExiste = await prisma.categoriaHabito.findFirst({
+        where: {
+          id: categoriaId,
+          userId: user.id,
+        },
+      });
+
+      if (!categoriaExiste) {
+        return NextResponse.json(
+          { error: 'Categoria não encontrada' },
+          { status: 404 }
+        );
+      }
+    }
 
     const habito = await prisma.habito.create({
       data: {
@@ -150,6 +183,7 @@ export async function POST(req: NextRequest) {
         diasSemana,
         cor,
         icone,
+        categoriaId,
         userId: user.id,
       },
     });

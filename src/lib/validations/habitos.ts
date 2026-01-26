@@ -40,6 +40,11 @@ export const habitoSchema = z.object({
     .max(50, 'Ícone inválido')
     .optional()
     .default('target'),
+  categoriaId: z
+    .string()
+    .cuid()
+    .optional()
+    .nullable(),
 });
 
 export const habitoUpdateSchema = habitoSchema.partial();
@@ -65,7 +70,35 @@ export const registroHabitoSchema = z.object({
     .nullable(),
 });
 
+// Schema para Categoria de Hábito
+export const categoriaHabitoSchema = z.object({
+  nome: z
+    .string()
+    .min(1, 'Nome é obrigatório')
+    .max(50, 'Nome deve ter no máximo 50 caracteres'),
+  cor: z
+    .string()
+    .regex(hexColorRegex, 'Cor deve ser um código hexadecimal válido')
+    .optional()
+    .default('#8B5CF6'),
+  icone: z
+    .string()
+    .max(50, 'Ícone inválido')
+    .optional()
+    .default('folder'),
+  ordem: z
+    .number()
+    .int()
+    .min(0)
+    .optional()
+    .default(0),
+});
+
+export const categoriaHabitoUpdateSchema = categoriaHabitoSchema.partial();
+
 // Tipos TypeScript gerados automaticamente
 export type HabitoInput = z.infer<typeof habitoSchema>;
 export type HabitoUpdateInput = z.infer<typeof habitoUpdateSchema>;
 export type RegistroHabitoInput = z.infer<typeof registroHabitoSchema>;
+export type CategoriaHabitoInput = z.infer<typeof categoriaHabitoSchema>;
+export type CategoriaHabitoUpdateInput = z.infer<typeof categoriaHabitoUpdateSchema>;

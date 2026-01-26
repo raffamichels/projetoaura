@@ -97,6 +97,14 @@ enum StatusHabito {
   ABANDONADO
 }
 
+enum TipoNotificacao {
+  LEMBRETE_HABITO
+  RESUMO_DIARIO
+  SEQUENCIA_RISCO
+  CONQUISTA
+  SISTEMA
+}
+
 
 model User {
   id                String        @id @default(cuid())
@@ -143,6 +151,9 @@ model User {
   documentosViagem   DocumentoViagem[]
   habitos            Habito[]
   registrosHabitos   RegistroHabito[]
+  categoriasHabito   CategoriaHabito[]
+  notificacoes       Notificacao[]
+  preferenciaNotificacao PreferenciaNotificacao?
 
   @@map("users")
 }
@@ -820,6 +831,10 @@ model Habito {
   // Status
   status              StatusHabito     @default(ATIVO)
 
+  // Data de encerramento (soft delete) - quando preenchido, hábito não aparece mais
+  // mas os registros históricos são preservados
+  dataEncerramento    DateTime?        @db.Date
+
   // Gamificação
   sequenciaAtual      Int              @default(0)
   maiorSequencia      Int              @default(0)
@@ -828,6 +843,10 @@ model Habito {
   // Visual
   cor                 String           @default("#8B5CF6")
   icone               String           @default("target")
+
+  // Categoria
+  categoriaId         String?
+  categoria           CategoriaHabito? @relation(fields: [categoriaId], references: [id], onDelete: SetNull)
 
   userId              String
   user                User             @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -859,4 +878,68 @@ model RegistroHabito {
   @@unique([habitoId, data])
   @@map("registros_habitos")
   @@index([userId, data])
+}
+
+// ============================================
+// CATEGORIAS DE HÁBITOS
+// ============================================
+
+model CategoriaHabito {
+  id        String   @id @default(cuid())
+  nome      String
+  cor       String   @default("#8B5CF6")
+  icone     String   @default("folder")
+  ordem     Int      @default(0)
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  habitos   Habito[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, nome])
+  @@index([userId, ordem])
+  @@map("categorias_habitos")
+}
+
+// ============================================
+// SISTEMA DE NOTIFICAÇÕES
+// ============================================
+
+model Notificacao {
+  id        String          @id @default(cuid())
+  tipo      TipoNotificacao
+  titulo    String
+  mensagem  String
+  dados     Json?
+  lida      Boolean         @default(false)
+  lidaEm    DateTime?
+
+  userId    String
+  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime        @default(now())
+
+  @@index([userId, lida, createdAt(sort: Desc)])
+  @@index([userId, createdAt(sort: Desc)])
+  @@map("notificacoes")
+}
+
+model PreferenciaNotificacao {
+  id                    String   @id @default(cuid())
+  lembreteHabitoAtivo   Boolean  @default(true)
+  resumoDiarioAtivo     Boolean  @default(true)
+  horarioResumoDiario   String   @default("07:00")
+  alertaSequenciaAtivo  Boolean  @default(true)
+  toastAtivo            Boolean  @default(true)
+
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("preferencias_notificacao")
 }

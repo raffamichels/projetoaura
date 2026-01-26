@@ -122,6 +122,9 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
 }
 
 // DELETE - Excluir hábito
+// Query params:
+// - tipo: 'encerrar' (soft delete - preserva histórico) ou 'excluir' (hard delete - remove tudo)
+// - diaSemana: (opcional) número 0-6 para remover apenas um dia específico do hábito
 export async function DELETE(req: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
@@ -154,14 +157,87 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ error: 'Hábito não encontrado' }, { status: 404 });
     }
 
-    await prisma.habito.delete({
-      where: { id },
-    });
+    // Obter parâmetros
+    const tipoExclusao = req.nextUrl.searchParams.get('tipo') || 'excluir';
+    const diaSemanaParam = req.nextUrl.searchParams.get('diaSemana');
 
-    return NextResponse.json(
-      { message: 'Hábito excluído com sucesso' },
-      { status: 200 }
-    );
+    if (tipoExclusao === 'encerrar') {
+      // Verificar se é para remover apenas um dia específico
+      if (diaSemanaParam !== null) {
+        const diaSemana = parseInt(diaSemanaParam, 10);
+
+        // Se diasSemana está vazio, significa "todos os dias"
+        // Nesse caso, criamos um array com todos os dias EXCETO o dia a remover
+        let novosDiasSemana: number[];
+
+        if (habitoExistente.diasSemana.length === 0) {
+          // Todos os dias: criar array [0,1,2,3,4,5,6] sem o dia removido
+          novosDiasSemana = [0, 1, 2, 3, 4, 5, 6].filter(d => d !== diaSemana);
+        } else {
+          // Dias específicos: remover o dia do array
+          novosDiasSemana = habitoExistente.diasSemana.filter(d => d !== diaSemana);
+        }
+
+        // Se não sobrou nenhum dia, encerrar o hábito completamente
+        if (novosDiasSemana.length === 0) {
+          const hoje = new Date();
+          hoje.setHours(0, 0, 0, 0);
+
+          await prisma.habito.update({
+            where: { id },
+            data: {
+              dataEncerramento: hoje,
+              status: 'CONCLUIDO',
+            },
+          });
+
+          return NextResponse.json(
+            { message: 'Hábito encerrado com sucesso. O histórico foi preservado.' },
+            { status: 200 }
+          );
+        }
+
+        // Atualizar o hábito removendo apenas o dia específico
+        await prisma.habito.update({
+          where: { id },
+          data: {
+            diasSemana: novosDiasSemana,
+          },
+        });
+
+        return NextResponse.json(
+          { message: 'Dia removido do hábito com sucesso. O histórico foi preservado.' },
+          { status: 200 }
+        );
+      }
+
+      // Soft delete completo: preenche dataEncerramento para preservar histórico
+      const hoje = new Date();
+      hoje.setHours(0, 0, 0, 0);
+
+      await prisma.habito.update({
+        where: { id },
+        data: {
+          dataEncerramento: hoje,
+          status: 'CONCLUIDO',
+        },
+      });
+
+      return NextResponse.json(
+        { message: 'Hábito encerrado com sucesso. O histórico foi preservado.' },
+        { status: 200 }
+      );
+    } else {
+      // Hard delete: remove o hábito e todos os registros (cascade)
+      await prisma.habito.delete({
+        where: { id },
+      });
+
+      return NextResponse.json(
+        { message: 'Hábito excluído com sucesso' },
+        { status: 200 }
+      );
+    }
   } catch (error) {
     console.error('Erro ao excluir hábito:', error);
     return NextResponse.json({ error: 'Erro interno' }, { status: 500 });

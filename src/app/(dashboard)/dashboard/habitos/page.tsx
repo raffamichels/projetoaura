@@ -4,10 +4,9 @@ import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import {
   Plus,
   Target,
@@ -21,10 +20,27 @@ import {
   BarChart3,
   Award,
   Percent,
+  X,
+  Clock,
+  ArrowLeft,
+  CalendarX,
+  CalendarOff,
+  Folder,
+  Settings2,
+  ChevronDown,
+  Tag,
 } from 'lucide-react';
 import { StreakCalendar } from './components/StreakCalendar';
 import { TrendChart } from './components/TrendChart';
 import { WeekdayStats } from './components/WeekdayStats';
+
+interface CategoriaHabito {
+  id: string;
+  nome: string;
+  cor: string;
+  icone: string;
+  totalHabitos?: number;
+}
 
 interface Habito {
   id: string;
@@ -37,6 +53,8 @@ interface Habito {
   totalCompletados: number;
   cor: string;
   icone: string;
+  categoriaId?: string | null;
+  categoria?: CategoriaHabito | null;
   completadoHoje: boolean;
 }
 
@@ -102,6 +120,8 @@ export default function HabitosPage() {
   const [loading, setLoading] = useState(true);
   const [habitos, setHabitos] = useState<Habito[]>([]);
   const [estatisticas, setEstatisticas] = useState<Estatisticas | null>(null);
+  const [categorias, setCategorias] = useState<CategoriaHabito[]>([]);
+  const [categoriaFiltro, setCategoriaFiltro] = useState<string | null>(null); // null = todas
 
   // Obter timezone do usuário (executado apenas no cliente)
   const timezone = useMemo(() => {
@@ -123,10 +143,17 @@ export default function HabitosPage() {
   const [modalHabitoAberto, setModalHabitoAberto] = useState(false);
   const [modalExcluirHabito, setModalExcluirHabito] = useState(false);
   const [habitoSelecionado, setHabitoSelecionado] = useState<Habito | null>(null);
+  const [etapaExclusao, setEtapaExclusao] = useState<1 | 2>(1); // 1 = escolher tipo, 2 = escolher escopo
+  const [modalCategoriasAberto, setModalCategoriasAberto] = useState(false);
+  const [categoriaEditando, setCategoriaEditando] = useState<CategoriaHabito | null>(null);
+  const [novaCategoria, setNovaCategoria] = useState({ nome: '', cor: '#8B5CF6', icone: 'folder' });
+  const [salvandoCategoria, setSalvandoCategoria] = useState(false);
+  const [excluindoCategoria, setExcluindoCategoria] = useState(false);
 
   // Loading states
   const [criandoHabito, setCriandoHabito] = useState(false);
   const [completandoHabito, setCompletandoHabito] = useState<string | null>(null);
+  const [excluindoHabito, setExcluindoHabito] = useState(false);
 
   // Form states
   const [novoHabito, setNovoHabito] = useState({
@@ -135,6 +162,7 @@ export default function HabitosPage() {
     horario: '',
     diasSemana: [] as number[],
     cor: '#8B5CF6',
+    categoriaId: null as string | null,
   });
 
   // Verifica se está visualizando o dia atual
@@ -153,10 +181,12 @@ export default function HabitosPage() {
 
       const habitosUrl = `/api/v1/habitos?${params.toString()}`;
       const estatisticasUrl = `/api/v1/habitos/estatisticas?timezone=${encodeURIComponent(timezone)}`;
+      const categoriasUrl = `/api/v1/habitos/categorias`;
 
-      const [habitosRes, estatisticasRes] = await Promise.all([
+      const [habitosRes, estatisticasRes, categoriasRes] = await Promise.all([
         fetch(habitosUrl),
         fetch(estatisticasUrl),
+        fetch(categoriasUrl),
       ]);
 
       if (habitosRes.ok) {
@@ -171,6 +201,11 @@ export default function HabitosPage() {
       if (estatisticasRes.ok) {
         const data = await estatisticasRes.json();
         setEstatisticas(data.data);
+      }
+
+      if (categoriasRes.ok) {
+        const data = await categoriasRes.json();
+        setCategorias(data.data);
       }
     } catch (error) {
       console.error('Erro ao carregar dados:', error);
@@ -197,6 +232,7 @@ export default function HabitosPage() {
           horario: novoHabito.horario || null,
           diasSemana: novoHabito.diasSemana,
           cor: novoHabito.cor,
+          categoriaId: novoHabito.categoriaId,
         }),
       });
 
@@ -208,6 +244,7 @@ export default function HabitosPage() {
           horario: '',
           diasSemana: [],
           cor: '#8B5CF6',
+          categoriaId: null,
         });
         carregarDados();
       } else {
@@ -248,23 +285,50 @@ export default function HabitosPage() {
     }
   };
 
-  const excluirHabito = async () => {
-    if (!habitoSelecionado) return;
+  // Dia sendo visualizado (para saber qual dia remover)
+  const diaVisualizando = diaSelecionado !== null ? diaSelecionado : diaAtual;
 
+  const excluirHabito = async (tipo: 'encerrar' | 'excluir', escopo?: 'dia' | 'todos') => {
+    if (!habitoSelecionado || excluindoHabito) return;
+
+    setExcluindoHabito(true);
     try {
-      const response = await fetch(`/api/v1/habitos/${habitoSelecionado.id}`, {
+      const params = new URLSearchParams({ tipo });
+      if (escopo === 'dia') {
+        params.set('diaSemana', diaVisualizando.toString());
+      }
+
+      const response = await fetch(`/api/v1/habitos/${habitoSelecionado.id}?${params.toString()}`, {
         method: 'DELETE',
       });
 
       if (response.ok) {
         setModalExcluirHabito(false);
         setHabitoSelecionado(null);
+        setEtapaExclusao(1);
         carregarDados();
       }
     } catch (error) {
       console.error('Erro ao excluir hábito:', error);
+    } finally {
+      setExcluindoHabito(false);
     }
   };
+
+  // Handler para avançar para segunda etapa (encerrar)
+  const handleEncerrarClick = () => {
+    setEtapaExclusao(2);
+  };
+
+  // Verifica se o hábito pode ser removido apenas de um dia específico
+  // (só faz sentido se o hábito aparece em mais de um dia)
+  const podeRemoverDiaEspecifico = useMemo(() => {
+    if (!habitoSelecionado) return false;
+    // Se diasSemana está vazio, aparece todos os dias (7 dias)
+    // Se tem valores, aparece nos dias especificados
+    const diasDoHabito = habitoSelecionado.diasSemana.length === 0 ? 7 : habitoSelecionado.diasSemana.length;
+    return diasDoHabito > 1;
+  }, [habitoSelecionado]);
 
   const toggleDiaSemana = (dia: number) => {
     setNovoHabito(prev => ({
@@ -275,9 +339,89 @@ export default function HabitosPage() {
     }));
   };
 
+  // Funções de categorias
+  const salvarCategoria = async () => {
+    if (salvandoCategoria || !novaCategoria.nome.trim()) return;
+
+    setSalvandoCategoria(true);
+    try {
+      const url = categoriaEditando
+        ? `/api/v1/habitos/categorias/${categoriaEditando.id}`
+        : '/api/v1/habitos/categorias';
+      const method = categoriaEditando ? 'PUT' : 'POST';
+
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nome: novaCategoria.nome.trim(),
+          cor: novaCategoria.cor,
+          icone: novaCategoria.icone,
+        }),
+      });
+
+      if (response.ok) {
+        setNovaCategoria({ nome: '', cor: '#8B5CF6', icone: 'folder' });
+        setCategoriaEditando(null);
+        carregarDados();
+      } else {
+        const errorData = await response.json();
+        alert(errorData.error || 'Erro ao salvar categoria');
+      }
+    } catch (error) {
+      console.error('Erro ao salvar categoria:', error);
+    } finally {
+      setSalvandoCategoria(false);
+    }
+  };
+
+  const excluirCategoria = async (categoriaId: string) => {
+    if (excluindoCategoria) return;
+
+    setExcluindoCategoria(true);
+    try {
+      const response = await fetch(`/api/v1/habitos/categorias/${categoriaId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        // Se estava filtrando por essa categoria, limpar o filtro
+        if (categoriaFiltro === categoriaId) {
+          setCategoriaFiltro(null);
+        }
+        carregarDados();
+      }
+    } catch (error) {
+      console.error('Erro ao excluir categoria:', error);
+    } finally {
+      setExcluindoCategoria(false);
+    }
+  };
+
+  const iniciarEdicaoCategoria = (categoria: CategoriaHabito) => {
+    setCategoriaEditando(categoria);
+    setNovaCategoria({
+      nome: categoria.nome,
+      cor: categoria.cor,
+      icone: categoria.icone,
+    });
+  };
+
+  const cancelarEdicaoCategoria = () => {
+    setCategoriaEditando(null);
+    setNovaCategoria({ nome: '', cor: '#8B5CF6', icone: 'folder' });
+  };
+
+  // Filtrar por categoria se houver filtro selecionado
+  const habitosFiltradosPorCategoria = useMemo(() => {
+    if (categoriaFiltro === null) return habitos;
+    if (categoriaFiltro === 'sem-categoria') return habitos.filter(h => !h.categoriaId);
+    return habitos.filter(h => h.categoriaId === categoriaFiltro);
+  }, [habitos, categoriaFiltro]);
+
   // Separar hábitos completados e pendentes
-  const habitosPendentes = habitos.filter(h => !h.completadoHoje);
-  const habitosCompletados = habitos.filter(h => h.completadoHoje);
+  const habitosPendentes = habitosFiltradosPorCategoria.filter(h => !h.completadoHoje);
+  const habitosCompletados = habitosFiltradosPorCategoria.filter(h => h.completadoHoje);
 
   if (loading) {
     return (
@@ -374,37 +518,93 @@ export default function HabitosPage() {
         </div>
       )}
 
-      {/* Seletor de Dia da Semana - Compacto */}
-      <div className="flex items-center justify-between gap-2">
-        <div className="flex gap-1">
-          {DIAS_SEMANA.map((dia) => {
-            const isSelected = diaSelecionado === null
-              ? dia.valor === diaAtual
-              : dia.valor === diaSelecionado;
-            const isToday = dia.valor === diaAtual;
+      {/* Seletor de Dia da Semana e Filtro de Categorias */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        {/* Dias da Semana */}
+        <div className="flex items-center gap-2">
+          <div className="flex gap-1">
+            {DIAS_SEMANA.map((dia) => {
+              const isSelected = diaSelecionado === null
+                ? dia.valor === diaAtual
+                : dia.valor === diaSelecionado;
+              const isToday = dia.valor === diaAtual;
 
-            return (
-              <button
-                key={dia.valor}
-                type="button"
-                onClick={() => setDiaSelecionado(dia.valor === diaAtual ? null : dia.valor)}
-                className={`w-7 h-7 rounded-full text-xs font-medium transition-all relative ${
-                  isSelected
-                    ? 'bg-purple-600 text-white'
-                    : isToday
-                      ? 'bg-zinc-800 text-purple-400 ring-1 ring-purple-500/50'
-                      : 'bg-zinc-800/50 text-zinc-500 hover:bg-zinc-800 hover:text-zinc-400'
-                }`}
-                title={isToday ? `${dia.nome} (${t('today')})` : dia.nome}
-              >
-                {dia.label}
-              </button>
-            );
-          })}
+              return (
+                <button
+                  key={dia.valor}
+                  type="button"
+                  onClick={() => setDiaSelecionado(dia.valor === diaAtual ? null : dia.valor)}
+                  className={`w-7 h-7 rounded-full text-xs font-medium transition-all relative ${
+                    isSelected
+                      ? 'bg-purple-600 text-white'
+                      : isToday
+                        ? 'bg-zinc-800 text-purple-400 ring-1 ring-purple-500/50'
+                        : 'bg-zinc-800/50 text-zinc-500 hover:bg-zinc-800 hover:text-zinc-400'
+                  }`}
+                  title={isToday ? `${dia.nome} (${t('today')})` : dia.nome}
+                >
+                  {dia.label}
+                </button>
+              );
+            })}
+          </div>
+          {!isVisualizandoDiaAtual && (
+            <span className="text-xs text-amber-500/70">{t('viewOnly')}</span>
+          )}
         </div>
-        {!isVisualizandoDiaAtual && (
-          <span className="text-xs text-amber-500/70">{t('viewOnly')}</span>
-        )}
+
+        {/* Filtro de Categorias */}
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 flex-wrap">
+            <button
+              onClick={() => setCategoriaFiltro(null)}
+              className={`px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
+                categoriaFiltro === null
+                  ? 'bg-purple-600 text-white'
+                  : 'bg-zinc-800/50 text-zinc-400 hover:bg-zinc-800'
+              }`}
+            >
+              {t('categories.all')}
+            </button>
+            {categorias.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => setCategoriaFiltro(cat.id)}
+                className={`px-2.5 py-1 rounded-full text-xs font-medium transition-all flex items-center gap-1 ${
+                  categoriaFiltro === cat.id
+                    ? 'text-white'
+                    : 'bg-zinc-800/50 text-zinc-400 hover:bg-zinc-800'
+                }`}
+                style={categoriaFiltro === cat.id ? { backgroundColor: cat.cor } : undefined}
+              >
+                <span
+                  className="w-2 h-2 rounded-full"
+                  style={{ backgroundColor: categoriaFiltro === cat.id ? 'white' : cat.cor }}
+                />
+                {cat.nome}
+              </button>
+            ))}
+            {habitos.some(h => !h.categoriaId) && (
+              <button
+                onClick={() => setCategoriaFiltro('sem-categoria')}
+                className={`px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
+                  categoriaFiltro === 'sem-categoria'
+                    ? 'bg-zinc-600 text-white'
+                    : 'bg-zinc-800/50 text-zinc-400 hover:bg-zinc-800'
+                }`}
+              >
+                {t('categories.uncategorized')}
+              </button>
+            )}
+          </div>
+          <button
+            onClick={() => setModalCategoriasAberto(true)}
+            className="p-1.5 rounded-lg bg-zinc-800/50 text-zinc-400 hover:bg-zinc-800 hover:text-white transition-colors"
+            title={t('categories.manage')}
+          >
+            <Settings2 className="w-4 h-4" />
+          </button>
+        </div>
       </div>
 
       {/* Lista de Hábitos - Compacta */}
@@ -704,6 +904,45 @@ export default function HabitosPage() {
               />
             </div>
 
+            {/* Categoria */}
+            {categorias.length > 0 && (
+              <div>
+                <Label className="text-zinc-300">{t('categories.title')} <span className="text-zinc-500">({t('optional')})</span></Label>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  <button
+                    type="button"
+                    onClick={() => setNovoHabito({ ...novoHabito, categoriaId: null })}
+                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                      novoHabito.categoriaId === null
+                        ? 'bg-zinc-700 text-white'
+                        : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
+                    }`}
+                  >
+                    {t('categories.none')}
+                  </button>
+                  {categorias.map((cat) => (
+                    <button
+                      key={cat.id}
+                      type="button"
+                      onClick={() => setNovoHabito({ ...novoHabito, categoriaId: cat.id })}
+                      className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 ${
+                        novoHabito.categoriaId === cat.id
+                          ? 'text-white'
+                          : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
+                      }`}
+                      style={novoHabito.categoriaId === cat.id ? { backgroundColor: cat.cor } : undefined}
+                    >
+                      <span
+                        className="w-2.5 h-2.5 rounded-full"
+                        style={{ backgroundColor: novoHabito.categoriaId === cat.id ? 'white' : cat.cor }}
+                      />
+                      {cat.nome}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Dias da Semana */}
             <div>
               <Label className="text-zinc-300">{t('repeatOn')}</Label>
@@ -773,20 +1012,295 @@ export default function HabitosPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Modal Confirmar Exclusão */}
-      <ConfirmModal
-        open={modalExcluirHabito}
-        onClose={() => {
-          setModalExcluirHabito(false);
-          setHabitoSelecionado(null);
-        }}
-        onConfirm={excluirHabito}
-        title={t('deleteHabit')}
-        description={t('deleteHabitConfirmation')}
-        confirmText={t('delete')}
-        cancelText={t('cancel')}
-        variant="danger"
-      />
+      {/* Modal Confirmar Exclusão com Opções */}
+      <Dialog open={modalExcluirHabito} onOpenChange={(open) => {
+        if (!excluindoHabito) {
+          setModalExcluirHabito(open);
+          if (!open) {
+            setHabitoSelecionado(null);
+            setEtapaExclusao(1);
+          }
+        }
+      }}>
+        <DialogContent className="sm:max-w-[520px] bg-zinc-900 border-zinc-800 rounded-2xl">
+          <DialogHeader>
+            <div className="flex items-start gap-4 mb-2">
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-lg shrink-0 ${
+                etapaExclusao === 1
+                  ? 'bg-gradient-to-br from-red-500 to-red-600'
+                  : 'bg-gradient-to-br from-purple-500 to-purple-600'
+              }`}>
+                {etapaExclusao === 1 ? (
+                  <Trash2 className="w-6 h-6 text-white" />
+                ) : (
+                  <Clock className="w-6 h-6 text-white" />
+                )}
+              </div>
+              <div className="flex-1">
+                <DialogTitle className="text-xl text-white mb-2">
+                  {etapaExclusao === 1 ? t('deleteHabit') : t('endHabitScope')}
+                </DialogTitle>
+                <DialogDescription className="text-zinc-400 text-sm leading-relaxed">
+                  {habitoSelecionado && (
+                    <>
+                      {etapaExclusao === 1
+                        ? t('deleteHabitOptions', { habitName: habitoSelecionado.nome })
+                        : t('endHabitScopeDescription', { habitName: habitoSelecionado.nome })
+                      }
+                    </>
+                  )}
+                </DialogDescription>
+              </div>
+            </div>
+          </DialogHeader>
+
+          {/* Etapa 1: Escolher entre encerrar ou excluir */}
+          {etapaExclusao === 1 && (
+            <div className="space-y-3 mt-4">
+              {/* Opção 1: Encerrar (soft delete) */}
+              <button
+                onClick={handleEncerrarClick}
+                disabled={excluindoHabito}
+                className="w-full p-4 rounded-xl border border-zinc-700 hover:border-purple-500 hover:bg-purple-500/10 transition-all text-left group disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center shrink-0 group-hover:bg-purple-500/30 transition-colors">
+                    <Clock className="w-5 h-5 text-purple-400" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium text-white mb-1">{t('endHabitOnly')}</p>
+                    <p className="text-sm text-zinc-500">{t('endHabitOnlyDescription')}</p>
+                  </div>
+                </div>
+              </button>
+
+              {/* Opção 2: Excluir (hard delete) */}
+              <button
+                onClick={() => excluirHabito('excluir')}
+                disabled={excluindoHabito}
+                className="w-full p-4 rounded-xl border border-zinc-700 hover:border-red-500 hover:bg-red-500/10 transition-all text-left group disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center shrink-0 group-hover:bg-red-500/30 transition-colors">
+                    <Trash2 className="w-5 h-5 text-red-400" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium text-white mb-1">{t('deleteHabitCompletely')}</p>
+                    <p className="text-sm text-zinc-500">{t('deleteHabitCompletelyDescription')}</p>
+                  </div>
+                </div>
+              </button>
+            </div>
+          )}
+
+          {/* Etapa 2: Escolher escopo (dia específico ou todos os dias) */}
+          {etapaExclusao === 2 && (
+            <div className="space-y-3 mt-4">
+              {/* Opção 1: Apenas este dia */}
+              {podeRemoverDiaEspecifico && (
+                <button
+                  onClick={() => excluirHabito('encerrar', 'dia')}
+                  disabled={excluindoHabito}
+                  className="w-full p-4 rounded-xl border border-zinc-700 hover:border-blue-500 hover:bg-blue-500/10 transition-all text-left group disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center shrink-0 group-hover:bg-blue-500/30 transition-colors">
+                      <CalendarX className="w-5 h-5 text-blue-400" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-medium text-white mb-1">
+                        {t('endOnlyThisDay', { dayName: DIAS_SEMANA[diaVisualizando].nome })}
+                      </p>
+                      <p className="text-sm text-zinc-500">{t('endOnlyThisDayDescription')}</p>
+                    </div>
+                  </div>
+                </button>
+              )}
+
+              {/* Opção 2: Todos os dias */}
+              <button
+                onClick={() => excluirHabito('encerrar', 'todos')}
+                disabled={excluindoHabito}
+                className="w-full p-4 rounded-xl border border-zinc-700 hover:border-purple-500 hover:bg-purple-500/10 transition-all text-left group disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center shrink-0 group-hover:bg-purple-500/30 transition-colors">
+                    <CalendarOff className="w-5 h-5 text-purple-400" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium text-white mb-1">{t('endAllDays')}</p>
+                    <p className="text-sm text-zinc-500">{t('endAllDaysDescription')}</p>
+                  </div>
+                </div>
+              </button>
+            </div>
+          )}
+
+          {/* Botões de ação */}
+          <div className="mt-4 flex gap-2">
+            {etapaExclusao === 2 && (
+              <Button
+                variant="ghost"
+                onClick={() => setEtapaExclusao(1)}
+                disabled={excluindoHabito}
+                className="flex-1 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-xl h-11"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                {t('back')}
+              </Button>
+            )}
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setModalExcluirHabito(false);
+                setHabitoSelecionado(null);
+                setEtapaExclusao(1);
+              }}
+              disabled={excluindoHabito}
+              className={`${etapaExclusao === 2 ? 'flex-1' : 'w-full'} text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-xl h-11`}
+            >
+              <X className="w-4 h-4 mr-2" />
+              {t('cancel')}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal Gerenciar Categorias */}
+      <Dialog open={modalCategoriasAberto} onOpenChange={(open) => {
+        setModalCategoriasAberto(open);
+        if (!open) {
+          setCategoriaEditando(null);
+          setNovaCategoria({ nome: '', cor: '#8B5CF6', icone: 'folder' });
+        }
+      }}>
+        <DialogContent className="bg-zinc-900 border-zinc-800 max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-white flex items-center gap-2">
+              <Folder className="w-5 h-5 text-purple-500" />
+              {t('categories.manage')}
+            </DialogTitle>
+            <DialogDescription className="text-zinc-400">
+              {t('categories.manageDescription')}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            {/* Form para criar/editar categoria */}
+            <div className="p-4 bg-zinc-800/50 rounded-lg space-y-3">
+              <div>
+                <Label htmlFor="nome-categoria" className="text-zinc-300 text-sm">
+                  {t('categories.name')}
+                </Label>
+                <Input
+                  id="nome-categoria"
+                  value={novaCategoria.nome}
+                  onChange={(e) => setNovaCategoria({ ...novaCategoria, nome: e.target.value })}
+                  placeholder={t('categories.namePlaceholder')}
+                  className="bg-zinc-800 border-zinc-700 text-white mt-1"
+                />
+              </div>
+
+              <div>
+                <Label className="text-zinc-300 text-sm">{t('categories.color')}</Label>
+                <div className="flex gap-2 mt-1.5">
+                  {CORES.map((cor) => (
+                    <button
+                      key={cor}
+                      type="button"
+                      onClick={() => setNovaCategoria({ ...novaCategoria, cor })}
+                      className={`w-7 h-7 rounded-full transition-transform ${
+                        novaCategoria.cor === cor ? 'ring-2 ring-white ring-offset-2 ring-offset-zinc-900 scale-110' : 'hover:scale-105'
+                      }`}
+                      style={{ backgroundColor: cor }}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex gap-2">
+                {categoriaEditando && (
+                  <Button
+                    variant="ghost"
+                    onClick={cancelarEdicaoCategoria}
+                    className="flex-1 text-zinc-400 hover:text-white"
+                  >
+                    {t('cancel')}
+                  </Button>
+                )}
+                <Button
+                  onClick={salvarCategoria}
+                  disabled={!novaCategoria.nome.trim() || salvandoCategoria}
+                  className={`${categoriaEditando ? 'flex-1' : 'w-full'} bg-purple-600 hover:bg-purple-700`}
+                >
+                  {salvandoCategoria ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : categoriaEditando ? (
+                    t('categories.update')
+                  ) : (
+                    <>
+                      <Plus className="w-4 h-4 mr-1" />
+                      {t('categories.add')}
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+
+            {/* Lista de categorias existentes */}
+            {categorias.length > 0 ? (
+              <div className="space-y-2">
+                <Label className="text-zinc-400 text-xs uppercase tracking-wide">
+                  {t('categories.existing')} ({categorias.length})
+                </Label>
+                <div className="space-y-1">
+                  {categorias.map((cat) => (
+                    <div
+                      key={cat.id}
+                      className={`flex items-center justify-between p-3 rounded-lg transition-colors ${
+                        categoriaEditando?.id === cat.id ? 'bg-purple-500/20 border border-purple-500/50' : 'bg-zinc-800/50 hover:bg-zinc-800'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <span
+                          className="w-4 h-4 rounded-full"
+                          style={{ backgroundColor: cat.cor }}
+                        />
+                        <div>
+                          <p className="text-sm font-medium text-white">{cat.nome}</p>
+                          <p className="text-xs text-zinc-500">
+                            {cat.totalHabitos || 0} {t('categories.habits')}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => iniciarEdicaoCategoria(cat)}
+                          className="p-1.5 text-zinc-500 hover:text-white transition-colors rounded"
+                        >
+                          <Settings2 className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => excluirCategoria(cat.id)}
+                          disabled={excluindoCategoria}
+                          className="p-1.5 text-zinc-500 hover:text-red-400 transition-colors rounded disabled:opacity-50"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-6 text-zinc-500">
+                <Tag className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                <p className="text-sm">{t('categories.empty')}</p>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -59,13 +59,15 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
       );
     }
 
-    const { data, completado, notas, timezone: timezoneBody } = validationResult.data;
+    const { completado, notas, timezone: timezoneBody } = validationResult.data;
 
     // Usar timezone do cliente ou fallback para o padrão
     const timezone = getTimezoneFromRequest(timezoneBody || null);
 
-    // Normalizar data para início do dia no timezone do usuário
-    const dataRegistro = normalizarParaInicioDoDia(new Date(data));
+    // Usar o início do dia no timezone do usuário para garantir consistência
+    // Isso resolve o problema de fuso horário onde às 22h de Brasília (UTC-3)
+    // o servidor em UTC já considera o dia seguinte
+    const dataRegistro = getInicioDoDiaNoTimezone(timezone);
 
     // Verificar se já existe registro para este dia
     const registroExistente = await prisma.registroHabito.findUnique({
