@@ -371,7 +371,6 @@ export default function PerfilPage() {
                     <div className="pt-3">
                       <Button
                         size="sm"
-                        variant="outline"
                         onClick={() => router.push('/dashboard/settings?from=profile')}
                         className="border-zinc-700 hover:bg-zinc-800 hover:text-white text-zinc-300"
                       >

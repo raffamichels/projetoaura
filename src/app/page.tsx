@@ -303,7 +303,7 @@ export default function LandingPage() {
                 FAQ
               </a>
               <div className="pt-4 flex flex-col gap-3">
-                <Button variant="outline" className="w-full border-white/10" onClick={() => router.push('/login')}>
+                <Button className="w-full border-white/10" onClick={() => router.push('/login')}>
                   Entrar
                 </Button>
                 <Button className="w-full bg-gradient-to-r from-violet-600 to-blue-600" onClick={() => router.push('/register')}>
@@ -704,7 +704,6 @@ export default function LandingPage() {
                 ))}
               </ul>
               <Button
-                variant="outline"
                 className="w-full h-12 border-white/10 text-white hover:bg-white/5"
                 onClick={() => router.push('/register')}
               >

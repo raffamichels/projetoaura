@@ -451,7 +451,6 @@ export default function SettingsPage() {
                     <div className="pt-3 flex gap-3">
                       <Button
                         size="sm"
-                        variant="outline"
                         onClick={handleAvatarClick}
                         disabled={uploadingAvatar}
                         className="border-zinc-700 hover:bg-zinc-800 hover:text-white text-zinc-300"
