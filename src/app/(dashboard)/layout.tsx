@@ -1,8 +1,13 @@
+import dynamic from 'next/dynamic';
 import { Sidebar } from '@/components/dashboard/Sidebar';
-import { Header } from '@/components/dashboard/Header';
 import { InstallPWA } from '@/components/pwa/InstallPWA';
 import { Toaster } from 'sonner';
 import { NotificationProvider } from '@/contexts/NotificationContext';
+
+// Dynamic import para evitar hydration mismatch com Radix UI
+const Header = dynamic(() => import('@/components/dashboard/Header').then(mod => ({ default: mod.Header })), {
+  ssr: false,
+});
 
 export default function DashboardLayout({
   children,

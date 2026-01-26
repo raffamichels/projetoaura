@@ -288,9 +288,15 @@ export default function EstudosPage() {
         throw new Error(errorData.error || 'Erro ao processar áudio');
       }
 
-      // 3. Anotação criada com sucesso
+      // 3. Anotação criada com sucesso - capturar e abrir modal de visualização
+      const processData = await processResponse.json();
       fecharModalAnotacao();
-      carregarDados();
+      await carregarDados();
+
+      // Abrir modal da anotação gerada
+      if (processData.data) {
+        setAnotacaoSelecionada(processData.data);
+      }
     } catch (error) {
       console.error('Erro ao processar áudio:', error);
       setErroAudio(error instanceof Error ? error.message : 'Erro ao processar áudio');

@@ -71,7 +71,7 @@ export async function createSubscriptionWithIntent(
     items: [{ price: priceId }],
     payment_behavior: 'default_incomplete',
     payment_settings: {
-      payment_method_types: ['card', 'pix'] as Stripe.SubscriptionCreateParams.PaymentSettings.PaymentMethodType[],
+      payment_method_types: ['card'] as Stripe.SubscriptionCreateParams.PaymentSettings.PaymentMethodType[],
       save_default_payment_method: 'on_subscription',
     },
     expand: ['latest_invoice'],
@@ -106,7 +106,7 @@ export async function createSubscriptionWithIntent(
   if (!clientSecret) {
     const setupIntent = await stripe.setupIntents.create({
       customer: customerId,
-      payment_method_types: ['card', 'pix'] as Stripe.SetupIntentCreateParams['payment_method_types'],
+      payment_method_types: ['card'] as Stripe.SetupIntentCreateParams['payment_method_types'],
       metadata: {
         subscription_id: subscription.id,
       },
