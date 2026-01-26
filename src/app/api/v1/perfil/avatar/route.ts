@@ -1,15 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/lib/auth/auth'; // Importa a função auth do seu arquivo de configuração v5
+import { auth } from '@/lib/auth/auth';
 import { prisma } from '@/lib/prisma';
-import { writeFile } from 'fs/promises';
-import path from 'path';
-import fs from 'fs'; // Importado para usar existsSync e mkdirSync
+import { put, del } from '@vercel/blob';
 
 export async function POST(req: NextRequest) {
   try {
-    // CORREÇÃO: Usa auth() em vez de getServerSession(authOptions)
     const session = await auth();
-    
+
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
@@ -38,35 +35,36 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Converter file para buffer
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
     // Criar nome único para o arquivo
     const uniqueSuffix = `${session.user.id}-${Date.now()}`;
-    // Fallback seguro caso o nome do arquivo não tenha extensão
     const extension = file.name.split('.').pop() || 'jpg';
-    const filename = `avatar-${uniqueSuffix}.${extension}`;
+    const filename = `avatars/avatar-${uniqueSuffix}.${extension}`;
 
-    // Definir caminho
-    const uploadsDir = path.join(process.cwd(), 'public', 'uploads', 'avatars');
-    const filepath = path.join(uploadsDir, filename);
+    // Buscar usuário atual para deletar avatar antigo se existir
+    const currentUser = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { image: true },
+    });
 
-    // Criar diretório se não existir
-    if (!fs.existsSync(uploadsDir)) {
-      fs.mkdirSync(uploadsDir, { recursive: true });
+    // Deletar avatar antigo do Vercel Blob se existir
+    if (currentUser?.image && currentUser.image.includes('blob.vercel-storage.com')) {
+      try {
+        await del(currentUser.image);
+      } catch {
+        // Ignorar erro se não conseguir deletar o arquivo antigo
+      }
     }
 
-    // Salvar arquivo
-    await writeFile(filepath, buffer);
+    // Upload para Vercel Blob
+    const blob = await put(filename, file, {
+      access: 'public',
+      addRandomSuffix: false,
+    });
 
-    // URL pública do avatar
-    const avatarUrl = `/uploads/avatars/${filename}`;
-
-    // Atualizar usuário no banco
+    // Atualizar usuário no banco com a URL do blob
     const updatedUser = await prisma.user.update({
       where: { id: session.user.id },
-      data: { image: avatarUrl },
+      data: { image: blob.url },
       select: {
         id: true,
         name: true,
@@ -92,13 +90,27 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function DELETE(req: NextRequest) {
+export async function DELETE() {
   try {
-    // CORREÇÃO: Usa auth() em vez de getServerSession(authOptions)
     const session = await auth();
-    
+
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
+    }
+
+    // Buscar usuário atual para deletar avatar do Vercel Blob
+    const currentUser = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { image: true },
+    });
+
+    // Deletar avatar do Vercel Blob se existir
+    if (currentUser?.image && currentUser.image.includes('blob.vercel-storage.com')) {
+      try {
+        await del(currentUser.image);
+      } catch {
+        // Ignorar erro se não conseguir deletar o arquivo
+      }
     }
 
     // Remover avatar do usuário

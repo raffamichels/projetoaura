@@ -413,6 +413,12 @@ model Anotacao {
   conteudo    String   @db.Text
   cor         String   @default("#FBBF24")
 
+  // Campos para anotação por áudio
+  tipoOrigem        String   @default("texto") // "texto" | "audio"
+  audioUrl          String?  // URL do arquivo de áudio no Vercel Blob
+  audioDuracao      Int?     // Duração em segundos
+  transcricaoOriginal String? @db.Text // Transcrição completa do áudio
+
   cursoId     String?
   curso       Curso?   @relation(fields: [cursoId], references: [id], onDelete: SetNull)
 

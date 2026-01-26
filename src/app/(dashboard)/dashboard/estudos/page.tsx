@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BookOpen, Plus, Search, StickyNote, FileText, ChevronRight, Edit, Trash2, Sparkles, Loader2, Crown } from 'lucide-react';
+import { BookOpen, Plus, Search, StickyNote, FileText, ChevronRight, Edit, Trash2, Sparkles, Loader2, Crown, Mic, FileAudio } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -13,6 +13,8 @@ import { UpgradeToPremiumModal } from '@/components/planos/UpgradeToPremiumModal
 import { verificarAcessoRecurso } from '@/lib/planos-helper';
 import { RecursoPremium, PlanoUsuario } from '@/types/planos';
 import { useTranslations } from 'next-intl';
+import { AudioRecorder } from '@/components/estudos/AudioRecorder';
+import { AudioPlayer } from '@/components/estudos/AudioPlayer';
 
 interface Curso {
   id: string;
@@ -31,6 +33,10 @@ interface Anotacao {
   titulo: string;
   conteudo: string;
   cor: string;
+  tipoOrigem?: string;
+  audioUrl?: string;
+  audioDuracao?: number;
+  transcricaoOriginal?: string;
   curso?: {
     id: string;
     nome: string;
@@ -77,12 +83,20 @@ export default function EstudosPage() {
   });
 
   // Estados para anotação com IA
-  const [tipoAnotacao, setTipoAnotacao] = useState<'livre' | 'ia'>('livre');
+  const [tipoAnotacao, setTipoAnotacao] = useState<'livre' | 'ia' | 'audio'>('livre');
   const [formatoAnotacao, setFormatoAnotacao] = useState<'padrao' | 'notion'>('padrao');
   const [textoOriginalIA, setTextoOriginalIA] = useState('');
   const [anotacaoGeradaIA, setAnotacaoGeradaIA] = useState<{ title: string; content: string } | null>(null);
   const [gerandoAnotacao, setGerandoAnotacao] = useState(false);
   const [erroIA, setErroIA] = useState<string | null>(null);
+
+  // Estados para anotação por áudio
+  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+  const [audioDuracao, setAudioDuracao] = useState(0);
+  const [uploadandoAudio, setUploadandoAudio] = useState(false);
+  const [processandoAudio, setProcessandoAudio] = useState(false);
+  const [erroAudio, setErroAudio] = useState<string | null>(null);
+  const [mostrarTranscricao, setMostrarTranscricao] = useState(false);
 
   // Estados de loading para evitar múltiplos cliques (BUG-002)
   const [criandoCurso, setCriandoCurso] = useState(false);
@@ -214,6 +228,84 @@ export default function EstudosPage() {
     setTipoAnotacao('ia');
   };
 
+  const handleAudioRecordingComplete = (blob: Blob, duration: number) => {
+    setAudioBlob(blob);
+    setAudioDuracao(duration);
+    setErroAudio(null);
+  };
+
+  const processarAudioGravado = async () => {
+    if (!audioBlob || processandoAudio) return;
+
+    // Verificar se o usuário tem acesso ao recurso premium
+    if (!isPremium) {
+      setShowUpgradeModal(true);
+      return;
+    }
+
+    setUploadandoAudio(true);
+    setProcessandoAudio(false);
+    setErroAudio(null);
+
+    try {
+      // 1. Fazer upload do áudio para Vercel Blob
+      const formData = new FormData();
+      formData.append('audio', audioBlob, 'recording.webm');
+      formData.append('duration', audioDuracao.toString());
+
+      const uploadResponse = await fetch('/api/v1/estudos/anotacoes/audio/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!uploadResponse.ok) {
+        const errorData = await uploadResponse.json();
+        throw new Error(errorData.error || 'Erro ao fazer upload do áudio');
+      }
+
+      const uploadData = await uploadResponse.json();
+      setUploadandoAudio(false);
+      setProcessandoAudio(true);
+
+      // 2. Processar o áudio com Gemini
+      const processResponse = await fetch('/api/v1/estudos/anotacoes/audio/process', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          audioUrl: uploadData.url,
+          audioDuracao,
+          formato: formatoAnotacao,
+          cor: novaAnotacao.cor,
+        }),
+      });
+
+      if (!processResponse.ok) {
+        const errorData = await processResponse.json();
+        if (processResponse.status === 403) {
+          setShowUpgradeModal(true);
+          return;
+        }
+        throw new Error(errorData.error || 'Erro ao processar áudio');
+      }
+
+      // 3. Anotação criada com sucesso
+      fecharModalAnotacao();
+      carregarDados();
+    } catch (error) {
+      console.error('Erro ao processar áudio:', error);
+      setErroAudio(error instanceof Error ? error.message : 'Erro ao processar áudio');
+    } finally {
+      setUploadandoAudio(false);
+      setProcessandoAudio(false);
+    }
+  };
+
+  const descartarAudioGravado = () => {
+    setAudioBlob(null);
+    setAudioDuracao(0);
+    setErroAudio(null);
+  };
+
   // Verificar se o modal de curso tem dados não salvos
   const isCursoDirty = novoCurso.nome.length > 0 || novoCurso.descricao.length > 0;
 
@@ -222,7 +314,8 @@ export default function EstudosPage() {
     novaAnotacao.titulo.length > 0 ||
     novaAnotacao.conteudo.length > 0 ||
     textoOriginalIA.length > 0 ||
-    anotacaoGeradaIA !== null;
+    anotacaoGeradaIA !== null ||
+    audioBlob !== null;
 
   const handleFecharModalCurso = (open: boolean) => {
     if (!open && isCursoDirty) {
@@ -256,6 +349,12 @@ export default function EstudosPage() {
     setTextoOriginalIA('');
     setAnotacaoGeradaIA(null);
     setErroIA(null);
+    // Limpar estados de áudio
+    setAudioBlob(null);
+    setAudioDuracao(0);
+    setErroAudio(null);
+    setUploadandoAudio(false);
+    setProcessandoAudio(false);
   };
 
   const confirmarFecharAnotacao = () => {
@@ -283,6 +382,7 @@ export default function EstudosPage() {
   const abrirAnotacao = (anotacao: Anotacao) => {
     setAnotacaoSelecionada(anotacao);
     setEditandoAnotacao(false);
+    setMostrarTranscricao(false);
     setModalVisualizarAnotacao(true);
   };
 
@@ -662,55 +762,88 @@ export default function EstudosPage() {
 
       {/* Modal Nova Anotação */}
       <Dialog open={modalAnotacaoAberto} onOpenChange={handleFecharModalAnotacao}>
-        <DialogContent className={`bg-zinc-900 border-zinc-800 text-white p-6 transition-all ${tipoAnotacao === 'ia' ? 'max-w-4xl' : 'max-w-xl'}`}>
+        <DialogContent className={`bg-zinc-900 border-zinc-800 text-white p-6 transition-all ${tipoAnotacao === 'ia' ? 'max-w-4xl' : tipoAnotacao === 'audio' ? 'max-w-lg' : 'max-w-xl'}`}>
           <DialogHeader>
             <DialogTitle>{t('newNoteTitle')}</DialogTitle>
           </DialogHeader>
 
           <div className="space-y-1">
-            {/* Título - campo principal destacado */}
-            <input
-              type="text"
-              value={tipoAnotacao === 'ia' && anotacaoGeradaIA ? anotacaoGeradaIA.title : novaAnotacao.titulo}
-              onChange={(e) => {
-                if (tipoAnotacao === 'ia' && anotacaoGeradaIA) {
-                  setAnotacaoGeradaIA({ ...anotacaoGeradaIA, title: e.target.value });
-                } else {
-                  setNovaAnotacao({ ...novaAnotacao, titulo: e.target.value });
-                }
-              }}
-              placeholder={t('titlePlaceholder')}
-              className="w-full bg-transparent border-none text-white text-lg font-medium placeholder:text-zinc-500 focus:outline-none focus:ring-0 py-2"
-              autoFocus
-            />
+            {/* Seletor de modo de anotação */}
+            <div className="flex gap-2 mb-4">
+              <button
+                type="button"
+                onClick={() => setTipoAnotacao('livre')}
+                className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg text-sm font-medium transition-all ${
+                  tipoAnotacao === 'livre'
+                    ? 'bg-purple-500/20 text-purple-400 border border-purple-500/50'
+                    : 'bg-zinc-800 text-zinc-400 border border-zinc-700 hover:border-zinc-600'
+                }`}
+              >
+                <FileText className="w-4 h-4" />
+                Escrever
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (!isPremium) {
+                    setShowUpgradeModal(true);
+                    return;
+                  }
+                  setTipoAnotacao('ia');
+                }}
+                className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg text-sm font-medium transition-all ${
+                  tipoAnotacao === 'ia'
+                    ? 'bg-purple-500/20 text-purple-400 border border-purple-500/50'
+                    : 'bg-zinc-800 text-zinc-400 border border-zinc-700 hover:border-zinc-600'
+                }`}
+              >
+                <Sparkles className="w-4 h-4" />
+                Texto + IA
+                {!isPremium && <Crown className="w-3 h-3 text-yellow-400" />}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (!isPremium) {
+                    setShowUpgradeModal(true);
+                    return;
+                  }
+                  setTipoAnotacao('audio');
+                }}
+                className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg text-sm font-medium transition-all ${
+                  tipoAnotacao === 'audio'
+                    ? 'bg-purple-500/20 text-purple-400 border border-purple-500/50'
+                    : 'bg-zinc-800 text-zinc-400 border border-zinc-700 hover:border-zinc-600'
+                }`}
+              >
+                <Mic className="w-4 h-4" />
+                Gravar
+                {!isPremium && <Crown className="w-3 h-3 text-yellow-400" />}
+              </button>
+            </div>
 
-            <div className="border-t border-zinc-800" />
+            {/* Título - apenas para modo livre e ia */}
+            {tipoAnotacao !== 'audio' && (
+              <>
+                <input
+                  type="text"
+                  value={tipoAnotacao === 'ia' && anotacaoGeradaIA ? anotacaoGeradaIA.title : novaAnotacao.titulo}
+                  onChange={(e) => {
+                    if (tipoAnotacao === 'ia' && anotacaoGeradaIA) {
+                      setAnotacaoGeradaIA({ ...anotacaoGeradaIA, title: e.target.value });
+                    } else {
+                      setNovaAnotacao({ ...novaAnotacao, titulo: e.target.value });
+                    }
+                  }}
+                  placeholder={t('titlePlaceholder')}
+                  className="w-full bg-transparent border-none text-white text-lg font-medium placeholder:text-zinc-500 focus:outline-none focus:ring-0 py-2"
+                  autoFocus
+                />
+                <div className="border-t border-zinc-800" />
+              </>
+            )}
 
             <div className="space-y-0.5">
-              {/* Tipo de anotação */}
-              <div className="flex items-center gap-3 py-2.5 px-1 hover:bg-zinc-800/30 rounded-lg transition-colors">
-                <StickyNote className="w-5 h-5 text-zinc-400 shrink-0" />
-                <div className="flex items-center justify-between flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-zinc-300">{t('aiNote')}</span>
-                    {!isPremium && <Crown className="w-3 h-3 text-yellow-400" />}
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (!isPremium && tipoAnotacao === 'livre') {
-                        setShowUpgradeModal(true);
-                        return;
-                      }
-                      setTipoAnotacao(tipoAnotacao === 'livre' ? 'ia' : 'livre');
-                    }}
-                    className={`relative w-9 h-5 rounded-full transition-colors ${tipoAnotacao === 'ia' ? 'bg-purple-500' : 'bg-zinc-600'}`}
-                  >
-                    <span className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition-transform ${tipoAnotacao === 'ia' ? 'left-4.5' : 'left-0.5'}`} />
-                  </button>
-                </div>
-              </div>
-
               {/* Conteúdo - modo livre */}
               {tipoAnotacao === 'livre' && (
                 <div className="flex items-start gap-3 py-2.5 px-1 hover:bg-zinc-800/30 rounded-lg transition-colors">
@@ -722,6 +855,80 @@ export default function EstudosPage() {
                     rows={4}
                     className="flex-1 bg-transparent border-none text-sm text-white placeholder:text-zinc-500 focus:outline-none resize-none"
                   />
+                </div>
+              )}
+
+              {/* Conteúdo - modo áudio */}
+              {tipoAnotacao === 'audio' && (
+                <div className="py-4">
+                  {erroAudio && (
+                    <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
+                      {erroAudio}
+                    </div>
+                  )}
+
+                  {/* Seletor de formato */}
+                  <div className="flex items-center gap-3 py-2.5 px-1 mb-4 bg-zinc-800/30 rounded-lg">
+                    <FileText className="w-5 h-5 text-zinc-400 shrink-0" />
+                    <div className="flex items-center justify-between flex-1">
+                      <span className="text-sm text-zinc-300">Formato da anotação</span>
+                      <select
+                        value={formatoAnotacao}
+                        onChange={(e) => setFormatoAnotacao(e.target.value as 'padrao' | 'notion')}
+                        disabled={uploadandoAudio || processandoAudio}
+                        className="bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-purple-500 cursor-pointer"
+                      >
+                        <option value="padrao">Padrão</option>
+                        <option value="notion">Notion (Markdown)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Gravador ou status de processamento */}
+                  {uploadandoAudio || processandoAudio ? (
+                    <div className="flex flex-col items-center gap-4 py-8">
+                      <Loader2 className="w-12 h-12 text-purple-500 animate-spin" />
+                      <div className="text-center">
+                        <p className="text-white font-medium">
+                          {uploadandoAudio ? 'Enviando áudio...' : 'Transcrevendo e organizando...'}
+                        </p>
+                        <p className="text-sm text-zinc-400 mt-1">
+                          {uploadandoAudio
+                            ? 'Aguarde enquanto o áudio é enviado'
+                            : 'A IA está transcrevendo e criando sua anotação'}
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <AudioRecorder
+                      onRecordingComplete={handleAudioRecordingComplete}
+                      maxDuration={2700}
+                      disabled={uploadandoAudio || processandoAudio}
+                    />
+                  )}
+
+                  {/* Cor da anotação */}
+                  {!uploadandoAudio && !processandoAudio && (
+                    <div className="flex items-center gap-3 py-2.5 px-1 mt-4 bg-zinc-800/30 rounded-lg">
+                      <div
+                        className="w-5 h-5 rounded-full shrink-0"
+                        style={{ backgroundColor: novaAnotacao.cor }}
+                      />
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        {cores.map((cor) => (
+                          <button
+                            key={cor}
+                            type="button"
+                            onClick={() => setNovaAnotacao({ ...novaAnotacao, cor })}
+                            className={`w-6 h-6 rounded-full transition-all ${
+                              novaAnotacao.cor === cor ? 'ring-2 ring-white ring-offset-1 ring-offset-zinc-900' : 'opacity-60 hover:opacity-100'
+                            }`}
+                            style={{ backgroundColor: cor }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -792,26 +999,28 @@ export default function EstudosPage() {
                 </>
               )}
 
-              {/* Cor */}
-              <div className="flex items-center gap-3 py-2.5 px-1 hover:bg-zinc-800/30 rounded-lg transition-colors">
-                <div
-                  className="w-5 h-5 rounded-full shrink-0"
-                  style={{ backgroundColor: novaAnotacao.cor }}
-                />
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  {cores.map((cor) => (
-                    <button
-                      key={cor}
-                      type="button"
-                      onClick={() => setNovaAnotacao({ ...novaAnotacao, cor })}
-                      className={`w-6 h-6 rounded-full transition-all ${
-                        novaAnotacao.cor === cor ? 'ring-2 ring-white ring-offset-1 ring-offset-zinc-900' : 'opacity-60 hover:opacity-100'
-                      }`}
-                      style={{ backgroundColor: cor }}
-                    />
-                  ))}
+              {/* Cor - apenas para modo livre e ia */}
+              {tipoAnotacao !== 'audio' && (
+                <div className="flex items-center gap-3 py-2.5 px-1 hover:bg-zinc-800/30 rounded-lg transition-colors">
+                  <div
+                    className="w-5 h-5 rounded-full shrink-0"
+                    style={{ backgroundColor: novaAnotacao.cor }}
+                  />
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    {cores.map((cor) => (
+                      <button
+                        key={cor}
+                        type="button"
+                        onClick={() => setNovaAnotacao({ ...novaAnotacao, cor })}
+                        className={`w-6 h-6 rounded-full transition-all ${
+                          novaAnotacao.cor === cor ? 'ring-2 ring-white ring-offset-1 ring-offset-zinc-900' : 'opacity-60 hover:opacity-100'
+                        }`}
+                        style={{ backgroundColor: cor }}
+                      />
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
             {/* Botões */}
@@ -821,10 +1030,24 @@ export default function EstudosPage() {
                 variant="ghost"
                 onClick={() => handleFecharModalAnotacao(false)}
                 className="px-4 h-9 text-sm text-zinc-400 hover:text-white"
-                disabled={criandoAnotacao || gerandoAnotacao}
+                disabled={criandoAnotacao || gerandoAnotacao || uploadandoAudio || processandoAudio}
               >
                 {t('cancel')}
               </Button>
+
+              {/* Botão para modo áudio */}
+              {tipoAnotacao === 'audio' && audioBlob && !uploadandoAudio && !processandoAudio && (
+                <Button
+                  type="button"
+                  onClick={processarAudioGravado}
+                  className="px-6 h-9 text-sm bg-purple-600 hover:bg-purple-700 text-white rounded-full font-medium"
+                >
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  Transcrever e criar anotação
+                </Button>
+              )}
+
+              {/* Botão para modo IA */}
               {tipoAnotacao === 'ia' && !anotacaoGeradaIA ? (
                 <Button
                   type="button"
@@ -955,20 +1178,63 @@ export default function EstudosPage() {
                         className="w-10 h-10 rounded flex items-center justify-center flex-shrink-0"
                         style={{ backgroundColor: anotacaoSelecionada.cor + '20', color: anotacaoSelecionada.cor }}
                       >
-                        <StickyNote className="w-5 h-5" />
+                        {anotacaoSelecionada.tipoOrigem === 'audio' ? (
+                          <FileAudio className="w-5 h-5" />
+                        ) : (
+                          <StickyNote className="w-5 h-5" />
+                        )}
                       </div>
                       <div className="flex-1 min-w-0">
                         <h3 className="text-xl font-bold text-white mb-1 break-words">
                           {anotacaoSelecionada.titulo}
                         </h3>
-                        {anotacaoSelecionada.curso && (
-                          <p className="text-sm text-zinc-400">{anotacaoSelecionada.curso.nome}</p>
-                        )}
+                        <div className="flex items-center gap-2">
+                          {anotacaoSelecionada.curso && (
+                            <p className="text-sm text-zinc-400">{anotacaoSelecionada.curso.nome}</p>
+                          )}
+                          {anotacaoSelecionada.tipoOrigem === 'audio' && (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-400 text-xs">
+                              <Mic className="w-3 h-3" />
+                              Áudio
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
+
+                    {/* Player de áudio para anotações de áudio */}
+                    {anotacaoSelecionada.tipoOrigem === 'audio' && anotacaoSelecionada.audioUrl && (
+                      <AudioPlayer
+                        src={anotacaoSelecionada.audioUrl}
+                        duration={anotacaoSelecionada.audioDuracao}
+                      />
+                    )}
+
                     <div className="bg-zinc-800/50 rounded-lg p-4 border border-zinc-700/50">
                       <p className="text-zinc-300 whitespace-pre-wrap break-words">{anotacaoSelecionada.conteudo}</p>
                     </div>
+
+                    {/* Transcrição original para anotações de áudio */}
+                    {anotacaoSelecionada.tipoOrigem === 'audio' && anotacaoSelecionada.transcricaoOriginal && (
+                      <div className="space-y-2">
+                        <button
+                          type="button"
+                          onClick={() => setMostrarTranscricao(!mostrarTranscricao)}
+                          className="flex items-center gap-2 text-sm text-zinc-400 hover:text-zinc-300 transition-colors"
+                        >
+                          <ChevronRight className={`w-4 h-4 transition-transform ${mostrarTranscricao ? 'rotate-90' : ''}`} />
+                          {mostrarTranscricao ? 'Ocultar transcrição original' : 'Ver transcrição original'}
+                        </button>
+                        {mostrarTranscricao && (
+                          <div className="bg-zinc-800/30 rounded-lg p-4 border border-zinc-700/30">
+                            <p className="text-sm text-zinc-400 whitespace-pre-wrap break-words">
+                              {anotacaoSelecionada.transcricaoOriginal}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
                     <p className="text-xs text-zinc-500">
                       {t('createdAt')} {new Date(anotacaoSelecionada.createdAt).toLocaleDateString('pt-BR')}
                     </p>
