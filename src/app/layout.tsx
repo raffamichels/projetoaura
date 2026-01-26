@@ -19,6 +19,13 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Aura - Gerenciamento Pessoal",
   description: "Sistema completo de gerenciamento pessoal",
+  manifest: "/manifest.json",
+  themeColor: "#0a0a0a",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Aura",
+  },
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: '16x16' },
@@ -28,8 +35,14 @@ export const metadata: Metadata = {
     ],
     shortcut: '/favicon.ico',
     apple: [
-      { url: '/favicon.ico', sizes: '180x180' },
+      { url: '/images/logo-com-fundo.png', sizes: '180x180' },
     ],
+  },
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
   },
 };
 

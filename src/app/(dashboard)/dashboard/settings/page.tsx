@@ -692,7 +692,7 @@ export default function SettingsPage() {
                     desc="Altere sua senha de acesso."
                     action={
                       <Button
-                        variant="outline"
+                        variant="default"
                         size="sm"
                         className="border-zinc-700 text-zinc-300"
                         onClick={() => setShowPasswordModal(true)}

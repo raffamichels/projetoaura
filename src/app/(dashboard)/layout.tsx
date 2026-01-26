@@ -1,5 +1,6 @@
 import { Sidebar } from '@/components/dashboard/Sidebar';
 import { Header } from '@/components/dashboard/Header';
+import { InstallPWA } from '@/components/pwa/InstallPWA';
 import { Toaster } from 'sonner';
 
 export default function DashboardLayout({
@@ -40,6 +41,9 @@ export default function DashboardLayout({
         }}
         richColors
       />
+
+      {/* PWA Install Prompt */}
+      <InstallPWA />
     </div>
   );
 }
