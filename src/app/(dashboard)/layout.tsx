@@ -1,13 +1,8 @@
-import dynamic from 'next/dynamic';
 import { Sidebar } from '@/components/dashboard/Sidebar';
+import { HeaderWrapper } from '@/components/dashboard/HeaderWrapper';
 import { InstallPWA } from '@/components/pwa/InstallPWA';
 import { Toaster } from 'sonner';
 import { NotificationProvider } from '@/contexts/NotificationContext';
-
-// Dynamic import para evitar hydration mismatch com Radix UI
-const Header = dynamic(() => import('@/components/dashboard/Header').then(mod => ({ default: mod.Header })), {
-  ssr: false,
-});
 
 export default function DashboardLayout({
   children,
@@ -27,7 +22,7 @@ export default function DashboardLayout({
         {/* Main Content */}
         <div className="flex-1 flex flex-col transition-all duration-300 lg:ml-(--sidebar-width,16rem) overflow-hidden relative z-10">
           {/* Header */}
-          <Header />
+          <HeaderWrapper />
 
           {/* Page Content - Performance Optimized Scroll */}
           <main className="flex-1 overflow-auto scroll-container">
