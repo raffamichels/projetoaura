@@ -78,6 +78,7 @@ export default function EstudosPage() {
 
   // Estados para anotação com IA
   const [tipoAnotacao, setTipoAnotacao] = useState<'livre' | 'ia'>('livre');
+  const [formatoAnotacao, setFormatoAnotacao] = useState<'padrao' | 'notion'>('padrao');
   const [textoOriginalIA, setTextoOriginalIA] = useState('');
   const [anotacaoGeradaIA, setAnotacaoGeradaIA] = useState<{ title: string; content: string } | null>(null);
   const [gerandoAnotacao, setGerandoAnotacao] = useState(false);
@@ -182,7 +183,7 @@ export default function EstudosPage() {
       const response = await fetch('/api/generate-note', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: textoOriginalIA }),
+        body: JSON.stringify({ content: textoOriginalIA, formato: formatoAnotacao }),
       });
 
       const data = await response.json();
@@ -251,6 +252,7 @@ export default function EstudosPage() {
     setModalAnotacaoAberto(false);
     setNovaAnotacao({ titulo: '', conteudo: '', cor: '#FBBF24' });
     setTipoAnotacao('livre');
+    setFormatoAnotacao('padrao');
     setTextoOriginalIA('');
     setAnotacaoGeradaIA(null);
     setErroIA(null);
@@ -726,6 +728,23 @@ export default function EstudosPage() {
               {/* Conteúdo - modo IA com duas colunas */}
               {tipoAnotacao === 'ia' && (
                 <>
+                  {/* Seletor de formato */}
+                  <div className="flex items-center gap-3 py-2.5 px-1 hover:bg-zinc-800/30 rounded-lg transition-colors">
+                    <FileText className="w-5 h-5 text-zinc-400 shrink-0" />
+                    <div className="flex items-center justify-between flex-1">
+                      <span className="text-sm text-zinc-300">{t('outputFormat')}</span>
+                      <select
+                        value={formatoAnotacao}
+                        onChange={(e) => setFormatoAnotacao(e.target.value as 'padrao' | 'notion')}
+                        disabled={gerandoAnotacao}
+                        className="bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-purple-500 cursor-pointer"
+                      >
+                        <option value="padrao">{t('formatDefault')}</option>
+                        <option value="notion">{t('formatNotion')}</option>
+                      </select>
+                    </div>
+                  </div>
+
                   {erroIA && (
                     <div className="mx-1 p-2 bg-red-500/10 border border-red-500/50 rounded-lg text-red-400 text-sm">
                       {erroIA}

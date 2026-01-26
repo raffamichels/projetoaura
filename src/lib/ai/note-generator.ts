@@ -4,28 +4,33 @@ if (!process.env.GEMINI_API_KEY) {
   throw new Error("GEMINI_API_KEY não configurada")
 }
 
+export type NoteFormat = 'padrao' | 'notion'
+
 interface GenerateNoteParams {
   content: string
   userName?: string | null
+  formato?: NoteFormat
 }
 
 export async function generateNote({
   content,
   userName,
+  formato = 'padrao',
 }: GenerateNoteParams): Promise<{ title: string; content: string }> {
-  const prompt = `Você é ${userName || "um estudante"} que está organizando suas anotações de estudo.
+  const promptPadrao = `Você está organizando anotações de estudo.
 
-Com base no texto bruto abaixo (que pode ser transcrições, bullet points, notas rápidas ou qualquer tipo de anotação desorganizada), crie uma anotação ORGANIZADA e BEM ESTRUTURADA em primeira pessoa.
+Com base no texto bruto abaixo (que pode ser transcrições, bullet points, notas rápidas ou qualquer tipo de anotação desorganizada), crie uma anotação ORGANIZADA e BEM ESTRUTURADA.
 
 A anotação deve:
 - Organizar as informações de forma lógica e coesa
 - Manter TODAS as informações importantes do texto original
+- MANTER A MESMA PERSPECTIVA/TOM do texto original (se estiver em primeira pessoa, mantenha em primeira pessoa; se estiver impessoal/imparcial, mantenha impessoal)
 - Caso necessário, pular linhas para distinguir tópicos diferentes
 - Ser clara e fácil de revisar posteriormente
 - Usar parágrafos bem estruturados
 - Não usar títulos ou subtítulos, apenas texto corrido em parágrafos
-- Começar direto no conteúdo, sem introduções genéricas como "Hoje eu..."
-- Parecer natural, como anotações pessoais de estudo
+- Começar direto no conteúdo, sem introduções genéricas
+- Parecer natural, como anotações de estudo bem organizadas
 - Ter no máximo 800 palavras
 
 Texto bruto para organizar:
@@ -39,6 +44,40 @@ IMPORTANTE: Responda APENAS com um JSON válido no seguinte formato, sem nenhum 
 }
 
 Não inclua markdown, código ou qualquer formatação. Apenas o JSON puro.`
+
+  const promptNotion = `Você é ${userName || "um estudante"} que está organizando suas anotações de estudo para o Notion.
+
+Com base no texto bruto abaixo (que pode ser transcrições, bullet points, notas rápidas ou qualquer tipo de anotação desorganizada), crie uma anotação ORGANIZADA e BEM ESTRUTURADA em primeira pessoa, formatada para copiar e colar diretamente no Notion.
+
+A anotação deve:
+- Organizar as informações de forma lógica e coesa
+- Manter TODAS as informações importantes do texto original
+- Usar formatação Markdown compatível com o Notion:
+  - Use ## para títulos de seções principais
+  - Use ### para subtítulos quando necessário
+  - Use **texto** para negrito em termos importantes
+  - Use listas com - para bullet points quando apropriado
+  - Use listas numeradas 1. 2. 3. quando houver sequência ou passos
+  - Use > para citações ou destaques importantes
+  - Deixe linhas em branco entre seções para boa legibilidade
+- Ser clara e fácil de revisar posteriormente
+- Começar direto no conteúdo, sem introduções genéricas como "Hoje eu..."
+- Parecer natural, como anotações pessoais de estudo bem organizadas
+- Ter no máximo 800 palavras
+
+Texto bruto para organizar:
+
+${content}
+
+IMPORTANTE: Responda APENAS com um JSON válido no seguinte formato, sem nenhum texto adicional antes ou depois:
+{
+  "title": "Um título curto e descritivo para a anotação (máximo 60 caracteres)",
+  "content": "O conteúdo organizado da anotação com formatação Markdown para Notion"
+}
+
+Retorne apenas o JSON puro, mas o campo content DEVE conter a formatação Markdown.`
+
+  const prompt = formato === 'notion' ? promptNotion : promptPadrao
 
   try {
     console.log("🔄 Gerando anotação com IA...")

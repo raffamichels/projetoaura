@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth/auth"
 import { prisma } from "@/lib/prisma"
-import { generateNote } from "@/lib/ai/note-generator"
+import { generateNote, NoteFormat } from "@/lib/ai/note-generator"
 import { verificarAcessoRecurso } from "@/lib/planos-helper"
 import { RecursoPremium } from "@/types/planos"
 
@@ -48,14 +48,17 @@ export async function POST(req: Request) {
 
     console.log(`✅ Acesso ao recurso verificado (Plano: ${acessoRecurso.planoEfetivo})`)
 
-    const { content } = await req.json()
+    const { content, formato } = await req.json()
 
     if (!content || !content.trim()) {
       console.log("❌ Conteúdo não fornecido")
       return NextResponse.json({ error: "Conteúdo é obrigatório" }, { status: 400 })
     }
 
-    console.log(`📝 Conteúdo recebido: ${content.length} caracteres`)
+    // Validar formato se fornecido
+    const formatoValido: NoteFormat = formato === 'notion' ? 'notion' : 'padrao'
+
+    console.log(`📝 Conteúdo recebido: ${content.length} caracteres (formato: ${formatoValido})`)
 
     console.log("🤖 Chamando Gemini AI...")
 
@@ -63,6 +66,7 @@ export async function POST(req: Request) {
     const result = await generateNote({
       content,
       userName: user.name,
+      formato: formatoValido,
     })
 
     console.log("✅ Anotação gerada com sucesso!")
