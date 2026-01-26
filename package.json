@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
-    "@vercel/blob": "^0.27.1",
     "@hello-pangea/dnd": "^18.0.1",
     "@hookform/resolvers": "^5.2.2",
     "@neondatabase/serverless": "^1.0.2",
@@ -41,6 +40,7 @@
     "@tiptap/extension-underline": "^3.14.0",
     "@tiptap/react": "^3.14.0",
     "@tiptap/starter-kit": "^3.14.0",
+    "@vercel/blob": "^0.27.1",
     "bcryptjs": "^3.0.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -64,6 +64,7 @@
     "stripe": "^20.1.2",
     "swr": "^2.3.8",
     "tailwind-merge": "^3.4.0",
+    "ws": "^8.19.0",
     "zod": "^4.2.1"
   },
   "devDependencies": {
@@ -74,6 +75,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/sanitize-html": "^2.16.0",
+    "@types/ws": "^8.18.1",
     "babel-plugin-react-compiler": "1.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.1.1",
