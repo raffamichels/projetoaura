@@ -172,12 +172,12 @@ export default function NovaTransacaoModal({ aberto, onFechar, onSucesso }: Nova
 
   return (
     <Dialog open={aberto} onOpenChange={onFechar}>
-      <DialogContent className="bg-zinc-900 border-zinc-800 max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="bg-white border-[#E3E1D6] max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-white">
+          <DialogTitle className="text-2xl font-bold text-[#0E2A3F]">
             Nova Transação
           </DialogTitle>
-          <DialogDescription className="text-zinc-400">
+          <DialogDescription className="text-[#44586A]">
             Registre uma nova receita ou despesa
           </DialogDescription>
         </DialogHeader>
@@ -190,12 +190,12 @@ export default function NovaTransacaoModal({ aberto, onFechar, onSucesso }: Nova
               onClick={() => setTipo('RECEITA')}
               className={`p-4 rounded-lg border-2 transition-all ${
                 tipo === 'RECEITA'
-                  ? 'border-green-500 bg-green-500/10'
-                  : 'border-zinc-800 bg-zinc-900/50 hover:border-zinc-700'
+                  ? 'border-green-600 bg-green-50'
+                  : 'border-[#E9E7DC] bg-white hover:border-[#D9D7CB]'
               }`}
             >
-              <TrendingUp className={`w-6 h-6 mx-auto mb-2 ${tipo === 'RECEITA' ? 'text-green-400' : 'text-zinc-500'}`} />
-              <span className={`font-semibold ${tipo === 'RECEITA' ? 'text-green-400' : 'text-zinc-400'}`}>
+              <TrendingUp className={`w-6 h-6 mx-auto mb-2 ${tipo === 'RECEITA' ? 'text-green-600' : 'text-[#8395A5]'}`} />
+              <span className={`font-semibold ${tipo === 'RECEITA' ? 'text-green-600' : 'text-[#44586A]'}`}>
                 Receita
               </span>
             </button>
@@ -204,12 +204,12 @@ export default function NovaTransacaoModal({ aberto, onFechar, onSucesso }: Nova
               onClick={() => setTipo('DESPESA')}
               className={`p-4 rounded-lg border-2 transition-all ${
                 tipo === 'DESPESA'
-                  ? 'border-red-500 bg-red-500/10'
-                  : 'border-zinc-800 bg-zinc-900/50 hover:border-zinc-700'
+                  ? 'border-red-600 bg-red-50'
+                  : 'border-[#E9E7DC] bg-white hover:border-[#D9D7CB]'
               }`}
             >
-              <TrendingDown className={`w-6 h-6 mx-auto mb-2 ${tipo === 'DESPESA' ? 'text-red-400' : 'text-zinc-500'}`} />
-              <span className={`font-semibold ${tipo === 'DESPESA' ? 'text-red-400' : 'text-zinc-400'}`}>
+              <TrendingDown className={`w-6 h-6 mx-auto mb-2 ${tipo === 'DESPESA' ? 'text-red-600' : 'text-[#8395A5]'}`} />
+              <span className={`font-semibold ${tipo === 'DESPESA' ? 'text-red-600' : 'text-[#44586A]'}`}>
                 Despesa
               </span>
             </button>
@@ -217,20 +217,20 @@ export default function NovaTransacaoModal({ aberto, onFechar, onSucesso }: Nova
 
           {/* Descrição */}
           <div>
-            <Label className="text-zinc-300">Descrição *</Label>
+            <Label className="text-[#44586A]">Descrição *</Label>
             <Input
               value={descricao}
               onChange={(e) => setDescricao(e.target.value)}
               placeholder="Ex: Compra no mercado"
               required
-              className="bg-zinc-900/50 border-zinc-800 focus:border-purple-500 text-white"
+              className="bg-white border-[#D9D7CB] text-[#0E2A3F] placeholder:text-[#8395A5] focus:border-[#178E96] focus:ring-[#178E96]/20"
             />
           </div>
 
           {/* Valor e Data */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label className="text-zinc-300">Valor *</Label>
+              <Label className="text-[#44586A]">Valor *</Label>
               <Input
                 type="number"
                 step="0.01"
@@ -238,31 +238,31 @@ export default function NovaTransacaoModal({ aberto, onFechar, onSucesso }: Nova
                 onChange={(e) => setValor(e.target.value)}
                 placeholder="0,00"
                 required
-                className="bg-zinc-900/50 border-zinc-800 focus:border-purple-500 text-white"
+                className="bg-white border-[#D9D7CB] text-[#0E2A3F] placeholder:text-[#8395A5] focus:border-[#178E96] focus:ring-[#178E96]/20"
               />
             </div>
             <div>
-              <Label className="text-zinc-300">Data *</Label>
+              <Label className="text-[#44586A]">Data *</Label>
               <Input
                 type="date"
                 value={data}
                 onChange={(e) => setData(e.target.value)}
                 required
-                className="bg-zinc-900/50 border-zinc-800 focus:border-purple-500 text-white"
+                className="bg-white border-[#D9D7CB] text-[#0E2A3F] placeholder:text-[#8395A5] focus:border-[#178E96] focus:ring-[#178E96]/20"
               />
             </div>
           </div>
 
           {/* Categoria */}
           <div>
-            <Label className="text-zinc-300">Categoria</Label>
+            <Label className="text-[#44586A]">Categoria</Label>
             <Select value={categoriaId} onValueChange={setCategoriaId}>
-              <SelectTrigger className="bg-zinc-900/50 border-zinc-800 text-white">
+              <SelectTrigger className="bg-white border-[#D9D7CB] text-[#0E2A3F]">
                 <SelectValue placeholder="Selecione uma categoria" />
               </SelectTrigger>
-              <SelectContent className="bg-zinc-900 border-zinc-800">
+              <SelectContent className="bg-white border-[#E3E1D6]">
                 {categorias.map((cat) => (
-                  <SelectItem key={cat.id} value={cat.id} className="text-white hover:bg-zinc-800">
+                  <SelectItem key={cat.id} value={cat.id} className="text-[#0E2A3F] hover:bg-[#F4F3EC]">
                     <div className="flex items-center gap-2">
                       <div className="w-3 h-3 rounded-full" style={{ backgroundColor: cat.cor }} />
                       {cat.nome}
@@ -275,21 +275,21 @@ export default function NovaTransacaoModal({ aberto, onFechar, onSucesso }: Nova
 
           {/* Conta Bancária (obrigatório) e Cartão (opcional) */}
           <div className="space-y-3">
-            <div className="flex items-center gap-2 text-sm text-zinc-400 bg-blue-500/10 border border-blue-500/30 rounded-lg p-3">
-              <AlertCircle className="w-4 h-4 text-blue-400 shrink-0" />
+            <div className="flex items-center gap-2 text-sm text-[#44586A] bg-[#E5F1F1] border border-[#178E96]/30 rounded-lg p-3">
+              <AlertCircle className="w-4 h-4 text-[#117178] shrink-0" />
               <p>Toda transação deve estar vinculada a uma <strong>conta bancária</strong>. O cartão é opcional para registro adicional.</p>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label className="text-zinc-300">Conta Bancária *</Label>
+                <Label className="text-[#44586A]">Conta Bancária *</Label>
                 <Select value={contaBancariaId} onValueChange={handleContaChange}>
-                  <SelectTrigger className={`bg-zinc-900/50 border-zinc-800 text-white ${!contaBancariaId ? 'border-red-500/50' : ''}`}>
+                  <SelectTrigger className={`bg-white border-[#D9D7CB] text-[#0E2A3F] ${!contaBancariaId ? 'border-red-300' : ''}`}>
                     <SelectValue placeholder="Selecionar conta" />
                   </SelectTrigger>
-                  <SelectContent className="bg-zinc-900 border-zinc-800">
+                  <SelectContent className="bg-white border-[#E3E1D6]">
                     {contas.map((conta) => (
-                      <SelectItem key={conta.id} value={conta.id} className="text-white hover:bg-zinc-800">
+                      <SelectItem key={conta.id} value={conta.id} className="text-[#0E2A3F] hover:bg-[#F4F3EC]">
                         {conta.nome}
                       </SelectItem>
                     ))}
@@ -297,14 +297,14 @@ export default function NovaTransacaoModal({ aberto, onFechar, onSucesso }: Nova
                 </Select>
               </div>
               <div>
-                <Label className="text-zinc-300">Cartão de Crédito (Opcional)</Label>
+                <Label className="text-[#44586A]">Cartão de Crédito (Opcional)</Label>
                 <Select value={cartaoId} onValueChange={handleCartaoChange}>
-                  <SelectTrigger className="bg-zinc-900/50 border-zinc-800 text-white">
+                  <SelectTrigger className="bg-white border-[#D9D7CB] text-[#0E2A3F]">
                     <SelectValue placeholder="Selecionar cartão" />
                   </SelectTrigger>
-                  <SelectContent className="bg-zinc-900 border-zinc-800">
+                  <SelectContent className="bg-white border-[#E3E1D6]">
                     {cartoes.map((cartao) => (
-                      <SelectItem key={cartao.id} value={cartao.id} className="text-white hover:bg-zinc-800">
+                      <SelectItem key={cartao.id} value={cartao.id} className="text-[#0E2A3F] hover:bg-[#F4F3EC]">
                         {cartao.nome}
                       </SelectItem>
                     ))}
@@ -313,25 +313,25 @@ export default function NovaTransacaoModal({ aberto, onFechar, onSucesso }: Nova
               </div>
             </div>
             {!contaBancariaId && (
-              <p className="text-xs text-red-400">
+              <p className="text-xs text-red-600">
                 ⚠️ Selecione uma conta bancária
               </p>
             )}
             {contaBancariaId && (
-              <p className="text-xs text-green-400">
+              <p className="text-xs text-green-600">
                 ✓ Transação vinculada à conta {cartaoId && '(com informação de cartão)'}
               </p>
             )}
           </div>
 
           {/* Opções Especiais */}
-          <div className="space-y-4 p-4 bg-zinc-900/30 rounded-lg border border-zinc-800">
+          <div className="space-y-4 p-4 bg-[#F4F3EC] rounded-lg border border-[#E9E7DC]">
             {/* Despesa Fixa */}
             {tipo === 'DESPESA' && (
               <div className="flex items-center justify-between">
                 <div>
-                  <Label className="text-zinc-300">Despesa Fixa (Mensal)</Label>
-                  <p className="text-xs text-zinc-500">Repete todo mês automaticamente</p>
+                  <Label className="text-[#44586A]">Despesa Fixa (Mensal)</Label>
+                  <p className="text-xs text-[#8395A5]">Repete todo mês automaticamente</p>
                 </div>
                 <Switch
                   checked={isFixa}
@@ -344,8 +344,8 @@ export default function NovaTransacaoModal({ aberto, onFechar, onSucesso }: Nova
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <div>
-                  <Label className="text-zinc-300">Parcelar</Label>
-                  <p className="text-xs text-zinc-500">Dividir em várias parcelas</p>
+                  <Label className="text-[#44586A]">Parcelar</Label>
+                  <p className="text-xs text-[#8395A5]">Dividir em várias parcelas</p>
                 </div>
                 <Switch
                   checked={isParcela}
@@ -354,17 +354,17 @@ export default function NovaTransacaoModal({ aberto, onFechar, onSucesso }: Nova
               </div>
               {isParcela && (
                 <div>
-                  <Label className="text-zinc-300">Número de Parcelas</Label>
+                  <Label className="text-[#44586A]">Número de Parcelas</Label>
                   <Input
                     type="number"
                     min="2"
                     max="48"
                     value={parcelaTotais}
                     onChange={(e) => setParcelaTotais(e.target.value)}
-                    className="bg-zinc-900/50 border-zinc-800 focus:border-purple-500 text-white"
+                    className="bg-white border-[#D9D7CB] text-[#0E2A3F] placeholder:text-[#8395A5] focus:border-[#178E96] focus:ring-[#178E96]/20"
                   />
                   {valor && (
-                    <p className="text-xs text-zinc-500 mt-1">
+                    <p className="text-xs text-[#8395A5] mt-1">
                       {parcelaTotais}x de R$ {(parseFloat(valor.replace(',', '.')) / parseInt(parcelaTotais || '1')).toFixed(2)}
                     </p>
                   )}
@@ -375,13 +375,13 @@ export default function NovaTransacaoModal({ aberto, onFechar, onSucesso }: Nova
 
           {/* Observações */}
           <div>
-            <Label className="text-zinc-300">Observações</Label>
+            <Label className="text-[#44586A]">Observações</Label>
             <Textarea
               value={observacoes}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setObservacoes(e.target.value)}
               placeholder="Informações adicionais..."
               rows={3}
-              className="bg-zinc-900/50 border-zinc-800 focus:border-purple-500 text-white resize-none"
+              className="bg-white border-[#D9D7CB] text-[#0E2A3F] placeholder:text-[#8395A5] focus:border-[#178E96] focus:ring-[#178E96]/20 resize-none"
             />
           </div>
 
@@ -391,7 +391,7 @@ export default function NovaTransacaoModal({ aberto, onFechar, onSucesso }: Nova
               type="button"
               variant="default"
               onClick={onFechar}
-              className="flex-1 border-zinc-800 hover:bg-zinc-800"
+              className="flex-1 bg-white border border-[#E9E7DC] text-[#44586A] hover:bg-[#F4F3EC]"
               disabled={carregando}
             >
               Cancelar
@@ -401,8 +401,8 @@ export default function NovaTransacaoModal({ aberto, onFechar, onSucesso }: Nova
               disabled={carregando || !contaBancariaId}
               className={`flex-1 ${
                 tipo === 'RECEITA'
-                  ? 'bg-green-600 hover:bg-green-700'
-                  : 'bg-red-600 hover:bg-red-700'
+                  ? 'bg-green-600 hover:bg-green-700 text-white'
+                  : 'bg-red-600 hover:bg-red-700 text-white'
               } disabled:opacity-50`}
             >
               {carregando ? (

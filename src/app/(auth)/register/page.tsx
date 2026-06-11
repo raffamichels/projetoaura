@@ -2,12 +2,11 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Mail, Lock, User, ArrowRight, Shield, AtSign, Check, X, Loader2 } from 'lucide-react';
+import { ArrowRight, Check, X, Loader2, CalendarCheck, TrendingUp, BookOpenCheck } from 'lucide-react';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -119,83 +118,51 @@ export default function RegisterPage() {
   const isFormValid = name && username && email && password &&
                       !usernameError && usernameAvailable === true;
 
+  const inputClass = "bg-white border-[#D9D7CB] text-[#0E2A3F] placeholder:text-[#8395A5] focus:border-[#178E96] focus:ring-2 focus:ring-[#178E96]/20 h-11 rounded-lg transition-colors duration-150 text-sm";
+
   return (
-    <div className="min-h-screen md:h-screen relative overflow-hidden flex items-center justify-center p-3 sm:p-4" style={{
-      background: 'linear-gradient(135deg, #0f0f0f 0%, #0a0a0a 50%, #0f0f0f 100%)'
-    }}>
-      {/* Subtle noise texture */}
-      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{
-        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' /%3E%3C/svg%3E")`,
-      }} />
-
-      {/* Radial vignette effect */}
-      <div className="absolute inset-0 pointer-events-none" style={{
-        background: 'radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.4) 100%)'
-      }} />
-
-      {/* Animated gradient orbs - more subtle */}
-      <div className="absolute inset-0 overflow-hidden opacity-30">
-        <div className="absolute top-1/4 -left-1/4 w-96 h-96 bg-blue-600 rounded-full mix-blend-screen filter blur-3xl opacity-20 animate-blob"></div>
-        <div className="absolute top-1/3 -right-1/4 w-96 h-96 bg-purple-600 rounded-full mix-blend-screen filter blur-3xl opacity-15 animate-blob animation-delay-2000"></div>
-        <div className="absolute -bottom-1/4 left-1/3 w-96 h-96 bg-fuchsia-600 rounded-full mix-blend-screen filter blur-3xl opacity-10 animate-blob animation-delay-4000"></div>
-      </div>
-
-      {/* Very subtle grid */}
-      <div className="absolute inset-0 opacity-[0.02] pointer-events-none" style={{
-        backgroundImage: 'linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)',
-        backgroundSize: '50px 50px'
-      }} />
-
-      {/* Conteúdo */}
-      <div className="relative z-10 w-full max-w-md">
+    <div className="min-h-screen flex bg-white">
+      {/* Coluna esquerda - Formulário */}
+      <div className="w-full lg:w-1/2 flex flex-col px-6 sm:px-12 lg:px-20 xl:px-28 py-8">
         {/* Logo */}
-        <div className="text-center mb-2">
-          <Image
-            src="/images/logo-sem-fundo.png"
-            alt="Aura Logo"
-            width={280}
-            height={280}
-            className="w-56 h-56 sm:w-64 sm:h-64 md:w-36 md:h-36 lg:w-40 lg:h-40 mx-auto -mb-16 md:-mb-8"
-          />
-          <p className="text-gray-400 text-sm sm:text-base font-light">Comece sua jornada de produtividade</p>
+        <div className="mb-10">
+          <Link href="/">
+            <span className="text-3xl font-extrabold tracking-tight text-[#178E96]">Aura</span>
+          </Link>
         </div>
 
-        {/* Card de Registro - Glassmorphism */}
-        <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-5 sm:p-6 md:p-4 shadow-2xl shadow-purple-900/20 hover:shadow-purple-800/30 transition-all duration-300">
-          <div className="mb-4 md:mb-3">
-            <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">Criar sua conta</h2>
-            <p className="text-gray-400 text-xs sm:text-sm">Junte-se a milhares de usuários produtivos</p>
-          </div>
+        <div className="flex-1 flex flex-col justify-center max-w-md w-full mx-auto lg:mx-0">
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#0E2A3F] mb-2">
+            Criar sua conta
+          </h1>
+          <p className="text-[#5E7081] text-sm sm:text-base mb-8">
+            Comece sua jornada de produtividade com o <span className="font-semibold text-[#0E2A3F]">Aura</span>:
+          </p>
 
-          <form onSubmit={handleSubmit} className="space-y-3 md:space-y-2">
+          <form onSubmit={handleSubmit} className="space-y-4">
             {/* Nome */}
-            <div className="space-y-1.5 md:space-y-1">
-              <Label htmlFor="name" className="text-gray-300 text-xs sm:text-sm font-medium flex items-center gap-2">
-                <User className="w-3.5 h-3.5" />
+            <div className="space-y-1.5">
+              <Label htmlFor="name" className="text-[#44586A] text-sm font-medium">
                 Nome completo
               </Label>
-              <div className="relative group">
-                <Input
-                  id="name"
-                  type="text"
-                  placeholder="João Silva"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                  className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 h-10 sm:h-11 md:h-9 rounded-xl transition-all hover:bg-white/10 text-sm"
-                />
-                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-500/0 via-purple-500/5 to-blue-500/0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-              </div>
+              <Input
+                id="name"
+                type="text"
+                placeholder="João Silva"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                className={inputClass}
+              />
             </div>
 
             {/* Username */}
-            <div className="space-y-1.5 md:space-y-1">
-              <Label htmlFor="username" className="text-gray-300 text-xs sm:text-sm font-medium flex items-center gap-2">
-                <AtSign className="w-3.5 h-3.5" />
+            <div className="space-y-1.5">
+              <Label htmlFor="username" className="text-[#44586A] text-sm font-medium">
                 Username
               </Label>
-              <div className="relative group">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">@</div>
+              <div className="relative">
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8395A5] text-sm">@</div>
                 <Input
                   id="username"
                   type="text"
@@ -203,74 +170,64 @@ export default function RegisterPage() {
                   value={username}
                   onChange={(e) => handleUsernameChange(e.target.value)}
                   required
-                  className="pl-7 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 h-10 sm:h-11 md:h-9 rounded-xl transition-all hover:bg-white/10 text-sm pr-10"
+                  className={`pl-7 pr-10 ${inputClass}`}
                 />
                 <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                  {checkingUsername && <Loader2 className="w-4 h-4 text-gray-400 animate-spin" />}
-                  {!checkingUsername && usernameAvailable === true && <Check className="w-4 h-4 text-green-500" />}
-                  {!checkingUsername && usernameAvailable === false && <X className="w-4 h-4 text-red-500" />}
+                  {checkingUsername && <Loader2 className="w-4 h-4 text-[#8395A5] animate-spin" />}
+                  {!checkingUsername && usernameAvailable === true && <Check className="w-4 h-4 text-green-600" />}
+                  {!checkingUsername && usernameAvailable === false && <X className="w-4 h-4 text-red-600" />}
                 </div>
-                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-500/0 via-purple-500/5 to-blue-500/0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
               </div>
               {usernameError && (
-                <p className="text-xs text-red-400">{usernameError}</p>
+                <p className="text-xs text-red-600">{usernameError}</p>
               )}
               {!usernameError && usernameAvailable === true && (
-                <p className="text-xs text-green-400">Username disponível!</p>
+                <p className="text-xs text-green-600">Username disponível!</p>
               )}
               {!usernameError && username.length === 0 && (
-                <p className="text-xs text-gray-500">Letras, números, _ e . (3-30 caracteres)</p>
+                <p className="text-xs text-[#8395A5]">Letras, números, _ e . (3-30 caracteres)</p>
               )}
             </div>
 
             {/* Email */}
-            <div className="space-y-1.5 md:space-y-1">
-              <Label htmlFor="email" className="text-gray-300 text-xs sm:text-sm font-medium flex items-center gap-2">
-                <Mail className="w-3.5 h-3.5" />
-                Email
+            <div className="space-y-1.5">
+              <Label htmlFor="email" className="text-[#44586A] text-sm font-medium">
+                E-mail
               </Label>
-              <div className="relative group">
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="seu@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 h-10 sm:h-11 md:h-9 rounded-xl transition-all hover:bg-white/10 text-sm"
-                />
-                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-500/0 via-purple-500/5 to-blue-500/0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-              </div>
+              <Input
+                id="email"
+                type="email"
+                placeholder="seu@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className={inputClass}
+              />
             </div>
 
             {/* Senha */}
-            <div className="space-y-1.5 md:space-y-1">
-              <Label htmlFor="password" className="text-gray-300 text-xs sm:text-sm font-medium flex items-center gap-2">
-                <Lock className="w-3.5 h-3.5" />
+            <div className="space-y-1.5">
+              <Label htmlFor="password" className="text-[#44586A] text-sm font-medium">
                 Senha
               </Label>
-              <div className="relative group">
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  minLength={8}
-                  className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 h-10 sm:h-11 md:h-9 rounded-xl transition-all hover:bg-white/10 text-sm"
-                />
-                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-500/0 via-purple-500/5 to-blue-500/0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-              </div>
-              <p className="text-xs text-gray-500 flex items-center gap-1.5">
-                <Shield className="w-3 h-3" />
+              <Input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={8}
+                className={inputClass}
+              />
+              <p className="text-xs text-[#8395A5]">
                 Mínimo 8 caracteres, com maiúscula, minúscula e número
               </p>
             </div>
 
             {/* Erro */}
             {error && (
-              <div className="bg-red-500/10 backdrop-blur-sm border border-red-500/30 text-red-300 px-4 py-3 rounded-xl text-sm flex items-center gap-2 animate-in slide-in-from-top-2 duration-300">
+              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm flex items-center gap-2 animate-in slide-in-from-top-2 duration-300">
                 <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
@@ -281,7 +238,7 @@ export default function RegisterPage() {
             {/* Botão */}
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-purple-600 via-fuchsia-600 to-blue-600 hover:from-purple-500 hover:via-fuchsia-500 hover:to-blue-500 text-white font-semibold h-10 sm:h-11 md:h-9 rounded-xl shadow-lg shadow-purple-900/50 transition-all duration-300 hover:shadow-purple-800/60 hover:scale-[1.02] active:scale-[0.98] group mt-4 md:mt-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              className="w-full bg-[#178E96] hover:bg-[#117178] text-white font-semibold h-11 rounded-lg transition-colors duration-150 uppercase tracking-wide text-sm disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={loading || !isFormValid}
             >
               {loading ? (
@@ -290,71 +247,124 @@ export default function RegisterPage() {
                   Criando conta...
                 </div>
               ) : (
-                <span className="flex items-center justify-center gap-2">
-                  Criar conta gratuita
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </span>
+                'Criar conta gratuita'
               )}
             </Button>
           </form>
 
           {/* Termos */}
-          <p className="text-xs text-gray-500 text-center mt-3 md:mt-2">
+          <p className="text-xs text-[#8395A5] text-center mt-4">
             Ao criar uma conta, você concorda com nossos{' '}
-            <button className="text-purple-400 hover:text-purple-300 transition-colors font-medium">
+            <button className="text-[#117178] hover:text-[#178E96] transition-colors duration-150 font-medium underline">
               Termos de Uso
             </button>
             {' '}e{' '}
-            <button className="text-purple-400 hover:text-purple-300 transition-colors font-medium">
+            <button className="text-[#117178] hover:text-[#178E96] transition-colors duration-150 font-medium underline">
               Política de Privacidade
             </button>
           </p>
 
           {/* Link para Login */}
-          <div className="text-center mt-4 pt-4 md:mt-3 md:pt-3 border-t border-white/10">
-            <p className="text-xs sm:text-sm text-gray-400">
+          <div className="text-center mt-6">
+            <p className="text-sm text-[#5E7081]">
               Já tem uma conta?{' '}
               <Link
                 href="/login"
-                className="text-purple-400 hover:text-purple-300 font-semibold transition-colors inline-flex items-center gap-1 group"
+                className="text-[#117178] hover:text-[#178E96] font-semibold transition-colors duration-150"
               >
                 Fazer login
-                <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
               </Link>
             </p>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="text-center mt-4 md:mt-2 text-xs text-gray-500 md:hidden">
-          <p>© 2025 Aura. Feito com dedicação para sua produtividade.</p>
+        <div className="mt-10 flex items-center justify-between text-xs text-[#8395A5]">
+          <div className="flex flex-col gap-1">
+            <Link href="/#faq" className="underline hover:text-[#117178] transition-colors duration-150">
+              Acessar central de ajuda
+            </Link>
+            <Link href="/#contato" className="underline hover:text-[#117178] transition-colors duration-150">
+              Entrar em contato com suporte
+            </Link>
+          </div>
+          <p>
+            Feito com <span className="text-[#178E96]">♥</span> por Aura
+          </p>
         </div>
       </div>
 
-      <style jsx>{`
-        @keyframes blob {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          33% { transform: translate(30px, -50px) scale(1.1); }
-          66% { transform: translate(-20px, 20px) scale(0.9); }
-        }
-        .animate-blob {
-          animation: blob 7s infinite;
-        }
-        .animation-delay-2000 {
-          animation-delay: 2s;
-        }
-        .animation-delay-4000 {
-          animation-delay: 4s;
-        }
-        @keyframes gradient {
-          0%, 100% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-        }
-        .animate-gradient {
-          background-size: 200% 200%;
-          animation: gradient 3s ease infinite;
-        }
-      `}</style>
+      {/* Coluna direita - Painel promocional */}
+      <div className="hidden lg:flex w-1/2 relative overflow-hidden bg-gradient-to-br from-[#178E96] via-[#154F6D] to-[#0E2A3F] items-center justify-center p-12">
+        <div className="relative z-10 max-w-lg w-full">
+          <h2 className="text-3xl xl:text-4xl font-bold text-white text-center leading-snug mb-10">
+            Organize sua rotina, finanças e estudos em um só lugar ✨
+          </h2>
+
+          {/* Stat cards */}
+          <div className="flex justify-center gap-4 mb-10">
+            <div className="bg-white rounded-2xl px-6 py-4 shadow-xl flex items-center gap-3">
+              <span className="text-3xl font-extrabold text-[#178E96]">+10h</span>
+              <span className="text-sm text-[#44586A] leading-tight">
+                economizadas<br />por semana com o <span className="font-bold">Aura</span>
+              </span>
+            </div>
+            <div className="hidden xl:flex bg-white/10 border border-white/20 rounded-2xl px-6 py-4 items-center gap-3">
+              <span className="text-3xl font-extrabold text-white">+83%</span>
+              <span className="text-sm text-white/80 leading-tight">de hábitos<br />concluídos</span>
+            </div>
+          </div>
+
+          {/* Notificações do sistema (mockup) */}
+          <div className="space-y-3">
+            <div className="bg-white rounded-xl px-5 py-4 shadow-xl flex items-center gap-4">
+              <div className="w-10 h-10 rounded-lg bg-[#E5F1F1] flex items-center justify-center shrink-0">
+                <CalendarCheck className="w-5 h-5 text-[#117178]" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-[#0E2A3F]">Aura</p>
+                <p className="text-sm text-[#44586A] truncate">Você tem 2 compromissos hoje</p>
+              </div>
+              <span className="text-xs text-[#8395A5] shrink-0">9:41</span>
+            </div>
+            <div className="bg-white/90 rounded-xl px-5 py-4 shadow-lg flex items-center gap-4 scale-[0.97]">
+              <div className="w-10 h-10 rounded-lg bg-[#E5F1F1] flex items-center justify-center shrink-0">
+                <TrendingUp className="w-5 h-5 text-[#117178]" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-[#0E2A3F]">Aura</p>
+                <p className="text-sm text-[#44586A] truncate">Resumo financeiro do mês disponível</p>
+              </div>
+              <span className="text-xs text-[#8395A5] shrink-0">9:41</span>
+            </div>
+            <div className="bg-white/75 rounded-xl px-5 py-4 shadow-md flex items-center gap-4 scale-[0.94]">
+              <div className="w-10 h-10 rounded-lg bg-[#E5F1F1] flex items-center justify-center shrink-0">
+                <BookOpenCheck className="w-5 h-5 text-[#117178]" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-[#0E2A3F]">Aura</p>
+                <p className="text-sm text-[#44586A] truncate">Meta de leitura da semana concluída 🎉</p>
+              </div>
+              <span className="text-xs text-[#8395A5] shrink-0">9:41</span>
+            </div>
+          </div>
+
+          {/* CTA secundário */}
+          <div className="mt-10 text-center">
+            <Link
+              href="/login"
+              className="inline-flex items-center gap-2 text-white/90 hover:text-white font-medium text-sm transition-colors duration-150"
+            >
+              Já tem conta? Faça login
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
+
+        {/* Decoração sutil */}
+        <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-white/5" />
+        <div className="absolute -bottom-32 -left-32 w-[28rem] h-[28rem] rounded-full bg-white/5" />
+      </div>
     </div>
   );
 }

@@ -134,7 +134,7 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
         },
         listItem: {
           HTMLAttributes: {
-            class: 'text-zinc-300',
+            class: 'text-[#44586A]',
           },
         },
       }),
@@ -232,7 +232,7 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
       variant="ghost"
       size="sm"
       className={`h-8 w-8 p-0 ${
-        isActive ? 'bg-purple-600 text-white' : 'text-zinc-400 hover:text-white hover:bg-zinc-700'
+        isActive ? 'bg-[#178E96] text-white' : 'text-[#44586A] hover:text-[#0E2A3F] hover:bg-[#E9E7DC]'
       }`}
       title={title}
     >
@@ -260,7 +260,7 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
       variant="ghost"
       size="sm"
       className={`h-8 w-8 p-0 ${
-        editor.isActive('highlight', { color }) ? 'ring-2 ring-purple-500' : ''
+        editor.isActive('highlight', { color }) ? 'ring-2 ring-[#178E96]' : ''
       }`}
       title={title}
     >
@@ -271,7 +271,7 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
   );
 
   return (
-    <div className="border border-zinc-700 rounded-lg bg-zinc-900 overflow-hidden">
+    <div className="border border-[#D9D7CB] rounded-lg bg-white overflow-hidden">
       <style jsx global>{`
         .ProseMirror img {
           max-width: 100%;
@@ -342,7 +342,7 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
         }
       `}</style>
       {/* Toolbar */}
-      <div className="border-b border-zinc-700 bg-zinc-800/50 p-2 flex flex-wrap gap-1">
+      <div className="border-b border-[#D9D7CB] bg-[#F4F3EC] p-2 flex flex-wrap gap-1">
         {/* Undo/Redo */}
         <ToolbarButton
           onClick={() => editor.chain().focus().undo().run()}
@@ -355,7 +355,7 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
           title="Refazer"
         />
 
-        <div className="w-px h-8 bg-zinc-700 mx-1" />
+        <div className="w-px h-8 bg-[#E9E7DC] mx-1" />
 
         {/* Headings */}
         <ToolbarButton
@@ -377,7 +377,7 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
           title="Título 3"
         />
 
-        <div className="w-px h-8 bg-zinc-700 mx-1" />
+        <div className="w-px h-8 bg-[#E9E7DC] mx-1" />
 
         {/* Text formatting */}
         <ToolbarButton
@@ -405,7 +405,7 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
           title="Riscado"
         />
 
-        <div className="w-px h-8 bg-zinc-700 mx-1" />
+        <div className="w-px h-8 bg-[#E9E7DC] mx-1" />
 
         {/* Lists */}
         <ToolbarButton
@@ -421,7 +421,7 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
           title="Lista numerada"
         />
 
-        <div className="w-px h-8 bg-zinc-700 mx-1" />
+        <div className="w-px h-8 bg-[#E9E7DC] mx-1" />
 
         {/* Alignment */}
         <ToolbarButton
@@ -476,7 +476,7 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
           title="Alinhar à direita"
         />
 
-        <div className="w-px h-8 bg-zinc-700 mx-1" />
+        <div className="w-px h-8 bg-[#E9E7DC] mx-1" />
 
         {/* Text Colors */}
         <ColorButton color="#FFFFFF" title="Branco" />
@@ -486,7 +486,7 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
         <ColorButton color="#3B82F6" title="Azul" />
         <ColorButton color="#8B5CF6" title="Roxo" />
 
-        <div className="w-px h-8 bg-zinc-700 mx-1" />
+        <div className="w-px h-8 bg-[#E9E7DC] mx-1" />
 
         {/* Highlight Colors */}
         <HighlightButton color="#FEF3C7" title="Destaque Amarelo" />

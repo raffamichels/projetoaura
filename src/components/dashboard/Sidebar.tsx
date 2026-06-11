@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import {
@@ -16,7 +15,7 @@ import {
   ChevronRight,
   Heart
 } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { usePlano } from '@/hooks/usePlano';
 
 interface SidebarProps {
@@ -40,60 +39,30 @@ export function Sidebar({ isMobile = false, onNavigate }: SidebarProps) {
     { icon: Library, label: t('library'), href: '/dashboard/biblioteca' },
   ];
 
-  useEffect(() => {
-    if (typeof document !== 'undefined') {
-      document.documentElement.style.setProperty('--sidebar-width', isCollapsed ? '5rem' : '16rem');
-    }
-  }, [isCollapsed]);
-
   return (
-    <aside className={`${isMobile ? 'flex' : 'hidden lg:flex'} flex-col h-screen fixed left-0 top-0 border-r border-zinc-800 bg-zinc-900/50 backdrop-blur-xl transition-all duration-300 z-40 ${isCollapsed ? 'w-20' : 'w-64'}`}>
-      {/* Logo */}
-      <div className={`border-b border-zinc-800 bg-zinc-900 flex items-center ${isCollapsed ? 'p-4 justify-center' : 'p-6 justify-between'}`}>
-        {!isCollapsed && (
-          <Link href="/dashboard" className="hover:opacity-80 transition-opacity">
-            <h1 className="text-2xl font-extrabold">
-              <span className="bg-gradient-to-r from-aura-400 via-blue-400 to-purple-400 bg-clip-text text-transparent drop-shadow-md">
-                Aura
-              </span>
-            </h1>
-            <p className="text-xs text-gray-500">{t('personalManagement')}</p>
+    <aside className={`${isMobile ? 'flex w-full h-full' : 'hidden lg:flex'} flex-col bg-white border-r border-[#E9E7DC] transition-all duration-150 ${isMobile ? '' : isCollapsed ? 'w-20' : 'w-64'}`}>
+      {/* Branding (mobile) / Collapse toggle (desktop) */}
+      {isMobile ? (
+        <div className="flex items-center px-6 py-5 border-b border-[#E9E7DC]">
+          <Link href="/dashboard" onClick={onNavigate}>
+            <h1 className="text-xl font-extrabold text-[#178E96]">Aura</h1>
+            <p className="text-xs text-[#8395A5]">{t('personalManagement')}</p>
           </Link>
-        )}
-        {isCollapsed && (
-          <Link href="/dashboard" className="hover:opacity-80 transition-opacity">
-            <Image
-              src="/images/logo-sem-fundo.png"
-              alt="Aura Logo"
-              width={96}
-              height={96}
-              className="w-12 h-12 flex-shrink-0 object-contain"
-            />
-          </Link>
-        )}
-        {!isMobile && !isCollapsed && (
+        </div>
+      ) : (
+        <div className={`flex items-center py-2 ${isCollapsed ? 'justify-center' : 'justify-end pr-3'}`}>
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="text-gray-400 hover:text-white transition-colors p-1 hover:bg-zinc-800 rounded flex-shrink-0"
-            aria-label={t('collapseSidebar')}
+            className="text-[#8395A5] hover:text-[#0E2A3F] hover:bg-[#F4F3EC] transition-colors duration-150 p-1.5 rounded-md"
+            aria-label={isCollapsed ? t('expandSidebar') : t('collapseSidebar')}
           >
-            <ChevronLeft className="w-5 h-5" />
+            {isCollapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
           </button>
-        )}
-      </div>
-      {!isMobile && isCollapsed && (
-        <button
-          onClick={() => setIsCollapsed(false)}
-          className="text-gray-400 hover:text-white transition-colors p-2 hover:bg-zinc-800 mx-auto mt-2"
-          aria-label={t('expandSidebar')}
-        >
-          <ChevronRight className="w-5 h-5" />
-        </button>
+        </div>
       )}
 
-
       {/* Menu */}
-      <nav className="flex-1 p-4 space-y-1">
+      <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
         {menuItems.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.href;
@@ -104,18 +73,18 @@ export function Sidebar({ isMobile = false, onNavigate }: SidebarProps) {
               href={item.href}
               onClick={onNavigate}
               className={`
-                flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all relative group
+                flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors duration-150 relative
                 ${isActive
-                  ? 'bg-aura-500/10 text-aura-400 border border-aura-500/20'
-                  : 'text-gray-400 hover:text-white hover:bg-zinc-800/50'
+                  ? 'bg-[#E5F1F1] text-[#117178] font-semibold'
+                  : 'text-[#44586A] hover:text-[#0E2A3F] hover:bg-[#F4F3EC]'
                 }
-                ${isCollapsed ? 'justify-center' : ''}
+                ${isCollapsed && !isMobile ? 'justify-center' : ''}
               `}
-              title={isCollapsed ? item.label : ''}
+              title={isCollapsed && !isMobile ? item.label : ''}
             >
-              <Icon className="w-5 h-5 flex-shrink-0" />
-              {!isCollapsed && (
-                <span className="flex-1 font-medium text-sm">{item.label}</span>
+              <Icon className="w-5 h-5 flex-shrink-0" strokeWidth={isActive ? 2.4 : 2} />
+              {(!isCollapsed || isMobile) && (
+                <span className="flex-1 text-sm">{item.label}</span>
               )}
             </Link>
           );
@@ -123,47 +92,51 @@ export function Sidebar({ isMobile = false, onNavigate }: SidebarProps) {
       </nav>
 
       {/* Upgrade Card - Only show for free plan */}
-      {ehFree && !isCollapsed && (
-        <div className="p-4 border-t border-zinc-800">
-          <div className="bg-gradient-to-br from-aura-500/10 to-blue-500/10 border border-aura-500/20 rounded-xl p-4">
+      {ehFree && (!isCollapsed || isMobile) && (
+        <div className="p-4 border-t border-[#E9E7DC]">
+          <div className="bg-[#0E2A3F] rounded-xl p-4">
             <div className="flex items-center gap-2 mb-2">
-              <Crown className="w-5 h-5 text-yellow-500" />
-              <h3 className="font-semibold text-sm">{t('freePlan')}</h3>
+              <Crown className="w-5 h-5 text-[#D9A441]" />
+              <h3 className="font-semibold text-sm text-white">{t('freePlan')}</h3>
             </div>
-            <p className="text-xs text-gray-400 mb-3">
+            <p className="text-xs text-white/70 mb-3">
               {t('unlockPremiumFeatures')}
             </p>
             <button
               onClick={() => router.push('/premium')}
-              className="w-full bg-gradient-to-r from-aura-500 to-blue-500 hover:from-aura-600 hover:to-blue-600 text-white text-sm font-medium py-2 rounded-lg transition-all">
+              className="w-full bg-[#178E96] hover:bg-[#117178] text-white text-sm font-semibold py-2 rounded-lg transition-colors duration-150">
               {t('upgrade')}
             </button>
           </div>
         </div>
       )}
 
-      {ehFree && isCollapsed && (
-        <div className="p-4 border-t border-zinc-800 flex justify-center">
+      {ehFree && isCollapsed && !isMobile && (
+        <div className="p-4 border-t border-[#E9E7DC] flex justify-center">
           <button
             onClick={() => router.push('/premium')}
-            className="bg-gradient-to-r from-aura-500 to-blue-500 hover:from-aura-600 hover:to-blue-600 text-white p-2 rounded-lg transition-all"
+            className="bg-[#0E2A3F] hover:bg-[#154F6D] text-[#D9A441] p-2 rounded-lg transition-colors duration-150"
             title={t('upgrade')}>
-            <Crown className="w-5 h-5 text-yellow-500" />
+            <Crown className="w-5 h-5" />
           </button>
         </div>
       )}
 
       {/* Settings */}
-      <div className={`border-t border-zinc-800 ${isCollapsed ? 'p-2 flex justify-center' : 'px-4 py-2'}`}>
+      <div className={`border-t border-[#E9E7DC] ${isCollapsed && !isMobile ? 'p-2 flex justify-center' : 'px-3 py-2'}`}>
         <Link
           href="/dashboard/settings"
           onClick={onNavigate}
-          className={`flex items-center rounded-lg text-gray-400 hover:text-white hover:bg-zinc-800/50 transition-all ${isCollapsed ? 'justify-center p-2.5' : 'w-full gap-3 px-3 py-2.5'}`}
-          title={isCollapsed ? t('settings') : ''}
+          className={`flex items-center rounded-lg transition-colors duration-150 ${
+            pathname === '/dashboard/settings'
+              ? 'bg-[#E5F1F1] text-[#117178] font-semibold'
+              : 'text-[#44586A] hover:text-[#0E2A3F] hover:bg-[#F4F3EC]'
+          } ${isCollapsed && !isMobile ? 'justify-center p-2.5' : 'w-full gap-3 px-3 py-2.5'}`}
+          title={isCollapsed && !isMobile ? t('settings') : ''}
         >
           <Settings className="w-5 h-5 shrink-0" />
-          {!isCollapsed && (
-            <span className="font-medium text-sm">{t('settings')}</span>
+          {(!isCollapsed || isMobile) && (
+            <span className="text-sm">{t('settings')}</span>
           )}
         </Link>
       </div>

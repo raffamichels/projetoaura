@@ -24,9 +24,9 @@ function Slider({
 
   return (
     <div className={cn("relative flex w-full touch-none select-none items-center", className)}>
-      <div className="relative h-2 w-full grow overflow-hidden rounded-full bg-zinc-800">
+      <div className="relative h-2 w-full grow overflow-hidden rounded-full bg-[#E3E1D6]">
         <div
-          className="absolute h-full bg-zinc-400"
+          className="absolute h-full bg-[#178E96]"
           style={{ width: `${percentage}%` }}
         />
       </div>
@@ -40,7 +40,7 @@ function Slider({
         className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
       />
       <div
-        className="absolute h-5 w-5 rounded-full border-2 border-zinc-400 bg-zinc-900 ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+        className="absolute h-5 w-5 rounded-full border-2 border-[#178E96] bg-white shadow-sm ring-offset-background transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#178E96]/20 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
         style={{ left: `calc(${percentage}% - 10px)` }}
       />
     </div>

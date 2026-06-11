@@ -11,33 +11,28 @@ export default function DashboardLayout({
 }) {
   return (
     <NotificationProvider>
-      <div className="h-screen text-white flex overflow-hidden relative bg-gradient-to-br from-[#0a0a0a] via-[#050505] to-[#0a0a0a]">
-        {/* Performance: Using CSS class instead of inline SVG filter */}
-        <div className="noise-texture absolute inset-0" />
-        {/* Very subtle grid - optimized with contain */}
-        <div className="absolute inset-0 opacity-[0.02] pointer-events-none grid-pattern" />
-        {/* Sidebar - Desktop */}
-        <Sidebar />
+      <div className="h-screen flex flex-col overflow-hidden bg-[#F2F1E9] text-[#0E2A3F]">
+        {/* Topbar full-width */}
+        <HeaderWrapper />
 
-        {/* Main Content */}
-        <div className="flex-1 flex flex-col transition-all duration-300 lg:ml-(--sidebar-width,16rem) overflow-hidden relative z-10">
-          {/* Header */}
-          <HeaderWrapper />
+        <div className="flex-1 flex overflow-hidden">
+          {/* Sidebar - Desktop */}
+          <Sidebar />
 
-          {/* Page Content - Performance Optimized Scroll */}
+          {/* Page Content */}
           <main className="flex-1 overflow-auto scroll-container">
             {children}
           </main>
         </div>
 
-        {/* Toast Notifications - Bottom Right for better UX */}
+        {/* Toast Notifications */}
         <Toaster
           position="bottom-right"
           toastOptions={{
             style: {
-              background: '#18181b',
-              color: '#fff',
-              border: '1px solid #27272a',
+              background: '#FFFFFF',
+              color: '#0E2A3F',
+              border: '1px solid #E3E1D6',
             },
             className: 'sonner-toast',
           }}

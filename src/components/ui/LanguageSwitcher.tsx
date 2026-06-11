@@ -86,7 +86,7 @@ export function LanguageSwitcher() {
       <Button
         variant="ghost"
         size="icon"
-        className="relative hover:bg-zinc-800 h-8 w-8 sm:h-9 sm:w-9"
+        className="relative text-white hover:text-white hover:bg-white/15 h-8 w-8 sm:h-9 sm:w-9 duration-150"
         onClick={() => setIsOpen(!isOpen)}
         disabled={isPending}
       >
@@ -99,9 +99,9 @@ export function LanguageSwitcher() {
             className="fixed inset-0 z-40"
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute right-0 top-full mt-2 z-50 min-w-50 bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl overflow-hidden">
+          <div className="absolute right-0 top-full mt-2 z-50 min-w-50 bg-white border border-[#E3E1D6] text-[#0E2A3F] rounded-lg shadow-lg overflow-hidden">
             <div className="p-2">
-              <div className="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+              <div className="px-3 py-2 text-xs font-semibold text-[#8395A5] uppercase tracking-wider">
                 {t('language')}
               </div>
               {languages.map((language) => {
@@ -112,10 +112,10 @@ export function LanguageSwitcher() {
                     onClick={() => handleLanguageChange(language.code)}
                     disabled={isPending}
                     className={`
-                      w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors
+                      w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors duration-150
                       ${currentLocale === language.code
-                        ? 'bg-aura-500/10 text-aura-400'
-                        : 'hover:bg-zinc-800 text-white'
+                        ? 'bg-[#E5F1F1] text-[#117178]'
+                        : 'hover:bg-[#F4F3EC] text-[#0E2A3F]'
                       }
                       ${isPending ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
                     `}
@@ -123,7 +123,7 @@ export function LanguageSwitcher() {
                     <LangFlag />
                     <span className="flex-1 text-sm font-medium">{language.name}</span>
                     {currentLocale === language.code && (
-                      <Check className="w-4 h-4 text-aura-400" />
+                      <Check className="w-4 h-4 text-[#117178]" />
                     )}
                   </button>
                 );

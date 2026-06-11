@@ -44,19 +44,19 @@ export function PlanoManager() {
   };
 
   return (
-    <Card className="bg-zinc-900/50 border-zinc-800">
+    <Card className="bg-white border-[#E9E7DC]">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-white flex items-center gap-2">
-              <Crown className={`w-5 h-5 ${ehPremium ? 'text-purple-500' : 'text-gray-500'}`} />
+            <CardTitle className="text-[#0E2A3F] flex items-center gap-2">
+              <Crown className={`w-5 h-5 ${ehPremium ? 'text-[#D9A441]' : 'text-[#8395A5]'}`} />
               Gerenciar Plano
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-[#44586A]">
               Altere seu plano e teste as permissões
             </CardDescription>
           </div>
-          <Badge variant={ehPremium ? 'default' : 'secondary'} className={ehPremium ? 'bg-purple-500' : ''}>
+          <Badge variant={ehPremium ? 'default' : 'secondary'} className={ehPremium ? 'bg-[#178E96]' : ''}>
             {planoOriginal}
           </Badge>
         </div>
@@ -92,8 +92,8 @@ export function PlanoManager() {
           </Button>
         </div>
 
-        <div className="text-sm text-gray-400 bg-zinc-950/50 p-3 rounded-lg">
-          <p className="font-semibold text-gray-300 mb-1">Como funciona:</p>
+        <div className="text-sm text-[#44586A] bg-[#F4F3EC] p-3 rounded-lg border border-[#E9E7DC]">
+          <p className="font-semibold text-[#0E2A3F] mb-1">Como funciona:</p>
           <ul className="list-disc list-inside space-y-1">
             <li>Clique no botão para alternar entre FREE e PREMIUM</li>
             <li>A sessão é atualizada automaticamente após a mudança</li>

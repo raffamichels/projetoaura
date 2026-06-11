@@ -105,21 +105,21 @@ export function CalendarDayView({ compromissos, onSlotClick, onCompromissoClick,
   return (
     <div className="flex flex-col flex-1 min-h-0 max-h-full relative">
       {/* Header com o dia - FIXO e COMPACTO */}
-      <div className="grid grid-cols-[auto_1fr] border-b border-zinc-800 bg-zinc-900/95 z-20 backdrop-blur-sm flex-shrink-0">
+      <div className="grid grid-cols-[auto_1fr] border-b border-[#E9E7DC] bg-white z-20 flex-shrink-0">
         {/* Coluna de horas (vazia) */}
-        <div className="w-12 sm:w-14 md:w-16 border-r border-zinc-800"></div>
+        <div className="w-12 sm:w-14 md:w-16 border-r border-[#E9E7DC]"></div>
 
         {/* Dia */}
         <div
           className={`p-2 sm:p-2.5 text-center transition-all ${
-            isToday ? 'bg-purple-500/10' : ''
+            isToday ? 'bg-[#E5F1F1]' : ''
           }`}
         >
-          <div className="text-[10px] sm:text-xs text-gray-400 uppercase font-medium">
+          <div className="text-[10px] sm:text-xs text-[#8395A5] uppercase font-medium">
             {format(currentDate, 'EEEE', { locale: ptBR })}
           </div>
           <div className={`text-xl sm:text-2xl font-bold transition-colors ${
-            isToday ? 'text-purple-400' : 'text-white'
+            isToday ? 'text-[#178E96]' : 'text-[#0E2A3F]'
           }`}>
             {format(currentDate, 'd')}
           </div>
@@ -134,13 +134,13 @@ export function CalendarDayView({ compromissos, onSlotClick, onCompromissoClick,
       >
         <div className="grid grid-cols-[auto_1fr] relative" style={{ height: '1440px' }}>
           {/* Coluna de horas */}
-          <div className="w-12 sm:w-14 md:w-16 relative border-r border-zinc-800 bg-zinc-900/50">
+          <div className="w-12 sm:w-14 md:w-16 relative border-r border-[#E9E7DC] bg-white">
             {hours.map(hour => (
               <div
                 key={hour}
-                className="h-[60px] border-b border-zinc-800/50 flex items-start justify-end pr-1.5 sm:pr-2 pt-0"
+                className="h-[60px] border-b border-[#E9E7DC] flex items-start justify-end pr-1.5 sm:pr-2 pt-0"
               >
-                <span className="text-[10px] sm:text-xs text-gray-500 -translate-y-2 font-medium">
+                <span className="text-[10px] sm:text-xs text-[#8395A5] -translate-y-2 font-medium">
                   {String(hour).padStart(2, '0')}:00
                 </span>
               </div>
@@ -148,13 +148,13 @@ export function CalendarDayView({ compromissos, onSlotClick, onCompromissoClick,
           </div>
 
           {/* Coluna do dia */}
-          <div className="relative bg-zinc-950/30">
+          <div className="relative bg-[#FDFCFB]">
             {/* Grid de horas clicável */}
             {hours.map(hour => (
               <button
                 key={hour}
                 onClick={() => onSlotClick(currentDate, hour)}
-                className="w-full h-[60px] border-b border-zinc-800/50 hover:bg-purple-500/5 active:bg-purple-500/10 transition-colors text-left block touch-manipulation"
+                className="w-full h-[60px] border-b border-[#E9E7DC] hover:bg-[#E5F1F1] active:bg-[#D4EDED] transition-colors text-left block touch-manipulation"
               />
             ))}
 
@@ -177,12 +177,12 @@ export function CalendarDayView({ compromissos, onSlotClick, onCompromissoClick,
                     {comp.titulo}
                   </div>
                   {comp.horaFim && (
-                    <div className="text-gray-400 text-[10px] sm:text-xs mt-0.5">
+                    <div className="text-[#8395A5] text-[10px] sm:text-xs mt-0.5">
                       {comp.horaInicio} - {comp.horaFim}
                     </div>
                   )}
                   {comp.descricao && (
-                    <div className="text-gray-500 text-[10px] mt-1 line-clamp-2 hidden sm:block">
+                    <div className="text-[#5E7081] text-[10px] mt-1 line-clamp-2 hidden sm:block">
                       {comp.descricao}
                     </div>
                   )}

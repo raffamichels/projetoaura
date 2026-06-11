@@ -39,11 +39,11 @@ const getIcone = (icone: string) => {
 
 const getTipoTexto = (tipo: string, t: (key: string) => string) => {
   const tipos: Record<string, { texto: string; cor: string }> = {
-    'compromisso_criado': { texto: t('created'), cor: 'bg-green-500/10 text-green-400 border-green-500/20' },
-    'compromisso_editado': { texto: t('edited'), cor: 'bg-blue-500/10 text-blue-400 border-blue-500/20' },
-    'compromisso_excluido': { texto: t('deleted'), cor: 'bg-red-500/10 text-red-400 border-red-500/20' },
+    'compromisso_criado': { texto: t('created'), cor: 'bg-green-50 text-green-700 border-green-200' },
+    'compromisso_editado': { texto: t('edited'), cor: 'bg-[#EFF4F8] text-[#154F6D] border-[#D5E2EC]' },
+    'compromisso_excluido': { texto: t('deleted'), cor: 'bg-red-50 text-red-600 border-red-200' },
   };
-  return tipos[tipo] || { texto: t('action'), cor: 'bg-gray-500/10 text-gray-400 border-gray-500/20' };
+  return tipos[tipo] || { texto: t('action'), cor: 'bg-[#F4F3EC] text-[#8395A5] border-[#E9E7DC]' };
 };
 
 export function AtividadesRecentes() {
@@ -85,19 +85,19 @@ export function AtividadesRecentes() {
 
   if (loading) {
     return (
-      <Card className="lg:col-span-2 bg-zinc-900/50 border-zinc-800">
+      <Card className="lg:col-span-2">
         <CardHeader>
-          <CardTitle className="text-white flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-aura-400" />
+          <CardTitle className="text-[#0E2A3F] flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-[#178E96]" />
             {t('recentActivities')}
           </CardTitle>
-          <CardDescription className="text-gray-400">
+          <CardDescription className="text-[#44586A]">
             {t('yourTodayActions')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-aura-500"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#178E96]"></div>
           </div>
         </CardContent>
       </Card>
@@ -106,24 +106,23 @@ export function AtividadesRecentes() {
 
   if (atividades.length === 0) {
     return (
-      <Card className="lg:col-span-2 bg-zinc-900/50 border-zinc-800">
+      <Card className="lg:col-span-2">
         <CardHeader>
-          <CardTitle className="text-white flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-aura-400" />
+          <CardTitle className="text-[#0E2A3F] flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-[#178E96]" />
             {t('recentActivities')}
           </CardTitle>
-          <CardDescription className="text-gray-400">
+          <CardDescription className="text-[#44586A]">
             {t('yourTodayActions')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col items-center justify-center py-12 text-center">
-            <div className="relative mb-4">
-              <div className="absolute inset-0 bg-aura-500/20 blur-xl rounded-full"></div>
-              <Clock className="w-12 h-12 text-gray-600 relative" />
+            <div className="w-16 h-16 rounded-full bg-[#F4F3EC] flex items-center justify-center mb-4">
+              <Clock className="w-8 h-8 text-[#8395A5]" />
             </div>
-            <p className="text-gray-400 mb-2 font-medium">{t('noActivityToday')}</p>
-            <p className="text-sm text-gray-500 max-w-sm">
+            <p className="text-[#44586A] mb-2 font-medium">{t('noActivityToday')}</p>
+            <p className="text-sm text-[#8395A5] max-w-sm">
               {t('startCreatingAppointments')}
             </p>
           </div>
@@ -133,19 +132,19 @@ export function AtividadesRecentes() {
   }
 
   return (
-    <Card className="lg:col-span-2 bg-zinc-900/50 border-zinc-800">
+    <Card className="lg:col-span-2">
       <CardHeader>
-        <CardTitle className="text-white flex items-center gap-2 text-lg sm:text-xl">
-          <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-aura-400" />
+        <CardTitle className="text-[#0E2A3F] flex items-center gap-2 text-lg sm:text-xl">
+          <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-[#178E96]" />
           {t('recentActivities')}
         </CardTitle>
-        <CardDescription className="text-gray-400 text-sm">
+        <CardDescription className="text-[#44586A] text-sm">
           {t('yourTodayActions')}
         </CardDescription>
       </CardHeader>
       <CardContent>
         {/* Container com altura limitada e scroll */}
-        <div className="max-h-[350px] overflow-y-auto pr-1 sm:pr-2 space-y-2 sm:space-y-3 scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-zinc-900">
+        <div className="max-h-[350px] overflow-y-auto pr-1 sm:pr-2 space-y-2 sm:space-y-3 scrollbar-thin">
           {atividades.map((atividade) => {
             const IconeComponent = getIcone(atividade.icone);
             const tipoInfo = getTipoTexto(atividade.tipo, t);
@@ -153,14 +152,10 @@ export function AtividadesRecentes() {
             return (
               <div
                 key={atividade.id}
-                className="group relative flex items-start gap-3 sm:gap-4 p-3 sm:p-4 rounded-lg border border-zinc-800 bg-zinc-900/30 hover:bg-zinc-800/50 hover:border-zinc-700 transition-all cursor-pointer"
+                className="group relative flex items-start gap-3 sm:gap-4 p-3 sm:p-4 rounded-lg border border-[#E9E7DC] bg-white hover:bg-[#F4F3EC] hover:border-[#D9D7CB] transition-all duration-150 cursor-pointer"
               >
-                {/* Ícone com glow */}
+                {/* Ícone */}
                 <div className="relative flex-shrink-0">
-                  <div
-                    className="absolute inset-0 blur-md opacity-50 rounded-lg"
-                    style={{ backgroundColor: atividade.cor }}
-                  ></div>
                   <div
                     className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center"
                     style={{ backgroundColor: `${atividade.cor}20` }}
@@ -175,7 +170,7 @@ export function AtividadesRecentes() {
                 {/* Conteúdo */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2 mb-1">
-                    <h4 className="font-semibold text-sm sm:text-base text-white truncate group-hover:text-aura-400 transition-colors">
+                    <h4 className="font-semibold text-sm sm:text-base text-[#0E2A3F] truncate group-hover:text-[#117178] transition-colors duration-150">
                       {atividade.titulo}
                     </h4>
                     <Badge
@@ -187,12 +182,12 @@ export function AtividadesRecentes() {
                   </div>
 
                   {atividade.descricao && (
-                    <p className="text-xs sm:text-sm text-gray-400 mb-2 line-clamp-1">
+                    <p className="text-xs sm:text-sm text-[#44586A] mb-2 line-clamp-1">
                       {atividade.descricao}
                     </p>
                   )}
 
-                  <div className="flex items-center gap-1.5 sm:gap-2 text-xs text-gray-500">
+                  <div className="flex items-center gap-1.5 sm:gap-2 text-xs text-[#8395A5]">
                     <Clock className="w-3 h-3" />
                     <span>
                       {formatDistanceToNow(new Date(atividade.createdAt), {
@@ -205,7 +200,7 @@ export function AtividadesRecentes() {
 
                 {/* Indicador de hover - oculto em mobile */}
                 <div className="hidden sm:block absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <div className="w-1.5 h-8 bg-aura-500 rounded-full"></div>
+                  <div className="w-1.5 h-8 bg-[#178E96] rounded-full"></div>
                 </div>
               </div>
             );

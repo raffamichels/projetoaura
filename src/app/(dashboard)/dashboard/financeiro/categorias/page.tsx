@@ -61,19 +61,19 @@ export default function CategoriasPage() {
   const categoriasDespesa = categorias.filter((c) => c.tipo === 'DESPESA');
 
   return (
-    <div className="bg-zinc-950 p-4 lg:p-6 space-y-4 sm:space-y-6">
+    <div className="p-4 lg:p-6 space-y-4 sm:space-y-6">
       <div className="relative mb-8">
         <div className="relative">
           <div className="flex justify-between items-start mb-6">
             <div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-rose-400 bg-clip-text text-transparent">
+              <h1 className="text-4xl font-bold text-[#0E2A3F]">
                 Categorias
               </h1>
-              <p className="text-zinc-400 mt-2">Organize suas transações por categorias</p>
+              <p className="text-[#44586A] mt-2">Organize suas transações por categorias</p>
             </div>
             <Button
               onClick={() => setModalAberto(true)}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg transition-all hover:scale-105"
+              className="bg-[#178E96] hover:bg-[#117178] text-white transition-colors duration-150"
               size="lg"
             >
               <Plus className="w-5 h-5 mr-2" />
@@ -89,8 +89,8 @@ export default function CategoriasPage() {
                 variant={filtroTipo === 'TODOS' ? 'default' : 'default'}
                 onClick={() => setFiltroTipo('TODOS')}
                 className={filtroTipo === 'TODOS' 
-                  ? 'bg-purple-600 hover:bg-purple-700' 
-                  : 'border-zinc-800 hover:bg-zinc-800'
+                  ? 'bg-[#E5F1F1] text-[#117178] font-semibold hover:bg-[#E5F1F1]'
+                  : 'bg-white border border-[#E9E7DC] text-[#44586A] hover:bg-[#F4F3EC]'
                 }
               >
                 Todas
@@ -99,8 +99,8 @@ export default function CategoriasPage() {
                 variant={filtroTipo === 'RECEITA' ? 'default' : 'default'}
                 onClick={() => setFiltroTipo('RECEITA')}
                 className={filtroTipo === 'RECEITA' 
-                  ? 'bg-green-600 hover:bg-green-700' 
-                  : 'border-zinc-800 hover:bg-zinc-800'
+                  ? 'bg-green-600 hover:bg-green-700 text-white'
+                  : 'bg-white border border-[#E9E7DC] text-[#44586A] hover:bg-[#F4F3EC]'
                 }
               >
                 <TrendingUp className="w-4 h-4 mr-2" />
@@ -110,8 +110,8 @@ export default function CategoriasPage() {
                 variant={filtroTipo === 'DESPESA' ? 'default' : 'default'}
                 onClick={() => setFiltroTipo('DESPESA')}
                 className={filtroTipo === 'DESPESA' 
-                  ? 'bg-red-600 hover:bg-red-700' 
-                  : 'border-zinc-800 hover:bg-zinc-800'
+                  ? 'bg-red-600 hover:bg-red-700 text-white'
+                  : 'bg-white border border-[#E9E7DC] text-[#44586A] hover:bg-[#F4F3EC]'
                 }
               >
                 <TrendingDown className="w-4 h-4 mr-2" />
@@ -126,8 +126,8 @@ export default function CategoriasPage() {
                 size="sm"
                 onClick={() => setVisualizacao('grid')}
                 className={visualizacao === 'grid' 
-                  ? 'bg-zinc-800 border-zinc-700' 
-                  : 'border-zinc-800 hover:bg-zinc-800'
+                  ? 'bg-[#E5F1F1] text-[#117178] font-semibold hover:bg-[#E5F1F1]'
+                  : 'bg-white border border-[#E9E7DC] text-[#44586A] hover:bg-[#F4F3EC]'
                 }
               >
                 <Grid3x3 className="w-4 h-4" />
@@ -137,8 +137,8 @@ export default function CategoriasPage() {
                 size="sm"
                 onClick={() => setVisualizacao('lista')}
                 className={visualizacao === 'lista' 
-                  ? 'bg-zinc-800 border-zinc-700' 
-                  : 'border-zinc-800 hover:bg-zinc-800'
+                  ? 'bg-[#E5F1F1] text-[#117178] font-semibold hover:bg-[#E5F1F1]'
+                  : 'bg-white border border-[#E9E7DC] text-[#44586A] hover:bg-[#F4F3EC]'
                 }
               >
                 <List className="w-4 h-4" />
@@ -150,21 +150,21 @@ export default function CategoriasPage() {
 
       {loading ? (
         <div className="flex justify-center py-20">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#178E96]"></div>
         </div>
       ) : categorias.length === 0 ? (
-        <Card className="bg-zinc-900/50 border-zinc-800 p-12">
+        <Card className="bg-white border-[#E9E7DC] shadow-sm p-12">
           <div className="text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-500/10 rounded-full mb-4">
-              <Tag className="w-8 h-8 text-purple-400" />
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-[#E5F1F1] rounded-full mb-4">
+              <Tag className="w-8 h-8 text-[#117178]" />
             </div>
-            <h3 className="text-xl font-semibold text-white mb-2">
+            <h3 className="text-xl font-semibold text-[#0E2A3F] mb-2">
               Nenhuma categoria encontrada
             </h3>
-            <p className="text-zinc-400 mb-6">
+            <p className="text-[#44586A] mb-6">
               Crie categorias para organizar suas transações
             </p>
-            <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
+            <Button className="bg-[#178E96] hover:bg-[#117178] text-white">
               <Plus className="w-4 h-4 mr-2" />
               Criar Primeira Categoria
             </Button>
@@ -175,10 +175,10 @@ export default function CategoriasPage() {
           {/* Categorias de Receita */}
           {(filtroTipo === 'TODOS' || filtroTipo === 'RECEITA') && categoriasReceita.length > 0 && (
             <div>
-              <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-green-400" />
+              <h2 className="text-xl font-bold text-[#0E2A3F] mb-4 flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-green-600" />
                 Receitas
-                <span className="text-sm text-zinc-500 font-normal">({categoriasReceita.length})</span>
+                <span className="text-sm text-[#8395A5] font-normal">({categoriasReceita.length})</span>
               </h2>
               
               {visualizacao === 'grid' ? (
@@ -186,7 +186,7 @@ export default function CategoriasPage() {
                   {categoriasReceita.map((categoria) => (
                     <Card
                       key={categoria.id}
-                      className="relative overflow-hidden bg-zinc-900/50 border-zinc-800 hover:border-zinc-700 transition-all group cursor-pointer"
+                      className="relative overflow-hidden bg-white border-[#E9E7DC] shadow-sm hover:bg-[#FAF9F4] transition-colors duration-150 group cursor-pointer"
                     >
                       {/* Barra colorida no topo */}
                       <div 
@@ -205,13 +205,13 @@ export default function CategoriasPage() {
                           </div>
                           
                           {/* Nome */}
-                          <h3 className="font-semibold text-white text-sm mb-1">
+                          <h3 className="font-semibold text-[#0E2A3F] text-sm mb-1">
                             {categoria.nome}
                           </h3>
 
                           {/* Subcategorias */}
                           {categoria.subcategorias && categoria.subcategorias.length > 0 && (
-                            <p className="text-xs text-zinc-500">
+                            <p className="text-xs text-[#8395A5]">
                               {categoria.subcategorias.length} subcategoria(s)
                             </p>
                           )}
@@ -231,12 +231,12 @@ export default function CategoriasPage() {
                         </Button>
 
                         {menuAberto === categoria.id && (
-                          <div className="absolute right-2 top-10 w-40 bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl z-10">
-                            <button className="w-full px-3 py-2 text-left text-sm text-zinc-300 hover:bg-zinc-800 flex items-center gap-2">
+                          <div className="absolute right-2 top-10 w-40 bg-white border border-[#E3E1D6] rounded-lg shadow-lg z-10">
+                            <button className="w-full px-3 py-2 text-left text-sm text-[#44586A] hover:bg-[#F4F3EC] flex items-center gap-2">
                               <Edit className="w-3.5 h-3.5" />
                               Editar
                             </button>
-                            <button className="w-full px-3 py-2 text-left text-sm text-red-400 hover:bg-zinc-800 flex items-center gap-2">
+                            <button className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-[#F4F3EC] flex items-center gap-2">
                               <Trash2 className="w-3.5 h-3.5" />
                               Excluir
                             </button>
@@ -251,7 +251,7 @@ export default function CategoriasPage() {
                   {categoriasReceita.map((categoria) => (
                     <Card
                       key={categoria.id}
-                      className="relative overflow-hidden bg-zinc-900/50 border-zinc-800 hover:border-zinc-700 transition-all group"
+                      className="relative overflow-hidden bg-white border-[#E9E7DC] shadow-sm hover:bg-[#FAF9F4] transition-colors duration-150 group"
                     >
                       <div className="p-4 flex items-center gap-4">
                         {/* Ícone */}
@@ -264,16 +264,16 @@ export default function CategoriasPage() {
 
                         {/* Nome */}
                         <div className="flex-1">
-                          <h3 className="font-semibold text-white">{categoria.nome}</h3>
+                          <h3 className="font-semibold text-[#0E2A3F]">{categoria.nome}</h3>
                           {categoria.subcategorias && categoria.subcategorias.length > 0 && (
-                            <p className="text-sm text-zinc-500">
+                            <p className="text-sm text-[#8395A5]">
                               {categoria.subcategorias.length} subcategoria(s)
                             </p>
                           )}
                         </div>
 
                         {/* Tipo */}
-                        <div className="px-3 py-1 bg-green-500/10 text-green-400 text-xs rounded-full border border-green-500/20">
+                        <div className="px-3 py-1 bg-green-50 text-green-700 text-xs rounded-full border border-green-200">
                           Receita
                         </div>
 
@@ -288,12 +288,12 @@ export default function CategoriasPage() {
                         </Button>
 
                         {menuAberto === categoria.id && (
-                          <div className="absolute right-4 top-14 w-40 bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl z-10">
-                            <button className="w-full px-3 py-2 text-left text-sm text-zinc-300 hover:bg-zinc-800 flex items-center gap-2">
+                          <div className="absolute right-4 top-14 w-40 bg-white border border-[#E3E1D6] rounded-lg shadow-lg z-10">
+                            <button className="w-full px-3 py-2 text-left text-sm text-[#44586A] hover:bg-[#F4F3EC] flex items-center gap-2">
                               <Edit className="w-3.5 h-3.5" />
                               Editar
                             </button>
-                            <button className="w-full px-3 py-2 text-left text-sm text-red-400 hover:bg-zinc-800 flex items-center gap-2">
+                            <button className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-[#F4F3EC] flex items-center gap-2">
                               <Trash2 className="w-3.5 h-3.5" />
                               Excluir
                             </button>
@@ -310,10 +310,10 @@ export default function CategoriasPage() {
           {/* Categorias de Despesa */}
           {(filtroTipo === 'TODOS' || filtroTipo === 'DESPESA') && categoriasDespesa.length > 0 && (
             <div>
-              <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                <TrendingDown className="w-5 h-5 text-red-400" />
+              <h2 className="text-xl font-bold text-[#0E2A3F] mb-4 flex items-center gap-2">
+                <TrendingDown className="w-5 h-5 text-red-600" />
                 Despesas
-                <span className="text-sm text-zinc-500 font-normal">({categoriasDespesa.length})</span>
+                <span className="text-sm text-[#8395A5] font-normal">({categoriasDespesa.length})</span>
               </h2>
               
               {visualizacao === 'grid' ? (
@@ -321,7 +321,7 @@ export default function CategoriasPage() {
                   {categoriasDespesa.map((categoria) => (
                     <Card
                       key={categoria.id}
-                      className="relative overflow-hidden bg-zinc-900/50 border-zinc-800 hover:border-zinc-700 transition-all group cursor-pointer"
+                      className="relative overflow-hidden bg-white border-[#E9E7DC] shadow-sm hover:bg-[#FAF9F4] transition-colors duration-150 group cursor-pointer"
                     >
                       <div 
                         className="absolute top-0 left-0 right-0 h-1"
@@ -337,12 +337,12 @@ export default function CategoriasPage() {
                             <Tag className="w-7 h-7" style={{ color: categoria.cor }} />
                           </div>
                           
-                          <h3 className="font-semibold text-white text-sm mb-1">
+                          <h3 className="font-semibold text-[#0E2A3F] text-sm mb-1">
                             {categoria.nome}
                           </h3>
 
                           {categoria.subcategorias && categoria.subcategorias.length > 0 && (
-                            <p className="text-xs text-zinc-500">
+                            <p className="text-xs text-[#8395A5]">
                               {categoria.subcategorias.length} subcategoria(s)
                             </p>
                           )}
@@ -361,12 +361,12 @@ export default function CategoriasPage() {
                         </Button>
 
                         {menuAberto === categoria.id && (
-                          <div className="absolute right-2 top-10 w-40 bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl z-10">
-                            <button className="w-full px-3 py-2 text-left text-sm text-zinc-300 hover:bg-zinc-800 flex items-center gap-2">
+                          <div className="absolute right-2 top-10 w-40 bg-white border border-[#E3E1D6] rounded-lg shadow-lg z-10">
+                            <button className="w-full px-3 py-2 text-left text-sm text-[#44586A] hover:bg-[#F4F3EC] flex items-center gap-2">
                               <Edit className="w-3.5 h-3.5" />
                               Editar
                             </button>
-                            <button className="w-full px-3 py-2 text-left text-sm text-red-400 hover:bg-zinc-800 flex items-center gap-2">
+                            <button className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-[#F4F3EC] flex items-center gap-2">
                               <Trash2 className="w-3.5 h-3.5" />
                               Excluir
                             </button>
@@ -381,7 +381,7 @@ export default function CategoriasPage() {
                   {categoriasDespesa.map((categoria) => (
                     <Card
                       key={categoria.id}
-                      className="relative overflow-hidden bg-zinc-900/50 border-zinc-800 hover:border-zinc-700 transition-all group"
+                      className="relative overflow-hidden bg-white border-[#E9E7DC] shadow-sm hover:bg-[#FAF9F4] transition-colors duration-150 group"
                     >
                       <div className="p-4 flex items-center gap-4">
                         <div 
@@ -392,15 +392,15 @@ export default function CategoriasPage() {
                         </div>
 
                         <div className="flex-1">
-                          <h3 className="font-semibold text-white">{categoria.nome}</h3>
+                          <h3 className="font-semibold text-[#0E2A3F]">{categoria.nome}</h3>
                           {categoria.subcategorias && categoria.subcategorias.length > 0 && (
-                            <p className="text-sm text-zinc-500">
+                            <p className="text-sm text-[#8395A5]">
                               {categoria.subcategorias.length} subcategoria(s)
                             </p>
                           )}
                         </div>
 
-                        <div className="px-3 py-1 bg-red-500/10 text-red-400 text-xs rounded-full border border-red-500/20">
+                        <div className="px-3 py-1 bg-red-50 text-red-600 text-xs rounded-full border border-red-200">
                           Despesa
                         </div>
 
@@ -414,12 +414,12 @@ export default function CategoriasPage() {
                         </Button>
 
                         {menuAberto === categoria.id && (
-                          <div className="absolute right-4 top-14 w-40 bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl z-10">
-                            <button className="w-full px-3 py-2 text-left text-sm text-zinc-300 hover:bg-zinc-800 flex items-center gap-2">
+                          <div className="absolute right-4 top-14 w-40 bg-white border border-[#E3E1D6] rounded-lg shadow-lg z-10">
+                            <button className="w-full px-3 py-2 text-left text-sm text-[#44586A] hover:bg-[#F4F3EC] flex items-center gap-2">
                               <Edit className="w-3.5 h-3.5" />
                               Editar
                             </button>
-                            <button className="w-full px-3 py-2 text-left text-sm text-red-400 hover:bg-zinc-800 flex items-center gap-2">
+                            <button className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-[#F4F3EC] flex items-center gap-2">
                               <Trash2 className="w-3.5 h-3.5" />
                               Excluir
                             </button>

@@ -1,948 +1,827 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 import {
   Calendar,
   Wallet,
+  Heart,
   BookOpen,
   Library,
-  Target,
-  Dumbbell,
-  TrendingUp,
-  Users,
-  Shield,
-  Zap,
-  Check,
-  ChevronDown,
-  Star,
-  ArrowRight,
-  Lock,
+  Plane,
   Menu,
   X,
-  Globe,
-  BarChart3,
-  Clock,
-  Brain,
-  Layers,
-  MousePointerClick,
+  Check,
+  ChevronDown,
+  ArrowRight,
+  LayoutDashboard,
+  TrendingUp,
+  TrendingDown,
+  Bell,
+  Settings,
+  Shield,
+  Smartphone,
+  Zap,
 } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 
-export default function LandingPage() {
-  const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [nome, setNome] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [showOrbs, setShowOrbs] = useState(false);
+/* ============================================================
+   Mockups do sistema (recriações em CSS da UI real do produto)
+   ============================================================ */
 
-  // Performance: Lazy load orbs após first paint
-  useEffect(() => {
-    const timeout = setTimeout(() => setShowOrbs(true), 100);
-    return () => clearTimeout(timeout);
-  }, []);
-
-  // Performance: Scroll listener otimizado com RAF throttle
-  useEffect(() => {
-    let ticking = false;
-    let lastKnownScrollY = 0;
-
-    const handleScroll = () => {
-      lastKnownScrollY = window.scrollY;
-
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          setScrolled(lastKnownScrollY > 20);
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) return;
-
-    setLoading(true);
-
-    try {
-      const response = await fetch("/api/waitlist", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, nome }),
-      });
-
-      if (response.ok) {
-        setSubmitted(true);
-        setEmail("");
-        setNome("");
-        toast.success("Você entrou na lista de espera!");
-      }
-    } catch (error) {
-      console.error("Erro ao adicionar à lista de espera:", error);
-      toast.error("Erro ao processar. Tente novamente.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const modules = [
-    {
-      icon: Calendar,
-      title: "Agenda Inteligente",
-      description: "Organize compromissos com lembretes inteligentes e sincronização automática.",
-      gradient: "from-blue-500 to-cyan-400",
-      bgGradient: "from-blue-500/10 to-cyan-400/10",
-    },
-    {
-      icon: Wallet,
-      title: "Controle Financeiro",
-      description: "Gerencie receitas, despesas e investimentos com dashboards completos.",
-      gradient: "from-emerald-500 to-teal-400",
-      bgGradient: "from-emerald-500/10 to-teal-400/10",
-    },
-    {
-      icon: BookOpen,
-      title: "Gestão de Estudos",
-      description: "Acompanhe cursos, anotações e progresso com técnicas de aprendizado.",
-      gradient: "from-violet-500 to-purple-400",
-      bgGradient: "from-violet-500/10 to-purple-400/10",
-    },
-    {
-      icon: Library,
-      title: "Biblioteca Pessoal",
-      description: "Organize livros, artigos e conteúdos com citações e notas.",
-      gradient: "from-orange-500 to-amber-400",
-      bgGradient: "from-orange-500/10 to-amber-400/10",
-    },
-    {
-      icon: Target,
-      title: "Metas e Hábitos",
-      description: "Defina objetivos SMART e construa hábitos duradouros.",
-      gradient: "from-rose-500 to-pink-400",
-      bgGradient: "from-rose-500/10 to-pink-400/10",
-      comingSoon: true,
-    },
-    {
-      icon: Dumbbell,
-      title: "Treinos e Saúde",
-      description: "Planeje treinos e monitore sua evolução física.",
-      gradient: "from-red-500 to-orange-400",
-      bgGradient: "from-red-500/10 to-orange-400/10",
-      comingSoon: true,
-    },
-  ];
-
-  const benefits = [
-    {
-      icon: Zap,
-      title: "Produtividade 10x",
-      description: "Centralize tudo em um só lugar e economize horas por semana.",
-    },
-    {
-      icon: Shield,
-      title: "Segurança Total",
-      description: "Dados criptografados e protegidos seguindo padrões LGPD.",
-    },
-    {
-      icon: Brain,
-      title: "Insights Inteligentes",
-      description: "Análises personalizadas baseadas nos seus hábitos e padrões.",
-    },
-    {
-      icon: Layers,
-      title: "Tudo Integrado",
-      description: "Módulos que conversam entre si para uma experiência única.",
-    },
-  ];
-
-  const stats = [
-    { value: "7+", label: "Módulos Integrados" },
-    { value: "100%", label: "Dados Privados" },
-    { value: "500+", label: "Na Lista de Espera" },
-    { value: "R$12,90", label: "Plano Premium/mês" },
-  ];
-
-  const testimonials = [
-    {
-      name: "Ana Silva",
-      role: "Empreendedora",
-      image: null,
-      text: "Finalmente consigo ter uma visão completa da minha vida. Economizei mais de R$ 2.000 em 3 meses com o módulo financeiro!",
-    },
-    {
-      name: "Carlos Santos",
-      role: "Estudante de Medicina",
-      image: null,
-      text: "Organizei todos os meus estudos no Aura. A produtividade aumentou muito e consigo acompanhar meu progresso de forma visual.",
-    },
-    {
-      name: "Mariana Costa",
-      role: "Designer",
-      image: null,
-      text: "Simplesmente incrível. Cancelei 5 assinaturas de apps diferentes e agora uso só o Aura. Vale cada centavo!",
-    },
-  ];
-
-  const faqs = [
-    {
-      question: "Quando o Aura estará disponível?",
-      answer: "Estamos finalizando os testes beta e planejamos o lançamento oficial para fevereiro de 2026. Quem estiver na lista de espera terá acesso prioritário!",
-    },
-    {
-      question: "Meus dados estarão seguros?",
-      answer: "Absolutamente. Utilizamos criptografia de ponta a ponta e seguimos os mais rigorosos padrões de segurança (LGPD compliant). Seus dados são seus e jamais serão compartilhados.",
-    },
-    {
-      question: "Posso usar no celular?",
-      answer: "Sim! O Aura é totalmente responsivo e funciona perfeitamente em qualquer dispositivo. Apps nativos para iOS e Android estão previstos para o segundo semestre de 2026.",
-    },
-    {
-      question: "Posso cancelar a qualquer momento?",
-      answer: "Sim, sem burocracia. Você pode cancelar sua assinatura Premium a qualquer momento e continuar usando o plano gratuito.",
-    },
-    {
-      question: "Existe desconto para estudantes?",
-      answer: "Sim! Estudantes terão 50% de desconto no plano Premium. Os detalhes serão divulgados no lançamento.",
-    },
-  ];
-
+function BrowserFrame({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-[#0A0A0F] text-white overflow-x-hidden">
-      {/* Gradient Orbs Background - Performance Optimized */}
-      {showOrbs && (
-        <div className="fixed inset-0 overflow-hidden pointer-events-none orb-container">
-          <div className="absolute top-0 -left-40 w-80 h-80 bg-violet-600/30 rounded-full blur-3xl animate-pulse-slow will-change-opacity" />
-          <div className="absolute top-1/4 -right-40 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl animate-pulse-slow will-change-opacity animation-delay-2000" />
-          <div className="absolute bottom-1/4 left-1/4 w-64 h-64 bg-cyan-600/20 rounded-full blur-3xl animate-pulse-slow will-change-opacity animation-delay-4000" />
+    <div className="rounded-xl overflow-hidden border border-[#E3E1D6] shadow-[0_24px_60px_-20px_rgba(14,42,63,0.25)] bg-white">
+      {/* Barra do navegador */}
+      <div className="flex items-center gap-2 px-4 py-2.5 bg-[#F4F3EC] border-b border-[#E3E1D6]">
+        <span className="w-2.5 h-2.5 rounded-full bg-[#C0564F]" />
+        <span className="w-2.5 h-2.5 rounded-full bg-[#D9A441]" />
+        <span className="w-2.5 h-2.5 rounded-full bg-[#178E96]" />
+        <div className="ml-3 flex-1 max-w-[220px] h-5 rounded-md bg-white border border-[#E3E1D6] flex items-center px-2">
+          <span className="text-[9px] text-[#8395A5]">aura.app/dashboard</span>
         </div>
-      )}
+      </div>
+      {children}
+    </div>
+  );
+}
 
-      {/* Header */}
-      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-[#0A0A0F]/80 backdrop-blur-xl border-b border-white/5' : ''}`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
-            {/* Logo */}
-            <Link href="/" className="flex items-center">
-              <span className="text-3xl font-bold bg-gradient-to-r from-purple-400 via-fuchsia-400 to-blue-400 bg-clip-text text-transparent animate-gradient">
-                Aura
-              </span>
-            </Link>
-
-            {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center gap-8">
-              <a href="#recursos" className="text-sm text-gray-400 hover:text-white transition-colors">
-                Recursos
-              </a>
-              <a href="#como-funciona" className="text-sm text-gray-400 hover:text-white transition-colors">
-                Como Funciona
-              </a>
-              <a href="#precos" className="text-sm text-gray-400 hover:text-white transition-colors">
-                Preços
-              </a>
-              <a href="#faq" className="text-sm text-gray-400 hover:text-white transition-colors">
-                FAQ
-              </a>
-            </nav>
-
-            {/* CTA Buttons */}
-            <div className="hidden md:flex items-center gap-4">
-              <Button
-                variant="ghost"
-                className="text-gray-300 hover:text-white hover:bg-white/5"
-                onClick={() => router.push('/login')}
-              >
-                Entrar
-              </Button>
-              <Button
-                className="bg-gradient-to-r from-violet-600 to-blue-600 hover:from-violet-700 hover:to-blue-700 text-white shadow-lg shadow-violet-500/25"
-                onClick={() => router.push('/register')}
-              >
-                Começar Grátis
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </div>
-
-            {/* Mobile Menu Button */}
-            <button
-              className="md:hidden p-2 text-gray-400 hover:text-white"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
+function DashboardMockup() {
+  return (
+    <BrowserFrame>
+      {/* Topbar teal do sistema */}
+      <div className="flex items-center justify-between px-4 py-2 bg-[#178E96]">
+        <span className="text-white font-extrabold text-sm">Aura</span>
+        <div className="flex items-center gap-2.5">
+          <Bell className="w-3.5 h-3.5 text-white/80" />
+          <div className="w-5 h-5 rounded-full bg-[#0E2A3F] flex items-center justify-center">
+            <span className="text-[8px] text-white font-bold">RM</span>
           </div>
         </div>
-
-        {/* Mobile Menu */}
-        {mobileMenuOpen && (
-          <div className="md:hidden bg-[#0A0A0F]/95 backdrop-blur-xl border-b border-white/5">
-            <div className="px-4 py-6 space-y-4">
-              <a href="#recursos" className="block py-2 text-gray-300 hover:text-white" onClick={() => setMobileMenuOpen(false)}>
-                Recursos
-              </a>
-              <a href="#como-funciona" className="block py-2 text-gray-300 hover:text-white" onClick={() => setMobileMenuOpen(false)}>
-                Como Funciona
-              </a>
-              <a href="#precos" className="block py-2 text-gray-300 hover:text-white" onClick={() => setMobileMenuOpen(false)}>
-                Preços
-              </a>
-              <a href="#faq" className="block py-2 text-gray-300 hover:text-white" onClick={() => setMobileMenuOpen(false)}>
-                FAQ
-              </a>
-              <div className="pt-4 flex flex-col gap-3">
-                <Button className="w-full border-white/10" onClick={() => router.push('/login')}>
-                  Entrar
-                </Button>
-                <Button className="w-full bg-gradient-to-r from-violet-600 to-blue-600" onClick={() => router.push('/register')}>
-                  Começar Grátis
-                </Button>
+      </div>
+      <div className="flex bg-[#F2F1E9]">
+        {/* Sidebar */}
+        <div className="hidden sm:block w-32 bg-white border-r border-[#E9E7DC] py-3 space-y-0.5">
+          {[
+            { icon: LayoutDashboard, label: "Dashboard", active: true },
+            { icon: Heart, label: "Hábitos" },
+            { icon: Calendar, label: "Agenda" },
+            { icon: Wallet, label: "Financeiro" },
+            { icon: BookOpen, label: "Estudos" },
+            { icon: Library, label: "Biblioteca" },
+          ].map((item) => (
+            <div
+              key={item.label}
+              className={`flex items-center gap-1.5 mx-2 px-2 py-1.5 rounded-md ${
+                item.active
+                  ? "bg-[#E5F1F1] text-[#117178] font-semibold"
+                  : "text-[#44586A]"
+              }`}
+            >
+              <item.icon className="w-3 h-3" />
+              <span className="text-[9px]">{item.label}</span>
+            </div>
+          ))}
+          <div className="mx-2 mt-3 px-2 py-1.5 flex items-center gap-1.5 text-[#44586A]">
+            <Settings className="w-3 h-3" />
+            <span className="text-[9px]">Configurações</span>
+          </div>
+        </div>
+        {/* Conteúdo */}
+        <div className="flex-1 p-3 space-y-2.5">
+          <p className="text-[11px] font-bold text-[#0E2A3F]">Bom dia, Raffael 👋</p>
+          <div className="grid grid-cols-3 gap-2">
+            <div className="bg-white rounded-lg border border-[#E9E7DC] p-2.5">
+              <p className="text-[8px] text-[#8395A5] uppercase tracking-wide">Saldo do mês</p>
+              <p className="text-[13px] font-bold text-[#0E2A3F]">R$ 2.430</p>
+              <p className="text-[8px] text-green-600 flex items-center gap-0.5">
+                <TrendingUp className="w-2.5 h-2.5" /> +12%
+              </p>
+            </div>
+            <div className="bg-white rounded-lg border border-[#E9E7DC] p-2.5">
+              <p className="text-[8px] text-[#8395A5] uppercase tracking-wide">Compromissos</p>
+              <p className="text-[13px] font-bold text-[#0E2A3F]">3 hoje</p>
+              <p className="text-[8px] text-[#117178]">Próx. 14h00</p>
+            </div>
+            <div className="bg-white rounded-lg border border-[#E9E7DC] p-2.5">
+              <p className="text-[8px] text-[#8395A5] uppercase tracking-wide">Hábitos</p>
+              <p className="text-[13px] font-bold text-[#0E2A3F]">5/7</p>
+              <div className="mt-1 h-1 rounded-full bg-[#E9E7DC] overflow-hidden">
+                <div className="h-full w-[71%] bg-[#178E96] rounded-full" />
               </div>
+            </div>
+          </div>
+          {/* Gráfico de barras */}
+          <div className="bg-white rounded-lg border border-[#E9E7DC] p-2.5">
+            <p className="text-[9px] font-semibold text-[#0E2A3F] mb-1.5">Gastos por semana</p>
+            <div className="flex items-end gap-1.5 h-12">
+              {[40, 65, 50, 80, 58, 90, 70].map((h, i) => (
+                <div
+                  key={i}
+                  className="flex-1 rounded-t-sm bg-[#178E96]"
+                  style={{ height: `${h}%`, opacity: 0.45 + (h / 100) * 0.55 }}
+                />
+              ))}
+            </div>
+          </div>
+          {/* Lista */}
+          <div className="bg-white rounded-lg border border-[#E9E7DC] p-2.5 space-y-1.5">
+            {[
+              { label: "Mercado", valor: "- R$ 184,90", neg: true },
+              { label: "Salário", valor: "+ R$ 4.500,00", neg: false },
+            ].map((t) => (
+              <div key={t.label} className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5">
+                  <div className={`w-4 h-4 rounded ${t.neg ? "bg-red-50" : "bg-green-50"} flex items-center justify-center`}>
+                    {t.neg ? (
+                      <TrendingDown className="w-2.5 h-2.5 text-red-600" />
+                    ) : (
+                      <TrendingUp className="w-2.5 h-2.5 text-green-600" />
+                    )}
+                  </div>
+                  <span className="text-[9px] text-[#44586A]">{t.label}</span>
+                </div>
+                <span className={`text-[9px] font-semibold ${t.neg ? "text-red-600" : "text-green-600"}`}>
+                  {t.valor}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </BrowserFrame>
+  );
+}
+
+function FinanceiroMockup() {
+  return (
+    <BrowserFrame>
+      <div className="flex items-center justify-between px-4 py-2 bg-[#178E96]">
+        <span className="text-white font-extrabold text-sm">Aura</span>
+        <span className="text-[9px] text-white/80">Financeiro</span>
+      </div>
+      <div className="p-3 bg-[#F2F1E9] space-y-2.5">
+        <div className="grid grid-cols-3 gap-2">
+          {[
+            { label: "Receitas", valor: "R$ 5.200", cor: "text-green-600" },
+            { label: "Despesas", valor: "R$ 2.770", cor: "text-red-600" },
+            { label: "Saldo", valor: "R$ 2.430", cor: "text-[#117178]" },
+          ].map((c) => (
+            <div key={c.label} className="bg-white rounded-lg border border-[#E9E7DC] p-2.5">
+              <p className="text-[8px] text-[#8395A5] uppercase tracking-wide">{c.label}</p>
+              <p className={`text-[12px] font-bold ${c.cor}`}>{c.valor}</p>
+            </div>
+          ))}
+        </div>
+        <div className="bg-white rounded-lg border border-[#E9E7DC] p-2.5 space-y-1.5">
+          <p className="text-[9px] font-semibold text-[#0E2A3F]">Transações recentes</p>
+          {[
+            { label: "Aluguel", cat: "Moradia", valor: "- R$ 1.200,00" },
+            { label: "Mercado", cat: "Alimentação", valor: "- R$ 184,90" },
+            { label: "Academia", cat: "Saúde", valor: "- R$ 89,90" },
+            { label: "Freelance", cat: "Renda extra", valor: "+ R$ 700,00", pos: true },
+          ].map((t) => (
+            <div key={t.label} className="flex items-center justify-between py-0.5 border-b border-[#F4F3EC] last:border-0">
+              <div>
+                <p className="text-[9px] font-medium text-[#0E2A3F]">{t.label}</p>
+                <p className="text-[8px] text-[#8395A5]">{t.cat}</p>
+              </div>
+              <span className={`text-[9px] font-semibold ${t.pos ? "text-green-600" : "text-red-600"}`}>
+                {t.valor}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </BrowserFrame>
+  );
+}
+
+function AgendaMockup() {
+  return (
+    <BrowserFrame>
+      <div className="flex items-center justify-between px-4 py-2 bg-[#178E96]">
+        <span className="text-white font-extrabold text-sm">Aura</span>
+        <span className="text-[9px] text-white/80">Agenda</span>
+      </div>
+      <div className="p-3 bg-[#F2F1E9] space-y-2">
+        <div className="bg-white rounded-lg border border-[#E9E7DC] p-2.5">
+          <p className="text-[9px] font-semibold text-[#0E2A3F] mb-1.5">Junho 2026</p>
+          <div className="grid grid-cols-7 gap-1 text-center">
+            {["D", "S", "T", "Q", "Q", "S", "S"].map((d, i) => (
+              <span key={i} className="text-[8px] text-[#8395A5] font-medium">{d}</span>
+            ))}
+            {Array.from({ length: 14 }, (_, i) => (
+              <span
+                key={i}
+                className={`text-[8px] py-0.5 rounded ${
+                  i === 10
+                    ? "bg-[#178E96] text-white font-bold"
+                    : i === 4 || i === 12
+                    ? "bg-[#E5F1F1] text-[#117178] font-semibold"
+                    : "text-[#44586A]"
+                }`}
+              >
+                {i + 1}
+              </span>
+            ))}
+          </div>
+        </div>
+        <div className="space-y-1.5">
+          {[
+            { hora: "09h00", titulo: "Reunião de planejamento", cor: "#178E96" },
+            { hora: "14h00", titulo: "Consulta médica", cor: "#154F6D" },
+            { hora: "19h30", titulo: "Treino — academia", cor: "#D9A441" },
+          ].map((e) => (
+            <div key={e.titulo} className="bg-white rounded-lg border border-[#E9E7DC] px-2.5 py-2 flex items-center gap-2">
+              <div className="w-1 self-stretch rounded-full" style={{ backgroundColor: e.cor }} />
+              <div>
+                <p className="text-[8px] text-[#8395A5]">{e.hora}</p>
+                <p className="text-[9px] font-medium text-[#0E2A3F]">{e.titulo}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </BrowserFrame>
+  );
+}
+
+function HabitosMockup() {
+  return (
+    <BrowserFrame>
+      <div className="flex items-center justify-between px-4 py-2 bg-[#178E96]">
+        <span className="text-white font-extrabold text-sm">Aura</span>
+        <span className="text-[9px] text-white/80">Hábitos</span>
+      </div>
+      <div className="p-3 bg-[#F2F1E9] space-y-1.5">
+        {[
+          { nome: "Ler 20 minutos", streak: "12 dias", pct: 86 },
+          { nome: "Beber 2L de água", streak: "30 dias", pct: 100 },
+          { nome: "Exercício físico", streak: "5 dias", pct: 57 },
+          { nome: "Meditar", streak: "8 dias", pct: 71 },
+        ].map((h) => (
+          <div key={h.nome} className="bg-white rounded-lg border border-[#E9E7DC] px-2.5 py-2">
+            <div className="flex items-center justify-between mb-1">
+              <div className="flex items-center gap-1.5">
+                <div className={`w-3.5 h-3.5 rounded-full flex items-center justify-center ${h.pct === 100 ? "bg-[#178E96]" : "bg-[#E5F1F1]"}`}>
+                  <Check className={`w-2 h-2 ${h.pct === 100 ? "text-white" : "text-[#117178]"}`} />
+                </div>
+                <span className="text-[9px] font-medium text-[#0E2A3F]">{h.nome}</span>
+              </div>
+              <span className="text-[8px] text-[#D9A441] font-semibold">🔥 {h.streak}</span>
+            </div>
+            <div className="h-1 rounded-full bg-[#E9E7DC] overflow-hidden">
+              <div className="h-full bg-[#178E96] rounded-full" style={{ width: `${h.pct}%` }} />
+            </div>
+          </div>
+        ))}
+      </div>
+    </BrowserFrame>
+  );
+}
+
+/* ============================================================
+   Landing Page
+   ============================================================ */
+
+const modulos = [
+  {
+    icon: Wallet,
+    titulo: "Financeiro",
+    descricao: "Controle receitas, despesas, contas, cartões e objetivos em um painel claro e completo.",
+  },
+  {
+    icon: Calendar,
+    titulo: "Agenda",
+    descricao: "Organize compromissos com visão diária e semanal, recorrências e lembretes.",
+  },
+  {
+    icon: Heart,
+    titulo: "Hábitos",
+    descricao: "Construa rotinas saudáveis com sequências, metas semanais e acompanhamento visual.",
+  },
+  {
+    icon: BookOpen,
+    titulo: "Estudos",
+    descricao: "Gerencie cursos e anotações com editor rico, áudio e organização por matéria.",
+  },
+  {
+    icon: Library,
+    titulo: "Biblioteca",
+    descricao: "Acompanhe suas leituras, registre citações, avaliações e progresso de cada livro.",
+  },
+  {
+    icon: Plane,
+    titulo: "Viagens",
+    descricao: "Planeje roteiros, organize documentos e controle os gastos de cada viagem.",
+  },
+];
+
+const faqs = [
+  {
+    pergunta: "O Aura é gratuito?",
+    resposta:
+      "Sim! Você pode criar sua conta e usar os módulos essenciais gratuitamente, sem cartão de crédito. O plano Premium desbloqueia recursos avançados para quem quer ir além.",
+  },
+  {
+    pergunta: "Funciona no celular?",
+    resposta:
+      "Sim. O Aura é um PWA: você pode instalá-lo direto do navegador no Android e iOS e usá-lo como um aplicativo, com a mesma conta em todos os dispositivos.",
+  },
+  {
+    pergunta: "Meus dados estão seguros?",
+    resposta:
+      "Seus dados são criptografados em trânsito e armazenados com segurança. Você pode exportá-los ou excluir sua conta a qualquer momento, em conformidade com a LGPD.",
+  },
+  {
+    pergunta: "Posso cancelar o Premium quando quiser?",
+    resposta:
+      "Pode. A assinatura é sem fidelidade: cancele a qualquer momento e continue usando o plano gratuito normalmente.",
+  },
+  {
+    pergunta: "Preciso configurar muita coisa para começar?",
+    resposta:
+      "Não. Em menos de 2 minutos você cria a conta e já pode registrar seu primeiro compromisso, transação ou hábito. Cada módulo funciona de forma independente.",
+  },
+];
+
+export default function LandingPage() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [faqAberta, setFaqAberta] = useState<number | null>(0);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-[#F2F1E9] text-[#0E2A3F]">
+      {/* ===================== Header ===================== */}
+      <header
+        className={`fixed top-0 inset-x-0 z-50 bg-white transition-shadow duration-150 ${
+          scrolled ? "shadow-[0_2px_12px_rgba(14,42,63,0.08)]" : "border-b border-[#E9E7DC]"
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          <Link href="/" className="text-2xl font-extrabold tracking-tight text-[#178E96]">
+            Aura
+          </Link>
+
+          <nav className="hidden md:flex items-center gap-8">
+            <a href="#recursos" className="text-sm text-[#44586A] hover:text-[#117178] transition-colors duration-150">
+              Recursos
+            </a>
+            <a href="#como-funciona" className="text-sm text-[#44586A] hover:text-[#117178] transition-colors duration-150">
+              Como funciona
+            </a>
+            <a href="#precos" className="text-sm text-[#44586A] hover:text-[#117178] transition-colors duration-150">
+              Preços
+            </a>
+            <a href="#faq" className="text-sm text-[#44586A] hover:text-[#117178] transition-colors duration-150">
+              FAQ
+            </a>
+          </nav>
+
+          <div className="hidden md:flex items-center gap-3">
+            <Link
+              href="/login"
+              className="text-sm font-semibold text-[#117178] hover:text-[#178E96] transition-colors duration-150 px-3 py-2"
+            >
+              Entrar
+            </Link>
+            <Link
+              href="/register"
+              className="text-sm font-semibold bg-[#178E96] hover:bg-[#117178] text-white px-5 py-2.5 rounded-lg transition-colors duration-150"
+            >
+              Cadastre-se grátis
+            </Link>
+          </div>
+
+          <button
+            className="md:hidden p-2 text-[#44586A] hover:bg-[#F4F3EC] rounded-lg transition-colors duration-150"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Abrir menu"
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
+
+        {/* Menu mobile */}
+        {mobileMenuOpen && (
+          <div className="md:hidden bg-white border-t border-[#E9E7DC] px-4 py-4 space-y-1">
+            {[
+              { href: "#recursos", label: "Recursos" },
+              { href: "#como-funciona", label: "Como funciona" },
+              { href: "#precos", label: "Preços" },
+              { href: "#faq", label: "FAQ" },
+            ].map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                className="block py-2.5 px-3 rounded-lg text-[#44586A] hover:bg-[#F4F3EC] transition-colors duration-150"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {item.label}
+              </a>
+            ))}
+            <div className="pt-3 border-t border-[#E9E7DC] flex flex-col gap-2">
+              <Link
+                href="/login"
+                className="text-center py-2.5 rounded-lg border border-[#D9D7CB] font-semibold text-[#117178] hover:bg-[#F4F3EC] transition-colors duration-150"
+              >
+                Entrar
+              </Link>
+              <Link
+                href="/register"
+                className="text-center py-2.5 rounded-lg bg-[#178E96] hover:bg-[#117178] text-white font-semibold transition-colors duration-150"
+              >
+                Cadastre-se grátis
+              </Link>
             </div>
           </div>
         )}
       </header>
 
-      {/* Hero Section */}
-      <section className="relative pt-32 pb-20 md:pt-44 md:pb-32 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center max-w-4xl mx-auto">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-violet-500/10 to-blue-500/10 border border-violet-500/20 mb-8 animate-fade-in">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-violet-500"></span>
-              </span>
-              <span className="text-sm text-violet-300">Lançamento em breve — Entre para a lista de espera</span>
-            </div>
-
-            {/* Main Headline */}
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 animate-fade-in-delay-1">
-              <span className="text-white">Organize toda sua vida</span>
-              <br />
-              <span className="bg-gradient-to-r from-violet-400 via-blue-400 to-cyan-400 bg-clip-text text-transparent">
-                em um só lugar
-              </span>
+      {/* ===================== Hero ===================== */}
+      <section className="pt-28 lg:pt-36 pb-16 lg:pb-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          <div>
+            <span className="inline-flex items-center gap-1.5 bg-[#E5F1F1] text-[#117178] text-xs font-semibold px-3 py-1.5 rounded-full mb-6">
+              <Zap className="w-3.5 h-3.5" />
+              Agenda, finanças, hábitos e estudos em um só lugar
+            </span>
+            <h1 className="text-4xl sm:text-5xl lg:text-[3.4rem] font-extrabold leading-[1.1] text-[#0E2A3F] mb-6">
+              Transforme sua rotina em <span className="text-[#178E96]">conquistas</span>
             </h1>
-
-            {/* Subheadline */}
-            <p className="text-lg md:text-xl text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed animate-fade-in-delay-2">
-              Aura é a plataforma completa de produtividade pessoal que integra
-              <span className="text-white font-medium"> agenda</span>,
-              <span className="text-white font-medium"> finanças</span>,
-              <span className="text-white font-medium"> estudos</span> e muito mais.
-              Tudo sincronizado, seguro e inteligente.
+            <p className="text-lg text-[#44586A] mb-8 max-w-lg leading-relaxed">
+              O Aura é o gerenciador pessoal completo: organize compromissos, controle suas
+              finanças, construa hábitos e acompanhe seus estudos — tudo em um painel simples e claro.
             </p>
-
-            {/* CTA Form */}
-            <div className="max-w-md mx-auto animate-fade-in-delay-3">
-              {!submitted ? (
-                <form onSubmit={handleSubmit} className="space-y-3">
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <Input
-                      type="email"
-                      placeholder="Seu melhor e-mail"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                      className="h-12 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-violet-500 focus:ring-violet-500/20"
-                    />
-                    <Button
-                      type="submit"
-                      disabled={loading}
-                      className="h-12 px-6 bg-gradient-to-r from-violet-600 to-blue-600 hover:from-violet-700 hover:to-blue-700 text-white font-medium shadow-lg shadow-violet-500/25 whitespace-nowrap"
-                    >
-                      {loading ? (
-                        <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                      ) : (
-                        <>
-                          Entrar na Lista
-                          <ArrowRight className="w-4 h-4 ml-2" />
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                  <p className="text-xs text-gray-500 flex items-center justify-center gap-1">
-                    <Lock className="w-3 h-3" />
-                    Seus dados estão seguros. Sem spam, prometemos.
-                  </p>
-                </form>
-              ) : (
-                <div className="p-6 rounded-2xl bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/20">
-                  <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-emerald-500/20 flex items-center justify-center">
-                    <Check className="w-6 h-6 text-emerald-400" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-emerald-300 mb-2">Você está na lista!</h3>
-                  <p className="text-sm text-gray-400">
-                    Avisaremos assim que o Aura estiver disponível. Fique de olho no seu e-mail!
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {/* Social Proof */}
-            <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 text-sm text-gray-500 animate-fade-in-delay-4">
-              <div className="flex -space-x-2">
-                {[...Array(5)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-400 to-blue-400 border-2 border-[#0A0A0F] flex items-center justify-center text-[10px] font-medium text-white"
-                  >
-                    {["A", "C", "M", "R", "P"][i]}
-                  </div>
-                ))}
-              </div>
-              <span>
-                <strong className="text-white">500+</strong> pessoas já na lista de espera
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Hero Visual/Mockup */}
-        <div className="mt-20 max-w-6xl mx-auto px-4 animate-fade-in-delay-5">
-          <div className="relative">
-            {/* Glow Effect - Performance Optimized */}
-            <div className="absolute inset-0 bg-gradient-to-r from-violet-600/20 via-blue-600/20 to-cyan-600/20 rounded-2xl blur-2xl will-change-opacity" />
-
-            {/* Dashboard Preview */}
-            <div className="relative bg-gradient-to-br from-white/[0.08] to-white/[0.02] rounded-2xl border border-white/10 p-2 shadow-2xl">
-              <div className="bg-[#12121A] rounded-xl overflow-hidden">
-                {/* Browser Chrome */}
-                <div className="flex items-center gap-2 px-4 py-3 border-b border-white/5">
-                  <div className="flex gap-1.5">
-                    <div className="w-3 h-3 rounded-full bg-red-500/80" />
-                    <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
-                    <div className="w-3 h-3 rounded-full bg-green-500/80" />
-                  </div>
-                  <div className="flex-1 flex justify-center">
-                    <div className="px-4 py-1 rounded-md bg-white/5 text-xs text-gray-500">
-                      app.aura.com/dashboard
-                    </div>
-                  </div>
-                </div>
-
-                {/* Dashboard Content Preview */}
-                <div className="p-6 md:p-8 space-y-6">
-                  {/* Header */}
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="text-sm text-gray-500">Bem-vindo de volta</div>
-                      <div className="text-xl font-semibold text-white">Olá, usuário!</div>
-                    </div>
-                    <div className="flex gap-2">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-500 to-blue-500" />
-                    </div>
-                  </div>
-
-                  {/* Stats Grid */}
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {[
-                      { label: "Compromissos", value: "12", color: "from-blue-500 to-cyan-500" },
-                      { label: "Saldo Mensal", value: "R$ 2.450", color: "from-emerald-500 to-teal-500" },
-                      { label: "Cursos Ativos", value: "3", color: "from-violet-500 to-purple-500" },
-                      { label: "Metas Ativas", value: "5", color: "from-orange-500 to-amber-500" },
-                    ].map((stat, i) => (
-                      <div key={i} className="p-4 rounded-xl bg-white/5 border border-white/5">
-                        <div className="text-xs text-gray-500 mb-1">{stat.label}</div>
-                        <div className={`text-xl font-bold bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`}>
-                          {stat.value}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Module Cards */}
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {modules.slice(0, 4).map((module, i) => (
-                      <div key={i} className="p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors cursor-pointer">
-                        <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${module.gradient} flex items-center justify-center mb-3`}>
-                          <module.icon className="w-5 h-5 text-white" />
-                        </div>
-                        <div className="text-sm font-medium text-white">{module.title}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Stats Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white/[0.02] border-y border-white/5">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {stats.map((stat, i) => (
-              <div key={i} className="text-center">
-                <div className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-violet-400 to-blue-400 bg-clip-text text-transparent mb-2">
-                  {stat.value}
-                </div>
-                <div className="text-sm text-gray-500">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Features/Modules Section */}
-      <section id="recursos" className="relative py-24 px-4 sm:px-6 lg:px-8">
-        {/* Subtle background pattern */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(120,119,198,0.1),transparent)]" />
-        <div className="max-w-7xl mx-auto">
-          {/* Section Header */}
-          <div className="text-center mb-16">
-            <Badge className="mb-4 bg-violet-500/10 text-violet-300 border-violet-500/20 hover:bg-violet-500/20">
-              Recursos
-            </Badge>
-            <h2 className="text-3xl md:text-5xl font-bold mb-4">
-              Tudo que você precisa,{" "}
-              <span className="bg-gradient-to-r from-violet-400 to-blue-400 bg-clip-text text-transparent">
-                integrado
-              </span>
-            </h2>
-            <p className="text-lg text-gray-400 max-w-2xl mx-auto">
-              Pare de usar dezenas de aplicativos. Com o Aura, você centraliza toda sua vida em uma plataforma inteligente.
-            </p>
-          </div>
-
-          {/* Features Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {modules.map((module, i) => (
-              <div
-                key={i}
-                className={`group relative p-6 rounded-2xl bg-gradient-to-br ${module.bgGradient} border border-white/5 hover:border-white/10 transition-all duration-300 hover:-translate-y-1`}
+            <div className="flex flex-col sm:flex-row gap-3 mb-6">
+              <Link
+                href="/register"
+                className="inline-flex items-center justify-center gap-2 bg-[#178E96] hover:bg-[#117178] text-white font-semibold px-7 py-3.5 rounded-lg transition-colors duration-150"
               >
-                {module.comingSoon && (
-                  <Badge className="absolute top-4 right-4 bg-white/10 text-white/70 border-0 text-xs">
-                    Em breve
-                  </Badge>
-                )}
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${module.gradient} flex items-center justify-center mb-4 shadow-lg`}>
-                  <module.icon className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="text-xl font-semibold text-white mb-2">{module.title}</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">{module.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* How it Works Section */}
-      <section id="como-funciona" className="relative py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white/[0.02] via-violet-950/20 to-white/[0.02]">
-        <div className="max-w-7xl mx-auto">
-          {/* Section Header */}
-          <div className="text-center mb-16">
-            <Badge className="mb-4 bg-blue-500/10 text-blue-300 border-blue-500/20 hover:bg-blue-500/20">
-              Como Funciona
-            </Badge>
-            <h2 className="text-3xl md:text-5xl font-bold mb-4">
-              Simples de começar,{" "}
-              <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-                poderoso de usar
-              </span>
-            </h2>
-          </div>
-
-          {/* Steps */}
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                step: "01",
-                icon: MousePointerClick,
-                title: "Crie sua conta",
-                description: "Cadastre-se em segundos com e-mail ou Google. Sem complicação, sem cartão de crédito.",
-              },
-              {
-                step: "02",
-                icon: Layers,
-                title: "Escolha seus módulos",
-                description: "Ative apenas os módulos que precisa. Agenda, finanças, estudos — você decide.",
-              },
-              {
-                step: "03",
-                icon: TrendingUp,
-                title: "Transforme sua produtividade",
-                description: "Acompanhe seu progresso com dashboards inteligentes e insights personalizados.",
-              },
-            ].map((item, i) => (
-              <div key={i} className="relative text-center">
-                {/* Connector Line */}
-                {i < 2 && (
-                  <div className="hidden md:block absolute top-12 left-[60%] w-[80%] h-px bg-gradient-to-r from-white/20 to-transparent" />
-                )}
-
-                <div className="inline-flex items-center justify-center w-24 h-24 rounded-2xl bg-gradient-to-br from-white/[0.08] to-white/[0.02] border border-white/10 mb-6">
-                  <item.icon className="w-10 h-10 text-white" />
-                </div>
-                <div className="text-xs text-violet-400 font-semibold mb-2">PASSO {item.step}</div>
-                <h3 className="text-xl font-semibold text-white mb-3">{item.title}</h3>
-                <p className="text-gray-400 text-sm">{item.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Benefits Section */}
-      <section className="relative py-24 px-4 sm:px-6 lg:px-8">
-        {/* Subtle gradient from bottom */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_120%,rgba(16,185,129,0.08),transparent)]" />
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            {/* Left Content */}
-            <div>
-              <Badge className="mb-4 bg-emerald-500/10 text-emerald-300 border-emerald-500/20 hover:bg-emerald-500/20">
-                Por que Aura?
-              </Badge>
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">
-                Uma plataforma pensada para quem quer{" "}
-                <span className="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
-                  resultados reais
-                </span>
-              </h2>
-              <p className="text-gray-400 mb-8 leading-relaxed">
-                Desenvolvemos o Aura para pessoas que levam a sério sua produtividade e organização pessoal.
-                Cada detalhe foi pensado para simplificar sua rotina e potencializar seus resultados.
-              </p>
-
-              <div className="space-y-6">
-                {benefits.map((benefit, i) => (
-                  <div key={i} className="flex gap-4">
-                    <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
-                      <benefit.icon className="w-6 h-6 text-violet-400" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-white mb-1">{benefit.title}</h4>
-                      <p className="text-sm text-gray-400">{benefit.description}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Right Visual */}
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-violet-600/20 to-blue-600/20 rounded-3xl blur-2xl will-change-opacity" />
-              <div className="relative grid grid-cols-2 gap-4">
-                {[
-                  { icon: Clock, label: "Economia de tempo", value: "5h/semana" },
-                  { icon: BarChart3, label: "Aumento de foco", value: "+47%" },
-                  { icon: Target, label: "Metas alcançadas", value: "3x mais" },
-                  { icon: Users, label: "Usuários satisfeitos", value: "98%" },
-                ].map((item, i) => (
-                  <div key={i} className="p-6 rounded-2xl bg-white/5 border border-white/10 text-center">
-                    <div className="w-12 h-12 mx-auto rounded-xl bg-gradient-to-br from-violet-500/20 to-blue-500/20 flex items-center justify-center mb-3">
-                      <item.icon className="w-6 h-6 text-violet-400" />
-                    </div>
-                    <div className="text-2xl font-bold text-white mb-1">{item.value}</div>
-                    <div className="text-xs text-gray-500">{item.label}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing Section */}
-      <section id="precos" className="relative py-24 px-4 sm:px-6 lg:px-8 bg-white/[0.02]">
-        {/* Background accent */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-violet-950/15 to-transparent" />
-        <div className="max-w-7xl mx-auto">
-          {/* Section Header */}
-          <div className="text-center mb-16">
-            <Badge className="mb-4 bg-violet-500/10 text-violet-300 border-violet-500/20 hover:bg-violet-500/20">
-              Preços
-            </Badge>
-            <h2 className="text-3xl md:text-5xl font-bold mb-4">
-              Planos simples,{" "}
-              <span className="bg-gradient-to-r from-violet-400 to-blue-400 bg-clip-text text-transparent">
-                sem surpresas
-              </span>
-            </h2>
-            <p className="text-lg text-gray-400 max-w-2xl mx-auto">
-              Comece gratuitamente e evolua quando precisar de mais poder.
-            </p>
-          </div>
-
-          {/* Pricing Cards */}
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {/* Free Plan */}
-            <div className="p-8 rounded-2xl bg-white/5 border border-white/10">
-              <h3 className="text-2xl font-bold text-white mb-2">Free</h3>
-              <p className="text-gray-400 text-sm mb-6">Perfeito para começar</p>
-              <div className="mb-6">
-                <span className="text-4xl font-bold text-white">R$ 0</span>
-                <span className="text-gray-500">/mês</span>
-              </div>
-              <ul className="space-y-3 mb-8">
-                {[
-                  "Agenda básica (10 compromissos/mês)",
-                  "Financeiro básico (20 transações/mês)",
-                  "1 curso ativo",
-                  "Biblioteca limitada",
-                ].map((item, i) => (
-                  <li key={i} className="flex items-start gap-3 text-sm text-gray-300">
-                    <Check className="w-5 h-5 text-gray-500 flex-shrink-0 mt-0.5" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-              <Button
-                className="w-full h-12 border-white/10 text-white hover:bg-white/5"
-                onClick={() => router.push('/register')}
-              >
-                Começar Grátis
-              </Button>
-            </div>
-
-            {/* Premium Plan */}
-            <div className="relative p-8 rounded-2xl bg-gradient-to-br from-violet-500/10 to-blue-500/10 border border-violet-500/30">
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                <Badge className="bg-gradient-to-r from-violet-600 to-blue-600 text-white border-0 shadow-lg">
-                  Mais Popular
-                </Badge>
-              </div>
-              <h3 className="text-2xl font-bold text-white mb-2">Premium</h3>
-              <p className="text-gray-400 text-sm mb-6">Para quem quer o máximo</p>
-              <div className="mb-2">
-                <span className="text-4xl font-bold bg-gradient-to-r from-violet-400 to-blue-400 bg-clip-text text-transparent">R$ 12,90</span>
-                <span className="text-gray-500">/mês</span>
-              </div>
-              <p className="text-xs text-gray-500 mb-6">ou R$ 129/ano (economize 16%)</p>
-              <ul className="space-y-3 mb-8">
-                {[
-                  "Todos os módulos ilimitados",
-                  "Backup automático de dados",
-                  "Suporte prioritário",
-                  "Relatórios avançados",
-                  "Exportação em PDF/Excel",
-                  "Sem anúncios",
-                  "Acesso antecipado a novos recursos",
-                ].map((item, i) => (
-                  <li key={i} className="flex items-start gap-3 text-sm text-gray-300">
-                    <Check className="w-5 h-5 text-violet-400 flex-shrink-0 mt-0.5" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-              <Button
-                className="w-full h-12 bg-gradient-to-r from-violet-600 to-blue-600 hover:from-violet-700 hover:to-blue-700 text-white shadow-lg shadow-violet-500/25"
-                onClick={() => router.push('/register')}
-              >
-                Assinar Premium
-                <Star className="w-4 h-4 ml-2" />
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section className="relative py-24 px-4 sm:px-6 lg:px-8">
-        {/* Subtle amber glow */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_50%,rgba(245,158,11,0.05),transparent)]" />
-        <div className="max-w-7xl mx-auto">
-          {/* Section Header */}
-          <div className="text-center mb-16">
-            <Badge className="mb-4 bg-amber-500/10 text-amber-300 border-amber-500/20 hover:bg-amber-500/20">
-              Depoimentos
-            </Badge>
-            <h2 className="text-3xl md:text-5xl font-bold mb-4">
-              O que dizem nossos{" "}
-              <span className="bg-gradient-to-r from-amber-400 to-orange-400 bg-clip-text text-transparent">
-                beta testers
-              </span>
-            </h2>
-          </div>
-
-          {/* Testimonials Grid */}
-          <div className="grid md:grid-cols-3 gap-6">
-            {testimonials.map((testimonial, i) => (
-              <div key={i} className="p-6 rounded-2xl bg-white/5 border border-white/10">
-                {/* Stars */}
-                <div className="flex gap-1 mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
-                  ))}
-                </div>
-
-                {/* Quote */}
-                <p className="text-gray-300 mb-6 text-sm leading-relaxed">
-                  "{testimonial.text}"
-                </p>
-
-                {/* Author */}
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-400 to-blue-400 flex items-center justify-center text-sm font-semibold text-white">
-                    {testimonial.name.charAt(0)}
-                  </div>
-                  <div>
-                    <div className="font-medium text-white text-sm">{testimonial.name}</div>
-                    <div className="text-xs text-gray-500">{testimonial.role}</div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ Section */}
-      <section id="faq" className="relative py-24 px-4 sm:px-6 lg:px-8 bg-white/[0.02]">
-        {/* Background accent */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-950/10 to-transparent" />
-        <div className="max-w-3xl mx-auto">
-          {/* Section Header */}
-          <div className="text-center mb-16">
-            <Badge className="mb-4 bg-cyan-500/10 text-cyan-300 border-cyan-500/20 hover:bg-cyan-500/20">
-              FAQ
-            </Badge>
-            <h2 className="text-3xl md:text-5xl font-bold mb-4">
-              Perguntas{" "}
-              <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
-                frequentes
-              </span>
-            </h2>
-          </div>
-
-          {/* FAQ Items */}
-          <div className="space-y-4">
-            {faqs.map((faq, i) => (
-              <details
-                key={i}
-                className="group p-6 rounded-2xl bg-white/5 border border-white/10 cursor-pointer hover:border-white/20 transition-colors"
-              >
-                <summary className="flex justify-between items-center font-medium text-white list-none">
-                  {faq.question}
-                  <ChevronDown className="w-5 h-5 text-gray-500 group-open:rotate-180 transition-transform" />
-                </summary>
-                <p className="mt-4 text-gray-400 text-sm leading-relaxed">{faq.answer}</p>
-              </details>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Final CTA Section */}
-      <section className="relative py-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto">
-          <div className="relative p-12 md:p-16 rounded-3xl overflow-hidden">
-            {/* Background Gradient */}
-            <div className="absolute inset-0 bg-gradient-to-br from-violet-600 via-blue-600 to-cyan-600" />
-            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSIxIi8+PC9nPjwvZz48L3N2Zz4=')] opacity-30" />
-
-            {/* Content */}
-            <div className="relative text-center">
-              <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
-                Pronto para transformar sua produtividade?
-              </h2>
-              <p className="text-lg text-white/80 mb-8 max-w-xl mx-auto">
-                Junte-se a centenas de pessoas que já estão na lista de espera do Aura.
-              </p>
-
-              {!submitted ? (
-                <form onSubmit={handleSubmit} className="max-w-md mx-auto">
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <Input
-                      type="email"
-                      placeholder="Seu melhor e-mail"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                      className="h-12 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40"
-                    />
-                    <Button
-                      type="submit"
-                      disabled={loading}
-                      className="h-12 px-6 bg-white text-violet-600 hover:bg-white/90 font-medium whitespace-nowrap"
-                    >
-                      {loading ? "Aguarde..." : "Garantir meu lugar"}
-                      <ArrowRight className="w-4 h-4 ml-2" />
-                    </Button>
-                  </div>
-                </form>
-              ) : (
-                <div className="max-w-md mx-auto p-6 rounded-2xl bg-white/10 border border-white/20">
-                  <Check className="w-10 h-10 mx-auto mb-3 text-white" />
-                  <p className="text-white font-medium">Você já está na lista!</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="py-16 px-4 sm:px-6 lg:px-8 border-t border-white/5">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-5 gap-8 mb-12">
-            {/* Brand */}
-            <div className="md:col-span-2">
-              <Link href="/" className="inline-block mb-4">
-                <span className="text-2xl font-bold bg-gradient-to-r from-purple-400 via-fuchsia-400 to-blue-400 bg-clip-text text-transparent animate-gradient">
-                  Aura
-                </span>
+                Criar conta gratuita
+                <ArrowRight className="w-4 h-4" />
               </Link>
-              <p className="text-sm text-gray-500 max-w-xs">
-                A plataforma completa de produtividade pessoal. Organize sua vida em um só lugar.
-              </p>
-            </div>
-
-            {/* Links */}
-            <div>
-              <h4 className="font-semibold text-white mb-4 text-sm">Produto</h4>
-              <ul className="space-y-3 text-sm">
-                <li><a href="#recursos" className="text-gray-500 hover:text-white transition-colors">Recursos</a></li>
-                <li><a href="#precos" className="text-gray-500 hover:text-white transition-colors">Preços</a></li>
-                <li><a href="#faq" className="text-gray-500 hover:text-white transition-colors">FAQ</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-semibold text-white mb-4 text-sm">Empresa</h4>
-              <ul className="space-y-3 text-sm">
-                <li><a href="#" className="text-gray-500 hover:text-white transition-colors">Sobre</a></li>
-                <li><a href="#" className="text-gray-500 hover:text-white transition-colors">Blog</a></li>
-                <li><a href="#" className="text-gray-500 hover:text-white transition-colors">Carreiras</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-semibold text-white mb-4 text-sm">Legal</h4>
-              <ul className="space-y-3 text-sm">
-                <li><a href="#" className="text-gray-500 hover:text-white transition-colors">Privacidade</a></li>
-                <li><a href="#" className="text-gray-500 hover:text-white transition-colors">Termos</a></li>
-                <li><a href="#" className="text-gray-500 hover:text-white transition-colors">LGPD</a></li>
-              </ul>
-            </div>
-          </div>
-
-          {/* Bottom */}
-          <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-sm text-gray-500">
-              © 2026 Aura. Todos os direitos reservados.
-            </p>
-            <div className="flex items-center gap-4">
-              <a href="#" className="text-gray-500 hover:text-white transition-colors">
-                <Globe className="w-5 h-5" />
+              <a
+                href="#recursos"
+                className="inline-flex items-center justify-center gap-2 bg-white hover:bg-[#F4F3EC] border border-[#D9D7CB] text-[#0E2A3F] font-semibold px-7 py-3.5 rounded-lg transition-colors duration-150"
+              >
+                Conhecer recursos
               </a>
             </div>
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-[#5E7081]">
+              <span className="inline-flex items-center gap-1.5">
+                <Check className="w-4 h-4 text-[#178E96]" /> Grátis para começar
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <Check className="w-4 h-4 text-[#178E96]" /> Sem cartão de crédito
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <Check className="w-4 h-4 text-[#178E96]" /> Funciona no celular
+              </span>
+            </div>
+          </div>
+
+          <div className="relative">
+            <DashboardMockup />
+          </div>
+        </div>
+      </section>
+
+      {/* ===================== Faixa de destaque ===================== */}
+      <section className="bg-[#0E2A3F] py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+          {[
+            { numero: "6", label: "módulos integrados" },
+            { numero: "2 min", label: "para começar a usar" },
+            { numero: "100%", label: "em português" },
+            { numero: "24/7", label: "acesso em qualquer dispositivo" },
+          ].map((s) => (
+            <div key={s.label}>
+              <p className="text-3xl lg:text-4xl font-extrabold text-[#2EB8C0] mb-1">{s.numero}</p>
+              <p className="text-sm text-white/70">{s.label}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ===================== Recursos ===================== */}
+      <section id="recursos" className="bg-white py-20 lg:py-28">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-14">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0E2A3F] mb-4">
+              Tudo o que você precisa para se organizar
+            </h2>
+            <p className="text-lg text-[#5E7081]">
+              Cada módulo foi pensado para simplificar uma área da sua vida — e todos conversam entre si.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {modulos.map((m) => (
+              <div
+                key={m.titulo}
+                className="bg-white border border-[#E9E7DC] rounded-xl p-6 shadow-sm hover:shadow-md hover:border-[#178E96]/40 transition-all duration-150"
+              >
+                <div className="w-11 h-11 rounded-lg bg-[#E5F1F1] flex items-center justify-center mb-4">
+                  <m.icon className="w-5 h-5 text-[#117178]" />
+                </div>
+                <h3 className="text-lg font-bold text-[#0E2A3F] mb-2">{m.titulo}</h3>
+                <p className="text-sm text-[#5E7081] leading-relaxed">{m.descricao}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ===================== Deep-dives alternados ===================== */}
+      <section id="como-funciona" className="py-20 lg:py-28">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20 lg:space-y-28">
+          {/* Financeiro */}
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <span className="inline-flex items-center gap-1.5 text-[#117178] text-sm font-semibold mb-3">
+                <Wallet className="w-4 h-4" /> Financeiro
+              </span>
+              <h3 className="text-2xl sm:text-3xl font-extrabold text-[#0E2A3F] mb-4">
+                Saiba exatamente para onde vai o seu dinheiro
+              </h3>
+              <p className="text-[#44586A] leading-relaxed mb-6">
+                Registre transações em segundos, organize por categorias, acompanhe contas e cartões
+                e visualize sua evolução com gráficos claros. Defina objetivos e veja seu progresso mês a mês.
+              </p>
+              <ul className="space-y-2.5">
+                {["Receitas, despesas e transferências", "Contas, cartões e faturas", "Objetivos de economia com progresso visual"].map((li) => (
+                  <li key={li} className="flex items-start gap-2 text-sm text-[#44586A]">
+                    <Check className="w-4 h-4 text-[#178E96] mt-0.5 shrink-0" />
+                    {li}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <FinanceiroMockup />
+          </div>
+
+          {/* Agenda */}
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="lg:order-2">
+              <span className="inline-flex items-center gap-1.5 text-[#117178] text-sm font-semibold mb-3">
+                <Calendar className="w-4 h-4" /> Agenda
+              </span>
+              <h3 className="text-2xl sm:text-3xl font-extrabold text-[#0E2A3F] mb-4">
+                Seus compromissos sob controle, sem esforço
+              </h3>
+              <p className="text-[#44586A] leading-relaxed mb-6">
+                Visualize o dia e a semana de relance, crie eventos recorrentes e receba lembretes.
+                A agenda se integra ao seu dashboard para você nunca perder um compromisso.
+              </p>
+              <ul className="space-y-2.5">
+                {["Visão diária e semanal", "Eventos recorrentes e lembretes", "Integração com o painel inicial"].map((li) => (
+                  <li key={li} className="flex items-start gap-2 text-sm text-[#44586A]">
+                    <Check className="w-4 h-4 text-[#178E96] mt-0.5 shrink-0" />
+                    {li}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="lg:order-1">
+              <AgendaMockup />
+            </div>
+          </div>
+
+          {/* Hábitos */}
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <span className="inline-flex items-center gap-1.5 text-[#117178] text-sm font-semibold mb-3">
+                <Heart className="w-4 h-4" /> Hábitos
+              </span>
+              <h3 className="text-2xl sm:text-3xl font-extrabold text-[#0E2A3F] mb-4">
+                Construa hábitos que ficam
+              </h3>
+              <p className="text-[#44586A] leading-relaxed mb-6">
+                Marque seus hábitos diários, mantenha sequências e acompanhe seu desempenho semanal.
+                Pequenas ações todos os dias, grandes resultados no fim do mês.
+              </p>
+              <ul className="space-y-2.5">
+                {["Sequências (streaks) motivadoras", "Metas semanais flexíveis", "Histórico e estatísticas de constância"].map((li) => (
+                  <li key={li} className="flex items-start gap-2 text-sm text-[#44586A]">
+                    <Check className="w-4 h-4 text-[#178E96] mt-0.5 shrink-0" />
+                    {li}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <HabitosMockup />
+          </div>
+        </div>
+      </section>
+
+      {/* ===================== Benefícios rápidos ===================== */}
+      <section className="bg-white py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid sm:grid-cols-3 gap-8">
+          {[
+            {
+              icon: Smartphone,
+              titulo: "Leve no bolso",
+              descricao: "Instale como aplicativo no celular (PWA) e acesse de qualquer lugar.",
+            },
+            {
+              icon: Shield,
+              titulo: "Seguro e privado",
+              descricao: "Seus dados criptografados e sob seu controle, em conformidade com a LGPD.",
+            },
+            {
+              icon: Zap,
+              titulo: "Rápido de verdade",
+              descricao: "Interface leve e direta: registre qualquer coisa em poucos toques.",
+            },
+          ].map((b) => (
+            <div key={b.titulo} className="flex gap-4">
+              <div className="w-11 h-11 rounded-lg bg-[#E5F1F1] flex items-center justify-center shrink-0">
+                <b.icon className="w-5 h-5 text-[#117178]" />
+              </div>
+              <div>
+                <h3 className="font-bold text-[#0E2A3F] mb-1">{b.titulo}</h3>
+                <p className="text-sm text-[#5E7081] leading-relaxed">{b.descricao}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ===================== Preços ===================== */}
+      <section id="precos" className="py-20 lg:py-28">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-14">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0E2A3F] mb-4">
+              Comece grátis, evolua quando quiser
+            </h2>
+            <p className="text-lg text-[#5E7081]">
+              Sem pegadinhas: o plano gratuito é para sempre e o Premium não tem fidelidade.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+            {/* Free */}
+            <div className="bg-white border border-[#E9E7DC] rounded-2xl p-8 shadow-sm flex flex-col">
+              <h3 className="text-lg font-bold text-[#0E2A3F]">Gratuito</h3>
+              <p className="text-sm text-[#8395A5] mb-5">Para organizar o essencial</p>
+              <p className="mb-6">
+                <span className="text-4xl font-extrabold text-[#0E2A3F]">R$ 0</span>
+                <span className="text-sm text-[#8395A5]">/mês</span>
+              </p>
+              <ul className="space-y-3 mb-8 flex-1">
+                {["Agenda e compromissos", "Controle financeiro básico", "Hábitos ilimitados", "Acesso em todos os dispositivos"].map((li) => (
+                  <li key={li} className="flex items-start gap-2 text-sm text-[#44586A]">
+                    <Check className="w-4 h-4 text-[#178E96] mt-0.5 shrink-0" />
+                    {li}
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href="/register"
+                className="block text-center border border-[#D9D7CB] hover:bg-[#F4F3EC] text-[#0E2A3F] font-semibold py-3 rounded-lg transition-colors duration-150"
+              >
+                Criar conta grátis
+              </Link>
+            </div>
+
+            {/* Premium */}
+            <div className="relative bg-white border-2 border-[#178E96] rounded-2xl p-8 shadow-md flex flex-col">
+              <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[#178E96] text-white text-xs font-bold px-4 py-1.5 rounded-full">
+                MAIS POPULAR
+              </span>
+              <h3 className="text-lg font-bold text-[#0E2A3F]">Premium</h3>
+              <p className="text-sm text-[#8395A5] mb-5">Para quem quer o controle total</p>
+              <p className="mb-6">
+                <span className="text-4xl font-extrabold text-[#0E2A3F]">R$ 19,90</span>
+                <span className="text-sm text-[#8395A5]">/mês</span>
+              </p>
+              <ul className="space-y-3 mb-8 flex-1">
+                {[
+                  "Tudo do plano gratuito",
+                  "Estudos com editor completo e áudio",
+                  "Biblioteca de leituras avançada",
+                  "Planejamento de viagens",
+                  "Relatórios e estatísticas detalhadas",
+                ].map((li) => (
+                  <li key={li} className="flex items-start gap-2 text-sm text-[#44586A]">
+                    <Check className="w-4 h-4 text-[#178E96] mt-0.5 shrink-0" />
+                    {li}
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href="/register"
+                className="block text-center bg-[#178E96] hover:bg-[#117178] text-white font-semibold py-3 rounded-lg transition-colors duration-150"
+              >
+                Começar agora
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ===================== FAQ ===================== */}
+      <section id="faq" className="bg-white py-20 lg:py-28">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0E2A3F] mb-4">
+              Perguntas frequentes
+            </h2>
+            <p className="text-lg text-[#5E7081]">Tudo o que você precisa saber antes de começar.</p>
+          </div>
+
+          <div className="space-y-3">
+            {faqs.map((faq, i) => (
+              <div key={faq.pergunta} className="border border-[#E9E7DC] rounded-xl overflow-hidden bg-white">
+                <button
+                  className="w-full flex items-center justify-between gap-4 px-5 py-4 text-left hover:bg-[#FAF9F4] transition-colors duration-150"
+                  onClick={() => setFaqAberta(faqAberta === i ? null : i)}
+                  aria-expanded={faqAberta === i}
+                >
+                  <span className="font-semibold text-[#0E2A3F] text-sm sm:text-base">{faq.pergunta}</span>
+                  <ChevronDown
+                    className={`w-5 h-5 text-[#8395A5] shrink-0 transition-transform duration-150 ${
+                      faqAberta === i ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+                {faqAberta === i && (
+                  <div className="px-5 pb-4 text-sm text-[#5E7081] leading-relaxed">{faq.resposta}</div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ===================== CTA final ===================== */}
+      <section className="bg-gradient-to-br from-[#178E96] via-[#154F6D] to-[#0E2A3F] py-20">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-white mb-4">
+            Pronto para organizar sua vida?
+          </h2>
+          <p className="text-lg text-white/80 mb-8">
+            Crie sua conta gratuita em menos de 2 minutos e comece hoje mesmo.
+          </p>
+          <Link
+            href="/register"
+            className="inline-flex items-center gap-2 bg-white hover:bg-[#F2F1E9] text-[#117178] font-bold px-8 py-4 rounded-lg transition-colors duration-150"
+          >
+            Criar conta gratuita
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+      </section>
+
+      {/* ===================== Footer ===================== */}
+      <footer className="bg-[#0E2A3F] text-white/70 py-14">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-10">
+            <div>
+              <Link href="/" className="text-2xl font-extrabold text-white">
+                Aura
+              </Link>
+              <p className="text-sm mt-3 leading-relaxed">
+                O gerenciador pessoal completo para sua rotina, finanças, hábitos e estudos.
+              </p>
+            </div>
+            <div>
+              <h4 className="text-white font-semibold text-sm mb-4">Produto</h4>
+              <ul className="space-y-2.5 text-sm">
+                <li><a href="#recursos" className="hover:text-white transition-colors duration-150">Recursos</a></li>
+                <li><a href="#precos" className="hover:text-white transition-colors duration-150">Preços</a></li>
+                <li><a href="#faq" className="hover:text-white transition-colors duration-150">FAQ</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-white font-semibold text-sm mb-4">Conta</h4>
+              <ul className="space-y-2.5 text-sm">
+                <li><Link href="/login" className="hover:text-white transition-colors duration-150">Entrar</Link></li>
+                <li><Link href="/register" className="hover:text-white transition-colors duration-150">Criar conta</Link></li>
+                <li><Link href="/premium" className="hover:text-white transition-colors duration-150">Premium</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-white font-semibold text-sm mb-4">Legal</h4>
+              <ul className="space-y-2.5 text-sm">
+                <li><a href="#" className="hover:text-white transition-colors duration-150">Privacidade</a></li>
+                <li><a href="#" className="hover:text-white transition-colors duration-150">Termos de uso</a></li>
+                <li><a href="#" className="hover:text-white transition-colors duration-150">LGPD</a></li>
+              </ul>
+            </div>
+          </div>
+          <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm">
+            <p>© {new Date().getFullYear()} Aura. Todos os direitos reservados.</p>
+            <p>
+              Feito com <span className="text-[#178E96]">♥</span> para sua produtividade
+            </p>
           </div>
         </div>
       </footer>

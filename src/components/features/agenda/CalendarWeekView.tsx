@@ -107,23 +107,23 @@ export function CalendarWeekView({ compromissos, onSlotClick, onCompromissoClick
   return (
     <div className="flex flex-col flex-1 min-h-0 max-h-full relative">
       {/* Header com dias da semana - FIXO */}
-      <div className="grid grid-cols-8 border-b-2 border-zinc-700 bg-gradient-to-b from-zinc-900 to-zinc-900/95 z-20 shadow-lg backdrop-blur-sm flex-shrink-0">
+      <div className="grid grid-cols-8 border-b-2 border-[#E9E7DC] bg-white z-20 flex-shrink-0">
         {/* Coluna de horas (vazia) */}
-        <div className="w-10 sm:w-16 border-r border-zinc-800"></div>
+        <div className="w-10 sm:w-16 border-r border-[#E9E7DC]"></div>
 
         {/* Dias da semana */}
         {weekDays.map((day, i) => (
           <div
             key={i}
-            className={`p-2 sm:p-3 text-center border-r border-zinc-800 transition-all duration-200 ${
-              isToday(day) ? 'bg-aura-500/10 border-b-2 border-b-aura-500' : ''
+            className={`p-2 sm:p-3 text-center border-r border-[#E9E7DC] transition-all duration-200 ${
+              isToday(day) ? 'bg-[#E5F1F1] border-b-2 border-b-[#178E96]' : ''
             }`}
           >
-            <div className="text-[10px] sm:text-xs text-gray-400 uppercase font-medium">
+            <div className="text-[10px] sm:text-xs text-[#8395A5] uppercase font-medium">
               {format(day, 'EEE', { locale: ptBR })}
             </div>
             <div className={`text-sm sm:text-xl font-bold mt-0.5 sm:mt-1 transition-colors ${
-              isToday(day) ? 'text-aura-400' : 'text-white'
+              isToday(day) ? 'text-[#178E96]' : 'text-[#0E2A3F]'
             }`}>
               {format(day, 'd')}
             </div>
@@ -143,9 +143,9 @@ export function CalendarWeekView({ compromissos, onSlotClick, onCompromissoClick
             {hours.map(hour => (
               <div
                 key={hour}
-                className="h-[60px] border-b border-zinc-800 flex items-start justify-end pr-1 sm:pr-2 pt-0"
+                className="h-[60px] border-b border-[#E9E7DC] flex items-start justify-end pr-1 sm:pr-2 pt-0"
               >
-                <span className="text-[10px] sm:text-xs text-gray-500 -translate-y-2">
+                <span className="text-[10px] sm:text-xs text-[#8395A5] -translate-y-2">
                   {String(hour).padStart(2, '0')}:00
                 </span>
               </div>
@@ -159,14 +159,14 @@ export function CalendarWeekView({ compromissos, onSlotClick, onCompromissoClick
             return (
               <div
                 key={dayIndex}
-                className="relative border-r border-zinc-800"
+                className="relative border-r border-[#E9E7DC]"
               >
                 {/* Grid de horas clicável */}
                 {hours.map(hour => (
                   <button
                     key={hour}
                     onClick={() => onSlotClick(day, hour)}
-                    className="w-full h-[60px] border-b border-zinc-800 hover:bg-purple-500/5 active:bg-purple-500/10 transition-colors text-left block touch-manipulation"
+                    className="w-full h-[60px] border-b border-[#E9E7DC] hover:bg-[#E5F1F1] active:bg-[#D4EDED] transition-colors text-left block touch-manipulation"
                   />
                 ))}
 
@@ -189,7 +189,7 @@ export function CalendarWeekView({ compromissos, onSlotClick, onCompromissoClick
                         {comp.titulo}
                       </div>
                       {comp.horaFim && (
-                        <div className="text-gray-400 text-[9px] sm:text-[10px] hidden xs:block">
+                        <div className="text-[#8395A5] text-[9px] sm:text-[10px] hidden xs:block">
                           {comp.horaInicio} - {comp.horaFim}
                         </div>
                       )}

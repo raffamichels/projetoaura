@@ -3,11 +3,11 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { AtSign, Check, X, Loader2, ArrowRight, Sparkles } from 'lucide-react';
+import { Check, X, Loader2 } from 'lucide-react';
 
 export default function ChooseUsernamePage() {
   const { data: session, update } = useSession();
@@ -40,7 +40,7 @@ export default function ChooseUsernamePage() {
       const suggested = session.user.name
         .toLowerCase()
         .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '') // Remove acentos
+        .replace(/[̀-ͯ]/g, '') // Remove acentos
         .replace(/[^a-z0-9]/g, '_')
         .replace(/_+/g, '_')
         .replace(/^_|_$/g, '')
@@ -143,70 +143,42 @@ export default function ChooseUsernamePage() {
   // Se session ainda está carregando
   if (session === undefined) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{
-        background: 'linear-gradient(135deg, #0f0f0f 0%, #0a0a0a 50%, #0f0f0f 100%)'
-      }}>
-        <Loader2 className="w-8 h-8 text-purple-500 animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-[#F2F1E9]">
+        <Loader2 className="w-8 h-8 text-[#178E96] animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden flex items-center justify-center p-4" style={{
-      background: 'linear-gradient(135deg, #0f0f0f 0%, #0a0a0a 50%, #0f0f0f 100%)'
-    }}>
-      {/* Background effects */}
-      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{
-        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' /%3E%3C/svg%3E")`,
-      }} />
-
-      <div className="absolute inset-0 pointer-events-none" style={{
-        background: 'radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.4) 100%)'
-      }} />
-
-      <div className="absolute inset-0 overflow-hidden opacity-30">
-        <div className="absolute top-1/4 -left-1/4 w-96 h-96 bg-blue-600 rounded-full mix-blend-screen filter blur-3xl opacity-20 animate-pulse"></div>
-        <div className="absolute top-1/3 -right-1/4 w-96 h-96 bg-purple-600 rounded-full mix-blend-screen filter blur-3xl opacity-15 animate-pulse"></div>
-        <div className="absolute -bottom-1/4 left-1/3 w-96 h-96 bg-fuchsia-600 rounded-full mix-blend-screen filter blur-3xl opacity-10 animate-pulse"></div>
-      </div>
-
-      {/* Conteúdo */}
-      <div className="relative z-10 w-full max-w-md">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[#F2F1E9] p-4">
+      <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-6">
-          <Image
-            src="/images/logo-sem-fundo.png"
-            alt="Aura Logo"
-            width={160}
-            height={160}
-            className="w-32 h-32 mx-auto mb-4"
-          />
-          <h1 className="text-2xl font-bold text-white mb-2">Escolha seu username</h1>
-          <p className="text-gray-400 text-sm">Este será seu identificador único no Aura</p>
+          <Link href="/">
+            <span className="text-3xl font-extrabold tracking-tight text-[#178E96]">Aura</span>
+          </Link>
+          <h1 className="text-2xl font-bold text-[#0E2A3F] mt-4 mb-1">Escolha seu username</h1>
+          <p className="text-[#5E7081] text-sm">Este será seu identificador único no Aura</p>
         </div>
 
         {/* Card */}
-        <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 shadow-2xl shadow-purple-900/20">
+        <div className="bg-white border border-[#E9E7DC] rounded-2xl shadow-sm p-8">
           {/* Boas-vindas */}
-          <div className="flex items-center gap-3 mb-6 p-4 bg-purple-500/10 rounded-xl border border-purple-500/20">
-            <Sparkles className="w-5 h-5 text-purple-400 flex-shrink-0" />
-            <div>
-              <p className="text-sm text-white font-medium">
-                Bem-vindo, {session?.user?.name || 'usuário'}!
-              </p>
-              <p className="text-xs text-gray-400">Falta só mais um passo para começar</p>
-            </div>
+          <div className="mb-6 p-4 bg-[#E5F1F1] rounded-lg border border-[#178E96]/20">
+            <p className="text-sm text-[#0E2A3F] font-semibold">
+              Bem-vindo, {session?.user?.name || 'usuário'}!
+            </p>
+            <p className="text-xs text-[#5E7081]">Falta só mais um passo para começar</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
             {/* Campo Username */}
-            <div className="space-y-2">
-              <Label htmlFor="username" className="text-gray-300 text-sm font-medium flex items-center gap-2">
-                <AtSign className="w-4 h-4" />
+            <div className="space-y-1.5">
+              <Label htmlFor="username" className="text-[#44586A] text-sm font-medium">
                 Username
               </Label>
               <div className="relative">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">@</div>
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8395A5] text-sm">@</div>
                 <Input
                   id="username"
                   type="text"
@@ -215,33 +187,33 @@ export default function ChooseUsernamePage() {
                   onChange={(e) => handleUsernameChange(e.target.value)}
                   required
                   autoFocus
-                  className="pl-7 pr-10 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 h-12 rounded-xl text-base"
+                  className="pl-7 pr-10 bg-white border-[#D9D7CB] text-[#0E2A3F] placeholder:text-[#8395A5] focus:border-[#178E96] focus:ring-2 focus:ring-[#178E96]/20 h-11 rounded-lg transition-colors duration-150 text-sm"
                 />
                 <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                  {checkingUsername && <Loader2 className="w-5 h-5 text-gray-400 animate-spin" />}
-                  {!checkingUsername && usernameAvailable === true && <Check className="w-5 h-5 text-green-500" />}
-                  {!checkingUsername && usernameAvailable === false && <X className="w-5 h-5 text-red-500" />}
+                  {checkingUsername && <Loader2 className="w-5 h-5 text-[#8395A5] animate-spin" />}
+                  {!checkingUsername && usernameAvailable === true && <Check className="w-5 h-5 text-green-600" />}
+                  {!checkingUsername && usernameAvailable === false && <X className="w-5 h-5 text-red-600" />}
                 </div>
               </div>
 
               {/* Feedback */}
               {usernameError && (
-                <p className="text-xs text-red-400">{usernameError}</p>
+                <p className="text-xs text-red-600">{usernameError}</p>
               )}
               {!usernameError && usernameAvailable === true && (
-                <p className="text-xs text-green-400">Username disponível!</p>
+                <p className="text-xs text-green-600">Username disponível!</p>
               )}
               {!usernameError && usernameAvailable === false && (
-                <p className="text-xs text-red-400">Este username já está em uso</p>
+                <p className="text-xs text-red-600">Este username já está em uso</p>
               )}
               {!usernameError && username.length === 0 && (
-                <p className="text-xs text-gray-500">Letras, números, _ e . (3-30 caracteres)</p>
+                <p className="text-xs text-[#8395A5]">Letras, números, _ e . (3-30 caracteres)</p>
               )}
             </div>
 
             {/* Erro geral */}
             {error && (
-              <div className="bg-red-500/10 border border-red-500/30 text-red-300 px-4 py-3 rounded-xl text-sm">
+              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
                 {error}
               </div>
             )}
@@ -250,24 +222,21 @@ export default function ChooseUsernamePage() {
             <Button
               type="submit"
               disabled={loading || !usernameAvailable || !!usernameError}
-              className="w-full bg-gradient-to-r from-purple-600 via-fuchsia-600 to-blue-600 hover:from-purple-500 hover:via-fuchsia-500 hover:to-blue-500 text-white font-semibold h-12 rounded-xl shadow-lg shadow-purple-900/50 transition-all duration-300 hover:shadow-purple-800/60 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              className="w-full bg-[#178E96] hover:bg-[#117178] text-white font-semibold h-11 rounded-lg transition-colors duration-150 uppercase tracking-wide text-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <div className="flex items-center gap-2">
-                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                   Salvando...
                 </div>
               ) : (
-                <span className="flex items-center justify-center gap-2">
-                  Continuar
-                  <ArrowRight className="w-5 h-5" />
-                </span>
+                'Continuar'
               )}
             </Button>
           </form>
 
           {/* Info */}
-          <p className="text-xs text-gray-500 text-center mt-4">
+          <p className="text-xs text-[#8395A5] text-center mt-4">
             Você poderá alterar seu username a cada 30 dias nas configurações.
           </p>
         </div>

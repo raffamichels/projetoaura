@@ -94,19 +94,19 @@ export default function TransacoesPage() {
   const saldo = totalReceitas - totalDespesas;
 
   return (
-    <div className="bg-zinc-950 p-4 lg:p-6 space-y-4 sm:space-y-6">
+    <div className="p-4 lg:p-6 space-y-4 sm:space-y-6">
       <div className="relative mb-8">
         <div className="relative">
           <div className="flex justify-between items-start mb-6">
             <div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
+              <h1 className="text-4xl font-bold text-[#0E2A3F]">
                 Transações
               </h1>
-              <p className="text-zinc-400 mt-2">Gerencie suas receitas e despesas</p>
+              <p className="text-[#44586A] mt-2">Gerencie suas receitas e despesas</p>
             </div>
             <Button
               onClick={() => setModalAberto(true)}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg shadow-purple-500/50 transition-all hover:shadow-xl hover:shadow-purple-500/60"
+              className="bg-[#178E96] hover:bg-[#117178] text-white transition-colors duration-150"
               size="lg"
             >
               <Plus className="w-5 h-5 mr-2" />
@@ -116,54 +116,54 @@ export default function TransacoesPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Receitas */}
-            <Card className="relative overflow-hidden bg-zinc-900/50 border-zinc-800 hover:border-green-500/40 transition-all">
+            <Card className="relative overflow-hidden bg-white border-[#E9E7DC] shadow-sm hover:border-green-200 transition-colors duration-150">
               <div className="relative p-6">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm text-zinc-400">Receitas</span>
-                  <div className="p-2 bg-green-500/10 rounded-lg">
-                    <TrendingUp className="w-5 h-5 text-green-400" />
+                  <span className="text-sm text-[#44586A]">Receitas</span>
+                  <div className="p-2 bg-green-50 rounded-lg">
+                    <TrendingUp className="w-5 h-5 text-green-600" />
                   </div>
                 </div>
-                <div className="text-3xl font-bold text-green-400">
+                <div className="text-3xl font-bold text-green-600">
                   {formatarMoeda(totalReceitas)}
                 </div>
-                <p className="text-xs text-zinc-500 mt-1">
+                <p className="text-xs text-[#8395A5] mt-1">
                   {transacoes.filter((t) => t.tipo === 'RECEITA').length} transações
                 </p>
               </div>
             </Card>
 
             {/* Despesas */}
-            <Card className="relative overflow-hidden bg-zinc-900/50 border-zinc-800 hover:border-red-500/40 transition-all">
+            <Card className="relative overflow-hidden bg-white border-[#E9E7DC] shadow-sm hover:border-red-200 transition-colors duration-150">
               <div className="relative p-6">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm text-zinc-400">Despesas</span>
-                  <div className="p-2 bg-red-500/10 rounded-lg">
-                    <TrendingDown className="w-5 h-5 text-red-400" />
+                  <span className="text-sm text-[#44586A]">Despesas</span>
+                  <div className="p-2 bg-red-50 rounded-lg">
+                    <TrendingDown className="w-5 h-5 text-red-600" />
                   </div>
                 </div>
-                <div className="text-3xl font-bold text-red-400">
+                <div className="text-3xl font-bold text-red-600">
                   {formatarMoeda(totalDespesas)}
                 </div>
-                <p className="text-xs text-zinc-500 mt-1">
+                <p className="text-xs text-[#8395A5] mt-1">
                   {transacoes.filter((t) => t.tipo === 'DESPESA').length} transações
                 </p>
               </div>
             </Card>
 
             {/* Saldo */}
-            <Card className="relative overflow-hidden bg-zinc-900/50 border-zinc-800 hover:border-purple-500/40 transition-all">
+            <Card className="relative overflow-hidden bg-white border-[#E9E7DC] shadow-sm hover:border-[#178E96]/40 transition-colors duration-150">
               <div className="relative p-6">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm text-zinc-400">Saldo</span>
-                  <div className="p-2 bg-purple-500/20 rounded-lg">
-                    <ArrowUpDown className="w-5 h-5 text-purple-400" />
+                  <span className="text-sm text-[#44586A]">Saldo</span>
+                  <div className="p-2 bg-[#E5F1F1] rounded-lg">
+                    <ArrowUpDown className="w-5 h-5 text-[#117178]" />
                   </div>
                 </div>
-                <div className={`text-3xl font-bold ${saldo >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                <div className={`text-3xl font-bold ${saldo >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                   {formatarMoeda(saldo)}
                 </div>
-                <p className="text-xs text-zinc-500 mt-1">
+                <p className="text-xs text-[#8395A5] mt-1">
                   Receitas - Despesas
                 </p>
               </div>
@@ -176,12 +176,12 @@ export default function TransacoesPage() {
       <div className="mb-6 flex flex-col sm:flex-row gap-4">
         {/* Busca */}
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8395A5]" />
           <Input
             placeholder="Buscar transações..."
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
-            className="pl-10 bg-zinc-900/50 border-zinc-800 focus:border-purple-500 transition-colors"
+            className="pl-10 bg-white border-[#D9D7CB] text-[#0E2A3F] placeholder:text-[#8395A5] focus:border-[#178E96] focus:ring-[#178E96]/20 transition-colors duration-150"
           />
         </div>
 
@@ -191,8 +191,8 @@ export default function TransacoesPage() {
             variant={filtroTipo === 'TODOS' ? 'default' : 'default'}
             onClick={() => setFiltroTipo('TODOS')}
             className={filtroTipo === 'TODOS' 
-              ? 'bg-purple-600 hover:bg-purple-700' 
-              : 'border-zinc-800 hover:bg-zinc-800'
+              ? 'bg-[#E5F1F1] text-[#117178] font-semibold hover:bg-[#E5F1F1]'
+              : 'bg-white border border-[#E9E7DC] text-[#44586A] hover:bg-[#F4F3EC]'
             }
           >
             Todas
@@ -201,8 +201,8 @@ export default function TransacoesPage() {
             variant={filtroTipo === 'RECEITA' ? 'default' : 'default'}
             onClick={() => setFiltroTipo('RECEITA')}
             className={filtroTipo === 'RECEITA' 
-              ? 'bg-green-600 hover:bg-green-700' 
-              : 'border-zinc-800 hover:bg-zinc-800'
+              ? 'bg-green-600 hover:bg-green-700 text-white'
+              : 'bg-white border border-[#E9E7DC] text-[#44586A] hover:bg-[#F4F3EC]'
             }
           >
             Receitas
@@ -211,8 +211,8 @@ export default function TransacoesPage() {
             variant={filtroTipo === 'DESPESA' ? 'default' : 'default'}
             onClick={() => setFiltroTipo('DESPESA')}
             className={filtroTipo === 'DESPESA' 
-              ? 'bg-red-600 hover:bg-red-700' 
-              : 'border-zinc-800 hover:bg-zinc-800'
+              ? 'bg-red-600 hover:bg-red-700 text-white'
+              : 'bg-white border border-[#E9E7DC] text-[#44586A] hover:bg-[#F4F3EC]'
             }
           >
             Despesas
@@ -223,23 +223,23 @@ export default function TransacoesPage() {
       {/* Lista de Transações */}
       {loading ? (
         <div className="flex justify-center py-20">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#178E96]"></div>
         </div>
       ) : transacoesFiltradas.length === 0 ? (
-        <Card className="bg-zinc-900/50 border-zinc-800 p-12">
+        <Card className="bg-white border-[#E9E7DC] shadow-sm p-12">
           <div className="text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-500/10 rounded-full mb-4">
-              <TrendingUp className="w-8 h-8 text-purple-400" />
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-[#E5F1F1] rounded-full mb-4">
+              <TrendingUp className="w-8 h-8 text-[#117178]" />
             </div>
-            <h3 className="text-xl font-semibold text-white mb-2">
+            <h3 className="text-xl font-semibold text-[#0E2A3F] mb-2">
               Nenhuma transação encontrada
             </h3>
-            <p className="text-zinc-400 mb-6">
+            <p className="text-[#44586A] mb-6">
               Comece criando sua primeira transação
             </p>
             <Button
               onClick={() => setModalAberto(true)}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+              className="bg-[#178E96] hover:bg-[#117178] text-white"
             >
               <Plus className="w-4 h-4 mr-2" />
               Nova Transação
@@ -251,41 +251,41 @@ export default function TransacoesPage() {
           {transacoesFiltradas.map((transacao) => (
             <Card
               key={transacao.id}
-              className="bg-zinc-900/50 border-zinc-800 hover:border-zinc-700 transition-all group hover:shadow-lg"
+              className="bg-white border-[#E9E7DC] shadow-sm hover:bg-[#FAF9F4] transition-colors duration-150 group"
             >
               <div className="p-4 flex items-center gap-4">
                 <div
                   className={`relative p-3 rounded-xl ${
                     transacao.tipo === 'RECEITA'
-                      ? 'bg-green-500/10'
-                      : 'bg-red-500/10'
+                      ? 'bg-green-50'
+                      : 'bg-red-50'
                   }`}
                 >
                   {transacao.tipo === 'RECEITA' ? (
-                    <TrendingUp className="w-6 h-6 text-green-400" />
+                    <TrendingUp className="w-6 h-6 text-green-600" />
                   ) : (
-                    <TrendingDown className="w-6 h-6 text-red-400" />
+                    <TrendingDown className="w-6 h-6 text-red-600" />
                   )}
                 </div>
 
                 {/* Informações */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <h3 className="font-semibold text-white truncate">
+                    <h3 className="font-semibold text-[#0E2A3F] truncate">
                       {transacao.descricao}
                     </h3>
                     {transacao.isFixa && (
-                      <span className="px-2 py-0.5 bg-blue-500/20 text-blue-400 text-xs rounded-full">
+                      <span className="px-2 py-0.5 bg-[#E5F1F1] text-[#117178] text-xs rounded-full">
                         Fixa
                       </span>
                     )}
                     {transacao.isParcela && (
-                      <span className="px-2 py-0.5 bg-purple-500/20 text-purple-400 text-xs rounded-full">
+                      <span className="px-2 py-0.5 bg-[#E5F1F1] text-[#117178] text-xs rounded-full">
                         {transacao.parcelaNumero}/{transacao.parcelaTotais}
                       </span>
                     )}
                   </div>
-                  <div className="flex items-center gap-3 text-sm text-zinc-400">
+                  <div className="flex items-center gap-3 text-sm text-[#44586A]">
                     <div className="flex items-center gap-1">
                       <Calendar className="w-3.5 h-3.5" />
                       {format(new Date(transacao.data), "dd 'de' MMM", { locale: ptBR })}
@@ -318,7 +318,7 @@ export default function TransacoesPage() {
                 <div className="text-right">
                   <div
                     className={`text-xl font-bold ${
-                      transacao.tipo === 'RECEITA' ? 'text-green-400' : 'text-red-400'
+                      transacao.tipo === 'RECEITA' ? 'text-green-600' : 'text-red-600'
                     }`}
                   >
                     {transacao.tipo === 'RECEITA' ? '+' : '-'} {formatarMoeda(transacao.valor)}
@@ -337,12 +337,12 @@ export default function TransacoesPage() {
                   </Button>
                   
                   {menuAberto === transacao.id && (
-                    <div className="absolute right-0 mt-2 w-48 bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl z-10">
-                      <button className="w-full px-4 py-2 text-left text-sm text-zinc-300 hover:bg-zinc-800 flex items-center gap-2">
+                    <div className="absolute right-0 mt-2 w-48 bg-white border border-[#E3E1D6] rounded-lg shadow-lg z-10">
+                      <button className="w-full px-4 py-2 text-left text-sm text-[#44586A] hover:bg-[#F4F3EC] flex items-center gap-2">
                         <Edit className="w-4 h-4" />
                         Editar
                       </button>
-                      <button className="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-zinc-800 flex items-center gap-2">
+                      <button className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-[#F4F3EC] flex items-center gap-2">
                         <Trash2 className="w-4 h-4" />
                         Excluir
                       </button>

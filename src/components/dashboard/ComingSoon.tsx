@@ -15,43 +15,32 @@ export function ComingSoon({ icon: Icon, title, description, features }: ComingS
       <div className="max-w-4xl w-full">
 
         {/* Card Principal */}
-        <div className="relative overflow-hidden rounded-3xl animate-slide-up">
-          {/* Background com gradiente */}
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-slate-900 to-blue-900/20" />
-
-          {/* Grid Pattern */}
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:40px_40px]" />
-          </div>
-
-          {/* Glow effects */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-purple-500/20 rounded-full blur-[100px] animate-pulse-slow" />
-          <div className="absolute bottom-0 right-0 w-[400px] h-[200px] bg-blue-500/20 rounded-full blur-[80px] animate-pulse-slow" />
+        <div className="relative overflow-hidden rounded-3xl bg-white border border-[#E9E7DC] shadow-sm animate-slide-up">
 
           {/* Conteúdo */}
           <div className="relative z-10 p-12 md:p-16 text-center">
 
             {/* Ícone */}
-            <div className="inline-flex items-center justify-center w-24 h-24 rounded-2xl bg-gradient-to-br from-purple-500/20 to-blue-500/20 border border-purple-500/30 mb-8 animate-scale-in">
-              <Icon className="w-12 h-12 text-purple-400" strokeWidth={1.5} />
+            <div className="inline-flex items-center justify-center w-24 h-24 rounded-2xl bg-[#E5F1F1] border border-[#178E96]/20 mb-8 animate-scale-in">
+              <Icon className="w-12 h-12 text-[#178E96]" strokeWidth={1.5} />
             </div>
 
             {/* Badge Em Breve */}
             <div className="inline-block mb-6 animate-fade-in-delay-1">
-              <div className="px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/30">
-                <span className="text-sm font-semibold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+              <div className="px-4 py-2 rounded-full bg-[#E5F1F1] border border-[#178E96]/30">
+                <span className="text-sm font-semibold text-[#117178]">
                   Em Breve
                 </span>
               </div>
             </div>
 
             {/* Título */}
-            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 animate-fade-in-delay-2">
+            <h1 className="text-5xl md:text-6xl font-bold text-[#0E2A3F] mb-6 animate-fade-in-delay-2">
               {title}
             </h1>
 
             {/* Descrição */}
-            <p className="text-xl text-slate-300 max-w-2xl mx-auto mb-12 animate-fade-in-delay-3">
+            <p className="text-xl text-[#44586A] max-w-2xl mx-auto mb-12 animate-fade-in-delay-3">
               {description}
             </p>
 
@@ -61,24 +50,24 @@ export function ComingSoon({ icon: Icon, title, description, features }: ComingS
                 {features.map((feature, index) => (
                   <div
                     key={index}
-                    className="p-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all duration-300"
+                    className="p-4 rounded-xl bg-[#F4F3EC] border border-[#E9E7DC] hover:border-[#D9D7CB] transition-all duration-150"
                     style={{ animationDelay: `${0.1 * index}s` }}
                   >
-                    <p className="text-sm text-slate-300">{feature}</p>
+                    <p className="text-sm text-[#44586A]">{feature}</p>
                   </div>
                 ))}
               </div>
             )}
 
             {/* Mensagem de rodapé */}
-            <div className="mt-12 pt-8 border-t border-white/10 animate-fade-in-delay-5">
-              <p className="text-slate-400 text-sm">
+            <div className="mt-12 pt-8 border-t border-[#E9E7DC] animate-fade-in-delay-5">
+              <p className="text-[#8395A5] text-sm">
                 Estamos trabalhando duro para trazer essa funcionalidade para você
               </p>
               <div className="flex items-center justify-center gap-2 mt-4">
-                <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
-                <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" style={{ animationDelay: '0.2s' }} />
-                <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" style={{ animationDelay: '0.4s' }} />
+                <div className="w-2 h-2 rounded-full bg-[#178E96] animate-pulse" />
+                <div className="w-2 h-2 rounded-full bg-[#178E96] animate-pulse" style={{ animationDelay: '0.2s' }} />
+                <div className="w-2 h-2 rounded-full bg-[#178E96] animate-pulse" style={{ animationDelay: '0.4s' }} />
               </div>
             </div>
 
@@ -88,27 +77,27 @@ export function ComingSoon({ icon: Icon, title, description, features }: ComingS
         {/* Cards de Info Extras */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 animate-fade-in-delay-6">
           {/* Premium Feature */}
-          <div className="p-6 rounded-2xl bg-gradient-to-br from-yellow-500/10 to-amber-500/10 border border-yellow-500/20 hover:border-yellow-500/40 transition-all duration-300">
+          <div className="p-6 rounded-2xl bg-amber-50 border border-amber-200 hover:border-amber-300 transition-all duration-150">
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-lg bg-yellow-500/20 flex items-center justify-center">
-                <span className="text-yellow-500 text-xl">👑</span>
+              <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center">
+                <span className="text-[#D9A441] text-xl">👑</span>
               </div>
-              <h3 className="font-semibold text-white">Recurso Premium</h3>
+              <h3 className="font-semibold text-[#0E2A3F]">Recurso Premium</h3>
             </div>
-            <p className="text-sm text-slate-300">
+            <p className="text-sm text-[#44586A]">
               Esta funcionalidade estará disponível para usuários premium com recursos exclusivos
             </p>
           </div>
 
           {/* Notificação */}
-          <div className="p-6 rounded-2xl bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-blue-500/20 hover:border-blue-500/40 transition-all duration-300">
+          <div className="p-6 rounded-2xl bg-[#EFF4F8] border border-[#D5E2EC] hover:border-[#B9CEDC] transition-all duration-150">
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
-                <span className="text-blue-400 text-xl">🔔</span>
+              <div className="w-10 h-10 rounded-lg bg-[#E0EAF2] flex items-center justify-center">
+                <span className="text-[#154F6D] text-xl">🔔</span>
               </div>
-              <h3 className="font-semibold text-white">Seja Notificado</h3>
+              <h3 className="font-semibold text-[#0E2A3F]">Seja Notificado</h3>
             </div>
-            <p className="text-sm text-slate-300">
+            <p className="text-sm text-[#44586A]">
               Você será notificado quando esta funcionalidade for lançada
             </p>
           </div>

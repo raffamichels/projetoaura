@@ -69,26 +69,26 @@ export default function ObjetivosPage() {
   const totalMetas = objetivosAtivos.reduce((acc, obj) => acc + obj.valorMeta, 0);
 
   return (
-    <div className="bg-zinc-950 p-4 lg:p-6 space-y-4 sm:space-y-6">
+    <div className="p-4 lg:p-6 space-y-4 sm:space-y-6">
       <div className="relative mb-8">
         <div className="relative">
           <div className="flex justify-between items-start mb-6">
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <div className="p-3 bg-zinc-900 border border-zinc-800 rounded-xl">
-                  <Target className="w-8 h-8 text-purple-400" />
+                <div className="p-3 bg-white border border-[#E9E7DC] rounded-xl shadow-sm">
+                  <Target className="w-8 h-8 text-[#117178]" />
                 </div>
                 <div>
-                  <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-orange-400 bg-clip-text text-transparent">
+                  <h1 className="text-4xl font-bold text-[#0E2A3F]">
                     Objetivos Financeiros
                   </h1>
-                  <p className="text-zinc-400">Transforme seus sonhos em realidade</p>
+                  <p className="text-[#44586A]">Transforme seus sonhos em realidade</p>
                 </div>
               </div>
             </div>
             <Button
               onClick={() => setModalAberto(true)}
-              className="bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 hover:from-purple-700 hover:via-pink-700 hover:to-orange-700 text-white shadow-lg transition-all hover:scale-105"
+              className="bg-[#178E96] hover:bg-[#117178] text-white transition-colors duration-150"
               size="lg"
             >
               <Plus className="w-5 h-5 mr-2" />
@@ -98,52 +98,52 @@ export default function ObjetivosPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Total Economizado */}
-            <Card className="relative overflow-hidden bg-zinc-900/50 border-zinc-800 hover:border-green-500/40 transition-all">
+            <Card className="relative overflow-hidden bg-white border-[#E9E7DC] shadow-sm hover:border-green-200 transition-colors duration-150">
               <div className="relative p-6">
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="p-2 bg-green-500/10 rounded-lg">
-                    <Sparkles className="w-5 h-5 text-green-400" />
+                  <div className="p-2 bg-green-50 rounded-lg">
+                    <Sparkles className="w-5 h-5 text-green-600" />
                   </div>
-                  <span className="text-sm text-zinc-400">Você já economizou</span>
+                  <span className="text-sm text-[#44586A]">Você já economizou</span>
                 </div>
-                <div className="text-3xl font-bold text-green-400 mb-1">
+                <div className="text-3xl font-bold text-green-600 mb-1">
                   {formatarMoeda(totalEconomizado)}
                 </div>
-                <p className="text-xs text-zinc-500">Continue assim! 🎯</p>
+                <p className="text-xs text-[#8395A5]">Continue assim! 🎯</p>
               </div>
             </Card>
 
             {/* Progresso Geral */}
-            <Card className="relative overflow-hidden bg-zinc-900/50 border-zinc-800 hover:border-purple-500/40 transition-all">
+            <Card className="relative overflow-hidden bg-white border-[#E9E7DC] shadow-sm hover:border-[#178E96]/40 transition-colors duration-150">
               <div className="relative p-6">
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="p-2 bg-purple-500/10 rounded-lg">
-                    <TrendingUp className="w-5 h-5 text-purple-400" />
+                  <div className="p-2 bg-[#E5F1F1] rounded-lg">
+                    <TrendingUp className="w-5 h-5 text-[#117178]" />
                   </div>
-                  <span className="text-sm text-zinc-400">Progresso Geral</span>
+                  <span className="text-sm text-[#44586A]">Progresso Geral</span>
                 </div>
-                <div className="text-3xl font-bold text-purple-400 mb-1">
+                <div className="text-3xl font-bold text-[#117178] mb-1">
                   {totalMetas > 0 ? Math.round((totalEconomizado / totalMetas) * 100) : 0}%
                 </div>
-                <p className="text-xs text-zinc-500">
+                <p className="text-xs text-[#8395A5]">
                   Faltam {formatarMoeda(totalMetas - totalEconomizado)}
                 </p>
               </div>
             </Card>
 
             {/* Objetivos Ativos */}
-            <Card className="relative overflow-hidden bg-zinc-900/50 border-zinc-800 hover:border-orange-500/40 transition-all">
+            <Card className="relative overflow-hidden bg-white border-[#E9E7DC] shadow-sm hover:border-amber-200 transition-colors duration-150">
               <div className="relative p-6">
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="p-2 bg-orange-500/10 rounded-lg">
-                    <Zap className="w-5 h-5 text-orange-400" />
+                  <div className="p-2 bg-amber-50 rounded-lg">
+                    <Zap className="w-5 h-5 text-amber-700" />
                   </div>
-                  <span className="text-sm text-zinc-400">Objetivos Ativos</span>
+                  <span className="text-sm text-[#44586A]">Objetivos Ativos</span>
                 </div>
-                <div className="text-3xl font-bold text-orange-400 mb-1">
+                <div className="text-3xl font-bold text-amber-700 mb-1">
                   {objetivosAtivos.length}
                 </div>
-                <p className="text-xs text-zinc-500">
+                <p className="text-xs text-[#8395A5]">
                   {objetivosConcluidos.length} concluídos
                 </p>
               </div>
@@ -155,23 +155,23 @@ export default function ObjetivosPage() {
       {/* Lista de Objetivos */}
       {loading ? (
         <div className="flex justify-center py-20">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#178E96]"></div>
         </div>
       ) : objetivosAtivos.length === 0 ? (
-        <Card className="bg-zinc-900/50 border-zinc-800 p-12">
+        <Card className="bg-white border-[#E9E7DC] shadow-sm p-12">
           <div className="text-center">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-purple-500/10 rounded-full mb-4">
-              <Target className="w-10 h-10 text-purple-400" />
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-[#E5F1F1] rounded-full mb-4">
+              <Target className="w-10 h-10 text-[#117178]" />
             </div>
-            <h3 className="text-2xl font-semibold text-white mb-2">
+            <h3 className="text-2xl font-semibold text-[#0E2A3F] mb-2">
               Comece sua jornada financeira!
             </h3>
-            <p className="text-zinc-400 mb-6 max-w-md mx-auto">
+            <p className="text-[#44586A] mb-6 max-w-md mx-auto">
               Defina seus objetivos e acompanhe seu progresso rumo à realização dos seus sonhos
             </p>
             <Button
               onClick={() => setModalAberto(true)}
-              className="bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 hover:from-purple-700 hover:via-pink-700 hover:to-orange-700 shadow-lg"
+              className="bg-[#178E96] hover:bg-[#117178] text-white"
             >
               <Plus className="w-4 h-4 mr-2" />
               Criar Primeiro Objetivo
@@ -183,7 +183,7 @@ export default function ObjetivosPage() {
           {objetivosAtivos.map((objetivo) => (
             <Card
               key={objetivo.id}
-              className="relative overflow-hidden bg-zinc-900/50 border-zinc-800 hover:border-zinc-700 transition-all group hover:shadow-lg"
+              className="relative overflow-hidden bg-white border-[#E9E7DC] shadow-sm hover:bg-[#FAF9F4] transition-colors duration-150 group"
             >
               {/* Barra de Progresso de Fundo */}
               <div 
@@ -209,14 +209,14 @@ export default function ObjetivosPage() {
                       )}
                     </div>
                     <div>
-                      <h3 className="font-bold text-lg text-white">{objetivo.nome}</h3>
+                      <h3 className="font-bold text-lg text-[#0E2A3F]">{objetivo.nome}</h3>
                       {objetivo.descricao && (
-                        <p className="text-sm text-zinc-400">{objetivo.descricao}</p>
+                        <p className="text-sm text-[#44586A]">{objetivo.descricao}</p>
                       )}
                     </div>
                   </div>
                   {objetivo.isReservaEmergencia && (
-                    <span className="px-3 py-1 bg-blue-500/10 text-blue-400 text-xs rounded-full flex items-center gap-1 border border-blue-500/20">
+                    <span className="px-3 py-1 bg-[#E5F1F1] text-[#117178] text-xs rounded-full flex items-center gap-1 border border-[#178E96]/20">
                       <Shield className="w-3 h-3" />
                       Emergência
                     </span>
@@ -226,12 +226,12 @@ export default function ObjetivosPage() {
                 {/* Progresso Visual */}
                 <div className="mb-4">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm text-zinc-400">Progresso</span>
-                    <span className="text-sm font-bold text-white">
+                    <span className="text-sm text-[#44586A]">Progresso</span>
+                    <span className="text-sm font-bold text-[#0E2A3F]">
                       {Math.round(objetivo.porcentagemAtingida)}%
                     </span>
                   </div>
-                  <div className="relative h-3 bg-zinc-800 rounded-full overflow-hidden">
+                  <div className="relative h-3 bg-[#E9E7DC] rounded-full overflow-hidden">
                     <div 
                       className="absolute inset-y-0 left-0 rounded-full transition-all duration-500"
                       style={{ 
@@ -245,13 +245,13 @@ export default function ObjetivosPage() {
                 {/* Valores */}
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <div>
-                    <p className="text-xs text-zinc-500 mb-1">Economizado</p>
-                    <p className="text-lg font-bold text-white">
+                    <p className="text-xs text-[#8395A5] mb-1">Economizado</p>
+                    <p className="text-lg font-bold text-[#0E2A3F]">
                       {formatarMoeda(objetivo.valorAtual)}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-zinc-500 mb-1">Falta</p>
+                    <p className="text-xs text-[#8395A5] mb-1">Falta</p>
                     <p className="text-lg font-bold" style={{ color: objetivo.cor }}>
                       {formatarMoeda(objetivo.falta)}
                     </p>
@@ -259,13 +259,13 @@ export default function ObjetivosPage() {
                 </div>
 
                 {/* Meta e Data */}
-                <div className="flex items-center justify-between pt-4 border-t border-zinc-800">
-                  <div className="flex items-center gap-2 text-sm text-zinc-400">
+                <div className="flex items-center justify-between pt-4 border-t border-[#E9E7DC]">
+                  <div className="flex items-center gap-2 text-sm text-[#44586A]">
                     <DollarSign className="w-4 h-4" />
                     Meta: {formatarMoeda(objetivo.valorMeta)}
                   </div>
                   {objetivo.dataMeta && (
-                    <div className="flex items-center gap-2 text-sm text-zinc-400">
+                    <div className="flex items-center gap-2 text-sm text-[#44586A]">
                       <Calendar className="w-4 h-4" />
                       {format(new Date(objetivo.dataMeta), "dd/MM/yyyy", { locale: ptBR })}
                     </div>
@@ -297,25 +297,25 @@ export default function ObjetivosPage() {
       {/* Objetivos Concluídos */}
       {objetivosConcluidos.length > 0 && (
         <div className="mt-12">
-          <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
-            <CheckCircle2 className="w-6 h-6 text-green-400" />
+          <h2 className="text-2xl font-bold text-[#0E2A3F] mb-4 flex items-center gap-2">
+            <CheckCircle2 className="w-6 h-6 text-green-600" />
             Objetivos Concluídos 🎉
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {objetivosConcluidos.map((objetivo) => (
               <Card
                 key={objetivo.id}
-                className="bg-zinc-900/50 border-zinc-800 hover:border-green-500/40 transition-all"
+                className="bg-white border-[#E9E7DC] shadow-sm hover:border-green-200 transition-colors duration-150"
               >
                 <div className="p-4">
                   <div className="flex items-center gap-2 mb-2">
-                    <CheckCircle2 className="w-5 h-5 text-green-400" />
-                    <h3 className="font-semibold text-white">{objetivo.nome}</h3>
+                    <CheckCircle2 className="w-5 h-5 text-green-600" />
+                    <h3 className="font-semibold text-[#0E2A3F]">{objetivo.nome}</h3>
                   </div>
-                  <p className="text-2xl font-bold text-green-400">
+                  <p className="text-2xl font-bold text-green-600">
                     {formatarMoeda(objetivo.valorMeta)}
                   </p>
-                  <p className="text-xs text-zinc-500 mt-1">Meta alcançada!</p>
+                  <p className="text-xs text-[#8395A5] mt-1">Meta alcançada!</p>
                 </div>
               </Card>
             ))}

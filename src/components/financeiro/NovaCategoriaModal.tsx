@@ -79,9 +79,9 @@ export default function NovaCategoriaModal({ aberto, onFechar, onSucesso }: Nova
 
   return (
     <Dialog open={aberto} onOpenChange={onFechar}>
-      <DialogContent className="bg-zinc-900 border-zinc-800 max-w-md">
+      <DialogContent className="bg-white border-[#E3E1D6] max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-white">
+          <DialogTitle className="text-2xl font-bold text-[#0E2A3F]">
             Nova Categoria
           </DialogTitle>
         </DialogHeader>
@@ -89,19 +89,19 @@ export default function NovaCategoriaModal({ aberto, onFechar, onSucesso }: Nova
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Tipo de Categoria */}
           <div>
-            <Label className="text-zinc-300 mb-3 block">Tipo *</Label>
+            <Label className="text-[#44586A] mb-3 block">Tipo *</Label>
             <div className="grid grid-cols-2 gap-3">
               <button
                 type="button"
                 onClick={() => setTipo('RECEITA')}
                 className={`p-4 rounded-lg border-2 transition-all ${
                   tipo === 'RECEITA'
-                    ? 'border-green-500 bg-green-500/10'
-                    : 'border-zinc-800 bg-zinc-900/50 hover:border-zinc-700'
+                    ? 'border-green-600 bg-green-50'
+                    : 'border-[#E9E7DC] bg-white hover:border-[#D9D7CB]'
                 }`}
               >
-                <TrendingUp className={`w-6 h-6 mx-auto mb-2 ${tipo === 'RECEITA' ? 'text-green-400' : 'text-zinc-500'}`} />
-                <span className={`font-semibold ${tipo === 'RECEITA' ? 'text-green-400' : 'text-zinc-400'}`}>
+                <TrendingUp className={`w-6 h-6 mx-auto mb-2 ${tipo === 'RECEITA' ? 'text-green-600' : 'text-[#8395A5]'}`} />
+                <span className={`font-semibold ${tipo === 'RECEITA' ? 'text-green-600' : 'text-[#44586A]'}`}>
                   Receita
                 </span>
               </button>
@@ -110,12 +110,12 @@ export default function NovaCategoriaModal({ aberto, onFechar, onSucesso }: Nova
                 onClick={() => setTipo('DESPESA')}
                 className={`p-4 rounded-lg border-2 transition-all ${
                   tipo === 'DESPESA'
-                    ? 'border-red-500 bg-red-500/10'
-                    : 'border-zinc-800 bg-zinc-900/50 hover:border-zinc-700'
+                    ? 'border-red-600 bg-red-50'
+                    : 'border-[#E9E7DC] bg-white hover:border-[#D9D7CB]'
                 }`}
               >
-                <TrendingDown className={`w-6 h-6 mx-auto mb-2 ${tipo === 'DESPESA' ? 'text-red-400' : 'text-zinc-500'}`} />
-                <span className={`font-semibold ${tipo === 'DESPESA' ? 'text-red-400' : 'text-zinc-400'}`}>
+                <TrendingDown className={`w-6 h-6 mx-auto mb-2 ${tipo === 'DESPESA' ? 'text-red-600' : 'text-[#8395A5]'}`} />
+                <span className={`font-semibold ${tipo === 'DESPESA' ? 'text-red-600' : 'text-[#44586A]'}`}>
                   Despesa
                 </span>
               </button>
@@ -124,22 +124,22 @@ export default function NovaCategoriaModal({ aberto, onFechar, onSucesso }: Nova
 
           {/* Nome */}
           <div>
-            <Label className="text-zinc-300">Nome da Categoria *</Label>
+            <Label className="text-[#44586A]">Nome da Categoria *</Label>
             <Input
               value={nome}
               onChange={(e) => setNome(e.target.value)}
               placeholder="Ex: Assinaturas, Lazer, Freelance"
               required
-              className="bg-zinc-900/50 border-zinc-800 focus:border-purple-500 text-white"
+              className="bg-white border-[#D9D7CB] text-[#0E2A3F] placeholder:text-[#8395A5] focus:border-[#178E96] focus:ring-[#178E96]/20"
             />
-            <p className="text-xs text-zinc-500 mt-1">
+            <p className="text-xs text-[#8395A5] mt-1">
               Escolha um nome descritivo e fácil de identificar
             </p>
           </div>
 
           {/* Cor */}
           <div>
-            <Label className="text-zinc-300 mb-2 block">Cor</Label>
+            <Label className="text-[#44586A] mb-2 block">Cor</Label>
             <div className="grid grid-cols-4 gap-2">
               {CORES_DISPONIVEIS.map((corOpt) => (
                 <button
@@ -147,7 +147,7 @@ export default function NovaCategoriaModal({ aberto, onFechar, onSucesso }: Nova
                   type="button"
                   onClick={() => setCor(corOpt.valor)}
                   className={`h-12 rounded-lg transition-all hover:scale-110 ${
-                    cor === corOpt.valor ? 'ring-2 ring-white ring-offset-2 ring-offset-zinc-900 scale-110' : ''
+                    cor === corOpt.valor ? 'ring-2 ring-[#0E2A3F] ring-offset-2 ring-offset-white scale-110' : ''
                   }`}
                   style={{ backgroundColor: corOpt.valor }}
                   title={corOpt.nome}
@@ -157,8 +157,8 @@ export default function NovaCategoriaModal({ aberto, onFechar, onSucesso }: Nova
           </div>
 
           {/* Preview */}
-          <div className="p-4 bg-zinc-900/30 rounded-lg border border-zinc-800">
-            <Label className="text-zinc-300 text-xs mb-2 block">Preview</Label>
+          <div className="p-4 bg-[#F4F3EC] rounded-lg border border-[#E9E7DC]">
+            <Label className="text-[#44586A] text-xs mb-2 block">Preview</Label>
             <div className="flex items-center gap-3">
               <div 
                 className="w-12 h-12 rounded-lg flex items-center justify-center"
@@ -167,10 +167,10 @@ export default function NovaCategoriaModal({ aberto, onFechar, onSucesso }: Nova
                 <div className="w-6 h-6 rounded-full" style={{ backgroundColor: cor }} />
               </div>
               <div>
-                <p className="font-semibold text-white">
+                <p className="font-semibold text-[#0E2A3F]">
                   {nome || 'Nome da Categoria'}
                 </p>
-                <p className="text-xs text-zinc-500">
+                <p className="text-xs text-[#8395A5]">
                   {tipo === 'RECEITA' ? 'Receita' : 'Despesa'}
                 </p>
               </div>
@@ -183,7 +183,7 @@ export default function NovaCategoriaModal({ aberto, onFechar, onSucesso }: Nova
               type="button"
               variant="default"
               onClick={onFechar}
-              className="flex-1 border-zinc-800 hover:bg-zinc-800"
+              className="flex-1 bg-white border border-[#E9E7DC] text-[#44586A] hover:bg-[#F4F3EC]"
               disabled={carregando}
             >
               Cancelar
@@ -193,8 +193,8 @@ export default function NovaCategoriaModal({ aberto, onFechar, onSucesso }: Nova
               disabled={carregando}
               className={`flex-1 ${
                 tipo === 'RECEITA'
-                  ? 'bg-green-600 hover:bg-green-700'
-                  : 'bg-red-600 hover:bg-red-700'
+                  ? 'bg-green-600 hover:bg-green-700 text-white'
+                  : 'bg-red-600 hover:bg-red-700 text-white'
               }`}
             >
               {carregando ? (

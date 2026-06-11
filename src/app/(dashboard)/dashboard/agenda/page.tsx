@@ -116,8 +116,8 @@ function AgendaPageContent() {
   return (
     <div className="flex flex-col h-full p-4 lg:p-6 overflow-hidden">
       {/* Header compacto - apenas mobile */}
-      <div className="md:hidden flex items-center justify-between gap-2 p-3 border-b border-zinc-800 bg-zinc-900/80 backdrop-blur-sm shrink-0">
-        <h1 className="text-lg font-bold text-white">{t('title')}</h1>
+      <div className="md:hidden flex items-center justify-between gap-2 p-3 border-b border-[#E9E7DC] bg-white shrink-0">
+        <h1 className="text-lg font-bold text-[#0E2A3F]">{t('title')}</h1>
         <Button
           onClick={() => {
             setSelectedDate(null);
@@ -127,7 +127,7 @@ function AgendaPageContent() {
             setIsModalOpen(true);
           }}
           size="sm"
-          className="bg-purple-600 hover:bg-purple-700 h-8"
+          className="bg-[#178E96] hover:bg-[#117178] text-white h-8"
         >
           <Plus className="w-3.5 h-3.5 mr-1.5" />
           {t('new')}
@@ -135,8 +135,8 @@ function AgendaPageContent() {
       </div>
 
       {/* Header desktop - integrado */}
-      <div className="hidden md:flex items-center justify-between gap-3 px-4 py-2 border-b border-zinc-800 bg-zinc-900/80 backdrop-blur-sm shrink-0">
-        <h1 className="text-xl font-bold text-white">{t('title')}</h1>
+      <div className="hidden md:flex items-center justify-between gap-3 px-4 py-2 border-b border-[#E9E7DC] bg-white shrink-0">
+        <h1 className="text-xl font-bold text-[#0E2A3F]">{t('title')}</h1>
         <Button
           onClick={() => {
             setSelectedDate(null);
@@ -145,7 +145,7 @@ function AgendaPageContent() {
             setIsEditMode(false);
             setIsModalOpen(true);
           }}
-          className="bg-purple-600 hover:bg-purple-700 h-9"
+          className="bg-[#178E96] hover:bg-[#117178] text-white h-9"
         >
           <Plus className="w-4 h-4 mr-2" />
           {t('newAppointment')}
@@ -153,12 +153,12 @@ function AgendaPageContent() {
       </div>
 
       {/* Calendário - ocupa todo espaço restante */}
-      <div className="flex-1 min-h-0 max-h-full bg-zinc-900/50 overflow-hidden flex flex-col">
+      <div className="flex-1 min-h-0 max-h-full bg-white border border-[#E9E7DC] rounded-xl shadow-sm overflow-hidden flex flex-col">
         {loading ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-aura-500 mx-auto mb-4"></div>
-              <p className="text-gray-400">{t('loadingCalendar')}</p>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#178E96] mx-auto mb-4"></div>
+              <p className="text-[#44586A]">{t('loadingCalendar')}</p>
             </div>
           </div>
         ) : view === 'day' ? (
@@ -207,10 +207,10 @@ function AgendaPageContent() {
             />
             <div className="flex items-center justify-center h-full">
               <div className="text-center">
-                <p className="text-xl font-semibold text-white mb-2">
+                <p className="text-xl font-semibold text-[#0E2A3F] mb-2">
                   {view === 'month' ? t('monthView') : t('yearView')}
                 </p>
-                <p className="text-gray-400">{tCommon('comingSoon')}</p>
+                <p className="text-[#44586A]">{tCommon('comingSoon')}</p>
               </div>
             </div>
           </>
@@ -219,10 +219,10 @@ function AgendaPageContent() {
 
       {/* Modal de Detalhes do Compromisso */}
       <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen} modal={false}>
-        <DialogContent className="bg-zinc-900 border-zinc-800 text-white w-[95vw] max-w-[500px] sm:max-w-md max-h-[90vh] overflow-y-auto">
+        <DialogContent className="bg-white border-[#E9E7DC] text-[#0E2A3F] w-[95vw] max-w-[500px] sm:max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-base sm:text-lg">{t('appointmentDetails')}</DialogTitle>
-            <DialogDescription className="text-gray-400 text-xs sm:text-sm">
+            <DialogDescription className="text-[#44586A] text-xs sm:text-sm">
               {t('viewAndManage')}
             </DialogDescription>
           </DialogHeader>
@@ -239,7 +239,7 @@ function AgendaPageContent() {
 
       {/* Modal de Criar/Editar Compromisso */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen} modal={false}>
-        <DialogContent className="bg-zinc-900 border-zinc-800 text-white w-[95vw] max-w-[600px] sm:max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="bg-white border-[#E9E7DC] text-[#0E2A3F] w-[95vw] max-w-[600px] sm:max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-base sm:text-lg">
               {isEditMode
@@ -248,7 +248,7 @@ function AgendaPageContent() {
                   ? `${t('newAppointment')} - ${format(selectedDate, 'dd/MM/yyyy')} ${t('startTimeLabel').replace(' *', '')} ${String(selectedHour).padStart(2, '0')}:00`
                   : t('newAppointment')}
             </DialogTitle>
-            <DialogDescription className="text-gray-400 text-xs sm:text-sm">
+            <DialogDescription className="text-[#44586A] text-xs sm:text-sm">
               {isEditMode ? t('updateInfo') : t('fillDetails')}
             </DialogDescription>
           </DialogHeader>

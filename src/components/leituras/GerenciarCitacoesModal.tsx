@@ -92,25 +92,25 @@ function ConteudoGerenciarCitacoes({ onAtualizar }: ConteudoGerenciarCitacoesPro
   };
 
   const CitacaoCard = ({ citacao, mostrarBotaoDestaque = true }: { citacao: Citacao; mostrarBotaoDestaque?: boolean }) => (
-    <div className="bg-zinc-800/50 border border-zinc-700 rounded-lg p-3 sm:p-4 space-y-3">
+    <div className="bg-[#F4F3EC] border border-[#D9D7CB] rounded-lg p-3 sm:p-4 space-y-3">
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
-          <p className="text-zinc-200 text-xs sm:text-sm italic line-clamp-3">&ldquo;{citacao.texto}&rdquo;</p>
-          {citacao.autor && <p className="text-xs text-zinc-400 mt-2">— {citacao.autor}</p>}
+          <p className="text-[#44586A] text-xs sm:text-sm italic line-clamp-3">&ldquo;{citacao.texto}&rdquo;</p>
+          {citacao.autor && <p className="text-xs text-[#44586A] mt-2">— {citacao.autor}</p>}
           {citacao.midia && (
-            <p className="text-xs text-zinc-500 mt-1">
+            <p className="text-xs text-[#8395A5] mt-1">
               {citacao.midia.tipo === 'LIVRO' ? '📚' : '🎬'} {citacao.midia.titulo}
             </p>
           )}
         </div>
       </div>
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-2 border-t border-zinc-700">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-2 border-t border-[#D9D7CB]">
         {mostrarBotaoDestaque && (
           <Button
             variant="ghost"
             size="sm"
             onClick={() => toggleDestaque(citacao)}
-            className={`flex-1 h-8 text-xs ${citacao.destaque ? 'bg-yellow-500/20 text-yellow-500 hover:bg-yellow-500/30' : 'text-zinc-400 hover:text-yellow-500'}`}
+            className={`flex-1 h-8 text-xs ${citacao.destaque ? 'bg-amber-50 text-[#D9A441] hover:bg-yellow-500/30' : 'text-[#44586A] hover:text-[#D9A441]'}`}
           >
             <Star className={`w-3 h-3 mr-1.5 ${citacao.destaque ? 'fill-current' : ''}`} />
             <span>{citacao.destaque ? 'Remover destaque' : 'Adicionar destaque'}</span>
@@ -120,7 +120,7 @@ function ConteudoGerenciarCitacoes({ onAtualizar }: ConteudoGerenciarCitacoesPro
           variant="ghost"
           size="sm"
           onClick={() => excluirCitacao(citacao.id)}
-          className="h-8 text-xs text-red-400 hover:text-red-300 hover:bg-red-500/10"
+          className="h-8 text-xs text-red-600 hover:text-red-700 hover:bg-red-50"
         >
           <Trash2 className="w-3 h-3 mr-1.5" /> Excluir
         </Button>
@@ -131,18 +131,18 @@ function ConteudoGerenciarCitacoes({ onAtualizar }: ConteudoGerenciarCitacoesPro
   return (
     <div className="flex-1 flex flex-col min-h-0">
       <Tabs defaultValue="destaque" className="flex-1 flex flex-col min-h-0">
-        <TabsList className="grid w-full grid-cols-2 bg-zinc-800/50">
-          <TabsTrigger value="destaque" className="data-[state=active]:bg-purple-600 text-white text-xs sm:text-sm font-medium">
+        <TabsList className="grid w-full grid-cols-2 bg-[#F4F3EC]">
+          <TabsTrigger value="destaque" className="data-[state=active]:bg-[#178E96] text-white text-xs sm:text-sm font-medium">
             Inspiradoras ({citacoesDestaque.length})
           </TabsTrigger>
-          <TabsTrigger value="todas" className="data-[state=active]:bg-purple-600 text-white text-xs sm:text-sm font-medium">
+          <TabsTrigger value="todas" className="data-[state=active]:bg-[#178E96] text-white text-xs sm:text-sm font-medium">
             Todas ({todasCitacoes.length})
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="destaque" className="flex-1 overflow-y-auto mt-4 space-y-3 pr-1">
           {loading ? <div className="animate-pulse text-center py-8">Carregando...</div> :
-            citacoesDestaque.length === 0 ? <div className="text-center py-12 text-zinc-500 text-sm">Nenhuma frase inspiradora</div> :
+            citacoesDestaque.length === 0 ? <div className="text-center py-12 text-[#8395A5] text-sm">Nenhuma frase inspiradora</div> :
             citacoesDestaque.map(c => <CitacaoCard key={c.id} citacao={c} />)}
         </TabsContent>
 
@@ -170,7 +170,7 @@ export function GerenciarCitacoesModal({ aberto, onFechar, onAtualizar, modoEmbu
 
   return (
     <Dialog open={aberto} onOpenChange={onFechar}>
-      <DialogContent className="bg-zinc-900 border-zinc-800 text-white max-w-3xl w-[95vw] max-h-[85vh] overflow-hidden flex flex-col p-6">
+      <DialogContent className="bg-white border-[#E9E7DC] text-[#0E2A3F] max-w-3xl w-[95vw] max-h-[85vh] overflow-hidden flex flex-col p-6">
         <DialogHeader>
           <DialogTitle>Gerenciar Citações</DialogTitle>
         </DialogHeader>

@@ -78,10 +78,10 @@ export function StarRating({
                   transition-all duration-150
                   ${
                     isFilled
-                      ? 'fill-yellow-400 text-yellow-400'
-                      : 'text-zinc-600 fill-transparent'
+                      ? 'fill-[#D9A441] text-[#D9A441]'
+                      : 'text-[#D9D7CB] fill-transparent'
                   }
-                  ${!readonly && !isFilled ? 'hover:text-yellow-400/50' : ''}
+                  ${!readonly && !isFilled ? 'hover:text-[#D9A441]/50' : ''}
                 `}
               />
             </button>
@@ -89,7 +89,7 @@ export function StarRating({
         })}
       </div>
       {showLabel && (
-        <span className="text-sm text-zinc-400 min-w-[3rem]">
+        <span className="text-sm text-[#8395A5] min-w-[3rem]">
           {value > 0 ? `${value}/5` : 'Sem nota'}
         </span>
       )}

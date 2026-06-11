@@ -89,7 +89,7 @@ export function GenerateReviewButton({
       <div className="relative">
         {/* Coroa indicando recurso premium - aparece apenas para usuários FREE */}
         {!isGenerating && !isPremium && (
-          <Crown className="w-3 h-3 text-yellow-400 absolute -top-1 -right-1 z-10" />
+          <Crown className="w-3 h-3 text-[#D9A441] absolute -top-1 -right-1 z-10" />
         )}
 
         <Button

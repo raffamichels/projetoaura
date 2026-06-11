@@ -107,17 +107,17 @@ export function CompromissoDetails({
 
         {/* Título */}
         <div>
-          <h3 className="text-base sm:text-lg font-bold text-white mb-1">{compromisso.titulo}</h3>
+          <h3 className="text-base sm:text-lg font-bold text-[#0E2A3F] mb-1">{compromisso.titulo}</h3>
           {compromisso.descricao && (
-            <p className="text-xs sm:text-sm text-gray-400">{compromisso.descricao}</p>
+            <p className="text-xs sm:text-sm text-[#44586A]">{compromisso.descricao}</p>
           )}
         </div>
 
         {/* Badge de Recorrente */}
         {compromisso.isRecorrente && (
-          <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 bg-aura-500/10 border border-aura-500/30 rounded-full">
-            <RefreshCw className="w-3 h-3 text-aura-400" />
-            <span className="text-[10px] sm:text-xs text-aura-400 font-medium">
+          <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 bg-[#E5F1F1] border border-[#178E96]/30 rounded-full">
+            <RefreshCw className="w-3 h-3 text-[#117178]" />
+            <span className="text-[10px] sm:text-xs text-[#117178] font-medium">
               {getDescricaoRecorrencia(
                 compromisso.tipoRecorrencia ?? 'semanal',
                 compromisso.intervaloRecorrencia || 1,
@@ -131,16 +131,16 @@ export function CompromissoDetails({
         <div className="space-y-2">
           {/* Data */}
           <div className="flex items-center gap-2 text-xs sm:text-sm">
-            <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 flex-shrink-0" />
-            <span className="text-gray-300">
+            <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#8395A5] flex-shrink-0" />
+            <span className="text-[#0E2A3F]">
               {format(parseISO(compromisso.data), "EEEE, d 'de' MMMM 'de' yyyy", { locale: dateLocale })}
             </span>
           </div>
 
           {/* Horário */}
           <div className="flex items-center gap-2 text-xs sm:text-sm">
-            <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 flex-shrink-0" />
-            <span className="text-gray-300">
+            <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#8395A5] flex-shrink-0" />
+            <span className="text-[#0E2A3F]">
               {compromisso.horaInicio}
               {compromisso.horaFim && ` - ${compromisso.horaFim}`}
             </span>
@@ -149,24 +149,24 @@ export function CompromissoDetails({
           {/* Categoria */}
           {compromisso.categoria && (
             <div className="flex items-center gap-2 text-xs sm:text-sm">
-              <Tag className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400 flex-shrink-0" />
-              <span className="text-gray-300 capitalize">{t(compromisso.categoria as any)}</span>
+              <Tag className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#8395A5] flex-shrink-0" />
+              <span className="text-[#0E2A3F] capitalize">{t(compromisso.categoria as any)}</span>
             </div>
           )}
 
           {/* Informação adicional sobre recorrência */}
           {compromisso.isRecorrente && compromisso.dataFimRecorrencia && (
-            <div className="text-[10px] sm:text-xs text-gray-500 pt-2 border-t border-zinc-800">
+            <div className="text-[10px] sm:text-xs text-[#8395A5] pt-2 border-t border-[#E9E7DC]">
               {t('repeatsUntil', { date: format(parseISO(compromisso.dataFimRecorrencia), "dd/MM/yyyy") })}
             </div>
           )}
         </div>
 
         {/* Ações */}
-        <div className="flex gap-2 pt-2 border-t border-zinc-700">
+        <div className="flex gap-2 pt-2 border-t border-[#E9E7DC]">
           <Button
             onClick={handleEditClick}
-            className="flex-1 bg-aura-500 hover:bg-aura-600 h-9 sm:h-10 text-sm sm:text-base"
+            className="flex-1 bg-[#178E96] hover:bg-[#117178] h-9 sm:h-10 text-sm sm:text-base"
             disabled={isDeleting}
           >
             <Edit className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
@@ -175,7 +175,7 @@ export function CompromissoDetails({
           <Button
             onClick={handleDeleteClick}
             variant="default"
-            className="flex-1 border-red-500/50 text-red-400 hover:bg-red-500/10 hover:text-red-400 h-9 sm:h-10 text-sm sm:text-base"
+            className="flex-1 border-red-500/50 text-red-500 hover:bg-red-50 hover:text-red-600 h-9 sm:h-10 text-sm sm:text-base"
             disabled={isDeleting}
           >
             <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />

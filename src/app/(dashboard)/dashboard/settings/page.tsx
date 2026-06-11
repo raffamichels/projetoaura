@@ -61,14 +61,14 @@ const NAV_ITEMS: NavItem[] = [
 // --- Sub-components (Outside of render) ---
 const SectionHeader = ({ title, description }: { title: string; description: string }) => (
   <div className="mb-6">
-    <h2 className="text-xl font-semibold text-zinc-100 tracking-tight">{title}</h2>
-    <p className="text-sm text-zinc-400 mt-1">{description}</p>
-    <Separator className="mt-4 bg-zinc-800" />
+    <h2 className="text-xl font-semibold text-[#0E2A3F] tracking-tight">{title}</h2>
+    <p className="text-sm text-[#44586A] mt-1">{description}</p>
+    <Separator className="mt-4 bg-[#E9E7DC]" />
   </div>
 );
 
 const SettingsCard = ({ children, className }: { children: React.ReactNode; className?: string }) => (
-  <div className={cn("bg-zinc-900/40 border border-zinc-800 rounded-xl p-6 shadow-sm", className)}>
+  <div className={cn("bg-white border border-[#E9E7DC] rounded-xl p-6 shadow-sm", className)}>
     {children}
   </div>
 );
@@ -84,8 +84,8 @@ const SettingRow = ({
 }) => (
   <div className="flex flex-col sm:flex-row sm:items-center justify-between py-4 first:pt-0 last:pb-0 gap-4">
     <div className="space-y-0.5">
-      <label className="text-sm font-medium text-zinc-200 block">{label}</label>
-      {desc && <p className="text-xs text-zinc-500 max-w-[400px]">{desc}</p>}
+      <label className="text-sm font-medium text-[#0E2A3F] block">{label}</label>
+      {desc && <p className="text-xs text-[#8395A5] max-w-[400px]">{desc}</p>}
     </div>
     <div className="shrink-0">{action}</div>
   </div>
@@ -355,7 +355,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100">
+    <div className="min-h-screen text-[#0E2A3F]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
         {/* Page Header */}
@@ -364,14 +364,14 @@ export default function SettingsPage() {
             <Button
               variant="ghost"
               onClick={() => router.push('/dashboard/perfil')}
-              className="mb-4 text-zinc-400 hover:text-white hover:bg-zinc-800 -ml-2"
+              className="mb-4 text-[#44586A] hover:text-[#0E2A3F] hover:bg-[#F4F3EC] -ml-2"
             >
               <ChevronLeft className="w-4 h-4 mr-1" />
               Voltar ao Perfil
             </Button>
           )}
-          <h1 className="text-3xl font-bold tracking-tight text-white">Configurações</h1>
-          <p className="text-zinc-400 mt-2 text-lg">
+          <h1 className="text-3xl font-bold tracking-tight text-[#0E2A3F]">Configurações</h1>
+          <p className="text-[#44586A] mt-2 text-lg">
             Gerencie sua conta e preferências do sistema.
           </p>
         </div>
@@ -389,13 +389,13 @@ export default function SettingsPage() {
                     key={item.id}
                     onClick={() => setActiveTab(item.id)}
                     className={cn(
-                      "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap lg:whitespace-normal text-left",
+                      "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-150 whitespace-nowrap lg:whitespace-normal text-left",
                       isActive
-                        ? "bg-zinc-900 text-white shadow-sm ring-1 ring-zinc-800"
-                        : "text-zinc-400 hover:text-zinc-100 hover:bg-zinc-900/50"
+                        ? "bg-[#E5F1F1] text-[#117178] font-semibold"
+                        : "text-[#44586A] hover:text-[#0E2A3F] hover:bg-[#F4F3EC]"
                     )}
                   >
-                    <Icon className={cn("w-4 h-4 shrink-0", isActive ? "text-aura-400" : "text-zinc-500")} />
+                    <Icon className={cn("w-4 h-4 shrink-0", isActive ? "text-[#117178]" : "text-[#8395A5]")} />
                     <span>{item.label}</span>
                   </button>
                 );
@@ -421,9 +421,9 @@ export default function SettingsPage() {
                       onChange={handleAvatarChange}
                       className="hidden"
                     />
-                    <Avatar className="w-24 h-24 border-4 border-zinc-900 shadow-xl">
+                    <Avatar className="w-24 h-24 border-4 border-white shadow-sm ring-2 ring-[#178E96]/20">
                       <AvatarImage src={session?.user?.image || undefined} />
-                      <AvatarFallback className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white text-2xl font-bold">
+                      <AvatarFallback className="bg-[#178E96] text-white text-2xl font-bold">
                         {getInitials(session?.user?.name)}
                       </AvatarFallback>
                     </Avatar>
@@ -431,7 +431,7 @@ export default function SettingsPage() {
                       className="absolute inset-0 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-all cursor-pointer"
                       onClick={handleAvatarClick}
                     >
-                      <div className="absolute inset-0 bg-black/60 rounded-full backdrop-blur-sm"></div>
+                      <div className="absolute inset-0 bg-[#0E2A3F]/60 rounded-full"></div>
                       {uploadingAvatar ? (
                         <Loader2 className="w-6 h-6 text-white relative z-10 animate-spin" />
                       ) : (
@@ -441,19 +441,19 @@ export default function SettingsPage() {
                   </div>
                   <div className="space-y-1 flex-1">
                     <div className="flex items-center gap-3">
-                      <h3 className="text-xl font-semibold text-white">{session?.user?.name}</h3>
-                      <Badge variant="outline" className="border-yellow-500/30 text-yellow-500 bg-yellow-500/10 gap-1 px-2 py-0.5">
+                      <h3 className="text-xl font-semibold text-[#0E2A3F]">{session?.user?.name}</h3>
+                      <Badge variant="outline" className="border-amber-200 text-amber-700 bg-amber-50 gap-1 px-2 py-0.5">
                         <Crown className="w-3 h-3" />
                         {session?.user?.plano || 'Free'}
                       </Badge>
                     </div>
-                    <p className="text-zinc-400">{session?.user?.email}</p>
+                    <p className="text-[#44586A]">{session?.user?.email}</p>
                     <div className="pt-3 flex gap-3">
                       <Button
                         size="sm"
                         onClick={handleAvatarClick}
                         disabled={uploadingAvatar}
-                        className="border-zinc-700 hover:bg-zinc-800 hover:text-white text-zinc-300"
+                        className="border border-[#D9D7CB] bg-white hover:bg-[#F4F3EC] text-[#0E2A3F]"
                       >
                         {uploadingAvatar ? (
                           <>
@@ -470,7 +470,7 @@ export default function SettingsPage() {
                           variant="ghost"
                           onClick={handleRemoverAvatar}
                           disabled={uploadingAvatar}
-                          className="text-zinc-400 hover:text-red-400 hover:bg-red-950/30"
+                          className="text-[#44586A] hover:text-red-600 hover:bg-red-50"
                         >
                           <Trash2 className="w-4 h-4 mr-1" />
                           Remover
@@ -484,43 +484,43 @@ export default function SettingsPage() {
                 <SettingsCard className="grid gap-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <Label htmlFor="fullname" className="text-zinc-300">Nome Completo</Label>
+                      <Label htmlFor="fullname" className="text-[#44586A]">Nome Completo</Label>
                       <Input
                         id="fullname"
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="bg-zinc-950/50 border-zinc-800 focus-visible:ring-aura-500/50 text-zinc-100"
+                        className="bg-white border-[#D9D7CB] text-[#0E2A3F] placeholder:text-[#8395A5] focus-visible:border-[#178E96] focus-visible:ring-[#178E96]/20"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="email" className="text-zinc-300">Email Principal</Label>
+                      <Label htmlFor="email" className="text-[#44586A]">Email Principal</Label>
                       <div className="relative">
-                        <Mail className="absolute left-3 top-2.5 h-4 w-4 text-zinc-500" />
+                        <Mail className="absolute left-3 top-2.5 h-4 w-4 text-[#8395A5]" />
                         <Input
                           id="email"
                           value={formData.email}
                           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                          className="pl-9 bg-zinc-950/50 border-zinc-800 focus-visible:ring-aura-500/50 text-zinc-100"
+                          className="pl-9 bg-white border-[#D9D7CB] text-[#0E2A3F] placeholder:text-[#8395A5] focus-visible:border-[#178E96] focus-visible:ring-[#178E96]/20"
                         />
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="phone" className="text-zinc-300">Telefone</Label>
+                      <Label htmlFor="phone" className="text-[#44586A]">Telefone</Label>
                       <div className="relative">
-                        <Smartphone className="absolute left-3 top-2.5 h-4 w-4 text-zinc-500" />
+                        <Smartphone className="absolute left-3 top-2.5 h-4 w-4 text-[#8395A5]" />
                         <Input
                           id="phone"
                           placeholder="+55"
                           value={formData.phone}
                           onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                          className="pl-9 bg-zinc-950/50 border-zinc-800 focus-visible:ring-aura-500/50 text-zinc-100"
+                          className="pl-9 bg-white border-[#D9D7CB] text-[#0E2A3F] placeholder:text-[#8395A5] focus-visible:border-[#178E96] focus-visible:ring-[#178E96]/20"
                         />
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex justify-end pt-4 border-t border-zinc-800">
-                    <Button onClick={handleSave} disabled={isSaving} className="bg-white text-black hover:bg-zinc-200 font-medium">
+                  <div className="flex justify-end pt-4 border-t border-[#E9E7DC]">
+                    <Button onClick={handleSave} disabled={isSaving} className="bg-[#178E96] hover:bg-[#117178] text-white font-medium transition-colors duration-150">
                       {isSaving ? 'Salvando...' : 'Salvar Alterações'}
                     </Button>
                   </div>
@@ -531,29 +531,29 @@ export default function SettingsPage() {
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <h3 className="text-lg font-medium text-zinc-100 flex items-center gap-2">
+                        <h3 className="text-lg font-medium text-[#0E2A3F] flex items-center gap-2">
                           <AtSign className="w-5 h-5" />
                           Username
                         </h3>
-                        <p className="text-sm text-zinc-400 mt-1">Seu identificador único no Aura</p>
+                        <p className="text-sm text-[#44586A] mt-1">Seu identificador único no Aura</p>
                       </div>
                       {session?.user?.username && (
-                        <Badge variant="outline" className="border-zinc-700 text-zinc-300 gap-1 px-3">
+                        <Badge variant="outline" className="border-[#D9D7CB] text-[#44586A] gap-1 px-3">
                           @{session.user.username}
                         </Badge>
                       )}
                     </div>
 
-                    <Separator className="bg-zinc-800" />
+                    <Separator className="bg-[#E9E7DC]" />
 
                     {!canChangeUsername ? (
-                      <div className="flex items-center gap-3 p-4 bg-zinc-900/50 rounded-xl border border-zinc-800">
-                        <AlertCircle className="w-5 h-5 text-yellow-500 flex-shrink-0" />
+                      <div className="flex items-center gap-3 p-4 bg-amber-50 rounded-xl border border-amber-200">
+                        <AlertCircle className="w-5 h-5 text-amber-700 flex-shrink-0" />
                         <div>
-                          <p className="text-sm text-zinc-300">
+                          <p className="text-sm text-[#44586A]">
                             Você poderá alterar seu username novamente em:
                           </p>
-                          <p className="text-sm font-medium text-zinc-100">
+                          <p className="text-sm font-medium text-[#0E2A3F]">
                             {nextChangeDate?.toLocaleDateString('pt-BR', {
                               day: '2-digit',
                               month: 'long',
@@ -564,18 +564,18 @@ export default function SettingsPage() {
                       </div>
                     ) : (
                       <div className="space-y-3">
-                        <Label className="text-zinc-300">Novo username</Label>
+                        <Label className="text-[#44586A]">Novo username</Label>
                         <div className="flex gap-3">
                           <div className="relative flex-1">
-                            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500">@</div>
+                            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8395A5]">@</div>
                             <Input
                               value={newUsername}
                               onChange={(e) => handleNewUsernameChange(e.target.value)}
                               placeholder="novo_username"
-                              className="pl-7 pr-10 bg-zinc-950/50 border-zinc-800 text-zinc-100"
+                              className="pl-7 pr-10 bg-white border-[#D9D7CB] text-[#0E2A3F] placeholder:text-[#8395A5] focus-visible:border-[#178E96] focus-visible:ring-[#178E96]/20"
                             />
                             <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                              {checkingUsername && <Loader2 className="w-4 h-4 text-zinc-400 animate-spin" />}
+                              {checkingUsername && <Loader2 className="w-4 h-4 text-[#8395A5] animate-spin" />}
                               {!checkingUsername && usernameAvailable === true && <Check className="w-4 h-4 text-green-500" />}
                               {!checkingUsername && usernameAvailable === false && <X className="w-4 h-4 text-red-500" />}
                             </div>
@@ -583,7 +583,7 @@ export default function SettingsPage() {
                           <Button
                             onClick={handleUpdateUsername}
                             disabled={updatingUsername || !usernameAvailable || !!usernameError}
-                            className="bg-white text-black hover:bg-zinc-200"
+                            className="bg-[#178E96] hover:bg-[#117178] text-white transition-colors duration-150"
                           >
                             {updatingUsername ? (
                               <>
@@ -596,12 +596,12 @@ export default function SettingsPage() {
                           </Button>
                         </div>
                         {usernameError && (
-                          <p className="text-xs text-red-400">{usernameError}</p>
+                          <p className="text-xs text-red-600">{usernameError}</p>
                         )}
                         {!usernameError && usernameAvailable === true && (
-                          <p className="text-xs text-green-400">Username disponível!</p>
+                          <p className="text-xs text-green-700">Username disponível!</p>
                         )}
-                        <p className="text-xs text-zinc-500">
+                        <p className="text-xs text-[#8395A5]">
                           Atenção: Após alterar, você deverá aguardar 30 dias para alterar novamente.
                         </p>
                       </div>
@@ -617,7 +617,7 @@ export default function SettingsPage() {
                 <SectionHeader title="Aparência" description="Customize a interface do sistema." />
 
                 <SettingsCard>
-                  <Label className="text-base text-zinc-200 mb-4 block">Tema da Interface</Label>
+                  <Label className="text-base text-[#0E2A3F] mb-4 block">Tema da Interface</Label>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     {[
                       { id: 'light', label: 'Claro', icon: Sun, comingSoon: true },
@@ -632,26 +632,26 @@ export default function SettingsPage() {
                           key={t.id}
                           onClick={() => !isDisabled && setTheme(t.id as 'light' | 'dark' | 'system')}
                           className={cn(
-                            "rounded-xl border-2 p-4 transition-all",
+                            "rounded-xl border-2 p-4 transition-all duration-150",
                             isDisabled
-                              ? "cursor-not-allowed opacity-60 border-zinc-800"
-                              : "cursor-pointer hover:bg-zinc-900",
+                              ? "cursor-not-allowed opacity-60 border-[#E9E7DC]"
+                              : "cursor-pointer hover:bg-[#F4F3EC]",
                             isSelected && !isDisabled
-                              ? "border-aura-500 bg-zinc-900 ring-1 ring-aura-500/20"
-                              : !isDisabled && "border-zinc-800 hover:border-zinc-700"
+                              ? "border-[#178E96] bg-[#E5F1F1] ring-1 ring-[#178E96]/20"
+                              : !isDisabled && "border-[#E9E7DC] hover:border-[#D9D7CB]"
                           )}
                         >
                           <div className="flex items-center justify-between mb-3">
-                            <div className={cn("p-2 rounded-full", isSelected && !isDisabled ? "bg-aura-500/20 text-aura-400" : "bg-zinc-800 text-zinc-400")}>
+                            <div className={cn("p-2 rounded-full", isSelected && !isDisabled ? "bg-[#178E96]/15 text-[#117178]" : "bg-[#F4F3EC] text-[#44586A]")}>
                               <Icon className="w-5 h-5" />
                             </div>
                             {isDisabled ? (
-                              <Badge variant="outline" className="bg-zinc-900 border-zinc-700 text-zinc-400 text-xs">Em Breve</Badge>
+                              <Badge variant="outline" className="bg-[#F4F3EC] border-[#D9D7CB] text-[#8395A5] text-xs">Em Breve</Badge>
                             ) : (
-                              isSelected && <CheckCircle2 className="w-5 h-5 text-aura-500" />
+                              isSelected && <CheckCircle2 className="w-5 h-5 text-[#178E96]" />
                             )}
                           </div>
-                          <span className={cn("font-medium", isSelected && !isDisabled ? "text-white" : "text-zinc-400")}>{t.label}</span>
+                          <span className={cn("font-medium", isSelected && !isDisabled ? "text-[#117178]" : "text-[#44586A]")}>{t.label}</span>
                         </div>
                       )
                     })}
@@ -666,14 +666,14 @@ export default function SettingsPage() {
                 <SectionHeader title="Notificações" description="Escolha o que você quer receber." />
 
                 <SettingsCard className="flex flex-col items-center justify-center py-12 text-center">
-                  <div className="p-4 rounded-full bg-zinc-800/50 mb-4">
-                    <Bell className="w-8 h-8 text-zinc-500" />
+                  <div className="p-4 rounded-full bg-[#F4F3EC] mb-4">
+                    <Bell className="w-8 h-8 text-[#8395A5]" />
                   </div>
-                  <h3 className="text-lg font-medium text-zinc-200 mb-2">Em Breve</h3>
-                  <p className="text-sm text-zinc-500 max-w-sm">
+                  <h3 className="text-lg font-medium text-[#0E2A3F] mb-2">Em Breve</h3>
+                  <p className="text-sm text-[#8395A5] max-w-sm">
                     As configurações de notificações estarão disponíveis em uma atualização futura.
                   </p>
-                  <Badge variant="outline" className="mt-4 bg-zinc-900 border-zinc-700 text-zinc-400">
+                  <Badge variant="outline" className="mt-4 bg-[#F4F3EC] border-[#D9D7CB] text-[#8395A5]">
                     Em Desenvolvimento
                   </Badge>
                 </SettingsCard>
@@ -693,30 +693,30 @@ export default function SettingsPage() {
                       <Button
                         variant="default"
                         size="sm"
-                        className="border-zinc-700 text-zinc-300"
+                        className="bg-[#178E96] hover:bg-[#117178] text-white transition-colors duration-150"
                         onClick={() => setShowPasswordModal(true)}
                       >
                         Redefinir
                       </Button>
                     }
                    />
-                   <Separator className="bg-zinc-800/50" />
+                   <Separator className="bg-[#E9E7DC]" />
                    <SettingRow
                     label="Autenticação em Dois Fatores"
                     desc="Adicione uma camada extra de segurança à sua conta."
-                    action={<Badge variant="outline" className="bg-zinc-900 border-zinc-700 text-zinc-400">Em Breve</Badge>}
+                    action={<Badge variant="outline" className="bg-[#F4F3EC] border-[#D9D7CB] text-[#8395A5]">Em Breve</Badge>}
                    />
                 </SettingsCard>
 
                 {/* Danger Zone - Discreto */}
                 <div className="pt-6">
-                  <div className="border border-zinc-800 rounded-xl p-5">
+                  <div className="border border-red-200 bg-red-50 rounded-xl p-5">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div>
-                        <h3 className="text-sm font-medium text-zinc-400 mb-1">
+                        <h3 className="text-sm font-medium text-red-600 mb-1">
                           Encerrar conta
                         </h3>
-                        <p className="text-xs text-zinc-500">
+                        <p className="text-xs text-[#8395A5]">
                           Esta ação é permanente e não pode ser desfeita.
                         </p>
                       </div>
@@ -724,7 +724,7 @@ export default function SettingsPage() {
                         variant="ghost"
                         size="sm"
                         onClick={() => setShowDeleteModal(true)}
-                        className="text-zinc-500 hover:text-zinc-400 hover:bg-zinc-900 text-xs"
+                        className="bg-red-600 hover:bg-red-700 text-white hover:text-white text-xs transition-colors duration-150"
                       >
                         Excluir conta
                       </Button>
@@ -743,9 +743,9 @@ export default function SettingsPage() {
                 <PlanoManager />
 
                 <SettingsCard>
-                   <div className="flex items-center gap-4 text-zinc-400 text-sm">
+                   <div className="flex items-center gap-4 text-[#44586A] text-sm">
                       <Laptop className="w-4 h-4" />
-                      <span>Precisa de uma fatura empresarial? <a href="#" className="text-aura-400 hover:underline">Entre em contato</a>.</span>
+                      <span>Precisa de uma fatura empresarial? <a href="#" className="text-[#117178] hover:underline">Entre em contato</a>.</span>
                    </div>
                 </SettingsCard>
               </div>

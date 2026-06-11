@@ -75,14 +75,14 @@ const NAV_ITEMS: NavItem[] = [
 // --- Sub-components (Outside of render) ---
 const SectionHeader = ({ title, description }: { title: string; description: string }) => (
   <div className="mb-6">
-    <h2 className="text-xl font-semibold text-zinc-100 tracking-tight">{title}</h2>
-    <p className="text-sm text-zinc-400 mt-1">{description}</p>
-    <Separator className="mt-4 bg-zinc-800" />
+    <h2 className="text-xl font-semibold text-[#0E2A3F] tracking-tight">{title}</h2>
+    <p className="text-sm text-[#44586A] mt-1">{description}</p>
+    <Separator className="mt-4 bg-[#E9E7DC]" />
   </div>
 );
 
 const SettingsCard = ({ children, className }: { children: React.ReactNode; className?: string }) => (
-  <div className={cn("bg-zinc-900/40 border border-zinc-800 rounded-xl p-6 shadow-sm", className)}>
+  <div className={cn("bg-white border border-[#E9E7DC] rounded-xl p-6 shadow-sm", className)}>
     {children}
   </div>
 );
@@ -272,10 +272,10 @@ export default function PerfilPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-zinc-950">
+      <div className="flex items-center justify-center min-h-screen bg-[#F2F1E9]">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-aura-500 mx-auto mb-4"></div>
-          <p className="text-zinc-400">Carregando perfil...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#178E96] mx-auto mb-4"></div>
+          <p className="text-[#44586A]">Carregando perfil...</p>
         </div>
       </div>
     );
@@ -285,13 +285,13 @@ export default function PerfilPage() {
   const completionPercentage = Math.round((unlockedAchievements.length / achievements.length) * 100);
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100">
+    <div className="min-h-screen text-[#0E2A3F]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
         {/* Page Header */}
         <div className="mb-10">
-          <h1 className="text-3xl font-bold tracking-tight text-white">Meu Perfil</h1>
-          <p className="text-zinc-400 mt-2 text-lg">
+          <h1 className="text-3xl font-bold tracking-tight text-[#0E2A3F]">Meu Perfil</h1>
+          <p className="text-[#44586A] mt-2 text-lg">
             Visualize suas informações, estatísticas e conquistas.
           </p>
         </div>
@@ -309,25 +309,25 @@ export default function PerfilPage() {
                     key={item.id}
                     onClick={() => setActiveTab(item.id)}
                     className={cn(
-                      "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap lg:whitespace-normal text-left",
+                      "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-150 whitespace-nowrap lg:whitespace-normal text-left",
                       isActive
-                        ? "bg-zinc-900 text-white shadow-sm ring-1 ring-zinc-800"
-                        : "text-zinc-400 hover:text-zinc-100 hover:bg-zinc-900/50"
+                        ? "bg-[#E5F1F1] text-[#117178] font-semibold"
+                        : "text-[#44586A] hover:text-[#0E2A3F] hover:bg-[#F4F3EC]"
                     )}
                   >
-                    <Icon className={cn("w-4 h-4 shrink-0", isActive ? "text-aura-400" : "text-zinc-500")} />
+                    <Icon className={cn("w-4 h-4 shrink-0", isActive ? "text-[#117178]" : "text-[#8395A5]")} />
                     <span>{item.label}</span>
                   </button>
                 );
               })}
 
               {/* Link para Configurações */}
-              <Separator className="my-2 bg-zinc-800 hidden lg:block" />
+              <Separator className="my-2 bg-[#E9E7DC] hidden lg:block" />
               <button
                 onClick={() => router.push('/dashboard/settings?from=profile')}
-                className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap lg:whitespace-normal text-left text-zinc-400 hover:text-zinc-100 hover:bg-zinc-900/50"
+                className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-150 whitespace-nowrap lg:whitespace-normal text-left text-[#44586A] hover:text-[#0E2A3F] hover:bg-[#F4F3EC]"
               >
-                <Settings className="w-4 h-4 shrink-0 text-zinc-500" />
+                <Settings className="w-4 h-4 shrink-0 text-[#8395A5]" />
                 <span>Configurações</span>
               </button>
             </nav>
@@ -343,28 +343,28 @@ export default function PerfilPage() {
 
                 {/* Profile Card - View Only */}
                 <SettingsCard className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-                  <Avatar className="w-24 h-24 border-4 border-zinc-900 shadow-xl ring-2 ring-aura-500/20">
+                  <Avatar className="w-24 h-24 border-4 border-white shadow-sm ring-2 ring-[#178E96]/20">
                     <AvatarImage src={session?.user?.image || undefined} />
-                    <AvatarFallback className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white text-2xl font-bold">
+                    <AvatarFallback className="bg-[#178E96] text-white text-2xl font-bold">
                       {getInitials(session?.user?.name)}
                     </AvatarFallback>
                   </Avatar>
                   <div className="space-y-1 flex-1">
                     <div className="flex items-center gap-3 flex-wrap">
-                      <h3 className="text-xl font-semibold text-white">{session?.user?.name}</h3>
-                      <Badge variant="outline" className="border-yellow-500/30 text-yellow-500 bg-yellow-500/10 gap-1 px-2 py-0.5">
+                      <h3 className="text-xl font-semibold text-[#0E2A3F]">{session?.user?.name}</h3>
+                      <Badge variant="outline" className="border-amber-200 text-amber-700 bg-amber-50 gap-1 px-2 py-0.5">
                         <Crown className="w-3 h-3" />
                         {session?.user?.plano || 'Free'}
                       </Badge>
                       {session?.user?.emailVerified && (
-                        <Badge variant="outline" className="border-green-500/30 text-green-400 bg-green-500/10 gap-1 px-2 py-0.5">
+                        <Badge variant="outline" className="border-green-200 text-green-700 bg-green-50 gap-1 px-2 py-0.5">
                           <CheckCircle2 className="w-3 h-3" />
                           Verificado
                         </Badge>
                       )}
                     </div>
-                    <p className="text-zinc-400">{session?.user?.email}</p>
-                    <p className="text-sm text-zinc-500 flex items-center gap-1">
+                    <p className="text-[#44586A]">{session?.user?.email}</p>
+                    <p className="text-sm text-[#8395A5] flex items-center gap-1">
                       <Clock className="w-3 h-3" />
                       Membro desde {new Date(session?.user?.createdAt || Date.now()).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}
                     </p>
@@ -372,7 +372,7 @@ export default function PerfilPage() {
                       <Button
                         size="sm"
                         onClick={() => router.push('/dashboard/settings?from=profile')}
-                        className="border-zinc-700 hover:bg-zinc-800 hover:text-white text-zinc-300"
+                        className="border border-[#D9D7CB] bg-white hover:bg-[#F4F3EC] text-[#0E2A3F]"
                       >
                         <Pencil className="w-4 h-4 mr-2" />
                         Editar Perfil
@@ -385,24 +385,24 @@ export default function PerfilPage() {
                 {session?.user?.plano === 'PREMIUM' ? (
                   <>
                     <SectionHeader title="Assinatura" description="Informações sobre seu plano atual." />
-                    <SettingsCard className="bg-gradient-to-br from-yellow-500/5 to-orange-500/5 border-yellow-500/20">
+                    <SettingsCard className="bg-[#0E2A3F] border-[#0E2A3F] text-white">
                       <div className="flex items-center gap-4 mb-4">
-                        <div className="p-3 bg-yellow-500/10 rounded-xl">
-                          <Crown className="w-6 h-6 text-yellow-400" />
+                        <div className="p-3 bg-white/10 rounded-xl">
+                          <Crown className="w-6 h-6 text-[#D9A441]" />
                         </div>
                         <div>
                           <h3 className="text-lg font-semibold text-white">Plano Premium</h3>
-                          <p className="text-sm text-zinc-400">Você tem acesso a todos os recursos</p>
+                          <p className="text-sm text-white/70">Você tem acesso a todos os recursos</p>
                         </div>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="p-3 bg-zinc-900/50 rounded-lg flex items-center justify-between">
-                          <span className="text-sm text-zinc-400">Status</span>
-                          <Badge className="bg-green-500/20 text-green-400 border-green-500/30">Ativo</Badge>
+                        <div className="p-3 bg-white/10 rounded-lg flex items-center justify-between">
+                          <span className="text-sm text-white/70">Status</span>
+                          <Badge className="bg-green-50 text-green-700 border-green-200">Ativo</Badge>
                         </div>
                         {getDaysUntilExpiration() && (
-                          <div className="p-3 bg-zinc-900/50 rounded-lg flex items-center justify-between">
-                            <span className="text-sm text-zinc-400">Renova em</span>
+                          <div className="p-3 bg-white/10 rounded-lg flex items-center justify-between">
+                            <span className="text-sm text-white/70">Renova em</span>
                             <span className="text-sm text-white font-medium">{getDaysUntilExpiration()} dias</span>
                           </div>
                         )}
@@ -412,17 +412,17 @@ export default function PerfilPage() {
                 ) : (
                   <>
                     <SectionHeader title="Upgrade" description="Aproveite todos os recursos do Aura." />
-                    <SettingsCard className="bg-gradient-to-br from-aura-500/5 to-purple-500/5 border-aura-500/20">
+                    <SettingsCard className="bg-[#0E2A3F] border-[#0E2A3F] text-white">
                       <div className="flex flex-col sm:flex-row items-center gap-6">
-                        <div className="p-4 bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-2xl">
-                          <Sparkles className="w-10 h-10 text-yellow-400" />
+                        <div className="p-4 bg-white/10 rounded-2xl">
+                          <Sparkles className="w-10 h-10 text-[#D9A441]" />
                         </div>
                         <div className="flex-1 text-center sm:text-left">
                           <h3 className="text-lg font-semibold text-white mb-1">Desbloqueie o Aura Premium</h3>
-                          <p className="text-sm text-zinc-400 mb-4">Acesse recursos exclusivos, conquistas especiais e muito mais.</p>
+                          <p className="text-sm text-white/70 mb-4">Acesse recursos exclusivos, conquistas especiais e muito mais.</p>
                           <Button
                             onClick={() => router.push('/premium')}
-                            className="bg-gradient-to-r from-yellow-500 via-orange-500 to-pink-500 hover:from-yellow-600 hover:via-orange-600 hover:to-pink-600 shadow-xl shadow-orange-500/25 border-0 text-white font-semibold"
+                            className="bg-[#178E96] hover:bg-[#117178] border-0 text-white font-semibold transition-colors duration-150"
                           >
                             <Sparkles className="w-4 h-4 mr-2" />
                             Fazer Upgrade
@@ -441,92 +441,92 @@ export default function PerfilPage() {
                 <SectionHeader title="Suas Estatísticas" description="Acompanhe seu progresso no Aura." />
 
                 <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-                  <div className="bg-gradient-to-br from-blue-500/10 to-blue-500/5 border border-blue-500/20 hover:border-blue-500/40 rounded-xl p-4 transition-all group">
+                  <div className="bg-white border border-[#E9E7DC] hover:border-[#D9D7CB] rounded-xl p-4 shadow-sm transition-all duration-150 group">
                     <div className="flex flex-col gap-2">
                       <div className="flex items-center justify-between">
-                        <div className="p-2 bg-blue-500/10 rounded-lg group-hover:bg-blue-500/20 transition-colors">
-                          <Calendar className="w-5 h-5 text-blue-400" />
+                        <div className="p-2 bg-blue-50 rounded-lg group-hover:bg-blue-100 transition-colors duration-150">
+                          <Calendar className="w-5 h-5 text-blue-600" />
                         </div>
-                        <TrendingUp className="w-4 h-4 text-blue-400/50" />
+                        <TrendingUp className="w-4 h-4 text-blue-300" />
                       </div>
                       <div>
-                        <p className="text-2xl font-bold text-white">{stats.compromissosTotal}</p>
-                        <p className="text-xs text-zinc-400">Compromissos</p>
+                        <p className="text-2xl font-bold text-[#0E2A3F]">{stats.compromissosTotal}</p>
+                        <p className="text-xs text-[#8395A5]">Compromissos</p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-gradient-to-br from-purple-500/10 to-purple-500/5 border border-purple-500/20 hover:border-purple-500/40 rounded-xl p-4 transition-all group">
+                  <div className="bg-white border border-[#E9E7DC] hover:border-[#D9D7CB] rounded-xl p-4 shadow-sm transition-all duration-150 group">
                     <div className="flex flex-col gap-2">
                       <div className="flex items-center justify-between">
-                        <div className="p-2 bg-purple-500/10 rounded-lg group-hover:bg-purple-500/20 transition-colors">
-                          <BookOpen className="w-5 h-5 text-purple-400" />
+                        <div className="p-2 bg-[#E5F1F1] rounded-lg group-hover:bg-[#d3e9e9] transition-colors duration-150">
+                          <BookOpen className="w-5 h-5 text-[#117178]" />
                         </div>
-                        <Activity className="w-4 h-4 text-purple-400/50" />
+                        <Activity className="w-4 h-4 text-[#178E96]/50" />
                       </div>
                       <div>
-                        <p className="text-2xl font-bold text-white">{stats.cursosAtivos}</p>
-                        <p className="text-xs text-zinc-400">Cursos Ativos</p>
+                        <p className="text-2xl font-bold text-[#0E2A3F]">{stats.cursosAtivos}</p>
+                        <p className="text-xs text-[#8395A5]">Cursos Ativos</p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-gradient-to-br from-green-500/10 to-green-500/5 border border-green-500/20 hover:border-green-500/40 rounded-xl p-4 transition-all group">
+                  <div className="bg-white border border-[#E9E7DC] hover:border-[#D9D7CB] rounded-xl p-4 shadow-sm transition-all duration-150 group">
                     <div className="flex flex-col gap-2">
                       <div className="flex items-center justify-between">
-                        <div className="p-2 bg-green-500/10 rounded-lg group-hover:bg-green-500/20 transition-colors">
-                          <Target className="w-5 h-5 text-green-400" />
+                        <div className="p-2 bg-green-50 rounded-lg group-hover:bg-green-100 transition-colors duration-150">
+                          <Target className="w-5 h-5 text-green-600" />
                         </div>
-                        <Check className="w-4 h-4 text-green-400/50" />
+                        <Check className="w-4 h-4 text-green-300" />
                       </div>
                       <div>
-                        <p className="text-2xl font-bold text-white">{stats.metasAlcancadas}</p>
-                        <p className="text-xs text-zinc-400">Metas</p>
+                        <p className="text-2xl font-bold text-[#0E2A3F]">{stats.metasAlcancadas}</p>
+                        <p className="text-xs text-[#8395A5]">Metas</p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-gradient-to-br from-orange-500/10 to-orange-500/5 border border-orange-500/20 hover:border-orange-500/40 rounded-xl p-4 transition-all group">
+                  <div className="bg-white border border-[#E9E7DC] hover:border-[#D9D7CB] rounded-xl p-4 shadow-sm transition-all duration-150 group">
                     <div className="flex flex-col gap-2">
                       <div className="flex items-center justify-between">
-                        <div className="p-2 bg-orange-500/10 rounded-lg group-hover:bg-orange-500/20 transition-colors">
-                          <Flame className="w-5 h-5 text-orange-400" />
+                        <div className="p-2 bg-amber-50 rounded-lg group-hover:bg-amber-100 transition-colors duration-150">
+                          <Flame className="w-5 h-5 text-amber-700" />
                         </div>
-                        <Zap className="w-4 h-4 text-orange-400/50" />
+                        <Zap className="w-4 h-4 text-amber-300" />
                       </div>
                       <div>
-                        <p className="text-2xl font-bold text-white">{stats.diasConsecutivos}</p>
-                        <p className="text-xs text-zinc-400">Dias Seguidos</p>
+                        <p className="text-2xl font-bold text-[#0E2A3F]">{stats.diasConsecutivos}</p>
+                        <p className="text-xs text-[#8395A5]">Dias Seguidos</p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-gradient-to-br from-cyan-500/10 to-cyan-500/5 border border-cyan-500/20 hover:border-cyan-500/40 rounded-xl p-4 transition-all group">
+                  <div className="bg-white border border-[#E9E7DC] hover:border-[#D9D7CB] rounded-xl p-4 shadow-sm transition-all duration-150 group">
                     <div className="flex flex-col gap-2">
                       <div className="flex items-center justify-between">
-                        <div className="p-2 bg-cyan-500/10 rounded-lg group-hover:bg-cyan-500/20 transition-colors">
-                          <DollarSign className="w-5 h-5 text-cyan-400" />
+                        <div className="p-2 bg-cyan-50 rounded-lg group-hover:bg-cyan-100 transition-colors duration-150">
+                          <DollarSign className="w-5 h-5 text-cyan-600" />
                         </div>
-                        <BarChart3 className="w-4 h-4 text-cyan-400/50" />
+                        <BarChart3 className="w-4 h-4 text-cyan-300" />
                       </div>
                       <div>
-                        <p className="text-2xl font-bold text-white">{stats.transacoesTotal}</p>
-                        <p className="text-xs text-zinc-400">Transações</p>
+                        <p className="text-2xl font-bold text-[#0E2A3F]">{stats.transacoesTotal}</p>
+                        <p className="text-xs text-[#8395A5]">Transações</p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-gradient-to-br from-pink-500/10 to-pink-500/5 border border-pink-500/20 hover:border-pink-500/40 rounded-xl p-4 transition-all group">
+                  <div className="bg-white border border-[#E9E7DC] hover:border-[#D9D7CB] rounded-xl p-4 shadow-sm transition-all duration-150 group">
                     <div className="flex flex-col gap-2">
                       <div className="flex items-center justify-between">
-                        <div className="p-2 bg-pink-500/10 rounded-lg group-hover:bg-pink-500/20 transition-colors">
-                          <Book className="w-5 h-5 text-pink-400" />
+                        <div className="p-2 bg-rose-50 rounded-lg group-hover:bg-rose-100 transition-colors duration-150">
+                          <Book className="w-5 h-5 text-rose-600" />
                         </div>
-                        <Star className="w-4 h-4 text-pink-400/50" />
+                        <Star className="w-4 h-4 text-rose-300" />
                       </div>
                       <div>
-                        <p className="text-2xl font-bold text-white">{stats.midiasLidas}</p>
-                        <p className="text-xs text-zinc-400">Leituras</p>
+                        <p className="text-2xl font-bold text-[#0E2A3F]">{stats.midiasLidas}</p>
+                        <p className="text-xs text-[#8395A5]">Leituras</p>
                       </div>
                     </div>
                   </div>
@@ -536,16 +536,16 @@ export default function PerfilPage() {
                 <SettingsCard>
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 bg-aura-500/10 rounded-lg">
-                        <Trophy className="w-5 h-5 text-aura-400" />
+                      <div className="p-2 bg-[#E5F1F1] rounded-lg">
+                        <Trophy className="w-5 h-5 text-[#117178]" />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-white">Progresso de Conquistas</h3>
-                        <p className="text-sm text-zinc-400">{unlockedAchievements.length} de {achievements.length} desbloqueadas</p>
+                        <h3 className="font-semibold text-[#0E2A3F]">Progresso de Conquistas</h3>
+                        <p className="text-sm text-[#44586A]">{unlockedAchievements.length} de {achievements.length} desbloqueadas</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-2xl font-bold text-white">{completionPercentage}%</p>
+                      <p className="text-2xl font-bold text-[#0E2A3F]">{completionPercentage}%</p>
                     </div>
                   </div>
                   <Progress value={completionPercentage} className="h-2" />
@@ -562,17 +562,17 @@ export default function PerfilPage() {
                 <SettingsCard>
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 bg-yellow-500/10 rounded-lg">
-                        <Trophy className="w-5 h-5 text-yellow-400" />
+                      <div className="p-2 bg-amber-50 rounded-lg">
+                        <Trophy className="w-5 h-5 text-amber-700" />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-white">Seu Progresso</h3>
-                        <p className="text-sm text-zinc-400">{unlockedAchievements.length} conquistas desbloqueadas</p>
+                        <h3 className="font-semibold text-[#0E2A3F]">Seu Progresso</h3>
+                        <p className="text-sm text-[#44586A]">{unlockedAchievements.length} conquistas desbloqueadas</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-3xl font-bold text-white">{completionPercentage}%</p>
-                      <p className="text-xs text-zinc-400">Completo</p>
+                      <p className="text-3xl font-bold text-[#0E2A3F]">{completionPercentage}%</p>
+                      <p className="text-xs text-[#8395A5]">Completo</p>
                     </div>
                   </div>
                   <Progress value={completionPercentage} className="h-3" />
@@ -591,7 +591,7 @@ export default function PerfilPage() {
                         className={cn(
                           "transition-all",
                           isUnlocked
-                            ? 'bg-gradient-to-br from-aura-500/10 to-aura-500/5 border-aura-500/30 shadow-lg shadow-aura-500/5'
+                            ? 'bg-[#E5F1F1] border-[#178E96]/40'
                             : 'opacity-60'
                         )}
                       >
@@ -600,25 +600,25 @@ export default function PerfilPage() {
                             className={cn(
                               "p-3 rounded-xl",
                               isUnlocked
-                                ? 'bg-aura-500/20 text-aura-400'
-                                : 'bg-zinc-800/50 text-zinc-500'
+                                ? 'bg-[#178E96]/15 text-[#117178]'
+                                : 'bg-[#F4F3EC] text-[#8395A5]'
                             )}
                           >
                             <Icon className="w-6 h-6" />
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-start justify-between gap-2">
-                              <h4 className="font-semibold text-white">{achievement.title}</h4>
-                              {isUnlocked && <CheckCircle2 className="w-5 h-5 text-green-400 shrink-0" />}
+                              <h4 className="font-semibold text-[#0E2A3F]">{achievement.title}</h4>
+                              {isUnlocked && <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0" />}
                             </div>
-                            <p className="text-sm text-zinc-400 mt-1">{achievement.description}</p>
+                            <p className="text-sm text-[#44586A] mt-1">{achievement.description}</p>
                             {hasProgress && (
                               <div className="mt-3">
                                 <div className="flex items-center justify-between text-xs mb-1">
-                                  <span className="text-zinc-500">
+                                  <span className="text-[#8395A5]">
                                     {achievement.progress}/{achievement.total}
                                   </span>
-                                  <span className="text-zinc-500">
+                                  <span className="text-[#8395A5]">
                                     {Math.round(((achievement.progress || 0) / (achievement.total || 1)) * 100)}%
                                   </span>
                                 </div>

@@ -456,8 +456,8 @@ export default function EstudosPage() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
-          <p className="text-zinc-400">{t('loading')}</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#178E96] mx-auto mb-4"></div>
+          <p className="text-[#44586A]">{t('loading')}</p>
         </div>
       </div>
     );
@@ -468,14 +468,14 @@ export default function EstudosPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white">{t('pageTitle')}</h1>
-          <p className="text-sm sm:text-base text-zinc-400">{t('subtitle')}</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#0E2A3F]">{t('pageTitle')}</h1>
+          <p className="text-sm sm:text-base text-[#44586A]">{t('subtitle')}</p>
         </div>
         <div className="flex flex-wrap gap-2 sm:gap-3 w-full sm:w-auto">
           <Button
             onClick={() => setBuscaAtiva(!buscaAtiva)}
             variant="default"
-            className="flex-1 sm:flex-none border-zinc-700 hover:bg-zinc-800 h-auto py-2 text-sm"
+            className="flex-1 sm:flex-none h-auto py-2 text-sm"
           >
             <Search className="w-4 h-4 mr-1 sm:mr-2" />
             <span className="hidden xs:inline">{t('search')}</span>
@@ -483,7 +483,7 @@ export default function EstudosPage() {
           <Button
             onClick={() => setModalAnotacaoAberto(true)}
             variant="default"
-            className="flex-1 sm:flex-none border-zinc-700 hover:bg-zinc-800 h-auto py-2 text-sm"
+            className="flex-1 sm:flex-none h-auto py-2 text-sm"
           >
             <StickyNote className="w-4 h-4 mr-1 sm:mr-2" />
             <span className="hidden xs:inline">{t('newNote')}</span>
@@ -491,7 +491,7 @@ export default function EstudosPage() {
           </Button>
           <Button
             onClick={() => setModalCursoAberto(true)}
-            className="flex-1 sm:flex-none bg-purple-600 hover:bg-purple-700 h-auto py-2 text-sm"
+            className="flex-1 sm:flex-none bg-[#178E96] hover:bg-[#117178] h-auto py-2 text-sm"
           >
             <Plus className="w-4 h-4 mr-1 sm:mr-2" />
             <span className="hidden xs:inline">{t('newCourse')}</span>
@@ -502,7 +502,7 @@ export default function EstudosPage() {
 
       {/* Busca */}
       {buscaAtiva && (
-        <Card className="bg-zinc-900 border-zinc-800">
+        <Card className="bg-white border-[#E9E7DC]">
           <CardContent className="p-4">
             <Input
               placeholder={t('searchPlaceholder')}
@@ -512,26 +512,26 @@ export default function EstudosPage() {
                 setTermoBusca(e.target.value);
                 buscarConteudo(e.target.value);
               }}
-              className="bg-zinc-800 border-zinc-700"
+              className="bg-[#F4F3EC] border-[#D9D7CB]"
             />
             {resultadosBusca && (
               <div className="mt-4 space-y-4">
                 {resultadosBusca.total === 0 ? (
-                  <p className="text-zinc-500 text-center py-4">{t('noResults')}</p>
+                  <p className="text-[#8395A5] text-center py-4">{t('noResults')}</p>
                 ) : (
                   <>
                     {resultadosBusca.cursos.length > 0 && (
                       <div>
-                        <h3 className="text-sm font-semibold text-zinc-400 mb-2">{t('courses')}</h3>
+                        <h3 className="text-sm font-semibold text-[#44586A] mb-2">{t('courses')}</h3>
                         {resultadosBusca.cursos.map((curso: any) => (
                           <div
                             key={curso.id}
-                            className="p-3 bg-zinc-800 rounded-lg hover:bg-zinc-750 cursor-pointer"
+                            className="p-3 bg-[#F4F3EC] rounded-lg hover:bg-[#E9E7DC] cursor-pointer"
                             onClick={() => window.location.href = `/dashboard/estudos/${curso.id}`}
                           >
                             <div className="flex items-center gap-2">
                               <div className="w-3 h-3 rounded-full" style={{ backgroundColor: curso.cor }} />
-                              <span className="text-white font-medium">{curso.nome}</span>
+                              <span className="text-[#0E2A3F] font-medium">{curso.nome}</span>
                             </div>
                           </div>
                         ))}
@@ -539,14 +539,14 @@ export default function EstudosPage() {
                     )}
                     {resultadosBusca.paginas.length > 0 && (
                       <div>
-                        <h3 className="text-sm font-semibold text-zinc-400 mb-2">{t('pages')}</h3>
+                        <h3 className="text-sm font-semibold text-[#44586A] mb-2">{t('pages')}</h3>
                         {resultadosBusca.paginas.map((pagina: any) => (
                           <div
                             key={pagina.id}
-                            className="p-3 bg-zinc-800 rounded-lg hover:bg-zinc-750 cursor-pointer"
+                            className="p-3 bg-[#F4F3EC] rounded-lg hover:bg-[#E9E7DC] cursor-pointer"
                           >
-                            <p className="text-white font-medium">{pagina.titulo}</p>
-                            <p className="text-sm text-zinc-400">{pagina.modulo.curso.nome}</p>
+                            <p className="text-[#0E2A3F] font-medium">{pagina.titulo}</p>
+                            <p className="text-sm text-[#44586A]">{pagina.modulo.curso.nome}</p>
                           </div>
                         ))}
                       </div>
@@ -561,56 +561,56 @@ export default function EstudosPage() {
 
       {/* Estatísticas */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
-        <Card className="bg-zinc-900 border-zinc-800">
+        <Card className="bg-white border-[#E9E7DC]">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-zinc-400">
+            <CardTitle className="text-sm font-medium text-[#44586A]">
               {t('totalCourses')}
             </CardTitle>
-            <BookOpen className="w-4 h-4 text-purple-500" />
+            <BookOpen className="w-4 h-4 text-[#178E96]" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white">{cursos.length}</div>
+            <div className="text-2xl font-bold text-[#0E2A3F]">{cursos.length}</div>
           </CardContent>
         </Card>
 
-        <Card className="bg-zinc-900 border-zinc-800">
+        <Card className="bg-white border-[#E9E7DC]">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-zinc-400">
+            <CardTitle className="text-sm font-medium text-[#44586A]">
               {t('totalModules')}
             </CardTitle>
-            <FileText className="w-4 h-4 text-blue-500" />
+            <FileText className="w-4 h-4 text-[#154F6D]" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white">
+            <div className="text-2xl font-bold text-[#0E2A3F]">
               {cursos.reduce((acc, c) => acc + c._count.modulos, 0)}
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-zinc-900 border-zinc-800">
+        <Card className="bg-white border-[#E9E7DC]">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-zinc-400">
+            <CardTitle className="text-sm font-medium text-[#44586A]">
               {t('totalNotes')}
             </CardTitle>
-            <StickyNote className="w-4 h-4 text-yellow-500" />
+            <StickyNote className="w-4 h-4 text-[#D9A441]" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white">{anotacoes.length}</div>
+            <div className="text-2xl font-bold text-[#0E2A3F]">{anotacoes.length}</div>
           </CardContent>
         </Card>
       </div>
 
       {/* Cursos */}
       <div>
-        <h2 className="text-lg sm:text-xl font-bold text-white mb-3 sm:mb-4">{t('myCourses')}</h2>
+        <h2 className="text-lg sm:text-xl font-bold text-[#0E2A3F] mb-3 sm:mb-4">{t('myCourses')}</h2>
         {cursos.length === 0 ? (
-          <Card className="bg-zinc-900 border-zinc-800">
+          <Card className="bg-white border-[#E9E7DC]">
             <CardContent className="p-6 sm:p-8 text-center">
-              <BookOpen className="w-10 h-10 sm:w-12 sm:h-12 text-zinc-600 mx-auto mb-3 sm:mb-4" />
-              <p className="text-sm sm:text-base text-zinc-400 mb-3 sm:mb-4">{t('noCoursesYet')}</p>
+              <BookOpen className="w-10 h-10 sm:w-12 sm:h-12 text-[#8395A5] mx-auto mb-3 sm:mb-4" />
+              <p className="text-sm sm:text-base text-[#44586A] mb-3 sm:mb-4">{t('noCoursesYet')}</p>
               <Button
                 onClick={() => setModalCursoAberto(true)}
-                className="bg-purple-600 hover:bg-purple-700 h-auto py-2.5 text-sm sm:text-base"
+                className="bg-[#178E96] hover:bg-[#117178] h-auto py-2.5 text-sm sm:text-base"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 {t('createFirstCourse')}
@@ -622,7 +622,7 @@ export default function EstudosPage() {
             {cursos.map((curso) => (
               <Card
                 key={curso.id}
-                className="bg-zinc-900 border-zinc-800 hover:border-zinc-700 cursor-pointer transition-colors"
+                className="bg-white border-[#E9E7DC] hover:border-[#D9D7CB] cursor-pointer transition-colors"
                 onClick={() => window.location.href = `/dashboard/estudos/${curso.id}`}
               >
                 <CardHeader>
@@ -635,17 +635,17 @@ export default function EstudosPage() {
                         <BookOpen className="w-5 h-5" />
                       </div>
                       <div>
-                        <CardTitle className="text-white text-lg">{curso.nome}</CardTitle>
+                        <CardTitle className="text-[#0E2A3F] text-lg">{curso.nome}</CardTitle>
                         {curso.descricao && (
-                          <p className="text-sm text-zinc-400 mt-1">{curso.descricao}</p>
+                          <p className="text-sm text-[#44586A] mt-1">{curso.descricao}</p>
                         )}
                       </div>
                     </div>
-                    <ChevronRight className="w-5 h-5 text-zinc-500" />
+                    <ChevronRight className="w-5 h-5 text-[#8395A5]" />
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex gap-4 text-sm text-zinc-400">
+                  <div className="flex gap-4 text-sm text-[#44586A]">
                     <div>
                       <span className="font-medium">{curso._count.modulos}</span> {t('modules')}
                     </div>
@@ -663,12 +663,12 @@ export default function EstudosPage() {
       {/* Anotações Recentes */}
       {anotacoes.length > 0 && (
         <div>
-          <h2 className="text-xl font-bold text-white mb-4">{t('recentNotes')}</h2>
+          <h2 className="text-xl font-bold text-[#0E2A3F] mb-4">{t('recentNotes')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {anotacoes.slice(0, 6).map((anotacao) => (
               <Card
                 key={anotacao.id}
-                className="bg-zinc-900 border-zinc-800 hover:border-zinc-700 cursor-pointer transition-colors"
+                className="bg-white border-[#E9E7DC] hover:border-[#D9D7CB] cursor-pointer transition-colors"
                 onClick={() => abrirAnotacao(anotacao)}
               >
                 <CardHeader>
@@ -680,11 +680,11 @@ export default function EstudosPage() {
                       <StickyNote className="w-4 h-4" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <CardTitle className="text-white text-base truncate">
+                      <CardTitle className="text-[#0E2A3F] text-base truncate">
                         {anotacao.titulo}
                       </CardTitle>
                       {anotacao.curso && (
-                        <p className="text-xs text-zinc-500 mt-1">{anotacao.curso.nome}</p>
+                        <p className="text-xs text-[#8395A5] mt-1">{anotacao.curso.nome}</p>
                       )}
                     </div>
                   </div>
@@ -697,42 +697,42 @@ export default function EstudosPage() {
 
       {/* Modal Novo Curso */}
       <Dialog open={modalCursoAberto} onOpenChange={handleFecharModalCurso}>
-        <DialogContent className="bg-zinc-900 border-zinc-800">
+        <DialogContent className="bg-white border-[#E9E7DC]">
           <DialogHeader>
-            <DialogTitle className="text-white">{t('newCourseTitle')}</DialogTitle>
+            <DialogTitle className="text-[#0E2A3F]">{t('newCourseTitle')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="nome" className="text-zinc-300">{t('courseName')}</Label>
+              <Label htmlFor="nome" className="text-[#44586A]">{t('courseName')}</Label>
               <Input
                 id="nome"
                 autoComplete="off"
                 value={novoCurso.nome}
                 onChange={(e) => setNovoCurso({ ...novoCurso, nome: e.target.value })}
-                className="bg-zinc-800 border-zinc-700 text-white mt-1"
+                className="bg-white border-[#D9D7CB] text-[#0E2A3F] mt-1"
                 placeholder={t('courseNamePlaceholder')}
               />
             </div>
             <div>
-              <Label htmlFor="descricao" className="text-zinc-300">{t('descriptionOptional')}</Label>
+              <Label htmlFor="descricao" className="text-[#44586A]">{t('descriptionOptional')}</Label>
               <Input
                 id="descricao"
                 autoComplete="off"
                 value={novoCurso.descricao}
                 onChange={(e) => setNovoCurso({ ...novoCurso, descricao: e.target.value })}
-                className="bg-zinc-800 border-zinc-700 text-white mt-1"
+                className="bg-white border-[#D9D7CB] text-[#0E2A3F] mt-1"
                 placeholder={t('descriptionPlaceholder')}
               />
             </div>
             <div>
-              <Label className="text-zinc-300">{t('color')}</Label>
+              <Label className="text-[#44586A]">{t('color')}</Label>
               <div className="flex gap-2 mt-2">
                 {cores.map((cor) => (
                   <button
                     key={cor}
                     onClick={() => setNovoCurso({ ...novoCurso, cor })}
                     className={`w-8 h-8 rounded-full ${
-                      novoCurso.cor === cor ? 'ring-2 ring-white ring-offset-2 ring-offset-zinc-900' : ''
+                      novoCurso.cor === cor ? 'ring-2 ring-[#0E2A3F] ring-offset-2 ring-offset-white' : ''
                     }`}
                     style={{ backgroundColor: cor }}
                   />
@@ -741,16 +741,15 @@ export default function EstudosPage() {
             </div>
             <div className="flex gap-2 justify-end pt-4">
               <Button
-                variant="default"
+                variant="outline"
                 onClick={() => handleFecharModalCurso(false)}
-                className="border-zinc-700"
               >
                 {t('cancel')}
               </Button>
               <Button
                 onClick={criarCurso}
                 disabled={!novoCurso.nome || criandoCurso}
-                className="bg-purple-600 hover:bg-purple-700"
+                className="bg-[#178E96] hover:bg-[#117178]"
               >
                 {criandoCurso ? (
                   <>
@@ -768,9 +767,9 @@ export default function EstudosPage() {
 
       {/* Modal Nova Anotação */}
       <Dialog open={modalAnotacaoAberto} onOpenChange={handleFecharModalAnotacao}>
-        <DialogContent className={`bg-zinc-900 border-zinc-800 text-white p-6 transition-all ${tipoAnotacao === 'ia' ? 'max-w-4xl' : tipoAnotacao === 'audio' ? 'max-w-lg' : 'max-w-xl'}`}>
+        <DialogContent className={`bg-white border-[#E9E7DC] text-[#0E2A3F] p-6 transition-all ${tipoAnotacao === 'ia' ? 'max-w-4xl' : tipoAnotacao === 'audio' ? 'max-w-lg' : 'max-w-xl'}`}>
           <DialogHeader>
-            <DialogTitle>{t('newNoteTitle')}</DialogTitle>
+            <DialogTitle className="text-[#0E2A3F]">{t('newNoteTitle')}</DialogTitle>
           </DialogHeader>
 
           <div className="space-y-1">
@@ -781,8 +780,8 @@ export default function EstudosPage() {
                 onClick={() => setTipoAnotacao('livre')}
                 className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg text-sm font-medium transition-all ${
                   tipoAnotacao === 'livre'
-                    ? 'bg-purple-500/20 text-purple-400 border border-purple-500/50'
-                    : 'bg-zinc-800 text-zinc-400 border border-zinc-700 hover:border-zinc-600'
+                    ? 'bg-[#E5F1F1] text-[#117178] font-semibold border border-[#178E96]/40'
+                    : 'bg-[#F4F3EC] text-[#5E7081] border border-[#E9E7DC] hover:border-[#D9D7CB]'
                 }`}
               >
                 <FileText className="w-4 h-4" />
@@ -799,13 +798,13 @@ export default function EstudosPage() {
                 }}
                 className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg text-sm font-medium transition-all ${
                   tipoAnotacao === 'ia'
-                    ? 'bg-purple-500/20 text-purple-400 border border-purple-500/50'
-                    : 'bg-zinc-800 text-zinc-400 border border-zinc-700 hover:border-zinc-600'
+                    ? 'bg-[#E5F1F1] text-[#117178] font-semibold border border-[#178E96]/40'
+                    : 'bg-[#F4F3EC] text-[#5E7081] border border-[#E9E7DC] hover:border-[#D9D7CB]'
                 }`}
               >
                 <Sparkles className="w-4 h-4" />
                 Texto + IA
-                {!isPremium && <Crown className="w-3 h-3 text-yellow-400" />}
+                {!isPremium && <Crown className="w-3 h-3 text-[#D9A441]" />}
               </button>
               <button
                 type="button"
@@ -818,13 +817,13 @@ export default function EstudosPage() {
                 }}
                 className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg text-sm font-medium transition-all ${
                   tipoAnotacao === 'audio'
-                    ? 'bg-purple-500/20 text-purple-400 border border-purple-500/50'
-                    : 'bg-zinc-800 text-zinc-400 border border-zinc-700 hover:border-zinc-600'
+                    ? 'bg-[#E5F1F1] text-[#117178] font-semibold border border-[#178E96]/40'
+                    : 'bg-[#F4F3EC] text-[#5E7081] border border-[#E9E7DC] hover:border-[#D9D7CB]'
                 }`}
               >
                 <Mic className="w-4 h-4" />
                 Gravar
-                {!isPremium && <Crown className="w-3 h-3 text-yellow-400" />}
+                {!isPremium && <Crown className="w-3 h-3 text-[#D9A441]" />}
               </button>
             </div>
 
@@ -842,24 +841,24 @@ export default function EstudosPage() {
                     }
                   }}
                   placeholder={t('titlePlaceholder')}
-                  className="w-full bg-transparent border-none text-white text-lg font-medium placeholder:text-zinc-500 focus:outline-none focus:ring-0 py-2"
+                  className="w-full bg-transparent border-none text-[#0E2A3F] text-lg font-medium placeholder:text-[#8395A5] focus:outline-none focus:ring-0 py-2"
                   autoFocus
                 />
-                <div className="border-t border-zinc-800" />
+                <div className="border-t border-[#E9E7DC]" />
               </>
             )}
 
             <div className="space-y-0.5">
               {/* Conteúdo - modo livre */}
               {tipoAnotacao === 'livre' && (
-                <div className="flex items-start gap-3 py-2.5 px-1 hover:bg-zinc-800/30 rounded-lg transition-colors">
-                  <FileText className="w-5 h-5 text-zinc-400 shrink-0 mt-0.5" />
+                <div className="flex items-start gap-3 py-2.5 px-1 hover:bg-[#F4F3EC] rounded-lg transition-colors">
+                  <FileText className="w-5 h-5 text-[#44586A] shrink-0 mt-0.5" />
                   <textarea
                     value={novaAnotacao.conteudo}
                     onChange={(e) => setNovaAnotacao({ ...novaAnotacao, conteudo: e.target.value })}
                     placeholder={t('contentPlaceholder')}
                     rows={4}
-                    className="flex-1 bg-transparent border-none text-sm text-white placeholder:text-zinc-500 focus:outline-none resize-none"
+                    className="flex-1 bg-transparent border-none text-sm text-[#0E2A3F] placeholder:text-[#8395A5] focus:outline-none resize-none"
                   />
                 </div>
               )}
@@ -868,21 +867,21 @@ export default function EstudosPage() {
               {tipoAnotacao === 'audio' && (
                 <div className="py-4">
                   {erroAudio && (
-                    <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
+                    <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
                       {erroAudio}
                     </div>
                   )}
 
                   {/* Seletor de formato */}
-                  <div className="flex items-center gap-3 py-2.5 px-1 mb-4 bg-zinc-800/30 rounded-lg">
-                    <FileText className="w-5 h-5 text-zinc-400 shrink-0" />
+                  <div className="flex items-center gap-3 py-2.5 px-1 mb-4 bg-[#F4F3EC] rounded-lg">
+                    <FileText className="w-5 h-5 text-[#44586A] shrink-0" />
                     <div className="flex items-center justify-between flex-1">
-                      <span className="text-sm text-zinc-300">Formato da anotação</span>
+                      <span className="text-sm text-[#44586A]">Formato da anotação</span>
                       <select
                         value={formatoAnotacao}
                         onChange={(e) => setFormatoAnotacao(e.target.value as 'padrao' | 'notion')}
                         disabled={uploadandoAudio || processandoAudio}
-                        className="bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-purple-500 cursor-pointer"
+                        className="bg-[#F4F3EC] border border-[#D9D7CB] rounded-lg px-3 py-1.5 text-[#0E2A3F] focus:outline-none focus:border-[#178E96] cursor-pointer"
                       >
                         <option value="padrao">Padrão</option>
                         <option value="notion">Notion (Markdown)</option>
@@ -893,12 +892,12 @@ export default function EstudosPage() {
                   {/* Gravador ou status de processamento */}
                   {uploadandoAudio || processandoAudio ? (
                     <div className="flex flex-col items-center gap-4 py-8">
-                      <Loader2 className="w-12 h-12 text-purple-500 animate-spin" />
+                      <Loader2 className="w-12 h-12 text-[#178E96] animate-spin" />
                       <div className="text-center">
-                        <p className="text-white font-medium">
+                        <p className="text-[#0E2A3F] font-medium">
                           {uploadandoAudio ? 'Enviando áudio...' : 'Transcrevendo e organizando...'}
                         </p>
-                        <p className="text-sm text-zinc-400 mt-1">
+                        <p className="text-sm text-[#44586A] mt-1">
                           {uploadandoAudio
                             ? 'Aguarde enquanto o áudio é enviado'
                             : 'A IA está transcrevendo e criando sua anotação'}
@@ -915,7 +914,7 @@ export default function EstudosPage() {
 
                   {/* Cor da anotação */}
                   {!uploadandoAudio && !processandoAudio && (
-                    <div className="flex items-center gap-3 py-2.5 px-1 mt-4 bg-zinc-800/30 rounded-lg">
+                    <div className="flex items-center gap-3 py-2.5 px-1 mt-4 bg-[#F4F3EC] rounded-lg">
                       <div
                         className="w-5 h-5 rounded-full shrink-0"
                         style={{ backgroundColor: novaAnotacao.cor }}
@@ -927,7 +926,7 @@ export default function EstudosPage() {
                             type="button"
                             onClick={() => setNovaAnotacao({ ...novaAnotacao, cor })}
                             className={`w-6 h-6 rounded-full transition-all ${
-                              novaAnotacao.cor === cor ? 'ring-2 ring-white ring-offset-1 ring-offset-zinc-900' : 'opacity-60 hover:opacity-100'
+                              novaAnotacao.cor === cor ? 'ring-2 ring-[#0E2A3F] ring-offset-1 ring-offset-white' : 'opacity-60 hover:opacity-100'
                             }`}
                             style={{ backgroundColor: cor }}
                           />
@@ -942,15 +941,15 @@ export default function EstudosPage() {
               {tipoAnotacao === 'ia' && (
                 <>
                   {/* Seletor de formato */}
-                  <div className="flex items-center gap-3 py-2.5 px-1 hover:bg-zinc-800/30 rounded-lg transition-colors">
-                    <FileText className="w-5 h-5 text-zinc-400 shrink-0" />
+                  <div className="flex items-center gap-3 py-2.5 px-1 hover:bg-[#F4F3EC] rounded-lg transition-colors">
+                    <FileText className="w-5 h-5 text-[#44586A] shrink-0" />
                     <div className="flex items-center justify-between flex-1">
-                      <span className="text-sm text-zinc-300">{t('outputFormat')}</span>
+                      <span className="text-sm text-[#44586A]">{t('outputFormat')}</span>
                       <select
                         value={formatoAnotacao}
                         onChange={(e) => setFormatoAnotacao(e.target.value as 'padrao' | 'notion')}
                         disabled={gerandoAnotacao}
-                        className="bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-purple-500 cursor-pointer"
+                        className="bg-[#F4F3EC] border border-[#D9D7CB] rounded-lg px-3 py-1.5 text-[#0E2A3F] focus:outline-none focus:border-[#178E96] cursor-pointer"
                       >
                         <option value="padrao">{t('formatDefault')}</option>
                         <option value="notion">{t('formatNotion')}</option>
@@ -959,7 +958,7 @@ export default function EstudosPage() {
                   </div>
 
                   {erroIA && (
-                    <div className="mx-1 p-2 bg-red-500/10 border border-red-500/50 rounded-lg text-red-400 text-sm">
+                    <div className="mx-1 p-2 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
                       {erroIA}
                     </div>
                   )}
@@ -967,7 +966,7 @@ export default function EstudosPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-2.5 px-1">
                     {/* Coluna esquerda - Texto de entrada */}
                     <div className="space-y-2">
-                      <div className="flex items-center gap-2 text-zinc-400">
+                      <div className="flex items-center gap-2 text-[#44586A]">
                         <Sparkles className="w-4 h-4" />
                         <span className="text-xs font-medium">{t('rawText')}</span>
                       </div>
@@ -975,14 +974,14 @@ export default function EstudosPage() {
                         value={textoOriginalIA}
                         onChange={(e) => setTextoOriginalIA(e.target.value)}
                         placeholder={t('rawTextPlaceholder')}
-                        className="w-full bg-zinc-800/50 border border-zinc-700 rounded-lg p-3 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-purple-500 resize-none min-h-[200px]"
+                        className="w-full bg-white border border-[#D9D7CB] rounded-lg p-3 text-sm text-[#0E2A3F] placeholder:text-[#8395A5] focus:outline-none focus:border-[#178E96] resize-none min-h-[200px]"
                         disabled={gerandoAnotacao}
                       />
                     </div>
 
                     {/* Coluna direita - Texto de saída */}
                     <div className="space-y-2">
-                      <div className="flex items-center gap-2 text-zinc-400">
+                      <div className="flex items-center gap-2 text-[#44586A]">
                         <FileText className="w-4 h-4" />
                         <span className="text-xs font-medium">{t('structuredNote')}</span>
                       </div>
@@ -991,11 +990,11 @@ export default function EstudosPage() {
                           value={anotacaoGeradaIA.content}
                           onChange={(e) => setAnotacaoGeradaIA({ ...anotacaoGeradaIA, content: e.target.value })}
                           placeholder={t('generatedContent')}
-                          className="w-full bg-zinc-800/50 border border-zinc-700 rounded-lg p-3 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-purple-500 resize-none min-h-[200px]"
+                          className="w-full bg-white border border-[#D9D7CB] rounded-lg p-3 text-sm text-[#0E2A3F] placeholder:text-[#8395A5] focus:outline-none focus:border-[#178E96] resize-none min-h-[200px]"
                         />
                       ) : (
-                        <div className="w-full bg-zinc-800/30 border border-zinc-700/50 rounded-lg p-3 min-h-[200px] flex items-center justify-center">
-                          <p className="text-sm text-zinc-500 italic text-center">
+                        <div className="w-full bg-[#F4F3EC] border border-[#E9E7DC] rounded-lg p-3 min-h-[200px] flex items-center justify-center">
+                          <p className="text-sm text-[#8395A5] italic text-center">
                             {t('structuredNotePreview')}
                           </p>
                         </div>
@@ -1007,7 +1006,7 @@ export default function EstudosPage() {
 
               {/* Cor - apenas para modo livre e ia */}
               {tipoAnotacao !== 'audio' && (
-                <div className="flex items-center gap-3 py-2.5 px-1 hover:bg-zinc-800/30 rounded-lg transition-colors">
+                <div className="flex items-center gap-3 py-2.5 px-1 hover:bg-[#F4F3EC] rounded-lg transition-colors">
                   <div
                     className="w-5 h-5 rounded-full shrink-0"
                     style={{ backgroundColor: novaAnotacao.cor }}
@@ -1019,7 +1018,7 @@ export default function EstudosPage() {
                         type="button"
                         onClick={() => setNovaAnotacao({ ...novaAnotacao, cor })}
                         className={`w-6 h-6 rounded-full transition-all ${
-                          novaAnotacao.cor === cor ? 'ring-2 ring-white ring-offset-1 ring-offset-zinc-900' : 'opacity-60 hover:opacity-100'
+                          novaAnotacao.cor === cor ? 'ring-2 ring-[#0E2A3F] ring-offset-1 ring-offset-white' : 'opacity-60 hover:opacity-100'
                         }`}
                         style={{ backgroundColor: cor }}
                       />
@@ -1030,12 +1029,12 @@ export default function EstudosPage() {
             </div>
 
             {/* Botões */}
-            <div className="flex justify-end gap-2 pt-3 border-t border-zinc-800 mt-3">
+            <div className="flex justify-end gap-2 pt-3 border-t border-[#E9E7DC] mt-3">
               <Button
                 type="button"
                 variant="ghost"
                 onClick={() => handleFecharModalAnotacao(false)}
-                className="px-4 h-9 text-sm text-zinc-400 hover:text-white"
+                className="px-4 h-9 text-sm text-[#44586A] hover:text-[#0E2A3F]"
                 disabled={criandoAnotacao || gerandoAnotacao || uploadandoAudio || processandoAudio}
               >
                 {t('cancel')}
@@ -1046,7 +1045,7 @@ export default function EstudosPage() {
                 <Button
                   type="button"
                   onClick={processarAudioGravado}
-                  className="px-6 h-9 text-sm bg-purple-600 hover:bg-purple-700 text-white rounded-full font-medium"
+                  className="px-6 h-9 text-sm bg-[#178E96] hover:bg-[#117178] text-white rounded-full font-medium"
                 >
                   <Sparkles className="w-4 h-4 mr-2" />
                   Transcrever e criar anotação
@@ -1059,7 +1058,7 @@ export default function EstudosPage() {
                   type="button"
                   onClick={gerarAnotacaoComIA}
                   disabled={!textoOriginalIA.trim() || gerandoAnotacao}
-                  className="px-6 h-9 text-sm bg-purple-600 hover:bg-purple-700 text-white rounded-full font-medium"
+                  className="px-6 h-9 text-sm bg-[#178E96] hover:bg-[#117178] text-white rounded-full font-medium"
                 >
                   {gerandoAnotacao ? (
                     <>
@@ -1082,7 +1081,7 @@ export default function EstudosPage() {
                     (tipoAnotacao === 'ia' && anotacaoGeradaIA && !anotacaoGeradaIA.title) ||
                     criandoAnotacao
                   }
-                  className="px-6 h-9 text-sm bg-purple-600 hover:bg-purple-700 text-white rounded-full font-medium"
+                  className="px-6 h-9 text-sm bg-[#178E96] hover:bg-[#117178] text-white rounded-full font-medium"
                 >
                   {criandoAnotacao ? (
                     <>
@@ -1101,9 +1100,9 @@ export default function EstudosPage() {
 
       {/* Modal Visualizar/Editar Anotação */}
       <Dialog open={modalVisualizarAnotacao} onOpenChange={setModalVisualizarAnotacao}>
-        <DialogContent className="bg-zinc-900 border-zinc-800 max-w-2xl h-[85vh] max-h-[600px] flex flex-col">
+        <DialogContent className="bg-white border-[#E9E7DC] max-w-2xl h-[85vh] max-h-[600px] flex flex-col">
           <DialogHeader className="flex-shrink-0">
-            <DialogTitle className="text-white">
+            <DialogTitle className="text-[#0E2A3F]">
               {editandoAnotacao ? t('editNote') : t('viewNote')}
             </DialogTitle>
           </DialogHeader>
@@ -1113,7 +1112,7 @@ export default function EstudosPage() {
                 <div className="flex flex-col flex-1 min-h-0">
                   <div className="flex-1 overflow-y-auto space-y-4 pr-2">
                     <div>
-                      <Label htmlFor="titulo-editar" className="text-zinc-300">{t('title')}</Label>
+                      <Label htmlFor="titulo-editar" className="text-[#44586A]">{t('title')}</Label>
                       <Input
                         id="titulo-editar"
                         autoComplete="off"
@@ -1121,11 +1120,11 @@ export default function EstudosPage() {
                         onChange={(e) =>
                           setAnotacaoSelecionada({ ...anotacaoSelecionada, titulo: e.target.value })
                         }
-                        className="bg-zinc-800 border-zinc-700 text-white mt-1"
+                        className="bg-white border-[#D9D7CB] text-[#0E2A3F] mt-1"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="conteudo-editar" className="text-zinc-300">{t('content')}</Label>
+                      <Label htmlFor="conteudo-editar" className="text-[#44586A]">{t('content')}</Label>
                       <textarea
                         id="conteudo-editar"
                         autoComplete="off"
@@ -1133,18 +1132,18 @@ export default function EstudosPage() {
                         onChange={(e) =>
                           setAnotacaoSelecionada({ ...anotacaoSelecionada, conteudo: e.target.value })
                         }
-                        className="w-full bg-zinc-800 border-zinc-700 text-white mt-1 rounded-md p-3 min-h-[200px] border resize-none"
+                        className="w-full bg-white border-[#D9D7CB] text-[#0E2A3F] mt-1 rounded-md p-3 min-h-[200px] border resize-none"
                       />
                     </div>
                     <div>
-                      <Label className="text-zinc-300">{t('color')}</Label>
+                      <Label className="text-[#44586A]">{t('color')}</Label>
                       <div className="flex gap-2 mt-2 flex-wrap">
                         {cores.map((cor) => (
                           <button
                             key={cor}
                             onClick={() => setAnotacaoSelecionada({ ...anotacaoSelecionada, cor })}
                             className={`w-8 h-8 rounded-full ${
-                              anotacaoSelecionada.cor === cor ? 'ring-2 ring-white ring-offset-2 ring-offset-zinc-900' : ''
+                              anotacaoSelecionada.cor === cor ? 'ring-2 ring-[#0E2A3F] ring-offset-2 ring-offset-white' : ''
                             }`}
                             style={{ backgroundColor: cor }}
                           />
@@ -1152,18 +1151,17 @@ export default function EstudosPage() {
                       </div>
                     </div>
                   </div>
-                  <div className="flex gap-2 justify-end pt-4 flex-shrink-0 border-t border-zinc-800 mt-4">
+                  <div className="flex gap-2 justify-end pt-4 flex-shrink-0 border-t border-[#E9E7DC] mt-4">
                     <Button
-                      variant="default"
+                      variant="outline"
                       onClick={() => setEditandoAnotacao(false)}
-                      className="border-zinc-700"
                     >
                       {t('cancel')}
                     </Button>
                     <Button
                       onClick={editarAnotacao}
                       disabled={!anotacaoSelecionada.titulo || editandoAnotacaoLoading}
-                      className="bg-purple-600 hover:bg-purple-700"
+                      className="bg-[#178E96] hover:bg-[#117178]"
                     >
                       {editandoAnotacaoLoading ? (
                         <>
@@ -1191,15 +1189,15 @@ export default function EstudosPage() {
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-xl font-bold text-white mb-1 break-words">
+                        <h3 className="text-xl font-bold text-[#0E2A3F] mb-1 break-words">
                           {anotacaoSelecionada.titulo}
                         </h3>
                         <div className="flex items-center gap-2">
                           {anotacaoSelecionada.curso && (
-                            <p className="text-sm text-zinc-400">{anotacaoSelecionada.curso.nome}</p>
+                            <p className="text-sm text-[#44586A]">{anotacaoSelecionada.curso.nome}</p>
                           )}
                           {anotacaoSelecionada.tipoOrigem === 'audio' && (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-400 text-xs">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#E5F1F1] text-[#117178] text-xs">
                               <Mic className="w-3 h-3" />
                               Áudio
                             </span>
@@ -1216,8 +1214,8 @@ export default function EstudosPage() {
                       />
                     )}
 
-                    <div className="bg-zinc-800/50 rounded-lg p-4 border border-zinc-700/50">
-                      <p className="text-zinc-300 whitespace-pre-wrap break-words">{anotacaoSelecionada.conteudo}</p>
+                    <div className="bg-[#F4F3EC] rounded-lg p-4 border border-[#E9E7DC]">
+                      <p className="text-[#44586A] whitespace-pre-wrap break-words">{anotacaoSelecionada.conteudo}</p>
                     </div>
 
                     {/* Transcrição original para anotações de áudio */}
@@ -1226,14 +1224,14 @@ export default function EstudosPage() {
                         <button
                           type="button"
                           onClick={() => setMostrarTranscricao(!mostrarTranscricao)}
-                          className="flex items-center gap-2 text-sm text-zinc-400 hover:text-zinc-300 transition-colors"
+                          className="flex items-center gap-2 text-sm text-[#44586A] hover:text-[#0E2A3F] transition-colors"
                         >
                           <ChevronRight className={`w-4 h-4 transition-transform ${mostrarTranscricao ? 'rotate-90' : ''}`} />
                           {mostrarTranscricao ? 'Ocultar transcrição original' : 'Ver transcrição original'}
                         </button>
                         {mostrarTranscricao && (
-                          <div className="bg-zinc-800/30 rounded-lg p-4 border border-zinc-700/30">
-                            <p className="text-sm text-zinc-400 whitespace-pre-wrap break-words">
+                          <div className="bg-[#F4F3EC] rounded-lg p-4 border border-[#E9E7DC]">
+                            <p className="text-sm text-[#44586A] whitespace-pre-wrap break-words">
                               {anotacaoSelecionada.transcricaoOriginal}
                             </p>
                           </div>
@@ -1241,22 +1239,22 @@ export default function EstudosPage() {
                       </div>
                     )}
 
-                    <p className="text-xs text-zinc-500">
+                    <p className="text-xs text-[#8395A5]">
                       {t('createdAt')} {new Date(anotacaoSelecionada.createdAt).toLocaleDateString('pt-BR')}
                     </p>
                   </div>
-                  <div className="flex gap-2 justify-end pt-4 flex-shrink-0 border-t border-zinc-800 mt-4">
+                  <div className="flex gap-2 justify-end pt-4 flex-shrink-0 border-t border-[#E9E7DC] mt-4">
                     <Button
-                      variant="default"
+                      variant="outline"
                       onClick={excluirAnotacao}
-                      className="border-zinc-700 hover:bg-red-500/20 hover:text-red-400 hover:border-red-500/50"
+                      className="hover:bg-red-50 hover:text-red-600 hover:border-red-200"
                     >
                       <Trash2 className="w-4 h-4 mr-2" />
                       {t('delete')}
                     </Button>
                     <Button
                       onClick={() => setEditandoAnotacao(true)}
-                      className="bg-purple-600 hover:bg-purple-700"
+                      className="bg-[#178E96] hover:bg-[#117178]"
                     >
                       <Edit className="w-4 h-4 mr-2" />
                       {t('edit')}

@@ -30,10 +30,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const statusColors = {
-  PLANEJADA: { bg: 'bg-blue-500/10', text: 'text-blue-400', border: 'border-blue-500/20' },
-  EM_ANDAMENTO: { bg: 'bg-green-500/10', text: 'text-green-400', border: 'border-green-500/20' },
-  CONCLUIDA: { bg: 'bg-zinc-500/10', text: 'text-zinc-400', border: 'border-zinc-500/20' },
-  CANCELADA: { bg: 'bg-red-500/10', text: 'text-red-400', border: 'border-red-500/20' },
+  PLANEJADA: { bg: 'bg-[#EFF4F8]', text: 'text-[#154F6D]', border: 'border-[#154F6D]/20' },
+  EM_ANDAMENTO: { bg: 'bg-green-50', text: 'text-green-700', border: 'border-green-200' },
+  CONCLUIDA: { bg: 'bg-[#F4F3EC]', text: 'text-[#8395A5]', border: 'border-[#E9E7DC]' },
+  CANCELADA: { bg: 'bg-red-50', text: 'text-red-600', border: 'border-red-200' },
 };
 
 const statusLabels = {
@@ -184,8 +184,8 @@ export default function ViagemDetalhesPage() {
 
   if (loading) {
     return (
-      <div className="bg-zinc-950 min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-aura-500"></div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#178E96]"></div>
       </div>
     );
   }
@@ -199,35 +199,35 @@ export default function ViagemDetalhesPage() {
     : 0;
 
   return (
-    <div className="bg-zinc-950 p-4 lg:p-6 space-y-6">
+    <div className="p-4 lg:p-6 space-y-6">
       {/* Header */}
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-4">
           <Button
             size="icon"
             onClick={() => router.push('/dashboard/viagens')}
-            className="bg-zinc-800 hover:bg-zinc-700 text-white"
+            className="bg-[#F4F3EC] hover:bg-[#E9E7DC] text-[#44586A] duration-150"
           >
             <ArrowLeft className="w-4 h-4" />
           </Button>
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">{viagem.nome}</h1>
+            <h1 className="text-3xl font-bold text-[#0E2A3F] mb-2">{viagem.nome}</h1>
             {viagem.descricao && (
-              <p className="text-zinc-400">{viagem.descricao}</p>
+              <p className="text-[#44586A]">{viagem.descricao}</p>
             )}
           </div>
         </div>
         <div className="flex gap-2">
           <Button
             size="icon"
-            className="bg-zinc-800 hover:bg-zinc-700 text-white"
+            className="bg-[#F4F3EC] hover:bg-[#E9E7DC] text-[#44586A] duration-150"
           >
             <Edit className="w-4 h-4" />
           </Button>
           <Button
             size="icon"
             onClick={handleDelete}
-            className="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20"
+            className="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 duration-150"
           >
             <Trash2 className="w-4 h-4" />
           </Button>
@@ -236,38 +236,38 @@ export default function ViagemDetalhesPage() {
 
       {/* Status e Informações Básicas */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="bg-zinc-900/50 border-zinc-800 p-6">
+        <Card className="bg-white border-[#E9E7DC] shadow-sm p-6">
           <div className="text-center">
-            <p className="text-sm text-zinc-400 mb-2">Status</p>
+            <p className="text-sm text-[#44586A] mb-2">Status</p>
             <Badge className={`${statusColors[viagem.status].bg} ${statusColors[viagem.status].text} border ${statusColors[viagem.status].border}`}>
               {statusLabels[viagem.status]}
             </Badge>
           </div>
         </Card>
 
-        <Card className="bg-zinc-900/50 border-zinc-800 p-6">
+        <Card className="bg-white border-[#E9E7DC] shadow-sm p-6">
           <div className="text-center">
-            <p className="text-sm text-zinc-400 mb-2">Período</p>
-            <p className="text-lg font-bold text-white">
+            <p className="text-sm text-[#44586A] mb-2">Período</p>
+            <p className="text-lg font-bold text-[#0E2A3F]">
               {format(new Date(viagem.dataInicio), 'dd MMM', { locale: ptBR })} -{' '}
               {format(new Date(viagem.dataFim), 'dd MMM yyyy', { locale: ptBR })}
             </p>
           </div>
         </Card>
 
-        <Card className="bg-zinc-900/50 border-zinc-800 p-6">
+        <Card className="bg-white border-[#E9E7DC] shadow-sm p-6">
           <div className="text-center">
-            <p className="text-sm text-zinc-400 mb-2">Destinos</p>
-            <p className="text-lg font-bold text-white">
+            <p className="text-sm text-[#44586A] mb-2">Destinos</p>
+            <p className="text-lg font-bold text-[#0E2A3F]">
               {viagem.destinos?.length || 0}
             </p>
           </div>
         </Card>
 
-        <Card className="bg-zinc-900/50 border-zinc-800 p-6">
+        <Card className="bg-white border-[#E9E7DC] shadow-sm p-6">
           <div className="text-center">
-            <p className="text-sm text-zinc-400 mb-2">Orçamento</p>
-            <p className="text-lg font-bold text-white">
+            <p className="text-sm text-[#44586A] mb-2">Orçamento</p>
+            <p className="text-lg font-bold text-[#0E2A3F]">
               {viagem.orcamentoTotal
                 ? `R$ ${Number(viagem.orcamentoTotal).toFixed(2)}`
                 : 'Não definido'}
@@ -278,16 +278,16 @@ export default function ViagemDetalhesPage() {
 
       {/* Orçamento Detalhado */}
       {viagem.orcamentoTotal && (
-        <Card className="bg-zinc-900/50 border-zinc-800 p-6">
-          <h2 className="text-xl font-bold text-white mb-4">Controle de Orçamento</h2>
+        <Card className="bg-white border-[#E9E7DC] shadow-sm p-6">
+          <h2 className="text-xl font-bold text-[#0E2A3F] mb-4">Controle de Orçamento</h2>
           <div className="space-y-4">
             <div className="flex justify-between items-center">
-              <span className="text-zinc-400">Total Gasto</span>
-              <span className="text-2xl font-bold text-white">
+              <span className="text-[#44586A]">Total Gasto</span>
+              <span className="text-2xl font-bold text-[#0E2A3F]">
                 R$ {viagem.totalGasto.toFixed(2)}
               </span>
             </div>
-            <div className="relative h-4 bg-zinc-800 rounded-full overflow-hidden">
+            <div className="relative h-4 bg-[#E9E7DC] rounded-full overflow-hidden">
               <div
                 className={`absolute inset-y-0 left-0 rounded-full transition-all ${
                   percentGasto > 100
@@ -300,10 +300,10 @@ export default function ViagemDetalhesPage() {
               />
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-zinc-400">
+              <span className="text-[#44586A]">
                 {percentGasto.toFixed(1)}% utilizado
               </span>
-              <span className="text-zinc-400">
+              <span className="text-[#44586A]">
                 R$ {(Number(viagem.orcamentoTotal) - viagem.totalGasto).toFixed(2)} restante
               </span>
             </div>
@@ -313,20 +313,20 @@ export default function ViagemDetalhesPage() {
 
       {/* Tabs com Conteúdo */}
       <Tabs defaultValue="destinos" className="space-y-4">
-        <TabsList className="bg-zinc-900/50 border border-zinc-800">
-          <TabsTrigger value="destinos" className="data-[state=active]:bg-aura-500 data-[state=active]:text-white">
+        <TabsList className="bg-white border border-[#E9E7DC]">
+          <TabsTrigger value="destinos" className="data-[state=active]:bg-[#E5F1F1] data-[state=active]:text-[#117178] data-[state=active]:font-semibold duration-150">
             <MapPin className="w-4 h-4 mr-2" />
             Destinos
           </TabsTrigger>
-          <TabsTrigger value="transportes" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">
+          <TabsTrigger value="transportes" className="data-[state=active]:bg-[#E5F1F1] data-[state=active]:text-[#117178] data-[state=active]:font-semibold duration-150">
             <Plane className="w-4 h-4 mr-2" />
             Transportes
           </TabsTrigger>
-          <TabsTrigger value="hospedagens" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+          <TabsTrigger value="hospedagens" className="data-[state=active]:bg-[#E5F1F1] data-[state=active]:text-[#117178] data-[state=active]:font-semibold duration-150">
             <Hotel className="w-4 h-4 mr-2" />
             Hospedagens
           </TabsTrigger>
-          <TabsTrigger value="atividades" className="data-[state=active]:bg-green-500 data-[state=active]:text-white">
+          <TabsTrigger value="atividades" className="data-[state=active]:bg-[#E5F1F1] data-[state=active]:text-[#117178] data-[state=active]:font-semibold duration-150">
             <Calendar className="w-4 h-4 mr-2" />
             Atividades
           </TabsTrigger>
@@ -335,10 +335,10 @@ export default function ViagemDetalhesPage() {
         {/* Tab de Destinos */}
         <TabsContent value="destinos" className="space-y-4">
           <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-bold text-white">Destinos da Viagem</h2>
+            <h2 className="text-2xl font-bold text-[#0E2A3F]">Destinos da Viagem</h2>
             <Button
               onClick={() => setIsDestinoModalOpen(true)}
-              className="bg-purple-600 hover:bg-purple-700"
+              className="bg-[#178E96] hover:bg-[#117178] text-white duration-150"
             >
               <Plus className="w-4 h-4 mr-2" />
               Adicionar Destino
@@ -346,20 +346,20 @@ export default function ViagemDetalhesPage() {
           </div>
 
           {!viagem.destinos || viagem.destinos.length === 0 ? (
-            <Card className="bg-zinc-900/50 border-zinc-800 p-12">
+            <Card className="bg-white border-[#E9E7DC] shadow-sm p-12">
               <div className="text-center">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-aura-500/10 rounded-full mb-4">
-                  <MapPin className="w-8 h-8 text-aura-400" />
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-[#F4F3EC] rounded-full mb-4">
+                  <MapPin className="w-8 h-8 text-[#117178]" />
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-2">
+                <h3 className="text-xl font-semibold text-[#0E2A3F] mb-2">
                   Nenhum destino adicionado
                 </h3>
-                <p className="text-zinc-400 mb-6">
+                <p className="text-[#8395A5] mb-6">
                   Comece adicionando os destinos da sua viagem
                 </p>
                 <Button
                   onClick={() => setIsDestinoModalOpen(true)}
-                  className="bg-purple-600 hover:bg-purple-700"
+                  className="bg-[#178E96] hover:bg-[#117178] text-white duration-150"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Adicionar Primeiro Destino
@@ -371,22 +371,22 @@ export default function ViagemDetalhesPage() {
               {viagem.destinos.map((destino, index) => (
                 <Card
                   key={destino.id}
-                  className="bg-zinc-900/50 border-zinc-800 hover:border-aura-500/40 transition-all p-6"
+                  className="bg-white border-[#E9E7DC] shadow-sm hover:border-[#178E96]/40 transition-all duration-150 p-6"
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="p-3 bg-aura-500/10 rounded-xl">
-                        <MapPin className="w-6 h-6 text-aura-400" />
+                      <div className="p-3 bg-[#E5F1F1] rounded-xl">
+                        <MapPin className="w-6 h-6 text-[#117178]" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-bold text-white">{destino.nome}</h3>
-                        <p className="text-sm text-zinc-400">{destino.cidade}, {destino.pais}</p>
+                        <h3 className="text-lg font-bold text-[#0E2A3F]">{destino.nome}</h3>
+                        <p className="text-sm text-[#44586A]">{destino.cidade}, {destino.pais}</p>
                       </div>
                     </div>
                     <Button
                       size="icon"
                       onClick={() => handleDeleteDestino(destino.id)}
-                      className="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20"
+                      className="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 duration-150"
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
@@ -394,8 +394,8 @@ export default function ViagemDetalhesPage() {
 
                   <div className="space-y-3">
                     <div className="flex items-center gap-2 text-sm">
-                      <Calendar className="w-4 h-4 text-zinc-500" />
-                      <span className="text-zinc-400">
+                      <Calendar className="w-4 h-4 text-[#8395A5]" />
+                      <span className="text-[#44586A]">
                         {format(new Date(destino.dataChegada), 'dd MMM', { locale: ptBR })} -{' '}
                         {format(new Date(destino.dataSaida), 'dd MMM yyyy', { locale: ptBR })}
                       </span>
@@ -403,34 +403,34 @@ export default function ViagemDetalhesPage() {
 
                     {destino.endereco && (
                       <div className="flex items-start gap-2 text-sm">
-                        <MapPin className="w-4 h-4 text-zinc-500 mt-0.5 flex-shrink-0" />
-                        <span className="text-zinc-400">{destino.endereco}</span>
+                        <MapPin className="w-4 h-4 text-[#8395A5] mt-0.5 flex-shrink-0" />
+                        <span className="text-[#44586A]">{destino.endereco}</span>
                       </div>
                     )}
 
-                    <div className="grid grid-cols-2 gap-4 pt-3 border-t border-zinc-800">
+                    <div className="grid grid-cols-2 gap-4 pt-3 border-t border-[#E9E7DC]">
                       {destino.idioma && (
                         <div>
-                          <p className="text-xs text-zinc-500">Idioma</p>
-                          <p className="text-sm text-white font-medium">{destino.idioma}</p>
+                          <p className="text-xs text-[#8395A5]">Idioma</p>
+                          <p className="text-sm text-[#0E2A3F] font-medium">{destino.idioma}</p>
                         </div>
                       )}
                       {destino.moeda && (
                         <div>
-                          <p className="text-xs text-zinc-500">Moeda</p>
-                          <p className="text-sm text-white font-medium">{destino.moeda}</p>
+                          <p className="text-xs text-[#8395A5]">Moeda</p>
+                          <p className="text-sm text-[#0E2A3F] font-medium">{destino.moeda}</p>
                         </div>
                       )}
                       {destino.fusoHorario && (
                         <div>
-                          <p className="text-xs text-zinc-500">Fuso Horário</p>
-                          <p className="text-sm text-white font-medium">{destino.fusoHorario}</p>
+                          <p className="text-xs text-[#8395A5]">Fuso Horário</p>
+                          <p className="text-sm text-[#0E2A3F] font-medium">{destino.fusoHorario}</p>
                         </div>
                       )}
                       {destino.temperaturaMed && (
                         <div>
-                          <p className="text-xs text-zinc-500">Temperatura</p>
-                          <p className="text-sm text-white font-medium">{destino.temperaturaMed}</p>
+                          <p className="text-xs text-[#8395A5]">Temperatura</p>
+                          <p className="text-sm text-[#0E2A3F] font-medium">{destino.temperaturaMed}</p>
                         </div>
                       )}
                     </div>
@@ -443,13 +443,13 @@ export default function ViagemDetalhesPage() {
 
         {/* Outras Tabs - Em breve */}
         <TabsContent value="transportes">
-          <Card className="bg-zinc-900/50 border-zinc-800 p-12">
+          <Card className="bg-white border-[#E9E7DC] shadow-sm p-12">
             <div className="text-center">
-              <Plane className="w-16 h-16 mx-auto text-blue-400 mb-4" />
-              <h3 className="text-xl font-semibold text-white mb-2">
+              <Plane className="w-16 h-16 mx-auto text-blue-300 mb-4" />
+              <h3 className="text-xl font-semibold text-[#0E2A3F] mb-2">
                 Transportes - Em breve
               </h3>
-              <p className="text-zinc-400">
+              <p className="text-[#44586A]">
                 Gerenciamento de transportes será adicionado em breve
               </p>
             </div>
@@ -457,13 +457,13 @@ export default function ViagemDetalhesPage() {
         </TabsContent>
 
         <TabsContent value="hospedagens">
-          <Card className="bg-zinc-900/50 border-zinc-800 p-12">
+          <Card className="bg-white border-[#E9E7DC] shadow-sm p-12">
             <div className="text-center">
-              <Hotel className="w-16 h-16 mx-auto text-purple-400 mb-4" />
-              <h3 className="text-xl font-semibold text-white mb-2">
+              <Hotel className="w-16 h-16 mx-auto text-[#178E96] mb-4" />
+              <h3 className="text-xl font-semibold text-[#0E2A3F] mb-2">
                 Hospedagens - Em breve
               </h3>
-              <p className="text-zinc-400">
+              <p className="text-[#44586A]">
                 Gerenciamento de hospedagens será adicionado em breve
               </p>
             </div>
@@ -471,13 +471,13 @@ export default function ViagemDetalhesPage() {
         </TabsContent>
 
         <TabsContent value="atividades">
-          <Card className="bg-zinc-900/50 border-zinc-800 p-12">
+          <Card className="bg-white border-[#E9E7DC] shadow-sm p-12">
             <div className="text-center">
-              <Calendar className="w-16 h-16 mx-auto text-green-400 mb-4" />
-              <h3 className="text-xl font-semibold text-white mb-2">
+              <Calendar className="w-16 h-16 mx-auto text-green-600 mb-4" />
+              <h3 className="text-xl font-semibold text-[#0E2A3F] mb-2">
                 Atividades - Em breve
               </h3>
-              <p className="text-zinc-400">
+              <p className="text-[#44586A]">
                 Gerenciamento de atividades será adicionado em breve
               </p>
             </div>
@@ -487,9 +487,9 @@ export default function ViagemDetalhesPage() {
 
       {/* Notas Gerais */}
       {viagem.notasGerais && (
-        <Card className="bg-zinc-900/50 border-zinc-800 p-6">
-          <h2 className="text-xl font-bold text-white mb-4">Notas Gerais</h2>
-          <p className="text-zinc-400 whitespace-pre-wrap">{viagem.notasGerais}</p>
+        <Card className="bg-white border-[#E9E7DC] shadow-sm p-6">
+          <h2 className="text-xl font-bold text-[#0E2A3F] mb-4">Notas Gerais</h2>
+          <p className="text-[#44586A] whitespace-pre-wrap">{viagem.notasGerais}</p>
         </Card>
       )}
 
@@ -670,7 +670,7 @@ export default function ViagemDetalhesPage() {
                   setIsDestinoModalOpen(false);
                   resetDestinoForm();
                 }}
-                className="bg-zinc-800 hover:bg-zinc-700 text-white"
+                className="bg-[#F4F3EC] hover:bg-[#E9E7DC] text-[#44586A] duration-150"
               >
                 Cancelar
               </Button>

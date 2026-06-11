@@ -25,23 +25,23 @@ export function WeekdayStats({ dados, melhorDia, piorDia }: WeekdayStatsProps) {
       return 'bg-green-500';
     }
     if (piorDia && dia.dia === piorDia.dia && dia.total > 0 && dia.taxa < 100) {
-      return 'bg-orange-500';
+      return 'bg-[#D9A441]';
     }
-    return 'bg-purple-500';
+    return 'bg-[#178E96]';
   };
 
   return (
     <div className="space-y-3">
       {dados.map((dia) => (
         <div key={dia.dia} className="flex items-center gap-3">
-          <span className="text-xs text-zinc-400 w-8">{DIAS_SEMANA[dia.dia]}</span>
-          <div className="flex-1 h-2 bg-zinc-800 rounded-full overflow-hidden">
+          <span className="text-xs text-[#44586A] w-8">{DIAS_SEMANA[dia.dia]}</span>
+          <div className="flex-1 h-2 bg-[#E9E7DC] rounded-full overflow-hidden">
             <div
               className={`h-full ${getBarColor(dia)} rounded-full transition-all duration-500`}
               style={{ width: `${dia.taxa}%` }}
             />
           </div>
-          <span className="text-xs text-zinc-400 w-10 text-right">{dia.taxa}%</span>
+          <span className="text-xs text-[#44586A] w-10 text-right">{dia.taxa}%</span>
         </div>
       ))}
 
@@ -50,15 +50,15 @@ export function WeekdayStats({ dados, melhorDia, piorDia }: WeekdayStatsProps) {
         {melhorDia && melhorDia.taxa > 0 && (
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-green-500" />
-            <span className="text-zinc-400">
+            <span className="text-[#44586A]">
               {t('bestDay')}: {DIAS_SEMANA[melhorDia.dia]}
             </span>
           </div>
         )}
         {piorDia && piorDia.total > 0 && piorDia.taxa < 100 && (
           <div className="flex items-center gap-1.5">
-            <div className="w-2 h-2 rounded-full bg-orange-500" />
-            <span className="text-zinc-400">
+            <div className="w-2 h-2 rounded-full bg-[#D9A441]" />
+            <span className="text-[#44586A]">
               {t('worstDay')}: {DIAS_SEMANA[piorDia.dia]}
             </span>
           </div>

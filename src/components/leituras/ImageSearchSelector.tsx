@@ -109,7 +109,7 @@ export function ImageSearchSelector({
   return (
     <div className="space-y-2">
       {buscando && (
-        <div className="flex items-center gap-2 text-purple-400 text-sm">
+        <div className="flex items-center gap-2 text-[#117178] text-sm">
           <Loader2 className="w-4 h-4 animate-spin" />
           <span>Buscando capas para "{titulo}"...</span>
         </div>
@@ -117,8 +117,8 @@ export function ImageSearchSelector({
 
       {aviso && (
         <div className="bg-yellow-900/20 border border-yellow-700/50 rounded-lg p-3">
-          <p className="text-sm text-yellow-400">{aviso}</p>
-          <p className="text-xs text-yellow-500 mt-1">
+          <p className="text-sm text-[#D9A441]">{aviso}</p>
+          <p className="text-xs text-[#D9A441] mt-1">
             Para filmes: obtenha uma chave gratuita em{' '}
             <a
               href="https://www.themoviedb.org/settings/api"
@@ -136,7 +136,7 @@ export function ImageSearchSelector({
       {mostrarSugestoes && (
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
-            <Label className="text-zinc-300">
+            <Label className="text-[#44586A]">
               Selecione uma capa ({sugestoes.length} {sugestoes.length === 1 ? 'resultado' : 'resultados'})
             </Label>
             <Button
@@ -144,16 +144,16 @@ export function ImageSearchSelector({
               variant="ghost"
               size="sm"
               onClick={() => setMostrarSugestoes(false)}
-              className="text-zinc-400 hover:text-white h-auto p-1"
+              className="text-[#44586A] hover:text-[#0E2A3F] h-auto p-1"
             >
               <X className="w-4 h-4" />
             </Button>
           </div>
 
           {sugestoes.length === 0 ? (
-            <div className="bg-zinc-800/50 border border-zinc-700 rounded-lg p-6 text-center">
-              <p className="text-zinc-400">Nenhuma capa encontrada para "{titulo}"</p>
-              <p className="text-xs text-zinc-500 mt-1">Tente um termo de busca diferente</p>
+            <div className="bg-[#F4F3EC] border border-[#D9D7CB] rounded-lg p-6 text-center">
+              <p className="text-[#44586A]">Nenhuma capa encontrada para "{titulo}"</p>
+              <p className="text-xs text-[#8395A5] mt-1">Tente um termo de busca diferente</p>
             </div>
           ) : (
             <div className="grid grid-cols-4 gap-2 max-h-45 overflow-y-auto p-1">
@@ -162,12 +162,12 @@ export function ImageSearchSelector({
                   key={sugestao.id}
                   type="button"
                   onClick={() => handleSelecionarCapa(sugestao.capa)}
-                  className={`group relative rounded-lg overflow-hidden transition-all hover:ring-2 hover:ring-purple-500 ${
-                    capaAtual === sugestao.capa ? 'ring-2 ring-purple-500' : 'ring-1 ring-zinc-700'
+                  className={`group relative rounded-lg overflow-hidden transition-all hover:ring-2 hover:ring-[#178E96] ${
+                    capaAtual === sugestao.capa ? 'ring-2 ring-[#178E96]' : 'ring-1 ring-zinc-700'
                   }`}
                   title={`${sugestao.titulo}${sugestao.autor ? ` - ${sugestao.autor}` : ''}${sugestao.ano ? ` (${sugestao.ano})` : ''}`}
                 >
-                  <div className="aspect-[2/3] bg-zinc-800">
+                  <div className="aspect-[2/3] bg-[#F4F3EC]">
                     <img
                       src={sugestao.capa}
                       alt={sugestao.titulo}
@@ -177,11 +177,11 @@ export function ImageSearchSelector({
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
                     <div className="absolute bottom-0 left-0 right-0 p-2">
-                      <p className="text-xs font-medium text-white line-clamp-2">
+                      <p className="text-xs font-medium text-[#0E2A3F] line-clamp-2">
                         {sugestao.titulo}
                       </p>
                       {(sugestao.autor || sugestao.ano) && (
-                        <p className="text-xs text-zinc-300 line-clamp-1">
+                        <p className="text-xs text-[#44586A] line-clamp-1">
                           {sugestao.autor}
                           {sugestao.autor && sugestao.ano && ' • '}
                           {sugestao.ano}
@@ -190,8 +190,8 @@ export function ImageSearchSelector({
                     </div>
                   </div>
                   {capaAtual === sugestao.capa && (
-                    <div className="absolute top-2 right-2 bg-purple-600 rounded-full p-1">
-                      <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <div className="absolute top-2 right-2 bg-[#178E96] rounded-full p-1">
+                      <svg className="w-3 h-3 text-[#0E2A3F]" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                     </div>
@@ -206,12 +206,12 @@ export function ImageSearchSelector({
       {/* Preview da capa atual */}
       {capaAtual && (
         <div>
-          <Label className="text-zinc-300 text-xs">Capa Selecionada</Label>
+          <Label className="text-[#44586A] text-xs">Capa Selecionada</Label>
           <div className="mt-1 relative inline-block">
             <img
               src={capaAtual}
               alt="Preview da capa"
-              className="w-20 h-28 object-cover rounded-md border border-zinc-700"
+              className="w-20 h-28 object-cover rounded-md border border-[#D9D7CB]"
             />
             <Button
               type="button"
