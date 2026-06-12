@@ -3,20 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { 
-  Plus, 
-  Wallet, 
-  CreditCard,
-  TrendingUp,
-  TrendingDown,
-  Building2,
-  Eye,
-  EyeOff,
-  MoreVertical,
-  Edit,
-  Trash2,
-  Archive,
-} from 'lucide-react';
+import { Plus, Wallet, CreditCard, TrendUp, TrendDown, Buildings, Eye, EyeSlash, DotsThreeVertical, PencilSimple, Trash, Archive } from '@phosphor-icons/react';
 import { formatarMoeda } from '@/lib/financeiro-helper';
 import NovaContaModal from '@/components/financeiro/NovaContaModal';
 import NovoCartaoModal from '@/components/financeiro/NovoCartaoModal';
@@ -102,27 +89,27 @@ export default function ContasPage() {
         <div className="relative">
           <div className="flex justify-between items-start mb-6">
             <div>
-              <h1 className="text-4xl font-bold text-[#0E2A3F]">
+              <h1 className="text-4xl font-bold text-ink">
                 Contas e Cartões
               </h1>
-              <p className="text-[#44586A] mt-2">Gerencie seus recursos financeiros</p>
+              <p className="text-ink-soft mt-2">Gerencie seus recursos financeiros</p>
             </div>
             <div className="flex gap-3">
               <Button
                 variant="default"
-                className="bg-white border border-[#E9E7DC] text-[#44586A] hover:bg-[#F4F3EC] duration-150"
+                className="bg-surface border border-line text-ink-soft hover:bg-surface-hover duration-150"
                 onClick={() => setOcultarSaldos(!ocultarSaldos)}
               >
                 {ocultarSaldos ? (
                   <Eye className="w-4 h-4 mr-2" />
                 ) : (
-                  <EyeOff className="w-4 h-4 mr-2" />
+                  <EyeSlash className="w-4 h-4 mr-2" />
                 )}
                 {ocultarSaldos ? 'Mostrar' : 'Ocultar'}
               </Button>
               <Button
                 onClick={() => setModalContaAberto(true)}
-                className="bg-[#178E96] hover:bg-[#117178] text-white transition-colors duration-150"
+                className="bg-brand hover:bg-brand-dark text-white transition-colors duration-150"
                 size="lg"
               >
                 <Plus className="w-5 h-5 mr-2" />
@@ -132,30 +119,30 @@ export default function ContasPage() {
           </div>
 
           {/* Card de Saldo Total */}
-          <Card className="relative overflow-hidden bg-white border-[#E9E7DC] shadow-sm transition-colors duration-150 mb-6">
+          <Card className="relative overflow-hidden bg-surface border-line shadow-sm transition-colors duration-150 mb-6">
             <div className="relative p-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="p-4 bg-green-50 rounded-xl">
-                    <Wallet className="w-8 h-8 text-green-600" />
+                  <div className="p-4 bg-green-50 dark:bg-green-500/10 rounded-xl">
+                    <Wallet className="w-8 h-8 text-green-600 dark:text-green-400" />
                   </div>
                   <div>
-                    <p className="text-sm text-[#44586A] mb-1">Saldo Total em Contas</p>
-                    <div className="text-4xl font-bold text-[#0E2A3F]">
+                    <p className="text-sm text-ink-soft mb-1">Saldo Total em Contas</p>
+                    <div className="text-4xl font-bold text-ink">
                       {ocultarSaldos ? '••••••' : formatarMoeda(saldoTotal)}
                     </div>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm text-[#44586A] mb-2">Resumo</p>
+                  <p className="text-sm text-ink-soft mb-2">Resumo</p>
                   <div className="flex gap-4">
                     <div>
-                      <p className="text-xs text-[#8395A5]">Contas</p>
-                      <p className="text-lg font-semibold text-green-600">{contasAtivas.length}</p>
+                      <p className="text-xs text-ink-faint">Contas</p>
+                      <p className="text-lg font-semibold text-green-600 dark:text-green-400">{contasAtivas.length}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-[#8395A5]">Cartões</p>
-                      <p className="text-lg font-semibold text-blue-600">{cartoesAtivos.length}</p>
+                      <p className="text-xs text-ink-faint">Cartões</p>
+                      <p className="text-lg font-semibold text-blue-600 dark:text-blue-400">{cartoesAtivos.length}</p>
                     </div>
                   </div>
                 </div>
@@ -167,21 +154,21 @@ export default function ContasPage() {
 
       {loading ? (
         <div className="flex justify-center py-20">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#178E96]"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand"></div>
         </div>
       ) : (
         <div className="space-y-8">
           {/* Seção de Contas Bancárias */}
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-bold text-[#0E2A3F] flex items-center gap-2">
-                <Wallet className="w-6 h-6 text-green-600" />
+              <h2 className="text-2xl font-bold text-ink flex items-center gap-2">
+                <Wallet className="w-6 h-6 text-green-600 dark:text-green-400" />
                 Contas Bancárias
               </h2>
               <Button
                 onClick={() => setModalContaAberto(true)}
                 variant="default"
-                className="bg-white border border-[#E9E7DC] text-[#44586A] hover:bg-[#F4F3EC] duration-150"
+                className="bg-surface border border-line text-ink-soft hover:bg-surface-hover duration-150"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Nova Conta
@@ -189,20 +176,20 @@ export default function ContasPage() {
             </div>
 
             {contasAtivas.length === 0 ? (
-              <Card className="bg-white border-[#E9E7DC] shadow-sm p-12">
+              <Card className="bg-surface border-line shadow-sm p-12">
                 <div className="text-center">
-                  <div className="inline-flex items-center justify-center w-16 h-16 bg-green-50 rounded-full mb-4">
-                    <Wallet className="w-8 h-8 text-green-600" />
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-green-50 dark:bg-green-500/10 rounded-full mb-4">
+                    <Wallet className="w-8 h-8 text-green-600 dark:text-green-400" />
                   </div>
-                  <h3 className="text-xl font-semibold text-[#0E2A3F] mb-2">
+                  <h3 className="text-xl font-semibold text-ink mb-2">
                     Nenhuma conta cadastrada
                   </h3>
-                  <p className="text-[#44586A] mb-6">
+                  <p className="text-ink-soft mb-6">
                     Adicione suas contas bancárias para começar
                   </p>
                   <Button
                     onClick={() => setModalContaAberto(true)}
-                    className="bg-[#178E96] hover:bg-[#117178] text-white"
+                    className="bg-brand hover:bg-brand-dark text-white"
                   >
                     <Plus className="w-4 h-4 mr-2" />
                     Adicionar Conta
@@ -214,7 +201,7 @@ export default function ContasPage() {
                 {contasAtivas.map((conta) => (
                   <Card
                     key={conta.id}
-                    className="relative overflow-hidden bg-white border-[#E9E7DC] shadow-sm hover:bg-[#FAF9F4] transition-colors duration-150 group"
+                    className="relative overflow-hidden bg-surface border-line shadow-sm hover:bg-surface-soft transition-colors duration-150 group"
                   >
                     {/* Barra colorida no topo */}
                     <div 
@@ -233,8 +220,8 @@ export default function ContasPage() {
                             <Wallet className="w-6 h-6" style={{ color: conta.cor }} />
                           </div>
                           <div>
-                            <h3 className="font-bold text-[#0E2A3F]">{conta.nome}</h3>
-                            <p className="text-xs text-[#8395A5]">{getTipoLabel(conta.tipo)}</p>
+                            <h3 className="font-bold text-ink">{conta.nome}</h3>
+                            <p className="text-xs text-ink-faint">{getTipoLabel(conta.tipo)}</p>
                           </div>
                         </div>
                         <Button
@@ -243,22 +230,22 @@ export default function ContasPage() {
                           className="opacity-0 group-hover:opacity-100 transition-opacity"
                           onClick={() => setMenuAberto(menuAberto === conta.id ? null : conta.id)}
                         >
-                          <MoreVertical className="w-4 h-4" />
+                          <DotsThreeVertical className="w-4 h-4" />
                         </Button>
                       </div>
 
                       {/* Banco */}
                       {conta.banco && (
-                        <div className="flex items-center gap-2 text-sm text-[#44586A] mb-4">
-                          <Building2 className="w-4 h-4" />
+                        <div className="flex items-center gap-2 text-sm text-ink-soft mb-4">
+                          <Buildings className="w-4 h-4" />
                           {conta.banco}
                         </div>
                       )}
 
                       {/* Saldo */}
-                      <div className="pt-4 border-t border-[#E9E7DC]">
-                        <p className="text-xs text-[#8395A5] mb-1">Saldo Atual</p>
-                        <div className="text-2xl font-bold text-[#0E2A3F]">
+                      <div className="pt-4 border-t border-line">
+                        <p className="text-xs text-ink-faint mb-1">Saldo Atual</p>
+                        <div className="text-2xl font-bold text-ink">
                           {ocultarSaldos ? '••••••' : formatarMoeda(conta.saldoAtual)}
                         </div>
                       </div>
@@ -267,30 +254,30 @@ export default function ContasPage() {
                       <div className="mt-3 flex items-center gap-1 text-sm">
                         {conta.saldoAtual >= 0 ? (
                           <>
-                            <TrendingUp className="w-4 h-4 text-green-600" />
-                            <span className="text-green-600">Positivo</span>
+                            <TrendUp className="w-4 h-4 text-green-600 dark:text-green-400" />
+                            <span className="text-green-600 dark:text-green-400">Positivo</span>
                           </>
                         ) : (
                           <>
-                            <TrendingDown className="w-4 h-4 text-red-600" />
-                            <span className="text-red-600">Negativo</span>
+                            <TrendDown className="w-4 h-4 text-red-600 dark:text-red-400" />
+                            <span className="text-red-600 dark:text-red-400">Negativo</span>
                           </>
                         )}
                       </div>
 
                       {/* Menu */}
                       {menuAberto === conta.id && (
-                        <div className="absolute right-4 top-16 w-48 bg-white border border-[#E3E1D6] rounded-lg shadow-lg z-10">
-                          <button className="w-full px-4 py-2 text-left text-sm text-[#44586A] hover:bg-[#F4F3EC] flex items-center gap-2">
-                            <Edit className="w-4 h-4" />
+                        <div className="absolute right-4 top-16 w-48 bg-surface border border-line rounded-lg shadow-lg z-10">
+                          <button className="w-full px-4 py-2 text-left text-sm text-ink-soft hover:bg-surface-hover flex items-center gap-2">
+                            <PencilSimple className="w-4 h-4" />
                             Editar
                           </button>
-                          <button className="w-full px-4 py-2 text-left text-sm text-[#44586A] hover:bg-[#F4F3EC] flex items-center gap-2">
+                          <button className="w-full px-4 py-2 text-left text-sm text-ink-soft hover:bg-surface-hover flex items-center gap-2">
                             <Archive className="w-4 h-4" />
                             Arquivar
                           </button>
-                          <button className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-[#F4F3EC] flex items-center gap-2">
-                            <Trash2 className="w-4 h-4" />
+                          <button className="w-full px-4 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-surface-hover flex items-center gap-2">
+                            <Trash className="w-4 h-4" />
                             Excluir
                           </button>
                         </div>
@@ -305,14 +292,14 @@ export default function ContasPage() {
           {/* Seção de Cartões */}
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-bold text-[#0E2A3F] flex items-center gap-2">
-                <CreditCard className="w-6 h-6 text-blue-600" />
+              <h2 className="text-2xl font-bold text-ink flex items-center gap-2">
+                <CreditCard className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                 Cartões de Crédito
               </h2>
               <Button
                 onClick={() => setModalCartaoAberto(true)}
                 variant="default"
-                className="bg-white border border-[#E9E7DC] text-[#44586A] hover:bg-[#F4F3EC] duration-150"
+                className="bg-surface border border-line text-ink-soft hover:bg-surface-hover duration-150"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Novo Cartão
@@ -320,20 +307,20 @@ export default function ContasPage() {
             </div>
 
             {cartoesAtivos.length === 0 ? (
-              <Card className="bg-white border-[#E9E7DC] shadow-sm p-12">
+              <Card className="bg-surface border-line shadow-sm p-12">
                 <div className="text-center">
-                  <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-50 rounded-full mb-4">
-                    <CreditCard className="w-8 h-8 text-blue-600" />
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-50 dark:bg-blue-500/10 rounded-full mb-4">
+                    <CreditCard className="w-8 h-8 text-blue-600 dark:text-blue-400" />
                   </div>
-                  <h3 className="text-xl font-semibold text-[#0E2A3F] mb-2">
+                  <h3 className="text-xl font-semibold text-ink mb-2">
                     Nenhum cartão cadastrado
                   </h3>
-                  <p className="text-[#44586A] mb-6">
+                  <p className="text-ink-soft mb-6">
                     Adicione seus cartões de crédito para controlar gastos
                   </p>
                   <Button
                     onClick={() => setModalCartaoAberto(true)}
-                    className="bg-[#178E96] hover:bg-[#117178] text-white"
+                    className="bg-brand hover:bg-brand-dark text-white"
                   >
                     <Plus className="w-4 h-4 mr-2" />
                     Adicionar Cartão
@@ -345,7 +332,7 @@ export default function ContasPage() {
                 {cartoesAtivos.map((cartao) => (
                   <Card
                     key={cartao.id}
-                    className="relative overflow-hidden bg-white border-[#E9E7DC] shadow-sm hover:bg-[#FAF9F4] transition-colors duration-150 group"
+                    className="relative overflow-hidden bg-surface border-line shadow-sm hover:bg-surface-soft transition-colors duration-150 group"
                   >
                     {/* Barra colorida no topo */}
                     <div 
@@ -364,9 +351,9 @@ export default function ContasPage() {
                             <CreditCard className="w-6 h-6" style={{ color: cartao.cor }} />
                           </div>
                           <div>
-                            <h3 className="font-bold text-[#0E2A3F]">{cartao.nome}</h3>
+                            <h3 className="font-bold text-ink">{cartao.nome}</h3>
                             {cartao.bandeira && (
-                              <p className="text-xs text-[#8395A5]">{cartao.bandeira}</p>
+                              <p className="text-xs text-ink-faint">{cartao.bandeira}</p>
                             )}
                           </div>
                         </div>
@@ -376,14 +363,14 @@ export default function ContasPage() {
                           className="opacity-0 group-hover:opacity-100 transition-opacity"
                           onClick={() => setMenuAberto(menuAberto === cartao.id ? null : cartao.id)}
                         >
-                          <MoreVertical className="w-4 h-4" />
+                          <DotsThreeVertical className="w-4 h-4" />
                         </Button>
                       </div>
 
                       {/* Número do cartão */}
                       {cartao.ultimosDigitos && (
                         <div className="mb-4">
-                          <p className="text-sm text-[#44586A]">
+                          <p className="text-sm text-ink-soft">
                             •••• •••• •••• {cartao.ultimosDigitos}
                           </p>
                         </div>
@@ -391,9 +378,9 @@ export default function ContasPage() {
 
                       {/* Limite */}
                       {cartao.limite && (
-                        <div className="pt-4 border-t border-[#E9E7DC] mb-3">
-                          <p className="text-xs text-[#8395A5] mb-1">Limite</p>
-                          <div className="text-xl font-bold text-[#0E2A3F]">
+                        <div className="pt-4 border-t border-line mb-3">
+                          <p className="text-xs text-ink-faint mb-1">Limite</p>
+                          <div className="text-xl font-bold text-ink">
                             {ocultarSaldos ? '••••••' : formatarMoeda(cartao.limite)}
                           </div>
                         </div>
@@ -403,31 +390,31 @@ export default function ContasPage() {
                       <div className="grid grid-cols-2 gap-3 text-sm">
                         {cartao.diaVencimento && (
                           <div>
-                            <p className="text-xs text-[#8395A5]">Vencimento</p>
-                            <p className="text-[#44586A] font-medium">Dia {cartao.diaVencimento}</p>
+                            <p className="text-xs text-ink-faint">Vencimento</p>
+                            <p className="text-ink-soft font-medium">Dia {cartao.diaVencimento}</p>
                           </div>
                         )}
                         {cartao.diaFechamento && (
                           <div>
-                            <p className="text-xs text-[#8395A5]">Fechamento</p>
-                            <p className="text-[#44586A] font-medium">Dia {cartao.diaFechamento}</p>
+                            <p className="text-xs text-ink-faint">Fechamento</p>
+                            <p className="text-ink-soft font-medium">Dia {cartao.diaFechamento}</p>
                           </div>
                         )}
                       </div>
 
                       {/* Menu */}
                       {menuAberto === cartao.id && (
-                        <div className="absolute right-4 top-16 w-48 bg-white border border-[#E3E1D6] rounded-lg shadow-lg z-10">
-                          <button className="w-full px-4 py-2 text-left text-sm text-[#44586A] hover:bg-[#F4F3EC] flex items-center gap-2">
-                            <Edit className="w-4 h-4" />
+                        <div className="absolute right-4 top-16 w-48 bg-surface border border-line rounded-lg shadow-lg z-10">
+                          <button className="w-full px-4 py-2 text-left text-sm text-ink-soft hover:bg-surface-hover flex items-center gap-2">
+                            <PencilSimple className="w-4 h-4" />
                             Editar
                           </button>
-                          <button className="w-full px-4 py-2 text-left text-sm text-[#44586A] hover:bg-[#F4F3EC] flex items-center gap-2">
+                          <button className="w-full px-4 py-2 text-left text-sm text-ink-soft hover:bg-surface-hover flex items-center gap-2">
                             <Archive className="w-4 h-4" />
                             Desativar
                           </button>
-                          <button className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-[#F4F3EC] flex items-center gap-2">
-                            <Trash2 className="w-4 h-4" />
+                          <button className="w-full px-4 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-surface-hover flex items-center gap-2">
+                            <Trash className="w-4 h-4" />
                             Excluir
                           </button>
                         </div>

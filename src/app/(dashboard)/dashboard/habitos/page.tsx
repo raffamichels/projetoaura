@@ -7,29 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Plus,
-  Target,
-  Flame,
-  CheckCircle2,
-  Circle,
-  Loader2,
-  Trash2,
-  Calendar,
-  TrendingUp,
-  BarChart3,
-  Award,
-  Percent,
-  X,
-  Clock,
-  ArrowLeft,
-  CalendarX,
-  CalendarOff,
-  Folder,
-  Settings2,
-  ChevronDown,
-  Tag,
-} from 'lucide-react';
+import { Plus, Target, Flame, CheckCircle, Circle, Spinner, Trash, Calendar, TrendUp, ChartBar, Medal, Percent, X, Clock, ArrowLeft, CalendarX, Folder, GearSix, CaretDown, Tag } from '@phosphor-icons/react';
 import { StreakCalendar } from './components/StreakCalendar';
 import { TrendChart } from './components/TrendChart';
 import { WeekdayStats } from './components/WeekdayStats';
@@ -111,8 +89,8 @@ const DIAS_SEMANA = [
 ];
 
 const CORES = [
-  '#8B5CF6', '#EF4444', '#F59E0B', '#10B981', '#3B82F6',
-  '#EC4899', '#6366F1', '#14B8A6', '#F97316', '#84CC16'
+  '#178E96', '#EF4444', '#F59E0B', '#10B981', '#3B82F6',
+  '#EC4899', '#154F6D', '#14B8A6', '#F97316', '#84CC16'
 ];
 
 export default function HabitosPage() {
@@ -146,7 +124,7 @@ export default function HabitosPage() {
   const [etapaExclusao, setEtapaExclusao] = useState<1 | 2>(1); // 1 = escolher tipo, 2 = escolher escopo
   const [modalCategoriasAberto, setModalCategoriasAberto] = useState(false);
   const [categoriaEditando, setCategoriaEditando] = useState<CategoriaHabito | null>(null);
-  const [novaCategoria, setNovaCategoria] = useState({ nome: '', cor: '#8B5CF6', icone: 'folder' });
+  const [novaCategoria, setNovaCategoria] = useState({ nome: '', cor: '#178E96', icone: 'folder' });
   const [salvandoCategoria, setSalvandoCategoria] = useState(false);
   const [excluindoCategoria, setExcluindoCategoria] = useState(false);
 
@@ -161,7 +139,7 @@ export default function HabitosPage() {
     descricao: '',
     horario: '',
     diasSemana: [] as number[],
-    cor: '#8B5CF6',
+    cor: '#178E96',
     categoriaId: null as string | null,
   });
 
@@ -243,7 +221,7 @@ export default function HabitosPage() {
           descricao: '',
           horario: '',
           diasSemana: [],
-          cor: '#8B5CF6',
+          cor: '#178E96',
           categoriaId: null,
         });
         carregarDados();
@@ -361,7 +339,7 @@ export default function HabitosPage() {
       });
 
       if (response.ok) {
-        setNovaCategoria({ nome: '', cor: '#8B5CF6', icone: 'folder' });
+        setNovaCategoria({ nome: '', cor: '#178E96', icone: 'folder' });
         setCategoriaEditando(null);
         carregarDados();
       } else {
@@ -409,7 +387,7 @@ export default function HabitosPage() {
 
   const cancelarEdicaoCategoria = () => {
     setCategoriaEditando(null);
-    setNovaCategoria({ nome: '', cor: '#8B5CF6', icone: 'folder' });
+    setNovaCategoria({ nome: '', cor: '#178E96', icone: 'folder' });
   };
 
   // Filtrar por categoria se houver filtro selecionado
@@ -427,8 +405,8 @@ export default function HabitosPage() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#178E96] mx-auto mb-4"></div>
-          <p className="text-[#44586A]">{t('loading')}</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand mx-auto mb-4"></div>
+          <p className="text-ink-soft">{t('loading')}</p>
         </div>
       </div>
     );
@@ -439,12 +417,12 @@ export default function HabitosPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#0E2A3F]">{t('pageTitle')}</h1>
-          <p className="text-sm sm:text-base text-[#44586A]">{t('subtitle')}</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-ink">{t('pageTitle')}</h1>
+          <p className="text-sm sm:text-base text-ink-soft">{t('subtitle')}</p>
         </div>
         <Button
           onClick={() => setModalHabitoAberto(true)}
-          className="bg-[#178E96] hover:bg-[#117178] text-white"
+          className="bg-brand hover:bg-brand-dark text-white"
         >
           <Plus className="w-4 h-4 mr-2" />
           {t('newHabit')}
@@ -458,13 +436,13 @@ export default function HabitosPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs text-[#8395A5]">{t('todayProgress')}</p>
-                  <p className="text-2xl font-bold text-[#0E2A3F]">
+                  <p className="text-xs text-ink-faint">{t('todayProgress')}</p>
+                  <p className="text-2xl font-bold text-ink">
                     {estatisticas.completadosHoje}/{estatisticas.totalHabitos}
                   </p>
                 </div>
-                <div className="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center">
-                  <CheckCircle2 className="w-5 h-5 text-green-600" />
+                <div className="w-10 h-10 rounded-full bg-green-50 dark:bg-green-500/10 flex items-center justify-center">
+                  <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
                 </div>
               </div>
             </CardContent>
@@ -474,13 +452,13 @@ export default function HabitosPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs text-[#8395A5]">{t('currentStreak')}</p>
-                  <p className="text-2xl font-bold text-[#0E2A3F]">
-                    {estatisticas.maiorSequenciaAtual} <span className="text-sm font-normal text-[#8395A5]">{t('days')}</span>
+                  <p className="text-xs text-ink-faint">{t('currentStreak')}</p>
+                  <p className="text-2xl font-bold text-ink">
+                    {estatisticas.maiorSequenciaAtual} <span className="text-sm font-normal text-ink-faint">{t('days')}</span>
                   </p>
                 </div>
-                <div className="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center">
-                  <Flame className="w-5 h-5 text-[#D9A441]" />
+                <div className="w-10 h-10 rounded-full bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center">
+                  <Flame className="w-5 h-5 text-gold" />
                 </div>
               </div>
             </CardContent>
@@ -490,13 +468,13 @@ export default function HabitosPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs text-[#8395A5]">{t('bestStreak')}</p>
-                  <p className="text-2xl font-bold text-[#0E2A3F]">
-                    {estatisticas.maiorSequenciaHistorica} <span className="text-sm font-normal text-[#8395A5]">{t('days')}</span>
+                  <p className="text-xs text-ink-faint">{t('bestStreak')}</p>
+                  <p className="text-2xl font-bold text-ink">
+                    {estatisticas.maiorSequenciaHistorica} <span className="text-sm font-normal text-ink-faint">{t('days')}</span>
                   </p>
                 </div>
-                <div className="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center">
-                  <TrendingUp className="w-5 h-5 text-amber-600" />
+                <div className="w-10 h-10 rounded-full bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center">
+                  <TrendUp className="w-5 h-5 text-amber-600 dark:text-amber-400" />
                 </div>
               </div>
             </CardContent>
@@ -506,11 +484,11 @@ export default function HabitosPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs text-[#8395A5]">{t('totalCompleted')}</p>
-                  <p className="text-2xl font-bold text-[#0E2A3F]">{estatisticas.totalCompletados}</p>
+                  <p className="text-xs text-ink-faint">{t('totalCompleted')}</p>
+                  <p className="text-2xl font-bold text-ink">{estatisticas.totalCompletados}</p>
                 </div>
-                <div className="w-10 h-10 rounded-full bg-[#E5F1F1] flex items-center justify-center">
-                  <Target className="w-5 h-5 text-[#117178]" />
+                <div className="w-10 h-10 rounded-full bg-brand-soft flex items-center justify-center">
+                  <Target className="w-5 h-5 text-brand-dark" />
                 </div>
               </div>
             </CardContent>
@@ -536,10 +514,10 @@ export default function HabitosPage() {
                   onClick={() => setDiaSelecionado(dia.valor === diaAtual ? null : dia.valor)}
                   className={`w-7 h-7 rounded-full text-xs font-medium transition-all relative ${
                     isSelected
-                      ? 'bg-[#178E96] text-white'
+                      ? 'bg-brand text-white'
                       : isToday
-                        ? 'bg-[#E5F1F1] text-[#117178] ring-1 ring-[#178E96]/40'
-                        : 'bg-[#F4F3EC] text-[#8395A5] hover:bg-[#E9E7DC] hover:text-[#44586A]'
+                        ? 'bg-brand-soft text-brand-dark ring-1 ring-brand/40'
+                        : 'bg-surface-hover text-ink-faint hover:bg-line hover:text-ink-soft'
                   }`}
                   title={isToday ? `${dia.nome} (${t('today')})` : dia.nome}
                 >
@@ -549,7 +527,7 @@ export default function HabitosPage() {
             })}
           </div>
           {!isVisualizandoDiaAtual && (
-            <span className="text-xs text-amber-600">{t('viewOnly')}</span>
+            <span className="text-xs text-amber-600 dark:text-amber-400">{t('viewOnly')}</span>
           )}
         </div>
 
@@ -560,8 +538,8 @@ export default function HabitosPage() {
               onClick={() => setCategoriaFiltro(null)}
               className={`px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
                 categoriaFiltro === null
-                  ? 'bg-[#178E96] text-white'
-                  : 'bg-[#F4F3EC] text-[#44586A] hover:bg-[#E9E7DC]'
+                  ? 'bg-brand text-white'
+                  : 'bg-surface-hover text-ink-soft hover:bg-line'
               }`}
             >
               {t('categories.all')}
@@ -573,7 +551,7 @@ export default function HabitosPage() {
                 className={`px-2.5 py-1 rounded-full text-xs font-medium transition-all flex items-center gap-1 ${
                   categoriaFiltro === cat.id
                     ? 'text-white'
-                    : 'bg-[#F4F3EC] text-[#44586A] hover:bg-[#E9E7DC]'
+                    : 'bg-surface-hover text-ink-soft hover:bg-line'
                 }`}
                 style={categoriaFiltro === cat.id ? { backgroundColor: cat.cor } : undefined}
               >
@@ -589,8 +567,8 @@ export default function HabitosPage() {
                 onClick={() => setCategoriaFiltro('sem-categoria')}
                 className={`px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
                   categoriaFiltro === 'sem-categoria'
-                    ? 'bg-[#178E96] text-white'
-                    : 'bg-[#F4F3EC] text-[#44586A] hover:bg-[#E9E7DC]'
+                    ? 'bg-brand text-white'
+                    : 'bg-surface-hover text-ink-soft hover:bg-line'
                 }`}
               >
                 {t('categories.uncategorized')}
@@ -599,10 +577,10 @@ export default function HabitosPage() {
           </div>
           <button
             onClick={() => setModalCategoriasAberto(true)}
-            className="p-1.5 rounded-lg bg-[#F4F3EC] text-[#44586A] hover:bg-[#EDEBE0] hover:text-[#0E2A3F] transition-colors duration-150"
+            className="p-1.5 rounded-lg bg-surface-hover text-ink-soft hover:bg-surface-hover hover:text-ink transition-colors duration-150"
             title={t('categories.manage')}
           >
-            <Settings2 className="w-4 h-4" />
+            <GearSix className="w-4 h-4" />
           </button>
         </div>
       </div>
@@ -611,13 +589,13 @@ export default function HabitosPage() {
       {habitos.length === 0 ? (
         <Card>
           <CardContent className="p-6 text-center">
-            <Target className="w-10 h-10 text-[#8395A5] mx-auto mb-3" />
-            <h3 className="text-base font-medium text-[#0E2A3F] mb-1">{t('noHabitsYet')}</h3>
-            <p className="text-sm text-[#44586A] mb-3">{t('startCreatingHabits')}</p>
+            <Target className="w-10 h-10 text-ink-faint mx-auto mb-3" />
+            <h3 className="text-base font-medium text-ink mb-1">{t('noHabitsYet')}</h3>
+            <p className="text-sm text-ink-soft mb-3">{t('startCreatingHabits')}</p>
             <Button
               onClick={() => setModalHabitoAberto(true)}
               size="sm"
-              className="bg-[#178E96] hover:bg-[#117178] text-white"
+              className="bg-brand hover:bg-brand-dark text-white"
             >
               <Plus className="w-4 h-4 mr-1" />
               {t('createFirstHabit')}
@@ -630,7 +608,7 @@ export default function HabitosPage() {
             {/* Hábitos Pendentes */}
             {habitosPendentes.length > 0 && (
               <div className={habitosCompletados.length > 0 ? 'mb-3' : ''}>
-                <h2 className="text-xs font-medium text-[#8395A5] mb-2 flex items-center gap-1.5 px-1">
+                <h2 className="text-xs font-medium text-ink-faint mb-2 flex items-center gap-1.5 px-1">
                   <Circle className="w-3 h-3" />
                   {t('pending')} ({habitosPendentes.length})
                 </h2>
@@ -639,32 +617,32 @@ export default function HabitosPage() {
                     <div
                       key={habito.id}
                       className={`flex items-center gap-3 p-2 rounded-lg transition-colors group ${
-                        isVisualizandoDiaAtual ? 'hover:bg-[#F4F3EC]' : 'opacity-70'
+                        isVisualizandoDiaAtual ? 'hover:bg-surface-hover' : 'opacity-70'
                       }`}
                     >
                       <button
                         onClick={() => isVisualizandoDiaAtual && completarHabito(habito)}
                         disabled={!isVisualizandoDiaAtual || completandoHabito === habito.id}
                         className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
-                          isVisualizandoDiaAtual ? 'hover:bg-[#F4F3EC] cursor-pointer' : 'cursor-not-allowed opacity-50'
+                          isVisualizandoDiaAtual ? 'hover:bg-surface-hover cursor-pointer' : 'cursor-not-allowed opacity-50'
                         }`}
                         style={{ borderColor: habito.cor }}
                         title={!isVisualizandoDiaAtual ? t('canOnlyCompleteToday') : undefined}
                       >
                         {completandoHabito === habito.id && (
-                          <Loader2 className="w-3 h-3 animate-spin" style={{ color: habito.cor }} />
+                          <Spinner className="w-3 h-3 animate-spin" style={{ color: habito.cor }} />
                         )}
                       </button>
 
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-[#0E2A3F] truncate">{habito.nome}</p>
+                        <p className="text-sm font-medium text-ink truncate">{habito.nome}</p>
                       </div>
 
                       <div className="flex items-center gap-2">
                         {habito.horario && (
-                          <span className="text-xs text-[#8395A5] hidden sm:block">{habito.horario}</span>
+                          <span className="text-xs text-ink-faint hidden sm:block">{habito.horario}</span>
                         )}
-                        <div className="flex items-center gap-0.5 text-[#D9A441]">
+                        <div className="flex items-center gap-0.5 text-gold">
                           <Flame className="w-3.5 h-3.5" />
                           <span className="text-xs font-medium">{habito.sequenciaAtual}</span>
                         </div>
@@ -673,9 +651,9 @@ export default function HabitosPage() {
                             setHabitoSelecionado(habito);
                             setModalExcluirHabito(true);
                           }}
-                          className="p-1 text-[#8395A5] hover:text-red-500 transition-colors rounded opacity-0 group-hover:opacity-100"
+                          className="p-1 text-ink-faint hover:text-red-500 transition-colors rounded opacity-0 group-hover:opacity-100"
                         >
-                          <Trash2 className="w-3.5 h-3.5" />
+                          <Trash className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     </div>
@@ -686,14 +664,14 @@ export default function HabitosPage() {
 
             {/* Divisor */}
             {habitosPendentes.length > 0 && habitosCompletados.length > 0 && (
-              <div className="border-t border-[#E9E7DC] my-2" />
+              <div className="border-t border-line my-2" />
             )}
 
             {/* Hábitos Completados */}
             {habitosCompletados.length > 0 && (
               <div>
-                <h2 className="text-xs font-medium text-[#8395A5] mb-2 flex items-center gap-1.5 px-1">
-                  <CheckCircle2 className="w-3 h-3 text-green-600" />
+                <h2 className="text-xs font-medium text-ink-faint mb-2 flex items-center gap-1.5 px-1">
+                  <CheckCircle className="w-3 h-3 text-green-600 dark:text-green-400" />
                   {t('completed')} ({habitosCompletados.length})
                 </h2>
                 <div className="space-y-1">
@@ -701,7 +679,7 @@ export default function HabitosPage() {
                     <div
                       key={habito.id}
                       className={`flex items-center gap-3 p-2 rounded-lg transition-colors group opacity-60 ${
-                        isVisualizandoDiaAtual ? 'hover:bg-[#F4F3EC]' : ''
+                        isVisualizandoDiaAtual ? 'hover:bg-surface-hover' : ''
                       }`}
                     >
                       <button
@@ -714,21 +692,21 @@ export default function HabitosPage() {
                         title={!isVisualizandoDiaAtual ? t('canOnlyCompleteToday') : undefined}
                       >
                         {completandoHabito === habito.id ? (
-                          <Loader2 className="w-3 h-3 animate-spin text-white" />
+                          <Spinner className="w-3 h-3 animate-spin text-white" />
                         ) : (
-                          <CheckCircle2 className="w-4 h-4 text-white" />
+                          <CheckCircle className="w-4 h-4 text-white" />
                         )}
                       </button>
 
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm text-[#44586A] line-through truncate">{habito.nome}</p>
+                        <p className="text-sm text-ink-soft line-through truncate">{habito.nome}</p>
                       </div>
 
                       <div className="flex items-center gap-2">
                         {habito.horario && (
-                          <span className="text-xs text-[#8395A5] hidden sm:block">{habito.horario}</span>
+                          <span className="text-xs text-ink-faint hidden sm:block">{habito.horario}</span>
                         )}
-                        <div className="flex items-center gap-0.5 text-[#D9A441]/60">
+                        <div className="flex items-center gap-0.5 text-gold/60">
                           <Flame className="w-3.5 h-3.5" />
                           <span className="text-xs font-medium">{habito.sequenciaAtual}</span>
                         </div>
@@ -737,9 +715,9 @@ export default function HabitosPage() {
                             setHabitoSelecionado(habito);
                             setModalExcluirHabito(true);
                           }}
-                          className="p-1 text-[#8395A5] hover:text-red-500 transition-colors rounded opacity-0 group-hover:opacity-100"
+                          className="p-1 text-ink-faint hover:text-red-500 transition-colors rounded opacity-0 group-hover:opacity-100"
                         >
-                          <Trash2 className="w-3.5 h-3.5" />
+                          <Trash className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     </div>
@@ -757,11 +735,11 @@ export default function HabitosPage() {
           {/* Calendário de Streak */}
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-base font-medium text-[#0E2A3F] flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-[#117178]" />
+              <CardTitle className="text-base font-medium text-ink flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-brand-dark" />
                 {t('streakCalendar')}
               </CardTitle>
-              <p className="text-xs text-[#8395A5]">
+              <p className="text-xs text-ink-faint">
                 {estatisticas.diasComHabitos > 90 ? t('last90Days') : t('allTime')}
               </p>
             </CardHeader>
@@ -773,11 +751,11 @@ export default function HabitosPage() {
           {/* Gráfico de Tendência */}
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-base font-medium text-[#0E2A3F] flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-[#117178]" />
+              <CardTitle className="text-base font-medium text-ink flex items-center gap-2">
+                <TrendUp className="w-4 h-4 text-brand-dark" />
                 {t('weeklyTrend')}
               </CardTitle>
-              <p className="text-xs text-[#8395A5]">
+              <p className="text-xs text-ink-faint">
                 {estatisticas.diasComHabitos > 84 ? t('last12Weeks') : t('allTime')}
               </p>
             </CardHeader>
@@ -789,11 +767,11 @@ export default function HabitosPage() {
           {/* Taxa de Sucesso por Dia da Semana */}
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-base font-medium text-[#0E2A3F] flex items-center gap-2">
-                <BarChart3 className="w-4 h-4 text-[#117178]" />
+              <CardTitle className="text-base font-medium text-ink flex items-center gap-2">
+                <ChartBar className="w-4 h-4 text-brand-dark" />
                 {t('successByWeekday')}
               </CardTitle>
-              <p className="text-xs text-[#8395A5]">
+              <p className="text-xs text-ink-faint">
                 {estatisticas.diasComHabitos > 90 ? t('last90Days') : t('allTime')}
               </p>
             </CardHeader>
@@ -809,11 +787,11 @@ export default function HabitosPage() {
           {/* Métricas Gerais */}
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-base font-medium text-[#0E2A3F] flex items-center gap-2">
-                <Award className="w-4 h-4 text-[#117178]" />
+              <CardTitle className="text-base font-medium text-ink flex items-center gap-2">
+                <Medal className="w-4 h-4 text-brand-dark" />
                 {t('overallMetrics')}
               </CardTitle>
-              <p className="text-xs text-[#8395A5]">
+              <p className="text-xs text-ink-faint">
                 {estatisticas.diasComHabitos > 90 ? t('last90Days') : t('allTime')}
               </p>
             </CardHeader>
@@ -821,19 +799,19 @@ export default function HabitosPage() {
               {/* Taxa de Sucesso Geral */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Percent className="w-4 h-4 text-green-600" />
-                  <span className="text-sm text-[#44586A]">{t('overallSuccessRate')}</span>
+                  <Percent className="w-4 h-4 text-green-600 dark:text-green-400" />
+                  <span className="text-sm text-ink-soft">{t('overallSuccessRate')}</span>
                 </div>
-                <span className="text-lg font-bold text-[#0E2A3F]">{estatisticas.taxaSucessoGeral}%</span>
+                <span className="text-lg font-bold text-ink">{estatisticas.taxaSucessoGeral}%</span>
               </div>
 
               {/* Dias Completos */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#117178]" />
-                  <span className="text-sm text-[#44586A]">{t('perfectDays')}</span>
+                  <CheckCircle className="w-4 h-4 text-brand-dark" />
+                  <span className="text-sm text-ink-soft">{t('perfectDays')}</span>
                 </div>
-                <span className="text-lg font-bold text-[#0E2A3F]">
+                <span className="text-lg font-bold text-ink">
                   {estatisticas.diasCompletosTotal}/{estatisticas.diasComHabitos}
                 </span>
               </div>
@@ -842,12 +820,12 @@ export default function HabitosPage() {
               {estatisticas.melhorSemana && estatisticas.melhorSemana.taxa > 0 && (
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <TrendingUp className="w-4 h-4 text-amber-600" />
-                    <span className="text-sm text-[#44586A]">{t('bestWeek')}</span>
+                    <TrendUp className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                    <span className="text-sm text-ink-soft">{t('bestWeek')}</span>
                   </div>
-                  <span className="text-lg font-bold text-[#0E2A3F]">
+                  <span className="text-lg font-bold text-ink">
                     {estatisticas.melhorSemana.taxa}%
-                    <span className="text-xs font-normal text-[#8395A5] ml-1">
+                    <span className="text-xs font-normal text-ink-faint ml-1">
                       ({t('week')} {estatisticas.melhorSemana.semana})
                     </span>
                   </span>
@@ -856,13 +834,13 @@ export default function HabitosPage() {
 
               {/* Barra de Progresso Visual */}
               <div className="pt-2">
-                <div className="flex justify-between text-xs text-[#8395A5] mb-1">
+                <div className="flex justify-between text-xs text-ink-faint mb-1">
                   <span>{t('consistency')}</span>
                   <span>{estatisticas.taxaSucessoGeral}%</span>
                 </div>
-                <div className="h-2 bg-[#E9E7DC] rounded-full overflow-hidden">
+                <div className="h-2 bg-line rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-[#178E96] rounded-full transition-all duration-150"
+                    className="h-full bg-brand rounded-full transition-all duration-150"
                     style={{ width: `${estatisticas.taxaSucessoGeral}%` }}
                   />
                 </div>
@@ -876,17 +854,17 @@ export default function HabitosPage() {
       <Dialog open={modalHabitoAberto} onOpenChange={setModalHabitoAberto}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-[#0E2A3F]">{t('newHabit')}</DialogTitle>
+            <DialogTitle className="text-ink">{t('newHabit')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-5">
             {/* Nome */}
             <div>
-              <Label htmlFor="nome-habito" className="text-[#44586A]">{t('habitName')}</Label>
+              <Label htmlFor="nome-habito" className="text-ink-soft">{t('habitName')}</Label>
               <Input
                 id="nome-habito"
                 value={novoHabito.nome}
                 onChange={(e) => setNovoHabito({ ...novoHabito, nome: e.target.value })}
-                className="bg-white border-[#D9D7CB] text-[#0E2A3F] placeholder:text-[#8395A5] focus:border-[#178E96] focus:ring-[#178E96]/20 mt-1.5"
+                className="bg-surface border-line-strong text-ink placeholder:text-ink-faint focus:border-brand focus:ring-brand/20 mt-1.5"
                 placeholder={t('habitNamePlaceholder')}
                 autoFocus
               />
@@ -894,28 +872,28 @@ export default function HabitosPage() {
 
             {/* Horário */}
             <div>
-              <Label htmlFor="horario-habito" className="text-[#44586A]">{t('time')} <span className="text-[#8395A5]">({t('optional')})</span></Label>
+              <Label htmlFor="horario-habito" className="text-ink-soft">{t('time')} <span className="text-ink-faint">({t('optional')})</span></Label>
               <Input
                 id="horario-habito"
                 type="time"
                 value={novoHabito.horario}
                 onChange={(e) => setNovoHabito({ ...novoHabito, horario: e.target.value })}
-                className="bg-white border-[#D9D7CB] text-[#0E2A3F] placeholder:text-[#8395A5] focus:border-[#178E96] focus:ring-[#178E96]/20 mt-1.5"
+                className="bg-surface border-line-strong text-ink placeholder:text-ink-faint focus:border-brand focus:ring-brand/20 mt-1.5"
               />
             </div>
 
             {/* Categoria */}
             {categorias.length > 0 && (
               <div>
-                <Label className="text-[#44586A]">{t('categories.title')} <span className="text-[#8395A5]">({t('optional')})</span></Label>
+                <Label className="text-ink-soft">{t('categories.title')} <span className="text-ink-faint">({t('optional')})</span></Label>
                 <div className="flex flex-wrap gap-2 mt-2">
                   <button
                     type="button"
                     onClick={() => setNovoHabito({ ...novoHabito, categoriaId: null })}
                     className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                       novoHabito.categoriaId === null
-                        ? 'bg-[#E5F1F1] text-[#117178] font-semibold'
-                        : 'bg-[#F4F3EC] text-[#44586A] hover:bg-[#E9E7DC]'
+                        ? 'bg-brand-soft text-brand-dark font-semibold'
+                        : 'bg-surface-hover text-ink-soft hover:bg-line'
                     }`}
                   >
                     {t('categories.none')}
@@ -928,7 +906,7 @@ export default function HabitosPage() {
                       className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 ${
                         novoHabito.categoriaId === cat.id
                           ? 'text-white'
-                          : 'bg-[#F4F3EC] text-[#44586A] hover:bg-[#E9E7DC]'
+                          : 'bg-surface-hover text-ink-soft hover:bg-line'
                       }`}
                       style={novoHabito.categoriaId === cat.id ? { backgroundColor: cat.cor } : undefined}
                     >
@@ -945,8 +923,8 @@ export default function HabitosPage() {
 
             {/* Dias da Semana */}
             <div>
-              <Label className="text-[#44586A]">{t('repeatOn')}</Label>
-              <p className="text-xs text-[#8395A5] mb-2">{t('leaveEmptyForEveryday')}</p>
+              <Label className="text-ink-soft">{t('repeatOn')}</Label>
+              <p className="text-xs text-ink-faint mb-2">{t('leaveEmptyForEveryday')}</p>
               <div className="flex gap-2">
                 {DIAS_SEMANA.map((dia) => (
                   <button
@@ -955,8 +933,8 @@ export default function HabitosPage() {
                     onClick={() => toggleDiaSemana(dia.valor)}
                     className={`w-10 h-10 rounded-full text-sm font-medium transition-colors ${
                       novoHabito.diasSemana.includes(dia.valor)
-                        ? 'bg-[#178E96] text-white'
-                        : 'bg-[#F4F3EC] text-[#44586A] hover:bg-[#E9E7DC]'
+                        ? 'bg-brand text-white'
+                        : 'bg-surface-hover text-ink-soft hover:bg-line'
                     }`}
                     title={dia.nome}
                   >
@@ -968,7 +946,7 @@ export default function HabitosPage() {
 
             {/* Cor */}
             <div>
-              <Label className="text-[#44586A]">{t('color')}</Label>
+              <Label className="text-ink-soft">{t('color')}</Label>
               <div className="flex gap-2 mt-2">
                 {CORES.map((cor) => (
                   <button
@@ -976,7 +954,7 @@ export default function HabitosPage() {
                     type="button"
                     onClick={() => setNovoHabito({ ...novoHabito, cor })}
                     className={`w-8 h-8 rounded-full transition-transform ${
-                      novoHabito.cor === cor ? 'ring-2 ring-[#178E96] ring-offset-2 ring-offset-white scale-110' : 'hover:scale-105'
+                      novoHabito.cor === cor ? 'ring-2 ring-brand ring-offset-2 ring-offset-white dark:ring-offset-surface scale-110' : 'hover:scale-105'
                     }`}
                     style={{ backgroundColor: cor }}
                   />
@@ -989,18 +967,18 @@ export default function HabitosPage() {
               <Button
                 variant="ghost"
                 onClick={() => setModalHabitoAberto(false)}
-                className="text-[#44586A] hover:text-[#0E2A3F] hover:bg-[#F4F3EC]"
+                className="text-ink-soft hover:text-ink hover:bg-surface-hover"
               >
                 {t('cancel')}
               </Button>
               <Button
                 onClick={criarHabito}
                 disabled={!novoHabito.nome || criandoHabito}
-                className="bg-[#178E96] hover:bg-[#117178] text-white"
+                className="bg-brand hover:bg-brand-dark text-white"
               >
                 {criandoHabito ? (
                   <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    <Spinner className="w-4 h-4 mr-2 animate-spin" />
                     {t('creating')}
                   </>
                 ) : (
@@ -1027,20 +1005,20 @@ export default function HabitosPage() {
             <div className="flex items-start gap-4 mb-2">
               <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${
                 etapaExclusao === 1
-                  ? 'bg-red-50 border border-red-200'
-                  : 'bg-[#E5F1F1]'
+                  ? 'bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30'
+                  : 'bg-brand-soft'
               }`}>
                 {etapaExclusao === 1 ? (
-                  <Trash2 className="w-6 h-6 text-red-600" />
+                  <Trash className="w-6 h-6 text-red-600 dark:text-red-400" />
                 ) : (
-                  <Clock className="w-6 h-6 text-[#117178]" />
+                  <Clock className="w-6 h-6 text-brand-dark" />
                 )}
               </div>
               <div className="flex-1">
-                <DialogTitle className="text-xl text-[#0E2A3F] mb-2">
+                <DialogTitle className="text-xl text-ink mb-2">
                   {etapaExclusao === 1 ? t('deleteHabit') : t('endHabitScope')}
                 </DialogTitle>
-                <DialogDescription className="text-[#44586A] text-sm leading-relaxed">
+                <DialogDescription className="text-ink-soft text-sm leading-relaxed">
                   {habitoSelecionado && (
                     <>
                       {etapaExclusao === 1
@@ -1061,15 +1039,15 @@ export default function HabitosPage() {
               <button
                 onClick={handleEncerrarClick}
                 disabled={excluindoHabito}
-                className="w-full p-4 rounded-xl border border-[#E9E7DC] hover:border-[#178E96] hover:bg-[#E5F1F1] transition-all text-left group disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full p-4 rounded-xl border border-line hover:border-brand hover:bg-brand-soft transition-all text-left group disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-[#E5F1F1] flex items-center justify-center shrink-0 group-hover:bg-[#D4E8E8] transition-colors">
-                    <Clock className="w-5 h-5 text-[#117178]" />
+                  <div className="w-10 h-10 rounded-lg bg-brand-soft flex items-center justify-center shrink-0 group-hover:bg-brand-soft transition-colors">
+                    <Clock className="w-5 h-5 text-brand-dark" />
                   </div>
                   <div className="flex-1">
-                    <p className="font-medium text-[#0E2A3F] mb-1">{t('endHabitOnly')}</p>
-                    <p className="text-sm text-[#8395A5]">{t('endHabitOnlyDescription')}</p>
+                    <p className="font-medium text-ink mb-1">{t('endHabitOnly')}</p>
+                    <p className="text-sm text-ink-faint">{t('endHabitOnlyDescription')}</p>
                   </div>
                 </div>
               </button>
@@ -1078,15 +1056,15 @@ export default function HabitosPage() {
               <button
                 onClick={() => excluirHabito('excluir')}
                 disabled={excluindoHabito}
-                className="w-full p-4 rounded-xl border border-[#E9E7DC] hover:border-red-300 hover:bg-red-50 transition-all text-left group disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full p-4 rounded-xl border border-line hover:border-red-300 dark:hover:border-red-500/40 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all text-left group disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center shrink-0 group-hover:bg-red-100 transition-colors">
-                    <Trash2 className="w-5 h-5 text-red-600" />
+                  <div className="w-10 h-10 rounded-lg bg-red-50 dark:bg-red-500/10 flex items-center justify-center shrink-0 group-hover:bg-red-100 dark:group-hover:bg-red-500/20 transition-colors">
+                    <Trash className="w-5 h-5 text-red-600 dark:text-red-400" />
                   </div>
                   <div className="flex-1">
-                    <p className="font-medium text-[#0E2A3F] mb-1">{t('deleteHabitCompletely')}</p>
-                    <p className="text-sm text-[#8395A5]">{t('deleteHabitCompletelyDescription')}</p>
+                    <p className="font-medium text-ink mb-1">{t('deleteHabitCompletely')}</p>
+                    <p className="text-sm text-ink-faint">{t('deleteHabitCompletelyDescription')}</p>
                   </div>
                 </div>
               </button>
@@ -1101,17 +1079,17 @@ export default function HabitosPage() {
                 <button
                   onClick={() => excluirHabito('encerrar', 'dia')}
                   disabled={excluindoHabito}
-                  className="w-full p-4 rounded-xl border border-[#E9E7DC] hover:border-[#178E96] hover:bg-[#E5F1F1] transition-all text-left group disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full p-4 rounded-xl border border-line hover:border-brand hover:bg-brand-soft transition-all text-left group disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-[#E5F1F1] flex items-center justify-center shrink-0 group-hover:bg-[#D4E8E8] transition-colors">
-                      <CalendarX className="w-5 h-5 text-[#117178]" />
+                    <div className="w-10 h-10 rounded-lg bg-brand-soft flex items-center justify-center shrink-0 group-hover:bg-brand-soft transition-colors">
+                      <CalendarX className="w-5 h-5 text-brand-dark" />
                     </div>
                     <div className="flex-1">
-                      <p className="font-medium text-[#0E2A3F] mb-1">
+                      <p className="font-medium text-ink mb-1">
                         {t('endOnlyThisDay', { dayName: DIAS_SEMANA[diaVisualizando].nome })}
                       </p>
-                      <p className="text-sm text-[#8395A5]">{t('endOnlyThisDayDescription')}</p>
+                      <p className="text-sm text-ink-faint">{t('endOnlyThisDayDescription')}</p>
                     </div>
                   </div>
                 </button>
@@ -1121,15 +1099,15 @@ export default function HabitosPage() {
               <button
                 onClick={() => excluirHabito('encerrar', 'todos')}
                 disabled={excluindoHabito}
-                className="w-full p-4 rounded-xl border border-[#E9E7DC] hover:border-[#178E96] hover:bg-[#E5F1F1] transition-all text-left group disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full p-4 rounded-xl border border-line hover:border-brand hover:bg-brand-soft transition-all text-left group disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-[#E5F1F1] flex items-center justify-center shrink-0 group-hover:bg-[#D4E8E8] transition-colors">
-                    <CalendarOff className="w-5 h-5 text-[#117178]" />
+                  <div className="w-10 h-10 rounded-lg bg-brand-soft flex items-center justify-center shrink-0 group-hover:bg-brand-soft transition-colors">
+                    <CalendarX className="w-5 h-5 text-brand-dark" />
                   </div>
                   <div className="flex-1">
-                    <p className="font-medium text-[#0E2A3F] mb-1">{t('endAllDays')}</p>
-                    <p className="text-sm text-[#8395A5]">{t('endAllDaysDescription')}</p>
+                    <p className="font-medium text-ink mb-1">{t('endAllDays')}</p>
+                    <p className="text-sm text-ink-faint">{t('endAllDaysDescription')}</p>
                   </div>
                 </div>
               </button>
@@ -1143,7 +1121,7 @@ export default function HabitosPage() {
                 variant="ghost"
                 onClick={() => setEtapaExclusao(1)}
                 disabled={excluindoHabito}
-                className="flex-1 text-[#44586A] hover:text-[#0E2A3F] hover:bg-[#F4F3EC] rounded-xl h-11"
+                className="flex-1 text-ink-soft hover:text-ink hover:bg-surface-hover rounded-xl h-11"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 {t('back')}
@@ -1157,7 +1135,7 @@ export default function HabitosPage() {
                 setEtapaExclusao(1);
               }}
               disabled={excluindoHabito}
-              className={`${etapaExclusao === 2 ? 'flex-1' : 'w-full'} text-[#44586A] hover:text-[#0E2A3F] hover:bg-[#F4F3EC] rounded-xl h-11`}
+              className={`${etapaExclusao === 2 ? 'flex-1' : 'w-full'} text-ink-soft hover:text-ink hover:bg-surface-hover rounded-xl h-11`}
             >
               <X className="w-4 h-4 mr-2" />
               {t('cancel')}
@@ -1171,25 +1149,25 @@ export default function HabitosPage() {
         setModalCategoriasAberto(open);
         if (!open) {
           setCategoriaEditando(null);
-          setNovaCategoria({ nome: '', cor: '#8B5CF6', icone: 'folder' });
+          setNovaCategoria({ nome: '', cor: '#178E96', icone: 'folder' });
         }
       }}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-[#0E2A3F] flex items-center gap-2">
-              <Folder className="w-5 h-5 text-[#117178]" />
+            <DialogTitle className="text-ink flex items-center gap-2">
+              <Folder className="w-5 h-5 text-brand-dark" />
               {t('categories.manage')}
             </DialogTitle>
-            <DialogDescription className="text-[#44586A]">
+            <DialogDescription className="text-ink-soft">
               {t('categories.manageDescription')}
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4">
             {/* Form para criar/editar categoria */}
-            <div className="p-4 bg-[#F4F3EC] rounded-lg space-y-3">
+            <div className="p-4 bg-surface-hover rounded-lg space-y-3">
               <div>
-                <Label htmlFor="nome-categoria" className="text-[#44586A] text-sm">
+                <Label htmlFor="nome-categoria" className="text-ink-soft text-sm">
                   {t('categories.name')}
                 </Label>
                 <Input
@@ -1197,12 +1175,12 @@ export default function HabitosPage() {
                   value={novaCategoria.nome}
                   onChange={(e) => setNovaCategoria({ ...novaCategoria, nome: e.target.value })}
                   placeholder={t('categories.namePlaceholder')}
-                  className="bg-white border-[#D9D7CB] text-[#0E2A3F] placeholder:text-[#8395A5] focus:border-[#178E96] focus:ring-[#178E96]/20 mt-1"
+                  className="bg-surface border-line-strong text-ink placeholder:text-ink-faint focus:border-brand focus:ring-brand/20 mt-1"
                 />
               </div>
 
               <div>
-                <Label className="text-[#44586A] text-sm">{t('categories.color')}</Label>
+                <Label className="text-ink-soft text-sm">{t('categories.color')}</Label>
                 <div className="flex gap-2 mt-1.5">
                   {CORES.map((cor) => (
                     <button
@@ -1210,7 +1188,7 @@ export default function HabitosPage() {
                       type="button"
                       onClick={() => setNovaCategoria({ ...novaCategoria, cor })}
                       className={`w-7 h-7 rounded-full transition-transform ${
-                        novaCategoria.cor === cor ? 'ring-2 ring-[#178E96] ring-offset-2 ring-offset-white scale-110' : 'hover:scale-105'
+                        novaCategoria.cor === cor ? 'ring-2 ring-brand ring-offset-2 ring-offset-white dark:ring-offset-surface scale-110' : 'hover:scale-105'
                       }`}
                       style={{ backgroundColor: cor }}
                     />
@@ -1223,7 +1201,7 @@ export default function HabitosPage() {
                   <Button
                     variant="ghost"
                     onClick={cancelarEdicaoCategoria}
-                    className="flex-1 text-[#44586A] hover:text-[#0E2A3F] hover:bg-[#E9E7DC]"
+                    className="flex-1 text-ink-soft hover:text-ink hover:bg-line"
                   >
                     {t('cancel')}
                   </Button>
@@ -1231,10 +1209,10 @@ export default function HabitosPage() {
                 <Button
                   onClick={salvarCategoria}
                   disabled={!novaCategoria.nome.trim() || salvandoCategoria}
-                  className={`${categoriaEditando ? 'flex-1' : 'w-full'} bg-[#178E96] hover:bg-[#117178] text-white`}
+                  className={`${categoriaEditando ? 'flex-1' : 'w-full'} bg-brand hover:bg-brand-dark text-white`}
                 >
                   {salvandoCategoria ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <Spinner className="w-4 h-4 animate-spin" />
                   ) : categoriaEditando ? (
                     t('categories.update')
                   ) : (
@@ -1250,7 +1228,7 @@ export default function HabitosPage() {
             {/* Lista de categorias existentes */}
             {categorias.length > 0 ? (
               <div className="space-y-2">
-                <Label className="text-[#44586A] text-xs uppercase tracking-wide">
+                <Label className="text-ink-soft text-xs uppercase tracking-wide">
                   {t('categories.existing')} ({categorias.length})
                 </Label>
                 <div className="space-y-1">
@@ -1258,7 +1236,7 @@ export default function HabitosPage() {
                     <div
                       key={cat.id}
                       className={`flex items-center justify-between p-3 rounded-lg transition-colors ${
-                        categoriaEditando?.id === cat.id ? 'bg-[#E5F1F1] border border-[#178E96]/40' : 'bg-[#F4F3EC] hover:bg-[#E9E7DC]'
+                        categoriaEditando?.id === cat.id ? 'bg-brand-soft border border-brand/40' : 'bg-surface-hover hover:bg-line'
                       }`}
                     >
                       <div className="flex items-center gap-3">
@@ -1267,8 +1245,8 @@ export default function HabitosPage() {
                           style={{ backgroundColor: cat.cor }}
                         />
                         <div>
-                          <p className="text-sm font-medium text-[#0E2A3F]">{cat.nome}</p>
-                          <p className="text-xs text-[#8395A5]">
+                          <p className="text-sm font-medium text-ink">{cat.nome}</p>
+                          <p className="text-xs text-ink-faint">
                             {cat.totalHabitos || 0} {t('categories.habits')}
                           </p>
                         </div>
@@ -1276,16 +1254,16 @@ export default function HabitosPage() {
                       <div className="flex items-center gap-1">
                         <button
                           onClick={() => iniciarEdicaoCategoria(cat)}
-                          className="p-1.5 text-[#8395A5] hover:text-[#0E2A3F] transition-colors rounded"
+                          className="p-1.5 text-ink-faint hover:text-ink transition-colors rounded"
                         >
-                          <Settings2 className="w-4 h-4" />
+                          <GearSix className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => excluirCategoria(cat.id)}
                           disabled={excluindoCategoria}
-                          className="p-1.5 text-[#8395A5] hover:text-red-500 transition-colors rounded disabled:opacity-50"
+                          className="p-1.5 text-ink-faint hover:text-red-500 transition-colors rounded disabled:opacity-50"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash className="w-4 h-4" />
                         </button>
                       </div>
                     </div>
@@ -1293,7 +1271,7 @@ export default function HabitosPage() {
                 </div>
               </div>
             ) : (
-              <div className="text-center py-6 text-[#8395A5]">
+              <div className="text-center py-6 text-ink-faint">
                 <Tag className="w-8 h-8 mx-auto mb-2 opacity-50" />
                 <p className="text-sm">{t('categories.empty')}</p>
               </div>

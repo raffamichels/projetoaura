@@ -1,6 +1,6 @@
 'use client';
 
-import { Star } from 'lucide-react';
+import { Star } from '@phosphor-icons/react';
 import { useState } from 'react';
 
 interface StarRatingProps {
@@ -78,10 +78,10 @@ export function StarRating({
                   transition-all duration-150
                   ${
                     isFilled
-                      ? 'fill-[#D9A441] text-[#D9A441]'
-                      : 'text-[#D9D7CB] fill-transparent'
+                      ? 'fill-gold text-gold'
+                      : 'text-line-strong fill-transparent'
                   }
-                  ${!readonly && !isFilled ? 'hover:text-[#D9A441]/50' : ''}
+                  ${!readonly && !isFilled ? 'hover:text-gold/50' : ''}
                 `}
               />
             </button>
@@ -89,7 +89,7 @@ export function StarRating({
         })}
       </div>
       {showLabel && (
-        <span className="text-sm text-[#8395A5] min-w-[3rem]">
+        <span className="text-sm text-ink-faint min-w-[3rem]">
           {value > 0 ? `${value}/5` : 'Sem nota'}
         </span>
       )}

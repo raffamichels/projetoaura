@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2 } from 'lucide-react';
+import { Spinner } from '@phosphor-icons/react';
 
 interface NovoCartaoModalProps {
   aberto: boolean;
@@ -84,9 +84,9 @@ export default function NovoCartaoModal({ aberto, onFechar, onSucesso }: NovoCar
 
   return (
     <Dialog open={aberto} onOpenChange={onFechar}>
-      <DialogContent className="bg-white border-[#E3E1D6] max-w-md">
+      <DialogContent className="bg-surface border-line max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-[#0E2A3F]">
+          <DialogTitle className="text-2xl font-bold text-ink">
             Novo Cartão de Crédito
           </DialogTitle>
         </DialogHeader>
@@ -94,56 +94,56 @@ export default function NovoCartaoModal({ aberto, onFechar, onSucesso }: NovoCar
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Nome */}
           <div>
-            <Label className="text-[#44586A]">Nome do Cartão *</Label>
+            <Label className="text-ink-soft">Nome do Cartão *</Label>
             <Input
               value={nome}
               onChange={(e) => setNome(e.target.value)}
               placeholder="Ex: Nubank Mastercard"
               required
-              className="bg-white border-[#D9D7CB] text-[#0E2A3F] placeholder:text-[#8395A5] focus:border-[#178E96] focus:ring-[#178E96]/20"
+              className="bg-surface border-line-strong text-ink placeholder:text-ink-faint focus:border-brand focus:ring-brand/20"
             />
           </div>
 
           {/* Bandeira e Últimos Dígitos */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label className="text-[#44586A]">Bandeira</Label>
+              <Label className="text-ink-soft">Bandeira</Label>
               <Input
                 value={bandeira}
                 onChange={(e) => setBandeira(e.target.value)}
                 placeholder="Visa, Mastercard"
-                className="bg-white border-[#D9D7CB] text-[#0E2A3F] placeholder:text-[#8395A5] focus:border-[#178E96] focus:ring-[#178E96]/20"
+                className="bg-surface border-line-strong text-ink placeholder:text-ink-faint focus:border-brand focus:ring-brand/20"
               />
             </div>
             <div>
-              <Label className="text-[#44586A]">Últimos 4 Dígitos</Label>
+              <Label className="text-ink-soft">Últimos 4 Dígitos</Label>
               <Input
                 value={ultimosDigitos}
                 onChange={(e) => setUltimosDigitos(e.target.value.replace(/\D/g, '').slice(0, 4))}
                 placeholder="1234"
                 maxLength={4}
-                className="bg-white border-[#D9D7CB] text-[#0E2A3F] placeholder:text-[#8395A5] focus:border-[#178E96] focus:ring-[#178E96]/20"
+                className="bg-surface border-line-strong text-ink placeholder:text-ink-faint focus:border-brand focus:ring-brand/20"
               />
             </div>
           </div>
 
           {/* Limite */}
           <div>
-            <Label className="text-[#44586A]">Limite</Label>
+            <Label className="text-ink-soft">Limite</Label>
             <Input
               type="number"
               step="0.01"
               value={limite}
               onChange={(e) => setLimite(e.target.value)}
               placeholder="0,00"
-              className="bg-white border-[#D9D7CB] text-[#0E2A3F] placeholder:text-[#8395A5] focus:border-[#178E96] focus:ring-[#178E96]/20"
+              className="bg-surface border-line-strong text-ink placeholder:text-ink-faint focus:border-brand focus:ring-brand/20"
             />
           </div>
 
           {/* Datas */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label className="text-[#44586A]">Dia do Vencimento</Label>
+              <Label className="text-ink-soft">Dia do Vencimento</Label>
               <Input
                 type="number"
                 min="1"
@@ -151,11 +151,11 @@ export default function NovoCartaoModal({ aberto, onFechar, onSucesso }: NovoCar
                 value={diaVencimento}
                 onChange={(e) => setDiaVencimento(e.target.value)}
                 placeholder="15"
-                className="bg-white border-[#D9D7CB] text-[#0E2A3F] placeholder:text-[#8395A5] focus:border-[#178E96] focus:ring-[#178E96]/20"
+                className="bg-surface border-line-strong text-ink placeholder:text-ink-faint focus:border-brand focus:ring-brand/20"
               />
             </div>
             <div>
-              <Label className="text-[#44586A]">Dia do Fechamento</Label>
+              <Label className="text-ink-soft">Dia do Fechamento</Label>
               <Input
                 type="number"
                 min="1"
@@ -163,14 +163,14 @@ export default function NovoCartaoModal({ aberto, onFechar, onSucesso }: NovoCar
                 value={diaFechamento}
                 onChange={(e) => setDiaFechamento(e.target.value)}
                 placeholder="10"
-                className="bg-white border-[#D9D7CB] text-[#0E2A3F] placeholder:text-[#8395A5] focus:border-[#178E96] focus:ring-[#178E96]/20"
+                className="bg-surface border-line-strong text-ink placeholder:text-ink-faint focus:border-brand focus:ring-brand/20"
               />
             </div>
           </div>
 
           {/* Cor */}
           <div>
-            <Label className="text-[#44586A]">Cor</Label>
+            <Label className="text-ink-soft">Cor</Label>
             <div className="grid grid-cols-4 gap-2 mt-2">
               {CORES_DISPONIVEIS.map((corOpt) => (
                 <button
@@ -178,7 +178,7 @@ export default function NovoCartaoModal({ aberto, onFechar, onSucesso }: NovoCar
                   type="button"
                   onClick={() => setCor(corOpt.valor)}
                   className={`h-10 rounded-lg transition-all ${
-                    cor === corOpt.valor ? 'ring-2 ring-[#0E2A3F] ring-offset-2 ring-offset-white' : ''
+                    cor === corOpt.valor ? 'ring-2 ring-navy ring-offset-2 ring-offset-white' : ''
                   }`}
                   style={{ backgroundColor: corOpt.valor }}
                   title={corOpt.nome}
@@ -193,7 +193,7 @@ export default function NovoCartaoModal({ aberto, onFechar, onSucesso }: NovoCar
               type="button"
               variant="default"
               onClick={onFechar}
-              className="flex-1 bg-white border border-[#E9E7DC] text-[#44586A] hover:bg-[#F4F3EC]"
+              className="flex-1 bg-surface border border-line text-ink-soft hover:bg-surface-hover"
               disabled={carregando}
             >
               Cancelar
@@ -201,11 +201,11 @@ export default function NovoCartaoModal({ aberto, onFechar, onSucesso }: NovoCar
             <Button
               type="submit"
               disabled={carregando}
-              className="flex-1 bg-[#154F6D] hover:bg-[#0E2A3F] text-white"
+              className="flex-1 bg-brand-blue hover:bg-navy text-white"
             >
               {carregando ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <Spinner className="w-4 h-4 mr-2 animate-spin" />
                   Salvando...
                 </>
               ) : (

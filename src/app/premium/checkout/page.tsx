@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { SubscriptionCheckout } from '@/components/subscriptions/SubscriptionCheckout';
-import { Check, ArrowLeft, Sparkles, AlertCircle } from 'lucide-react';
+import { Check, ArrowLeft, Warning } from '@phosphor-icons/react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 
@@ -73,11 +73,11 @@ export default function CheckoutPage() {
   // Mostrar loading enquanto verifica a sessão
   if (status === 'loading') {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
-        <Card className="bg-zinc-900/50 border-gray-800">
+      <div className="min-h-screen bg-background text-ink flex items-center justify-center">
+        <Card>
           <CardContent className="flex flex-col items-center justify-center py-12 px-8">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mb-4"></div>
-            <p className="text-gray-300">Verificando sua assinatura...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand mb-4"></div>
+            <p className="text-ink-soft">Verificando sua assinatura...</p>
           </CardContent>
         </Card>
       </div>
@@ -87,15 +87,12 @@ export default function CheckoutPage() {
   // Se já for premium, mostrar mensagem
   if (session?.user?.plano === 'PREMIUM') {
     return (
-      <div className="min-h-screen bg-black text-white">
-        <header className="border-b border-gray-800 bg-black/80 backdrop-blur-lg">
+      <div className="min-h-screen bg-background text-ink">
+        <header className="border-b border-line bg-surface/90 backdrop-blur-lg">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
-              <Link href="/premium" className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
-                  <Sparkles className="w-5 h-5 text-white" />
-                </div>
-                <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+              <Link href="/premium" className="flex items-center">
+                <span className="text-2xl font-extrabold tracking-tight text-brand">
                   Aura
                 </span>
               </Link>
@@ -104,28 +101,28 @@ export default function CheckoutPage() {
         </header>
 
         <div className="container mx-auto px-4 py-12 max-w-2xl">
-          <Card className="bg-zinc-900/50 border-gray-800">
+          <Card>
             <CardContent className="flex flex-col items-center justify-center py-12 space-y-6">
-              <div className="rounded-full bg-purple-900/30 p-4 border border-purple-800">
-                <AlertCircle className="h-12 w-12 text-purple-400" />
+              <div className="rounded-full bg-brand-soft p-4 border border-brand/30">
+                <Warning className="h-12 w-12 text-brand" />
               </div>
               <div className="text-center space-y-2">
-                <h2 className="text-2xl font-bold text-white">Você já é Premium!</h2>
-                <p className="text-gray-400">
+                <h2 className="text-2xl font-bold text-ink">Você já é Premium!</h2>
+                <p className="text-ink-soft">
                   Você já possui uma assinatura premium ativa.
                 </p>
               </div>
               <div className="flex flex-col sm:flex-row gap-3 w-full max-w-md">
                 <Button
                   asChild
-                  className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                  className="flex-1 bg-brand hover:bg-brand-dark transition-colors duration-150"
                 >
                   <Link href="/dashboard/assinatura">Gerenciar Assinatura</Link>
                 </Button>
                 <Button
                   asChild
                   variant="outline"
-                  className="flex-1 border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white"
+                  className="flex-1 border-line-strong text-ink-soft hover:bg-surface-hover hover:text-ink"
                 >
                   <Link href="/dashboard">Ir para Dashboard</Link>
                 </Button>
@@ -138,20 +135,17 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-background text-ink">
       {/* Header */}
-      <header className="border-b border-gray-800 bg-black/80 backdrop-blur-lg">
+      <header className="border-b border-line bg-surface/90 backdrop-blur-lg">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <Link href="/premium" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
-                <Sparkles className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+            <Link href="/premium" className="flex items-center">
+              <span className="text-2xl font-extrabold tracking-tight text-brand">
                 Aura
               </span>
             </Link>
-            <Button variant="ghost" className="text-gray-300 hover:text-white hover:bg-gray-800" asChild>
+            <Button variant="ghost" className="text-ink-soft hover:text-ink hover:bg-surface-hover" asChild>
               <Link href="/premium">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Voltar
@@ -166,46 +160,46 @@ export default function CheckoutPage() {
           {/* Left: Plan Selection */}
           <div className="space-y-6">
             <div>
-              <h1 className="text-3xl font-bold mb-2 text-white">Escolha seu plano</h1>
-              <p className="text-gray-400">
+              <h1 className="text-3xl font-bold mb-2 text-ink">Escolha seu plano</h1>
+              <p className="text-ink-soft">
                 Selecione o plano que melhor se adapta às suas necessidades
               </p>
             </div>
 
             {/* Monthly Plan */}
             <Card
-              className={`cursor-pointer transition-all bg-zinc-900/50 border-gray-800 ${
+              className={`cursor-pointer transition-all ${
                 selectedPlan === 'monthly'
-                  ? 'border-purple-500 shadow-lg shadow-purple-500/20'
-                  : 'hover:border-purple-500/50'
+                  ? 'border-brand shadow-lg shadow-brand/10'
+                  : 'hover:border-brand/50'
               }`}
               onClick={() => setSelectedPlan('monthly')}
             >
               <CardContent className="p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div>
-                    <h3 className="text-xl font-bold mb-1 text-white">Premium Mensal</h3>
-                    <p className="text-sm text-gray-400">
+                    <h3 className="text-xl font-bold mb-1 text-ink">Premium Mensal</h3>
+                    <p className="text-sm text-ink-soft">
                       Cobrança mensal
                     </p>
                   </div>
                   <div className="text-right">
-                    <div className="text-2xl font-bold text-white">R$ 12,90</div>
-                    <div className="text-sm text-gray-400">por mês</div>
+                    <div className="text-2xl font-bold text-ink">R$ 12,90</div>
+                    <div className="text-sm text-ink-soft">por mês</div>
                   </div>
                 </div>
                 {selectedPlan === 'monthly' && (
-                  <Badge className="bg-purple-600 text-white">Selecionado</Badge>
+                  <Badge className="bg-brand text-white">Selecionado</Badge>
                 )}
               </CardContent>
             </Card>
 
             {/* Yearly Plan */}
             <Card
-              className={`cursor-pointer transition-all relative bg-zinc-900/50 border-gray-800 ${
+              className={`cursor-pointer transition-all relative ${
                 selectedPlan === 'yearly'
-                  ? 'border-purple-500 shadow-lg shadow-purple-500/20'
-                  : 'hover:border-purple-500/50'
+                  ? 'border-brand shadow-lg shadow-brand/10'
+                  : 'hover:border-brand/50'
               }`}
               onClick={() => setSelectedPlan('yearly')}
             >
@@ -215,29 +209,29 @@ export default function CheckoutPage() {
               <CardContent className="p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div>
-                    <h3 className="text-xl font-bold mb-1 text-white">Premium Anual</h3>
-                    <p className="text-sm text-gray-400">
+                    <h3 className="text-xl font-bold mb-1 text-ink">Premium Anual</h3>
+                    <p className="text-sm text-ink-soft">
                       Cobrança anual - Melhor valor
                     </p>
                   </div>
                   <div className="text-right">
-                    <div className="text-2xl font-bold text-white">R$ 129,00</div>
-                    <div className="text-sm text-gray-400">por ano</div>
-                    <div className="text-xs text-green-400 font-semibold">
+                    <div className="text-2xl font-bold text-ink">R$ 129,00</div>
+                    <div className="text-sm text-ink-soft">por ano</div>
+                    <div className="text-xs text-green-700 dark:text-green-400 font-semibold">
                       R$ 10,75/mês
                     </div>
                   </div>
                 </div>
                 {selectedPlan === 'yearly' && (
-                  <Badge className="bg-purple-600 text-white">Selecionado</Badge>
+                  <Badge className="bg-brand text-white">Selecionado</Badge>
                 )}
               </CardContent>
             </Card>
 
             {/* Features List */}
-            <Card className="bg-zinc-900/50 border-gray-800">
+            <Card>
               <CardHeader>
-                <CardTitle className="text-white">O que está incluído</CardTitle>
+                <CardTitle className="text-ink">O que está incluído</CardTitle>
               </CardHeader>
               <CardContent>
                 <ul className="space-y-3">
@@ -253,8 +247,8 @@ export default function CheckoutPage() {
                     'Acesso antecipado a novos recursos',
                   ].map((feature, i) => (
                     <li key={i} className="flex items-start">
-                      <Check className="w-5 h-5 text-purple-400 mr-2 flex-shrink-0 mt-0.5" />
-                      <span className="text-gray-300">{feature}</span>
+                      <Check className="w-5 h-5 text-brand mr-2 flex-shrink-0 mt-0.5" />
+                      <span className="text-ink-soft">{feature}</span>
                     </li>
                   ))}
                 </ul>
@@ -265,35 +259,35 @@ export default function CheckoutPage() {
           {/* Right: Checkout Form */}
           <div className="lg:sticky lg:top-6 h-fit">
             {!showCheckout ? (
-              <Card className="bg-zinc-900/50 border-gray-800">
+              <Card>
                 <CardHeader>
-                  <CardTitle className="text-white">Confirme seu plano</CardTitle>
-                  <CardDescription className="text-gray-400">
-                    Você selecionou: <strong className="text-purple-400">{currentPlan.name}</strong>
+                  <CardTitle className="text-ink">Confirme seu plano</CardTitle>
+                  <CardDescription className="text-ink-soft">
+                    Você selecionou: <strong className="text-brand">{currentPlan.name}</strong>
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="p-4 border border-gray-800 rounded-lg bg-black/30">
+                  <div className="p-4 border border-line rounded-lg bg-surface-hover">
                     <div className="flex justify-between items-center mb-2">
-                      <span className="text-gray-300">Plano:</span>
-                      <span className="font-bold text-white">{currentPlan.name}</span>
+                      <span className="text-ink-soft">Plano:</span>
+                      <span className="font-bold text-ink">{currentPlan.name}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-300">Valor:</span>
-                      <span className="font-bold text-white">
+                      <span className="text-ink-soft">Valor:</span>
+                      <span className="font-bold text-ink">
                         {selectedPlan === 'monthly' ? 'R$ 12,90/mês' : 'R$ 129,00/ano'}
                       </span>
                     </div>
                   </div>
 
                   <Button
-                    className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
+                    className="w-full bg-brand hover:bg-brand-dark text-white transition-colors duration-150"
                     onClick={() => setShowCheckout(true)}
                   >
                     Prosseguir para Pagamento
                   </Button>
 
-                  <p className="text-xs text-gray-400 text-center">
+                  <p className="text-xs text-ink-soft text-center">
                     Você ainda pode voltar e trocar de plano antes de pagar
                   </p>
                 </CardContent>
@@ -309,7 +303,7 @@ export default function CheckoutPage() {
                 <div className="mt-4">
                   <Button
                     variant="outline"
-                    className="w-full border-gray-700 text-gray-300 hover:bg-gray-800"
+                    className="w-full border-line-strong text-ink-soft hover:bg-surface-hover"
                     onClick={() => setShowCheckout(false)}
                   >
                     Voltar e Trocar de Plano
@@ -318,7 +312,7 @@ export default function CheckoutPage() {
               </>
             )}
 
-            <div className="mt-6 text-center text-sm text-gray-400">
+            <div className="mt-6 text-center text-sm text-ink-soft">
               <p>Pagamento seguro processado pelo Stripe</p>
               <p className="mt-2">
                 Você pode cancelar sua assinatura a qualquer momento

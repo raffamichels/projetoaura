@@ -13,7 +13,7 @@ import {
 } from '@/types/midia';
 import { ImageSearchSelector } from './ImageSearchSelector';
 import { StarRating } from '@/components/ui/star-rating';
-import { Book, Film, User, Building, Globe, Calendar, Clock, Tag, Palette } from 'lucide-react';
+import { Book, FilmSlate, User, Building, Globe, Calendar, Clock, Tag, Palette } from '@phosphor-icons/react';
 
 interface NovaMidiaModalProps {
   aberto: boolean;
@@ -173,13 +173,13 @@ export function NovaMidiaModal({ aberto, onFechar, onSucesso }: NovaMidiaModalPr
 
   return (
     <Dialog open={aberto} onOpenChange={onFechar}>
-      <DialogContent className="bg-white border-[#E9E7DC] text-[#0E2A3F] max-w-md p-0 max-h-[90vh] overflow-y-auto">
+      <DialogContent className="bg-surface border-line text-ink max-w-md p-0 max-h-[90vh] overflow-y-auto">
         <DialogHeader className="px-5 pt-4 pb-3">
-          <DialogTitle className="text-[#0E2A3F] text-base flex items-center gap-2">
+          <DialogTitle className="text-ink text-base flex items-center gap-2">
             {formData.tipo === TipoMidia.LIVRO ? (
-              <Book className="w-4 h-4 text-[#117178]" />
+              <Book className="w-4 h-4 text-brand-dark" />
             ) : (
-              <Film className="w-4 h-4 text-[#117178]" />
+              <FilmSlate className="w-4 h-4 text-brand-dark" />
             )}
             Adicionar {formData.tipo === TipoMidia.LIVRO ? 'Livro' : 'Filme'}
           </DialogTitle>
@@ -187,11 +187,11 @@ export function NovaMidiaModal({ aberto, onFechar, onSucesso }: NovaMidiaModalPr
 
         <form onSubmit={handleSubmit} className="px-5 pb-5">
           {/* Tipo */}
-          <div className="flex items-center gap-3 py-1.5 px-1 hover:bg-[#F4F3EC] rounded-lg transition-colors mb-2">
+          <div className="flex items-center gap-3 py-1.5 px-1 hover:bg-surface-hover rounded-lg transition-colors mb-2">
             {formData.tipo === TipoMidia.LIVRO ? (
-              <Book className="w-5 h-5 text-[#44586A] shrink-0" />
+              <Book className="w-5 h-5 text-ink-soft shrink-0" />
             ) : (
-              <Film className="w-5 h-5 text-[#44586A] shrink-0" />
+              <FilmSlate className="w-5 h-5 text-ink-soft shrink-0" />
             )}
             <div className="flex items-center gap-1.5 flex-wrap flex-1">
               <button
@@ -200,8 +200,8 @@ export function NovaMidiaModal({ aberto, onFechar, onSucesso }: NovaMidiaModalPr
                 className={`
                   px-3 py-1.5 rounded-full text-sm font-medium transition-all flex items-center gap-2
                   ${formData.tipo === TipoMidia.LIVRO
-                    ? 'bg-[#E5F1F1] text-[#117178] ring-2 ring-[#178E96] ring-offset-1 ring-offset-white'
-                    : 'bg-[#F4F3EC] text-[#44586A] hover:bg-[#E9E7DC]'
+                    ? 'bg-brand-soft text-brand-dark ring-2 ring-brand ring-offset-1 ring-offset-white'
+                    : 'bg-surface-hover text-ink-soft hover:bg-line'
                   }
                 `}
               >
@@ -214,18 +214,18 @@ export function NovaMidiaModal({ aberto, onFechar, onSucesso }: NovaMidiaModalPr
                 className={`
                   px-3 py-1.5 rounded-full text-sm font-medium transition-all flex items-center gap-2
                   ${formData.tipo === TipoMidia.FILME
-                    ? 'bg-[#E5F1F1] text-[#117178] ring-2 ring-[#178E96] ring-offset-1 ring-offset-white'
-                    : 'bg-[#F4F3EC] text-[#44586A] hover:bg-[#E9E7DC]'
+                    ? 'bg-brand-soft text-brand-dark ring-2 ring-brand ring-offset-1 ring-offset-white'
+                    : 'bg-surface-hover text-ink-soft hover:bg-line'
                   }
                 `}
               >
-                <Film className="w-4 h-4" />
+                <FilmSlate className="w-4 h-4" />
                 Filme
               </button>
             </div>
           </div>
 
-          <div className="border-t border-[#E9E7DC] mb-2" />
+          <div className="border-t border-line mb-2" />
 
           {/* Título - campo principal */}
           <div className="mb-3">
@@ -235,7 +235,7 @@ export function NovaMidiaModal({ aberto, onFechar, onSucesso }: NovaMidiaModalPr
               onChange={(e) => setFormData({ ...formData, titulo: e.target.value })}
               placeholder={`Título do ${formData.tipo === TipoMidia.LIVRO ? 'livro' : 'filme'}`}
               required
-              className="w-full bg-transparent border-none text-[#0E2A3F] text-base font-medium placeholder:text-[#8395A5] focus:outline-none focus:ring-0 py-1.5"
+              className="w-full bg-transparent border-none text-ink text-base font-medium placeholder:text-ink-faint focus:outline-none focus:ring-0 py-1.5"
               autoFocus
             />
           </div>
@@ -246,36 +246,36 @@ export function NovaMidiaModal({ aberto, onFechar, onSucesso }: NovaMidiaModalPr
             {formData.tipo === TipoMidia.LIVRO && (
               <>
                 {/* Autor */}
-                <div className="flex items-center gap-3 py-1.5 px-1 hover:bg-[#F4F3EC] rounded-lg transition-colors">
-                  <User className="w-5 h-5 text-[#44586A] shrink-0" />
+                <div className="flex items-center gap-3 py-1.5 px-1 hover:bg-surface-hover rounded-lg transition-colors">
+                  <User className="w-5 h-5 text-ink-soft shrink-0" />
                   <input
                     type="text"
                     value={formData.autor}
                     onChange={(e) => setFormData({ ...formData, autor: e.target.value })}
                     placeholder="Autor"
-                    className="flex-1 bg-transparent border-none text-sm text-[#0E2A3F] placeholder:text-[#8395A5] focus:outline-none"
+                    className="flex-1 bg-transparent border-none text-sm text-ink placeholder:text-ink-faint focus:outline-none"
                   />
                 </div>
 
                 {/* Editora */}
-                <div className="flex items-center gap-3 py-1.5 px-1 hover:bg-[#F4F3EC] rounded-lg transition-colors">
-                  <Building className="w-5 h-5 text-[#44586A] shrink-0" />
+                <div className="flex items-center gap-3 py-1.5 px-1 hover:bg-surface-hover rounded-lg transition-colors">
+                  <Building className="w-5 h-5 text-ink-soft shrink-0" />
                   <input
                     type="text"
                     value={formData.editora}
                     onChange={(e) => setFormData({ ...formData, editora: e.target.value })}
                     placeholder="Editora"
-                    className="flex-1 bg-transparent border-none text-sm text-[#0E2A3F] placeholder:text-[#8395A5] focus:outline-none"
+                    className="flex-1 bg-transparent border-none text-sm text-ink placeholder:text-ink-faint focus:outline-none"
                   />
                 </div>
 
                 {/* Fonte */}
-                <div className="flex items-center gap-3 py-1.5 px-1 hover:bg-[#F4F3EC] rounded-lg transition-colors">
-                  <Book className="w-5 h-5 text-[#44586A] shrink-0" />
+                <div className="flex items-center gap-3 py-1.5 px-1 hover:bg-surface-hover rounded-lg transition-colors">
+                  <Book className="w-5 h-5 text-ink-soft shrink-0" />
                   <select
                     value={formData.fonte}
                     onChange={(e) => setFormData({ ...formData, fonte: e.target.value as FonteLivro })}
-                    className="flex-1 bg-white border-none text-sm text-[#0E2A3F] focus:outline-none appearance-none"
+                    className="flex-1 bg-surface border-none text-sm text-ink focus:outline-none appearance-none"
                   >
                     <option value={FonteLivro.FISICO}>Físico</option>
                     <option value={FonteLivro.DIGITAL}>Digital</option>
@@ -290,50 +290,50 @@ export function NovaMidiaModal({ aberto, onFechar, onSucesso }: NovaMidiaModalPr
             {formData.tipo === TipoMidia.FILME && (
               <>
                 {/* Diretor */}
-                <div className="flex items-center gap-3 py-1.5 px-1 hover:bg-[#F4F3EC] rounded-lg transition-colors">
-                  <User className="w-5 h-5 text-[#44586A] shrink-0" />
+                <div className="flex items-center gap-3 py-1.5 px-1 hover:bg-surface-hover rounded-lg transition-colors">
+                  <User className="w-5 h-5 text-ink-soft shrink-0" />
                   <input
                     type="text"
                     value={formData.diretor}
                     onChange={(e) => setFormData({ ...formData, diretor: e.target.value })}
                     placeholder="Diretor"
-                    className="flex-1 bg-transparent border-none text-sm text-[#0E2A3F] placeholder:text-[#8395A5] focus:outline-none"
+                    className="flex-1 bg-transparent border-none text-sm text-ink placeholder:text-ink-faint focus:outline-none"
                   />
                 </div>
 
                 {/* Ano de Lançamento */}
-                <div className="flex items-center gap-3 py-1.5 px-1 hover:bg-[#F4F3EC] rounded-lg transition-colors">
-                  <Calendar className="w-5 h-5 text-[#44586A] shrink-0" />
+                <div className="flex items-center gap-3 py-1.5 px-1 hover:bg-surface-hover rounded-lg transition-colors">
+                  <Calendar className="w-5 h-5 text-ink-soft shrink-0" />
                   <input
                     type="number"
                     value={formData.anoLancamento}
                     onChange={(e) => setFormData({ ...formData, anoLancamento: e.target.value })}
                     placeholder="Ano de Lançamento"
-                    className="flex-1 bg-transparent border-none text-sm text-[#0E2A3F] placeholder:text-[#8395A5] focus:outline-none"
+                    className="flex-1 bg-transparent border-none text-sm text-ink placeholder:text-ink-faint focus:outline-none"
                   />
                 </div>
 
                 {/* Duração */}
-                <div className="flex items-center gap-3 py-1.5 px-1 hover:bg-[#F4F3EC] rounded-lg transition-colors">
-                  <Clock className="w-5 h-5 text-[#44586A] shrink-0" />
+                <div className="flex items-center gap-3 py-1.5 px-1 hover:bg-surface-hover rounded-lg transition-colors">
+                  <Clock className="w-5 h-5 text-ink-soft shrink-0" />
                   <input
                     type="number"
                     value={formData.duracao}
                     onChange={(e) => setFormData({ ...formData, duracao: e.target.value })}
                     placeholder="Duração (minutos)"
-                    className="flex-1 bg-transparent border-none text-sm text-[#0E2A3F] placeholder:text-[#8395A5] focus:outline-none"
+                    className="flex-1 bg-transparent border-none text-sm text-ink placeholder:text-ink-faint focus:outline-none"
                   />
                 </div>
               </>
             )}
 
             {/* Gênero */}
-            <div className="flex items-center gap-3 py-1.5 px-1 hover:bg-[#F4F3EC] rounded-lg transition-colors">
-              <Tag className="w-5 h-5 text-[#44586A] shrink-0" />
+            <div className="flex items-center gap-3 py-1.5 px-1 hover:bg-surface-hover rounded-lg transition-colors">
+              <Tag className="w-5 h-5 text-ink-soft shrink-0" />
               <select
                 value={formData.genero}
                 onChange={(e) => setFormData({ ...formData, genero: e.target.value })}
-                className="flex-1 bg-white border-none text-sm text-[#0E2A3F] focus:outline-none appearance-none"
+                className="flex-1 bg-surface border-none text-sm text-ink focus:outline-none appearance-none"
               >
                 <option value="">Selecione um gênero...</option>
                 {generos.map((g) => (
@@ -345,24 +345,24 @@ export function NovaMidiaModal({ aberto, onFechar, onSucesso }: NovaMidiaModalPr
             </div>
 
             {/* Idioma */}
-            <div className="flex items-center gap-3 py-1.5 px-1 hover:bg-[#F4F3EC] rounded-lg transition-colors">
-              <Globe className="w-5 h-5 text-[#44586A] shrink-0" />
+            <div className="flex items-center gap-3 py-1.5 px-1 hover:bg-surface-hover rounded-lg transition-colors">
+              <Globe className="w-5 h-5 text-ink-soft shrink-0" />
               <input
                 type="text"
                 value={formData.idioma}
                 onChange={(e) => setFormData({ ...formData, idioma: e.target.value })}
                 placeholder="Idioma (ex: Português)"
-                className="flex-1 bg-transparent border-none text-sm text-[#0E2A3F] placeholder:text-[#8395A5] focus:outline-none"
+                className="flex-1 bg-transparent border-none text-sm text-ink placeholder:text-ink-faint focus:outline-none"
               />
             </div>
 
             {/* Status */}
-            <div className="flex items-center gap-3 py-1.5 px-1 hover:bg-[#F4F3EC] rounded-lg transition-colors">
-              <Tag className="w-5 h-5 text-[#44586A] shrink-0" />
+            <div className="flex items-center gap-3 py-1.5 px-1 hover:bg-surface-hover rounded-lg transition-colors">
+              <Tag className="w-5 h-5 text-ink-soft shrink-0" />
               <select
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value as StatusLeitura })}
-                className="flex-1 bg-white border-none text-sm text-[#0E2A3F] focus:outline-none appearance-none"
+                className="flex-1 bg-surface border-none text-sm text-ink focus:outline-none appearance-none"
               >
                 <option value={StatusLeitura.PROXIMO}>Próximo</option>
                 <option value={StatusLeitura.EM_ANDAMENTO}>Em andamento</option>
@@ -372,8 +372,8 @@ export function NovaMidiaModal({ aberto, onFechar, onSucesso }: NovaMidiaModalPr
             </div>
 
             {/* Avaliação */}
-            <div className="flex items-center gap-3 py-1.5 px-1 hover:bg-[#F4F3EC] rounded-lg transition-colors">
-              <div className="w-5 h-5 text-[#44586A] shrink-0 flex items-center justify-center">
+            <div className="flex items-center gap-3 py-1.5 px-1 hover:bg-surface-hover rounded-lg transition-colors">
+              <div className="w-5 h-5 text-ink-soft shrink-0 flex items-center justify-center">
                 ★
               </div>
               <div className="flex-1">
@@ -387,30 +387,30 @@ export function NovaMidiaModal({ aberto, onFechar, onSucesso }: NovaMidiaModalPr
             </div>
 
             {/* Datas */}
-            <div className="flex items-center gap-3 py-1.5 px-1 hover:bg-[#F4F3EC] rounded-lg transition-colors">
-              <Calendar className="w-5 h-5 text-[#44586A] shrink-0" />
+            <div className="flex items-center gap-3 py-1.5 px-1 hover:bg-surface-hover rounded-lg transition-colors">
+              <Calendar className="w-5 h-5 text-ink-soft shrink-0" />
               <div className="flex items-center gap-2 flex-1 flex-wrap">
                 <input
                   type="date"
                   value={formData.dataInicio}
                   onChange={(e) => setFormData({ ...formData, dataInicio: e.target.value })}
                   placeholder="Data de Início"
-                  className="bg-[#F4F3EC] border border-[#D9D7CB] rounded-md px-2 py-1 text-sm text-[#0E2A3F] focus:border-[#178E96] focus:outline-none flex-1 min-w-0"
+                  className="bg-surface-hover border border-line-strong rounded-md px-2 py-1 text-sm text-ink focus:border-brand focus:outline-none flex-1 min-w-0"
                 />
-                <span className="text-[#8395A5] text-sm">-</span>
+                <span className="text-ink-faint text-sm">-</span>
                 <input
                   type="date"
                   value={formData.dataConclusao}
                   onChange={(e) => setFormData({ ...formData, dataConclusao: e.target.value })}
                   placeholder="Data de Conclusão"
-                  className="bg-[#F4F3EC] border border-[#D9D7CB] rounded-md px-2 py-1 text-sm text-[#0E2A3F] focus:border-[#178E96] focus:outline-none flex-1 min-w-0"
+                  className="bg-surface-hover border border-line-strong rounded-md px-2 py-1 text-sm text-ink focus:border-brand focus:outline-none flex-1 min-w-0"
                 />
               </div>
             </div>
 
             {/* Cor */}
-            <div className="flex items-center gap-3 py-1.5 px-1 hover:bg-[#F4F3EC] rounded-lg transition-colors">
-              <Palette className="w-5 h-5 text-[#44586A] shrink-0" />
+            <div className="flex items-center gap-3 py-1.5 px-1 hover:bg-surface-hover rounded-lg transition-colors">
+              <Palette className="w-5 h-5 text-ink-soft shrink-0" />
               <div className="flex items-center gap-1.5 flex-wrap flex-1">
                 {CORES_MIDIA.map((cor) => (
                   <button
@@ -418,7 +418,7 @@ export function NovaMidiaModal({ aberto, onFechar, onSucesso }: NovaMidiaModalPr
                     type="button"
                     onClick={() => setFormData({ ...formData, cor })}
                     className={`w-6 h-6 rounded-full transition-all ${
-                      formData.cor === cor ? 'ring-2 ring-[#0E2A3F] ring-offset-1 ring-offset-white' : ''
+                      formData.cor === cor ? 'ring-2 ring-navy ring-offset-1 ring-offset-white' : ''
                     }`}
                     style={{ backgroundColor: cor }}
                   />
@@ -427,7 +427,7 @@ export function NovaMidiaModal({ aberto, onFechar, onSucesso }: NovaMidiaModalPr
             </div>
 
             {/* Busca de Capa */}
-            <div className="pt-2 border-t border-[#E9E7DC]">
+            <div className="pt-2 border-t border-line">
               <ImageSearchSelector
                 tipo={formData.tipo === TipoMidia.LIVRO ? 'livro' : 'filme'}
                 titulo={formData.titulo}
@@ -438,19 +438,19 @@ export function NovaMidiaModal({ aberto, onFechar, onSucesso }: NovaMidiaModalPr
           </div>
 
           {/* Botões */}
-          <div className="flex justify-end gap-2 pt-3 border-t border-[#E9E7DC] mt-3">
+          <div className="flex justify-end gap-2 pt-3 border-t border-line mt-3">
             <Button
               type="button"
               variant="ghost"
               onClick={onFechar}
-              className="px-4 h-9 text-sm text-[#44586A] hover:text-[#0E2A3F]"
+              className="px-4 h-9 text-sm text-ink-soft hover:text-ink"
               disabled={carregando}
             >
               Cancelar
             </Button>
             <Button
               type="submit"
-              className="px-6 h-9 text-sm bg-[#178E96] hover:bg-[#117178] text-white rounded-full"
+              className="px-6 h-9 text-sm bg-brand hover:bg-brand-dark text-white rounded-full"
               disabled={carregando}
             >
               {carregando 

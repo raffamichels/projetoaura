@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Compromisso } from '@/types/compromisso';
 import { Button } from '@/components/ui/button';
-import { Calendar, Clock, Tag, Edit, Trash2, RefreshCw } from 'lucide-react';
+import { Calendar, Clock, Tag, PencilSimple, Trash, ArrowsClockwise } from '@phosphor-icons/react';
 import { format, parseISO } from 'date-fns';
 import { ptBR, enUS } from 'date-fns/locale';
 import { RecurrenceActionModal } from '@/components/features/agenda/RecurrenceActionModal';
@@ -107,17 +107,17 @@ export function CompromissoDetails({
 
         {/* Título */}
         <div>
-          <h3 className="text-base sm:text-lg font-bold text-[#0E2A3F] mb-1">{compromisso.titulo}</h3>
+          <h3 className="text-base sm:text-lg font-bold text-ink mb-1">{compromisso.titulo}</h3>
           {compromisso.descricao && (
-            <p className="text-xs sm:text-sm text-[#44586A]">{compromisso.descricao}</p>
+            <p className="text-xs sm:text-sm text-ink-soft">{compromisso.descricao}</p>
           )}
         </div>
 
         {/* Badge de Recorrente */}
         {compromisso.isRecorrente && (
-          <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 bg-[#E5F1F1] border border-[#178E96]/30 rounded-full">
-            <RefreshCw className="w-3 h-3 text-[#117178]" />
-            <span className="text-[10px] sm:text-xs text-[#117178] font-medium">
+          <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 bg-brand-soft border border-brand/30 rounded-full">
+            <ArrowsClockwise className="w-3 h-3 text-brand-dark" />
+            <span className="text-[10px] sm:text-xs text-brand-dark font-medium">
               {getDescricaoRecorrencia(
                 compromisso.tipoRecorrencia ?? 'semanal',
                 compromisso.intervaloRecorrencia || 1,
@@ -131,16 +131,16 @@ export function CompromissoDetails({
         <div className="space-y-2">
           {/* Data */}
           <div className="flex items-center gap-2 text-xs sm:text-sm">
-            <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#8395A5] flex-shrink-0" />
-            <span className="text-[#0E2A3F]">
+            <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-ink-faint flex-shrink-0" />
+            <span className="text-ink">
               {format(parseISO(compromisso.data), "EEEE, d 'de' MMMM 'de' yyyy", { locale: dateLocale })}
             </span>
           </div>
 
           {/* Horário */}
           <div className="flex items-center gap-2 text-xs sm:text-sm">
-            <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#8395A5] flex-shrink-0" />
-            <span className="text-[#0E2A3F]">
+            <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-ink-faint flex-shrink-0" />
+            <span className="text-ink">
               {compromisso.horaInicio}
               {compromisso.horaFim && ` - ${compromisso.horaFim}`}
             </span>
@@ -149,36 +149,36 @@ export function CompromissoDetails({
           {/* Categoria */}
           {compromisso.categoria && (
             <div className="flex items-center gap-2 text-xs sm:text-sm">
-              <Tag className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#8395A5] flex-shrink-0" />
-              <span className="text-[#0E2A3F] capitalize">{t(compromisso.categoria as any)}</span>
+              <Tag className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-ink-faint flex-shrink-0" />
+              <span className="text-ink capitalize">{t(compromisso.categoria as any)}</span>
             </div>
           )}
 
           {/* Informação adicional sobre recorrência */}
           {compromisso.isRecorrente && compromisso.dataFimRecorrencia && (
-            <div className="text-[10px] sm:text-xs text-[#8395A5] pt-2 border-t border-[#E9E7DC]">
+            <div className="text-[10px] sm:text-xs text-ink-faint pt-2 border-t border-line">
               {t('repeatsUntil', { date: format(parseISO(compromisso.dataFimRecorrencia), "dd/MM/yyyy") })}
             </div>
           )}
         </div>
 
         {/* Ações */}
-        <div className="flex gap-2 pt-2 border-t border-[#E9E7DC]">
+        <div className="flex gap-2 pt-2 border-t border-line">
           <Button
             onClick={handleEditClick}
-            className="flex-1 bg-[#178E96] hover:bg-[#117178] h-9 sm:h-10 text-sm sm:text-base"
+            className="flex-1 bg-brand hover:bg-brand-dark h-9 sm:h-10 text-sm sm:text-base"
             disabled={isDeleting}
           >
-            <Edit className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
+            <PencilSimple className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
             {t('edit')}
           </Button>
           <Button
             onClick={handleDeleteClick}
             variant="default"
-            className="flex-1 border-red-500/50 text-red-500 hover:bg-red-50 hover:text-red-600 h-9 sm:h-10 text-sm sm:text-base"
+            className="flex-1 border-red-500/50 text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400 h-9 sm:h-10 text-sm sm:text-base"
             disabled={isDeleting}
           >
-            <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
+            <Trash className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
             {isDeleting ? t('deleting') : t('delete')}
           </Button>
         </div>

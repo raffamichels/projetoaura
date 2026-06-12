@@ -11,7 +11,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Loader2, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
+import { Spinner, MagnifyingGlassPlus, MagnifyingGlassMinus, ArrowCounterClockwise } from '@phosphor-icons/react';
 import { Slider } from '@/components/ui/slider';
 
 interface ImageCropModalProps {
@@ -171,7 +171,7 @@ export function ImageCropModal({
 
           {/* Controles de Zoom */}
           <div className="flex items-center gap-4 px-2">
-            <ZoomOut className="w-4 h-4 text-zinc-400" />
+            <MagnifyingGlassMinus className="w-4 h-4 text-zinc-400" />
             <Slider
               value={[scale]}
               onValueChange={([value]) => setScale(value)}
@@ -180,14 +180,14 @@ export function ImageCropModal({
               step={0.1}
               className="flex-1"
             />
-            <ZoomIn className="w-4 h-4 text-zinc-400" />
+            <MagnifyingGlassPlus className="w-4 h-4 text-zinc-400" />
             <Button
               variant="ghost"
               size="icon"
               onClick={handleReset}
               className="text-zinc-400 hover:text-zinc-100"
             >
-              <RotateCcw className="w-4 h-4" />
+              <ArrowCounterClockwise className="w-4 h-4" />
             </Button>
           </div>
 
@@ -212,7 +212,7 @@ export function ImageCropModal({
           >
             {isProcessing ? (
               <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                <Spinner className="w-4 h-4 mr-2 animate-spin" />
                 Processando...
               </>
             ) : (

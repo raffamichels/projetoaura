@@ -10,23 +10,7 @@ import Highlight from '@tiptap/extension-highlight';
 import { Extension } from '@tiptap/core';
 import { ResizableImage } from './ResizableImage';
 import DOMPurify from 'dompurify';
-import {
-  Bold,
-  Italic,
-  Underline as UnderlineIcon,
-  Strikethrough,
-  List,
-  ListOrdered,
-  Heading1,
-  Heading2,
-  Heading3,
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
-  Undo,
-  Redo,
-  Highlighter,
-} from 'lucide-react';
+import { TextB, TextItalic, TextUnderline as UnderlineIcon, TextStrikethrough, ListBullets, ListNumbers, TextHOne, TextHTwo, TextHThree, TextAlignLeft, TextAlignCenter, TextAlignRight, ArrowUUpLeft, ArrowUUpRight, HighlighterCircle } from '@phosphor-icons/react';
 import { Button } from '@/components/ui/button';
 
 // Configuração de sanitização para prevenir XSS
@@ -134,7 +118,7 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
         },
         listItem: {
           HTMLAttributes: {
-            class: 'text-[#44586A]',
+            class: 'text-ink-soft',
           },
         },
       }),
@@ -160,7 +144,7 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
     },
     editorProps: {
       attributes: {
-        class: 'prose prose-invert max-w-none min-h-[200px] focus:outline-none px-4 py-3',
+        class: 'prose dark:prose-invert max-w-none min-h-[200px] focus:outline-none px-4 py-3',
       },
       handlePaste: (view, event) => {
         const items = event.clipboardData?.items;
@@ -223,7 +207,7 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
   }: {
     onClick: () => void;
     isActive?: boolean;
-    icon: typeof Bold;
+    icon: typeof TextB;
     title: string;
   }) => (
     <Button
@@ -232,7 +216,7 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
       variant="ghost"
       size="sm"
       className={`h-8 w-8 p-0 ${
-        isActive ? 'bg-[#178E96] text-white' : 'text-[#44586A] hover:text-[#0E2A3F] hover:bg-[#E9E7DC]'
+        isActive ? 'bg-brand text-white' : 'text-ink-soft hover:text-ink hover:bg-line'
       }`}
       title={title}
     >
@@ -260,18 +244,18 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
       variant="ghost"
       size="sm"
       className={`h-8 w-8 p-0 ${
-        editor.isActive('highlight', { color }) ? 'ring-2 ring-[#178E96]' : ''
+        editor.isActive('highlight', { color }) ? 'ring-2 ring-brand' : ''
       }`}
       title={title}
     >
       <div className="flex items-center justify-center">
-        <Highlighter className="h-4 w-4" style={{ color }} />
+        <HighlighterCircle className="h-4 w-4" style={{ color }} />
       </div>
     </Button>
   );
 
   return (
-    <div className="border border-[#D9D7CB] rounded-lg bg-white overflow-hidden">
+    <div className="border border-line-strong rounded-lg bg-surface overflow-hidden">
       <style jsx global>{`
         .ProseMirror img {
           max-width: 100%;
@@ -283,11 +267,11 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
         }
 
         .ProseMirror img:hover {
-          box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.4);
+          box-shadow: 0 0 0 2px color-mix(in srgb, var(--brand) 40%, transparent);
         }
 
         .ProseMirror img.ProseMirror-selectednode {
-          outline: 2px solid rgb(168, 85, 247);
+          outline: 2px solid var(--brand);
           outline-offset: 2px;
         }
 
@@ -304,11 +288,11 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
         }
 
         .ProseMirror ul li {
-          color: #d4d4d8;
+          color: var(--ink-soft);
         }
 
         .ProseMirror ul li::marker {
-          color: #a78bfa;
+          color: var(--brand);
         }
 
         .ProseMirror ol {
@@ -318,7 +302,7 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
         }
 
         .ProseMirror ol li::marker {
-          color: #a78bfa;
+          color: var(--brand);
         }
 
         /* Listas aninhadas */
@@ -342,54 +326,54 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
         }
       `}</style>
       {/* Toolbar */}
-      <div className="border-b border-[#D9D7CB] bg-[#F4F3EC] p-2 flex flex-wrap gap-1">
+      <div className="border-b border-line-strong bg-surface-hover p-2 flex flex-wrap gap-1">
         {/* Undo/Redo */}
         <ToolbarButton
           onClick={() => editor.chain().focus().undo().run()}
-          icon={Undo}
+          icon={ArrowUUpLeft}
           title="Desfazer"
         />
         <ToolbarButton
           onClick={() => editor.chain().focus().redo().run()}
-          icon={Redo}
+          icon={ArrowUUpRight}
           title="Refazer"
         />
 
-        <div className="w-px h-8 bg-[#E9E7DC] mx-1" />
+        <div className="w-px h-8 bg-line mx-1" />
 
         {/* Headings */}
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
           isActive={hasActiveSelection() && editor.isActive('heading', { level: 1 })}
-          icon={Heading1}
+          icon={TextHOne}
           title="Título 1"
         />
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
           isActive={hasActiveSelection() && editor.isActive('heading', { level: 2 })}
-          icon={Heading2}
+          icon={TextHTwo}
           title="Título 2"
         />
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
           isActive={hasActiveSelection() && editor.isActive('heading', { level: 3 })}
-          icon={Heading3}
+          icon={TextHThree}
           title="Título 3"
         />
 
-        <div className="w-px h-8 bg-[#E9E7DC] mx-1" />
+        <div className="w-px h-8 bg-line mx-1" />
 
         {/* Text formatting */}
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleBold().run()}
           isActive={hasActiveSelection() && editor.isActive('bold')}
-          icon={Bold}
+          icon={TextB}
           title="Negrito"
         />
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleItalic().run()}
           isActive={hasActiveSelection() && editor.isActive('italic')}
-          icon={Italic}
+          icon={TextItalic}
           title="Itálico"
         />
         <ToolbarButton
@@ -401,27 +385,27 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleStrike().run()}
           isActive={hasActiveSelection() && editor.isActive('strike')}
-          icon={Strikethrough}
+          icon={TextStrikethrough}
           title="Riscado"
         />
 
-        <div className="w-px h-8 bg-[#E9E7DC] mx-1" />
+        <div className="w-px h-8 bg-line mx-1" />
 
         {/* Lists */}
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           isActive={hasActiveSelection() && editor.isActive('bulletList')}
-          icon={List}
+          icon={ListBullets}
           title="Lista"
         />
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
           isActive={hasActiveSelection() && editor.isActive('orderedList')}
-          icon={ListOrdered}
+          icon={ListNumbers}
           title="Lista numerada"
         />
 
-        <div className="w-px h-8 bg-[#E9E7DC] mx-1" />
+        <div className="w-px h-8 bg-line mx-1" />
 
         {/* Alignment */}
         <ToolbarButton
@@ -438,7 +422,7 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
               (!editor.isActive('resizableImage') && editor.isActive({ textAlign: 'left' }))
             )
           }
-          icon={AlignLeft}
+          icon={TextAlignLeft}
           title="Alinhar à esquerda"
         />
         <ToolbarButton
@@ -455,7 +439,7 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
               (!editor.isActive('resizableImage') && editor.isActive({ textAlign: 'center' }))
             )
           }
-          icon={AlignCenter}
+          icon={TextAlignCenter}
           title="Centralizar"
         />
         <ToolbarButton
@@ -472,11 +456,11 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
               (!editor.isActive('resizableImage') && editor.isActive({ textAlign: 'right' }))
             )
           }
-          icon={AlignRight}
+          icon={TextAlignRight}
           title="Alinhar à direita"
         />
 
-        <div className="w-px h-8 bg-[#E9E7DC] mx-1" />
+        <div className="w-px h-8 bg-line mx-1" />
 
         {/* Text Colors */}
         <ColorButton color="#FFFFFF" title="Branco" />
@@ -486,7 +470,7 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
         <ColorButton color="#3B82F6" title="Azul" />
         <ColorButton color="#8B5CF6" title="Roxo" />
 
-        <div className="w-px h-8 bg-[#E9E7DC] mx-1" />
+        <div className="w-px h-8 bg-line mx-1" />
 
         {/* Highlight Colors */}
         <HighlightButton color="#FEF3C7" title="Destaque Amarelo" />

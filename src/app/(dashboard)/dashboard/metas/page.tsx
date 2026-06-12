@@ -1,7 +1,7 @@
 'use client';
 
 import { ComingSoon } from '@/components/dashboard/ComingSoon';
-import { Target } from 'lucide-react';
+import { Target } from '@phosphor-icons/react';
 
 export default function MetasPage() {
   return (

@@ -1,5 +1,6 @@
 import { SessionProvider } from '@/components/providers/SessionProvider';
 import { IntlProvider } from '@/components/providers/IntlProvider';
+import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { getMessages } from 'next-intl/server';
@@ -28,14 +29,12 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: '/favicon.ico', sizes: '16x16' },
-      { url: '/favicon.ico', sizes: '32x32' },
-      { url: '/favicon.ico', sizes: '48x48' },
-      { url: '/favicon.ico', sizes: '64x64' },
+      { url: '/logo-aura.png', sizes: '192x192' },
+      { url: '/logo-aura.png', sizes: '512x512' },
     ],
-    shortcut: '/favicon.ico',
+    shortcut: '/logo-aura.png',
     apple: [
-      { url: '/images/logo-com-fundo.png', sizes: '180x180' },
+      { url: '/logo-aura.png', sizes: '180x180' },
     ],
   },
   viewport: {
@@ -58,12 +57,14 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <SessionProvider>
-          <IntlProvider initialMessages={messages}>
-            {children}
-          </IntlProvider>
-        </SessionProvider>
-        <Toaster />
+        <ThemeProvider>
+          <SessionProvider>
+            <IntlProvider initialMessages={messages}>
+              {children}
+            </IntlProvider>
+          </SessionProvider>
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -110,7 +110,7 @@ const ResizableImageComponent = ({ node, updateAttributes, selected }: NodeViewP
             userSelect: 'none',
             display: 'block',
           }}
-          className={`${selected ? 'ring-2 ring-[#178E96]' : ''} ${getAlignmentClasses()}`}
+          className={`${selected ? 'ring-2 ring-brand' : ''} ${getAlignmentClasses()}`}
           draggable={false}
         />
 
@@ -119,7 +119,7 @@ const ResizableImageComponent = ({ node, updateAttributes, selected }: NodeViewP
             {/* Resize handle - canto inferior direito */}
             <div
               onMouseDown={(e) => handleMouseDown(e, 'se')}
-              className="absolute bottom-0 right-0 w-4 h-4 bg-[#178E96] border-2 border-white rounded-full cursor-nwse-resize z-10"
+              className="absolute bottom-0 right-0 w-4 h-4 bg-brand border-2 border-white rounded-full cursor-nwse-resize z-10"
               style={{
                 transform: 'translate(50%, 50%)',
               }}
@@ -128,7 +128,7 @@ const ResizableImageComponent = ({ node, updateAttributes, selected }: NodeViewP
             {/* Resize handle - canto inferior esquerdo */}
             <div
               onMouseDown={(e) => handleMouseDown(e, 'sw')}
-              className="absolute bottom-0 left-0 w-4 h-4 bg-[#178E96] border-2 border-white rounded-full cursor-nesw-resize z-10"
+              className="absolute bottom-0 left-0 w-4 h-4 bg-brand border-2 border-white rounded-full cursor-nesw-resize z-10"
               style={{
                 transform: 'translate(-50%, 50%)',
               }}
@@ -137,7 +137,7 @@ const ResizableImageComponent = ({ node, updateAttributes, selected }: NodeViewP
             {/* Resize handle - canto superior direito */}
             <div
               onMouseDown={(e) => handleMouseDown(e, 'ne')}
-              className="absolute top-0 right-0 w-4 h-4 bg-[#178E96] border-2 border-white rounded-full cursor-nesw-resize z-10"
+              className="absolute top-0 right-0 w-4 h-4 bg-brand border-2 border-white rounded-full cursor-nesw-resize z-10"
               style={{
                 transform: 'translate(50%, -50%)',
               }}
@@ -146,7 +146,7 @@ const ResizableImageComponent = ({ node, updateAttributes, selected }: NodeViewP
             {/* Resize handle - canto superior esquerdo */}
             <div
               onMouseDown={(e) => handleMouseDown(e, 'nw')}
-              className="absolute top-0 left-0 w-4 h-4 bg-[#178E96] border-2 border-white rounded-full cursor-nwse-resize z-10"
+              className="absolute top-0 left-0 w-4 h-4 bg-brand border-2 border-white rounded-full cursor-nwse-resize z-10"
               style={{
                 transform: 'translate(-50%, -50%)',
               }}

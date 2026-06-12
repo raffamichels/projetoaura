@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Wallet, TrendingUp, TrendingDown, Target, Plus } from 'lucide-react';
+import { Wallet, TrendUp, TrendDown, Target, Plus } from '@phosphor-icons/react';
 import { Button } from '@/components/ui/button';
 import { formatarMoeda } from '@/lib/financeiro-helper';
 import NovaTransacaoModal from '@/components/financeiro/NovaTransacaoModal';
@@ -83,8 +83,8 @@ export default function FinanceiroDashboardPage() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#178E96] mx-auto mb-4"></div>
-          <p className="text-[#44586A]">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand mx-auto mb-4"></div>
+          <p className="text-ink-soft">
             {inicializando ? 'Preparando seu módulo financeiro...' : 'Carregando...'}
           </p>
         </div>
@@ -95,7 +95,7 @@ export default function FinanceiroDashboardPage() {
   if (!dashboard) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <p className="text-[#44586A]">Erro ao carregar dados</p>
+        <p className="text-ink-soft">Erro ao carregar dados</p>
       </div>
     );
   }
@@ -105,13 +105,13 @@ export default function FinanceiroDashboardPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#0E2A3F]">Financeiro</h1>
-          <p className="text-sm sm:text-base text-[#44586A]">Visão geral das suas finanças</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-ink">Financeiro</h1>
+          <p className="text-sm sm:text-base text-ink-soft">Visão geral das suas finanças</p>
         </div>
         <div className="flex gap-2 sm:gap-3 w-full sm:w-auto">
           <Button
             onClick={() => setModalTransacaoAberto(true)}
-            className="flex-1 sm:flex-none bg-[#178E96] hover:bg-[#117178] text-white h-auto py-2.5 text-sm sm:text-base"
+            className="flex-1 sm:flex-none bg-brand hover:bg-brand-dark text-white h-auto py-2.5 text-sm sm:text-base"
           >
             <Plus className="w-4 h-4 mr-2" />
             Nova Transação
@@ -122,72 +122,72 @@ export default function FinanceiroDashboardPage() {
       {/* Cards de Resumo */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {/* Saldo Total */}
-        <Card className="bg-white border-[#E9E7DC] shadow-sm">
+        <Card className="bg-surface border-line shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-[#44586A]">
+            <CardTitle className="text-sm font-medium text-ink-soft">
               Saldo Total
             </CardTitle>
-            <Wallet className="w-4 h-4 text-green-600" />
+            <Wallet className="w-4 h-4 text-green-600 dark:text-green-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-[#0E2A3F]">
+            <div className="text-2xl font-bold text-ink">
               {formatarMoeda(dashboard.saldoContas)}
             </div>
-            <p className="text-xs text-[#8395A5] mt-1">
+            <p className="text-xs text-ink-faint mt-1">
               {dashboard.estatisticas.totalContas} conta(s)
             </p>
           </CardContent>
         </Card>
 
         {/* Receitas do Mês */}
-        <Card className="bg-white border-[#E9E7DC] shadow-sm">
+        <Card className="bg-surface border-line shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-[#44586A]">
+            <CardTitle className="text-sm font-medium text-ink-soft">
               Receitas
             </CardTitle>
-            <TrendingUp className="w-4 h-4 text-green-600" />
+            <TrendUp className="w-4 h-4 text-green-600 dark:text-green-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">
+            <div className="text-2xl font-bold text-green-600 dark:text-green-400">
               {formatarMoeda(dashboard.resumoMensal.receitas)}
             </div>
-            <p className="text-xs text-[#8395A5] mt-1">
+            <p className="text-xs text-ink-faint mt-1">
               Mês atual
             </p>
           </CardContent>
         </Card>
 
         {/* Despesas do Mês */}
-        <Card className="bg-white border-[#E9E7DC] shadow-sm">
+        <Card className="bg-surface border-line shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-[#44586A]">
+            <CardTitle className="text-sm font-medium text-ink-soft">
               Despesas
             </CardTitle>
-            <TrendingDown className="w-4 h-4 text-red-600" />
+            <TrendDown className="w-4 h-4 text-red-600 dark:text-red-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">
+            <div className="text-2xl font-bold text-red-600 dark:text-red-400">
               {formatarMoeda(dashboard.resumoMensal.despesas)}
             </div>
-            <p className="text-xs text-[#8395A5] mt-1">
+            <p className="text-xs text-ink-faint mt-1">
               {dashboard.estatisticas.totalTransacoesMes} transações
             </p>
           </CardContent>
         </Card>
 
         {/* Sobra Mensal */}
-        <Card className="bg-white border-[#E9E7DC] shadow-sm">
+        <Card className="bg-surface border-line shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-[#44586A]">
+            <CardTitle className="text-sm font-medium text-ink-soft">
               Sobra Mensal
             </CardTitle>
-            <Target className="w-4 h-4 text-[#117178]" />
+            <Target className="w-4 h-4 text-brand-dark" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-[#0E2A3F]">
+            <div className="text-2xl font-bold text-ink">
               {formatarMoeda(dashboard.resumoMensal.sobra)}
             </div>
-            <p className="text-xs text-[#8395A5] mt-1">
+            <p className="text-xs text-ink-faint mt-1">
               Após despesas fixas
             </p>
           </CardContent>
@@ -197,13 +197,13 @@ export default function FinanceiroDashboardPage() {
       {/* Grid Principal */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Gastos por Categoria */}
-        <Card className="bg-white border-[#E9E7DC] shadow-sm">
+        <Card className="bg-surface border-line shadow-sm">
           <CardHeader>
-            <CardTitle className="text-[#0E2A3F]">Gastos por Categoria</CardTitle>
+            <CardTitle className="text-ink">Gastos por Categoria</CardTitle>
           </CardHeader>
           <CardContent>
             {dashboard.gastosPorCategoria.length === 0 ? (
-              <div className="text-center py-8 text-[#8395A5]">
+              <div className="text-center py-8 text-ink-faint">
                 Nenhuma despesa registrada este mês
               </div>
             ) : (
@@ -216,15 +216,15 @@ export default function FinanceiroDashboardPage() {
                           className="w-3 h-3 rounded-full"
                           style={{ backgroundColor: cat.cor }}
                         />
-                        <span className="text-sm text-[#44586A]">
+                        <span className="text-sm text-ink-soft">
                           {cat.categoriaNome}
                         </span>
                       </div>
-                      <span className="text-sm font-medium text-[#0E2A3F]">
+                      <span className="text-sm font-medium text-ink">
                         {formatarMoeda(cat.total)}
                       </span>
                     </div>
-                    <div className="w-full bg-[#E9E7DC] rounded-full h-2">
+                    <div className="w-full bg-line rounded-full h-2">
                       <div
                         className="h-2 rounded-full transition-all"
                         style={{
@@ -241,38 +241,38 @@ export default function FinanceiroDashboardPage() {
         </Card>
 
         {/* Resumo Financeiro */}
-        <Card className="bg-white border-[#E9E7DC] shadow-sm">
+        <Card className="bg-surface border-line shadow-sm">
           <CardHeader>
-            <CardTitle className="text-[#0E2A3F]">Resumo Financeiro</CardTitle>
+            <CardTitle className="text-ink">Resumo Financeiro</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex justify-between items-center py-3 border-b border-[#E9E7DC]">
-              <span className="text-[#44586A]">Receitas</span>
-              <span className="text-green-600 font-medium">
+            <div className="flex justify-between items-center py-3 border-b border-line">
+              <span className="text-ink-soft">Receitas</span>
+              <span className="text-green-600 dark:text-green-400 font-medium">
                 {formatarMoeda(dashboard.resumoMensal.receitas)}
               </span>
             </div>
-            <div className="flex justify-between items-center py-3 border-b border-[#E9E7DC]">
-              <span className="text-[#44586A]">Despesas Fixas</span>
-              <span className="text-red-600 font-medium">
+            <div className="flex justify-between items-center py-3 border-b border-line">
+              <span className="text-ink-soft">Despesas Fixas</span>
+              <span className="text-red-600 dark:text-red-400 font-medium">
                 {formatarMoeda(dashboard.resumoMensal.despesasFixas)}
               </span>
             </div>
-            <div className="flex justify-between items-center py-3 border-b border-[#E9E7DC]">
-              <span className="text-[#44586A]">Despesas Variáveis</span>
-              <span className="text-red-600 font-medium">
+            <div className="flex justify-between items-center py-3 border-b border-line">
+              <span className="text-ink-soft">Despesas Variáveis</span>
+              <span className="text-red-600 dark:text-red-400 font-medium">
                 {formatarMoeda(dashboard.resumoMensal.despesasVariaveis)}
               </span>
             </div>
-            <div className="flex justify-between items-center py-3 border-b border-[#E9E7DC]">
-              <span className="text-[#44586A]">Total em Objetivos</span>
-              <span className="text-[#117178] font-medium">
+            <div className="flex justify-between items-center py-3 border-b border-line">
+              <span className="text-ink-soft">Total em Objetivos</span>
+              <span className="text-brand-dark font-medium">
                 {formatarMoeda(dashboard.totalObjetivos)}
               </span>
             </div>
             <div className="flex justify-between items-center py-3 pt-4">
-              <span className="text-[#0E2A3F] font-semibold">Saldo Livre</span>
-              <span className="text-xl font-bold text-[#0E2A3F]">
+              <span className="text-ink font-semibold">Saldo Livre</span>
+              <span className="text-xl font-bold text-ink">
                 {formatarMoeda(dashboard.saldoLivre)}
               </span>
             </div>
@@ -283,32 +283,32 @@ export default function FinanceiroDashboardPage() {
       {/* Links Rápidos */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
         <Button
-          className="h-16 sm:h-20 bg-white border border-[#E9E7DC] shadow-sm hover:bg-[#F4F3EC] text-[#44586A] duration-150"
+          className="h-16 sm:h-20 bg-surface border border-line shadow-sm hover:bg-surface-hover text-ink-soft duration-150"
           onClick={() => window.location.href = '/dashboard/financeiro/contas'}
         >
           <div className="text-center">
-            <Wallet className="w-5 h-5 sm:w-6 sm:h-6 mx-auto mb-1 sm:mb-2 text-green-600" />
-            <div className="text-xs sm:text-sm text-[#44586A]">Contas e Cartões</div>
+            <Wallet className="w-5 h-5 sm:w-6 sm:h-6 mx-auto mb-1 sm:mb-2 text-green-600 dark:text-green-400" />
+            <div className="text-xs sm:text-sm text-ink-soft">Contas e Cartões</div>
           </div>
         </Button>
 
         <Button
-          className="h-16 sm:h-20 bg-white border border-[#E9E7DC] shadow-sm hover:bg-[#F4F3EC] text-[#44586A] duration-150"
+          className="h-16 sm:h-20 bg-surface border border-line shadow-sm hover:bg-surface-hover text-ink-soft duration-150"
           onClick={() => window.location.href = '/dashboard/financeiro/transacoes'}
         >
           <div className="text-center">
-            <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 mx-auto mb-1 sm:mb-2 text-blue-500" />
-            <div className="text-xs sm:text-sm text-[#44586A]">Transações</div>
+            <TrendUp className="w-5 h-5 sm:w-6 sm:h-6 mx-auto mb-1 sm:mb-2 text-blue-500" />
+            <div className="text-xs sm:text-sm text-ink-soft">Transações</div>
           </div>
         </Button>
 
         <Button
-          className="h-16 sm:h-20 bg-white border border-[#E9E7DC] shadow-sm hover:bg-[#F4F3EC] text-[#44586A] duration-150"
+          className="h-16 sm:h-20 bg-surface border border-line shadow-sm hover:bg-surface-hover text-ink-soft duration-150"
           onClick={() => window.location.href = '/dashboard/financeiro/objetivos'}
         >
           <div className="text-center">
-            <Target className="w-5 h-5 sm:w-6 sm:h-6 mx-auto mb-1 sm:mb-2 text-[#117178]" />
-            <div className="text-xs sm:text-sm text-[#44586A]">Objetivos</div>
+            <Target className="w-5 h-5 sm:w-6 sm:h-6 mx-auto mb-1 sm:mb-2 text-brand-dark" />
+            <div className="text-xs sm:text-sm text-ink-soft">Objetivos</div>
           </div>
         </Button>
       </div>

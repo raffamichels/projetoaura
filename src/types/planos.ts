@@ -59,7 +59,7 @@ export const PLANOS_INFO: Record<PlanoUsuario, PlanoInfo> = {
   [PlanoUsuario.PREMIUM]: {
     nome: 'Premium',
     descricao: 'Recursos avançados com IA',
-    preco: 'R$ 29,90',
+    preco: 'R$ 12,90',
     recursos: [
       'Todos os recursos do plano Free',
       'Geração de resenhas com IA',

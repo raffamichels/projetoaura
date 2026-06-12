@@ -7,7 +7,7 @@ import {
   useElements,
 } from '@stripe/react-stripe-js';
 import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
+import { Spinner } from '@phosphor-icons/react';
 
 interface CheckoutFormProps {
   onSuccess: () => void;
@@ -95,7 +95,7 @@ export function CheckoutForm({ onSuccess, onError, intentType }: CheckoutFormPro
       >
         {isProcessing ? (
           <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            <Spinner className="mr-2 h-4 w-4 animate-spin" />
             Processando...
           </>
         ) : (

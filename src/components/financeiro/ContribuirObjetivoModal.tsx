@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Loader2, Target, TrendingUp } from 'lucide-react';
+import { Spinner, Target, TrendUp } from '@phosphor-icons/react';
 import { formatarMoeda } from '@/lib/financeiro-helper';
 
 interface ContribuirObjetivoModalProps {
@@ -124,9 +124,9 @@ export default function ContribuirObjetivoModal({
 
   return (
     <Dialog open={aberto} onOpenChange={onFechar}>
-      <DialogContent className="bg-white border-[#E3E1D6] max-w-md">
+      <DialogContent className="bg-surface border-line max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-[#0E2A3F] flex items-center gap-2">
+          <DialogTitle className="text-2xl font-bold text-ink flex items-center gap-2">
             <Target className="w-6 h-6" style={{ color: objetivo.cor }} />
             Contribuir para Objetivo
           </DialogTitle>
@@ -141,15 +141,15 @@ export default function ContribuirObjetivoModal({
               borderColor: `${objetivo.cor}30`
             }}
           >
-            <h3 className="font-semibold text-[#0E2A3F] mb-2">{objetivo.nome}</h3>
+            <h3 className="font-semibold text-ink mb-2">{objetivo.nome}</h3>
             <div className="space-y-1 text-sm">
-              <div className="flex justify-between text-[#44586A]">
+              <div className="flex justify-between text-ink-soft">
                 <span>Progresso atual:</span>
-                <span className="font-medium text-[#0E2A3F]">
+                <span className="font-medium text-ink">
                   {formatarMoeda(objetivo.valorAtual)} de {formatarMoeda(objetivo.valorMeta)}
                 </span>
               </div>
-              <div className="w-full bg-[#E9E7DC] rounded-full h-2 mt-2">
+              <div className="w-full bg-line rounded-full h-2 mt-2">
                 <div 
                   className="h-2 rounded-full transition-all"
                   style={{ 
@@ -158,7 +158,7 @@ export default function ContribuirObjetivoModal({
                   }}
                 />
               </div>
-              <div className="flex justify-between text-[#8395A5] text-xs mt-1">
+              <div className="flex justify-between text-ink-faint text-xs mt-1">
                 <span>{Math.round(porcentagemAtual)}%</span>
                 <span>Faltam {formatarMoeda(objetivo.falta)}</span>
               </div>
@@ -167,7 +167,7 @@ export default function ContribuirObjetivoModal({
 
           {/* Valor */}
           <div>
-            <Label className="text-[#44586A]">Valor a Contribuir *</Label>
+            <Label className="text-ink-soft">Valor a Contribuir *</Label>
             <Input
               type="number"
               step="0.01"
@@ -175,21 +175,21 @@ export default function ContribuirObjetivoModal({
               onChange={(e) => setValor(e.target.value)}
               placeholder="0,00"
               required
-              className="bg-white border-[#D9D7CB] text-[#0E2A3F] placeholder:text-[#8395A5] focus:border-[#178E96] focus:ring-[#178E96]/20 text-lg font-semibold"
+              className="bg-surface border-line-strong text-ink placeholder:text-ink-faint focus:border-brand focus:ring-brand/20 text-lg font-semibold"
             />
             {valorNumerico > 0 && (
-              <div className="mt-2 p-3 bg-[#F4F3EC] rounded-lg border border-[#E9E7DC]">
+              <div className="mt-2 p-3 bg-surface-hover rounded-lg border border-line">
                 <div className="flex items-center gap-2 text-sm mb-2">
-                  <TrendingUp className="w-4 h-4 text-green-600" />
-                  <span className="text-[#44586A]">Após contribuição:</span>
+                  <TrendUp className="w-4 h-4 text-green-600 dark:text-green-400" />
+                  <span className="text-ink-soft">Após contribuição:</span>
                 </div>
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-[#44586A] text-sm">Novo total:</span>
-                  <span className="font-semibold text-[#0E2A3F]">
+                  <span className="text-ink-soft text-sm">Novo total:</span>
+                  <span className="font-semibold text-ink">
                     {formatarMoeda(novoTotal)}
                   </span>
                 </div>
-                <div className="w-full bg-[#E9E7DC] rounded-full h-2">
+                <div className="w-full bg-line rounded-full h-2">
                   <div 
                     className="h-2 rounded-full transition-all"
                     style={{ 
@@ -198,11 +198,11 @@ export default function ContribuirObjetivoModal({
                     }}
                   />
                 </div>
-                <div className="text-xs text-[#8395A5] mt-1">
+                <div className="text-xs text-ink-faint mt-1">
                   {Math.round(novaPorcentagem)}% da meta
                 </div>
                 {novoTotal >= objetivo.valorMeta && (
-                  <div className="mt-2 text-sm text-green-600 font-semibold">
+                  <div className="mt-2 text-sm text-green-600 dark:text-green-400 font-semibold">
                     🎉 Objetivo será concluído!
                   </div>
                 )}
@@ -212,25 +212,25 @@ export default function ContribuirObjetivoModal({
 
           {/* Descrição */}
           <div>
-            <Label className="text-[#44586A]">Descrição</Label>
+            <Label className="text-ink-soft">Descrição</Label>
             <Input
               value={descricao}
               onChange={(e) => setDescricao(e.target.value)}
               placeholder="Ex: Contribuição mensal"
-              className="bg-white border-[#D9D7CB] text-[#0E2A3F] placeholder:text-[#8395A5] focus:border-[#178E96] focus:ring-[#178E96]/20"
+              className="bg-surface border-line-strong text-ink placeholder:text-ink-faint focus:border-brand focus:ring-brand/20"
             />
           </div>
 
           {/* Conta */}
           <div>
-            <Label className="text-[#44586A]">Conta para Débito</Label>
+            <Label className="text-ink-soft">Conta para Débito</Label>
             <Select value={contaBancariaId} onValueChange={setContaBancariaId}>
-              <SelectTrigger className="bg-white border-[#D9D7CB] text-[#0E2A3F]">
+              <SelectTrigger className="bg-surface border-line-strong text-ink">
                 <SelectValue placeholder="Selecionar conta (opcional)" />
               </SelectTrigger>
-              <SelectContent className="bg-white border-[#E3E1D6]">
+              <SelectContent className="bg-surface border-line">
                 {contas.map((conta) => (
-                  <SelectItem key={conta.id} value={conta.id} className="text-[#0E2A3F] hover:bg-[#F4F3EC]">
+                  <SelectItem key={conta.id} value={conta.id} className="text-ink hover:bg-surface-hover">
                     {conta.nome}
                   </SelectItem>
                 ))}
@@ -244,7 +244,7 @@ export default function ContribuirObjetivoModal({
               type="button"
               variant="default"
               onClick={onFechar}
-              className="flex-1 bg-white border border-[#E9E7DC] text-[#44586A] hover:bg-[#F4F3EC]"
+              className="flex-1 bg-surface border border-line text-ink-soft hover:bg-surface-hover"
               disabled={carregando}
             >
               Cancelar
@@ -260,7 +260,7 @@ export default function ContribuirObjetivoModal({
             >
               {carregando ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <Spinner className="w-4 h-4 mr-2 animate-spin" />
                   Salvando...
                 </>
               ) : (

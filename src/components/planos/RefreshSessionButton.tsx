@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
-import { RefreshCw } from 'lucide-react';
+import { ArrowsClockwise } from '@phosphor-icons/react';
 import { toast } from 'sonner';
 
 /**
@@ -41,7 +41,7 @@ export function RefreshSessionButton() {
       size="sm"
       className="gap-2"
     >
-      <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+      <ArrowsClockwise className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
       {isRefreshing ? 'Atualizando...' : 'Atualizar Sessão'}
     </Button>
   );

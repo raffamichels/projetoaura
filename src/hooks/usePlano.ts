@@ -34,36 +34,6 @@ export function usePlano() {
   const ehFree = isFree(planoEfetivo);
 
   /**
-   * Atualiza o plano do usuário e força refresh da sessão
-   */
-  const atualizarPlano = async (novoPlano: PlanoUsuario, planoExpiraEm?: Date) => {
-    setIsUpdating(true);
-    try {
-      const response = await fetch('/api/v1/planos', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          plano: novoPlano,
-          planoExpiraEm,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Erro ao atualizar plano');
-      }
-
-      // Forçar atualização da sessão
-      await update();
-
-      return await response.json();
-    } finally {
-      setIsUpdating(false);
-    }
-  };
-
-  /**
    * Força refresh da sessão para obter dados atualizados
    */
   const refreshSessao = async () => {
@@ -82,7 +52,6 @@ export function usePlano() {
     ehPremium,
     ehFree,
     temAcessoARecurso,
-    atualizarPlano,
     refreshSessao,
     isUpdating,
     // Verificações específicas de recursos

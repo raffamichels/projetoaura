@@ -7,22 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import {
-  BookOpen,
-  Plus,
-  ChevronLeft,
-  FileText,
-  Trash2,
-  Edit,
-  FolderOpen,
-  Save,
-  X,
-  Sparkles,
-  List,
-  Maximize2,
-  Minimize2,
-  Loader2,
-} from 'lucide-react';
+import { BookOpen, Plus, CaretLeft, FileText, Trash, PencilSimple, FolderOpen, FloppyDisk, X, Sparkle, ListBullets, ArrowsOutSimple, ArrowsInSimple, Spinner } from '@phosphor-icons/react';
 import RichTextEditor from '@/components/estudos/RichTextEditor';
 import { PomodoroTimer } from '@/components/PomodoroTimer';
 import { ConfirmModal } from '@/components/ui/ConfirmModal';
@@ -400,10 +385,10 @@ export default function CursoDetalhePage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="relative">
-            <div className="animate-spin rounded-full h-16 w-16 border-4 border-[#178E96]/20 border-t-[#178E96] mx-auto mb-4"></div>
-            <Sparkles className="w-6 h-6 text-[#117178] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 animate-pulse" />
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-brand/20 border-t-brand mx-auto mb-4"></div>
+            <Sparkle className="w-6 h-6 text-brand-dark absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 animate-pulse" />
           </div>
-          <p className="text-[#44586A] font-medium">{t('loadingCourse')}</p>
+          <p className="text-ink-soft font-medium">{t('loadingCourse')}</p>
         </div>
       </div>
     );
@@ -413,10 +398,10 @@ export default function CursoDetalhePage() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="w-20 h-20 rounded-2xl bg-[#F4F3EC] flex items-center justify-center mx-auto mb-4">
-            <BookOpen className="w-10 h-10 text-[#8395A5]" />
+          <div className="w-20 h-20 rounded-2xl bg-surface-hover flex items-center justify-center mx-auto mb-4">
+            <BookOpen className="w-10 h-10 text-ink-faint" />
           </div>
-          <p className="text-[#44586A]">{t('courseNotFound')}</p>
+          <p className="text-ink-soft">{t('courseNotFound')}</p>
         </div>
       </div>
     );
@@ -425,15 +410,15 @@ export default function CursoDetalhePage() {
   return (
     <div className="p-4 lg:p-6 space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="relative border-b border-[#E9E7DC] bg-white -mx-4 lg:-mx-6 overflow-x-hidden">
+      <div className="relative border-b border-line bg-surface -mx-4 lg:-mx-6 overflow-x-hidden">
         <div className="relative p-3 sm:p-4">
           <div className="flex flex-row items-start sm:items-center gap-2 sm:gap-4 w-full">
             <Button
               variant="ghost"
               onClick={() => router.push('/dashboard/estudos')}
-              className="text-[#44586A] hover:text-[#0E2A3F] hover:bg-[#F4F3EC] rounded-xl h-auto py-2 px-3 text-sm flex-shrink-0"
+              className="text-ink-soft hover:text-ink hover:bg-surface-hover rounded-xl h-auto py-2 px-3 text-sm flex-shrink-0"
             >
-              <ChevronLeft className="w-4 h-4 mr-1 sm:mr-2" />
+              <CaretLeft className="w-4 h-4 mr-1 sm:mr-2" />
               {t('back')}
             </Button>
             <div className="flex-1 min-w-0">
@@ -448,9 +433,9 @@ export default function CursoDetalhePage() {
                   <BookOpen className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h1 className="text-base sm:text-xl font-bold text-[#0E2A3F] truncate">{curso.nome}</h1>
+                  <h1 className="text-base sm:text-xl font-bold text-ink truncate">{curso.nome}</h1>
                   {curso.descricao && (
-                    <p className="text-[#44586A] text-xs truncate">{curso.descricao}</p>
+                    <p className="text-ink-soft text-xs truncate">{curso.descricao}</p>
                   )}
                 </div>
               </div>
@@ -458,46 +443,46 @@ export default function CursoDetalhePage() {
             <div className="hidden sm:flex items-center gap-2 flex-shrink-0">
               <PomodoroTimer />
               <div className="flex items-center gap-2">
-                <div className="px-2.5 py-1 rounded-lg bg-[#F4F3EC] border border-[#E9E7DC]">
-                  <span className="text-xs text-[#8395A5] block">{t('modules')}</span>
-                  <p className="text-sm font-bold text-[#0E2A3F]">{curso.modulos.length}</p>
+                <div className="px-2.5 py-1 rounded-lg bg-surface-hover border border-line">
+                  <span className="text-xs text-ink-faint block">{t('modules')}</span>
+                  <p className="text-sm font-bold text-ink">{curso.modulos.length}</p>
                 </div>
-                <div className="px-2.5 py-1 rounded-lg bg-[#F4F3EC] border border-[#E9E7DC]">
-                  <span className="text-xs text-[#8395A5] block">{t('pages')}</span>
-                  <p className="text-sm font-bold text-[#0E2A3F]">
+                <div className="px-2.5 py-1 rounded-lg bg-surface-hover border border-line">
+                  <span className="text-xs text-ink-faint block">{t('pages')}</span>
+                  <p className="text-sm font-bold text-ink">
                     {curso.modulos.reduce((acc, m) => acc + (m._count?.paginas || 0), 0)}
                   </p>
                 </div>
                 <Button
                   onClick={excluirCurso}
                   variant="ghost"
-                  className="hover:bg-red-50 hover:text-red-600 text-[#44586A] rounded-lg h-auto py-1.5 px-2"
+                  className="hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400 text-ink-soft rounded-lg h-auto py-1.5 px-2"
                   title={t('deleteCourse')}
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <Trash className="w-4 h-4" />
                 </Button>
               </div>
             </div>
           </div>
           {/* Mobile stats row */}
           <div className="flex sm:hidden items-center gap-2 mt-2 w-full">
-            <div className="flex-1 px-2.5 py-1 rounded-lg bg-[#F4F3EC] border border-[#E9E7DC]">
-              <span className="text-xs text-[#8395A5] block">{t('modules')}</span>
-              <p className="text-sm font-bold text-[#0E2A3F]">{curso.modulos.length}</p>
+            <div className="flex-1 px-2.5 py-1 rounded-lg bg-surface-hover border border-line">
+              <span className="text-xs text-ink-faint block">{t('modules')}</span>
+              <p className="text-sm font-bold text-ink">{curso.modulos.length}</p>
             </div>
-            <div className="flex-1 px-2.5 py-1 rounded-lg bg-[#F4F3EC] border border-[#E9E7DC]">
-              <span className="text-xs text-[#8395A5] block">{t('pages')}</span>
-              <p className="text-sm font-bold text-[#0E2A3F]">
+            <div className="flex-1 px-2.5 py-1 rounded-lg bg-surface-hover border border-line">
+              <span className="text-xs text-ink-faint block">{t('pages')}</span>
+              <p className="text-sm font-bold text-ink">
                 {curso.modulos.reduce((acc, m) => acc + (m._count?.paginas || 0), 0)}
               </p>
             </div>
             <Button
               onClick={excluirCurso}
               variant="ghost"
-              className="hover:bg-red-50 hover:text-red-600 text-[#44586A] rounded-lg h-auto py-1.5 px-2"
+              className="hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400 text-ink-soft rounded-lg h-auto py-1.5 px-2"
               title={t('deleteCourse')}
             >
-              <Trash2 className="w-4 h-4" />
+              <Trash className="w-4 h-4" />
             </Button>
           </div>
           {/* Mobile Pomodoro Timer - abaixo dos stats */}
@@ -509,11 +494,11 @@ export default function CursoDetalhePage() {
 
       <div className="flex flex-col lg:flex-row h-auto lg:h-[calc(100vh-120px)]">
         {/* Sidebar Esquerda - Módulos */}
-        <div className={`${paginaAmpliada ? 'hidden' : 'w-full lg:w-80'} border-b lg:border-b-0 lg:border-r border-[#E9E7DC] overflow-y-auto max-h-96 lg:max-h-none`}>
+        <div className={`${paginaAmpliada ? 'hidden' : 'w-full lg:w-80'} border-b lg:border-b-0 lg:border-r border-line overflow-y-auto max-h-96 lg:max-h-none`}>
           <div className="p-4">
             <Button
               onClick={() => setModalModuloAberto(true)}
-              className="w-full bg-[#178E96] hover:bg-[#117178] text-white rounded-xl h-12"
+              className="w-full bg-brand hover:bg-brand-dark text-white rounded-xl h-12"
             >
               <Plus className="w-5 h-5 mr-2" />
               <span className="font-semibold">{t('newModule')}</span>
@@ -522,8 +507,8 @@ export default function CursoDetalhePage() {
 
           <div className="px-4 pb-4">
             <div className="flex items-center gap-2 mb-3">
-              <List className="w-4 h-4 text-[#8395A5]" />
-              <span className="text-xs font-semibold text-[#8395A5] uppercase tracking-wider">
+              <ListBullets className="w-4 h-4 text-ink-faint" />
+              <span className="text-xs font-semibold text-ink-faint uppercase tracking-wider">
                 {t('courseContent')}
               </span>
             </div>
@@ -534,34 +519,34 @@ export default function CursoDetalhePage() {
                   onClick={() => handleSelectModulo(modulo.id)}
                   className={`group relative cursor-pointer rounded-xl p-4 transition-all duration-200 ${
                     moduloSelecionado?.id === modulo.id
-                      ? 'bg-[#E5F1F1] border-2 border-[#178E96]/30'
-                      : 'bg-[#F4F3EC] hover:bg-[#EDEBE0] border-2 border-transparent hover:border-[#D9D7CB]'
+                      ? 'bg-brand-soft border-2 border-brand/30'
+                      : 'bg-surface-hover hover:bg-surface-hover border-2 border-transparent hover:border-line-strong'
                   }`}
                 >
                   <div className="flex items-start gap-3">
                     <div
                       className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
                         moduloSelecionado?.id === modulo.id
-                          ? 'bg-[#E5F1F1] text-[#117178]'
-                          : 'bg-[#E9E7DC] text-[#44586A] group-hover:bg-[#E9E7DC] group-hover:text-[#0E2A3F]'
+                          ? 'bg-brand-soft text-brand-dark'
+                          : 'bg-line text-ink-soft group-hover:bg-line group-hover:text-ink'
                       }`}
                     >
                       <FolderOpen className="w-5 h-5" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-xs font-semibold text-[#8395A5]">
+                        <span className="text-xs font-semibold text-ink-faint">
                           {t('module')} {index + 1}
                         </span>
                       </div>
-                      <h3 className="text-sm font-semibold text-[#0E2A3F] truncate mb-1">
+                      <h3 className="text-sm font-semibold text-ink truncate mb-1">
                         {modulo.nome}
                       </h3>
                       {modulo.descricao && (
-                        <p className="text-xs text-[#8395A5] truncate">{modulo.descricao}</p>
+                        <p className="text-xs text-ink-faint truncate">{modulo.descricao}</p>
                       )}
                       <div className="mt-2 flex items-center gap-2">
-                        <div className="flex items-center gap-1 text-xs text-[#8395A5]">
+                        <div className="flex items-center gap-1 text-xs text-ink-faint">
                           <FileText className="w-3 h-3" />
                           <span>{modulo._count?.paginas || 0} {t('pagesCount')}</span>
                         </div>
@@ -570,20 +555,20 @@ export default function CursoDetalhePage() {
                   </div>
                   <button
                     onClick={(e) => excluirModulo(modulo.id, e)}
-                    className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 p-2 hover:bg-red-50 rounded-lg transition-all"
+                    className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 p-2 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-all"
                     title={t('deleteModule')}
                   >
-                    <Trash2 className="w-4 h-4 text-red-600" />
+                    <Trash className="w-4 h-4 text-red-600 dark:text-red-400" />
                   </button>
                 </div>
               ))}
               {curso.modulos.length === 0 && (
                 <div className="text-center py-12">
-                  <div className="w-16 h-16 rounded-2xl bg-[#F4F3EC] flex items-center justify-center mx-auto mb-4">
-                    <FolderOpen className="w-8 h-8 text-[#8395A5]" />
+                  <div className="w-16 h-16 rounded-2xl bg-surface-hover flex items-center justify-center mx-auto mb-4">
+                    <FolderOpen className="w-8 h-8 text-ink-faint" />
                   </div>
-                  <p className="text-[#8395A5] text-sm mb-3">{t('noModulesYet')}</p>
-                  <p className="text-xs text-[#8395A5]">
+                  <p className="text-ink-faint text-sm mb-3">{t('noModulesYet')}</p>
+                  <p className="text-xs text-ink-faint">
                     {t('organizeContentByModules')}
                   </p>
                 </div>
@@ -597,17 +582,17 @@ export default function CursoDetalhePage() {
           {moduloSelecionado ? (
             <>
               {/* Lista de Páginas */}
-              <div className={`${paginaAmpliada ? 'hidden' : 'w-full lg:w-72'} border-b lg:border-b-0 lg:border-r border-[#E9E7DC] overflow-y-auto max-h-80 lg:max-h-none`}>
-                <div className="p-4 border-b border-[#E9E7DC] bg-white">
-                  <h2 className="font-bold text-[#0E2A3F] mb-1 text-lg">
+              <div className={`${paginaAmpliada ? 'hidden' : 'w-full lg:w-72'} border-b lg:border-b-0 lg:border-r border-line overflow-y-auto max-h-80 lg:max-h-none`}>
+                <div className="p-4 border-b border-line bg-surface">
+                  <h2 className="font-bold text-ink mb-1 text-lg">
                     {moduloSelecionado.nome}
                   </h2>
                   {moduloSelecionado.descricao && (
-                    <p className="text-xs text-[#44586A] mb-3">{moduloSelecionado.descricao}</p>
+                    <p className="text-xs text-ink-soft mb-3">{moduloSelecionado.descricao}</p>
                   )}
                   <Button
                     onClick={() => setModalPaginaAberto(true)}
-                    className="w-full bg-[#178E96] hover:bg-[#117178] text-white rounded-xl h-10"
+                    className="w-full bg-brand hover:bg-brand-dark text-white rounded-xl h-10"
                     size="sm"
                   >
                     <Plus className="w-4 h-4 mr-2" />
@@ -621,45 +606,45 @@ export default function CursoDetalhePage() {
                       onClick={() => handleSelectPagina(pagina.id)}
                       className={`group relative cursor-pointer rounded-xl p-3 transition-all duration-200 ${
                         paginaSelecionada?.id === pagina.id
-                          ? 'bg-[#E5F1F1] border-2 border-[#178E96]/30'
-                          : 'bg-[#F4F3EC] hover:bg-[#EDEBE0] border-2 border-transparent hover:border-[#D9D7CB]'
+                          ? 'bg-brand-soft border-2 border-brand/30'
+                          : 'bg-surface-hover hover:bg-surface-hover border-2 border-transparent hover:border-line-strong'
                       }`}
                     >
                       <div className="flex items-center gap-3">
                         <div
                           className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
                             paginaSelecionada?.id === pagina.id
-                              ? 'bg-[#EFF4F8] text-[#117178]'
-                              : 'bg-[#E9E7DC] text-[#44586A] group-hover:bg-[#E9E7DC]'
+                              ? 'bg-blue-soft text-brand-dark'
+                              : 'bg-line text-ink-soft group-hover:bg-line'
                           }`}
                         >
                           <FileText className="w-4 h-4" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <span className="text-xs text-[#8395A5] block mb-0.5">
+                          <span className="text-xs text-ink-faint block mb-0.5">
                             {t('page')} {index + 1}
                           </span>
-                          <span className="text-sm font-medium text-[#0E2A3F] truncate block">
+                          <span className="text-sm font-medium text-ink truncate block">
                             {pagina.titulo}
                           </span>
                         </div>
                       </div>
                       <button
                         onClick={(e) => excluirPagina(pagina.id, e)}
-                        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 p-1.5 hover:bg-red-50 rounded-lg transition-all"
+                        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 p-1.5 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-all"
                         title={t('deletePage')}
                       >
-                        <Trash2 className="w-3.5 h-3.5 text-red-600" />
+                        <Trash className="w-3.5 h-3.5 text-red-600 dark:text-red-400" />
                       </button>
                     </div>
                   ))}
                   {(!moduloSelecionado.paginas || moduloSelecionado.paginas.length === 0) && (
                     <div className="text-center py-12">
-                      <div className="w-14 h-14 rounded-xl bg-[#F4F3EC] flex items-center justify-center mx-auto mb-3">
-                        <FileText className="w-7 h-7 text-[#8395A5]" />
+                      <div className="w-14 h-14 rounded-xl bg-surface-hover flex items-center justify-center mx-auto mb-3">
+                        <FileText className="w-7 h-7 text-ink-faint" />
                       </div>
-                      <p className="text-[#8395A5] text-sm mb-2">{t('noPages')}</p>
-                      <p className="text-xs text-[#8395A5]">{t('createFirstPage')}</p>
+                      <p className="text-ink-faint text-sm mb-2">{t('noPages')}</p>
+                      <p className="text-xs text-ink-faint">{t('createFirstPage')}</p>
                     </div>
                   )}
                 </div>
@@ -680,7 +665,7 @@ export default function CursoDetalhePage() {
                                 titulo: e.target.value,
                               })
                             }
-                            className="text-3xl font-bold bg-white border-[#D9D7CB] text-[#0E2A3F] h-14 rounded-xl px-5"
+                            className="text-3xl font-bold bg-surface border-line-strong text-ink h-14 rounded-xl px-5"
                             placeholder={t('pageTitle')}
                           />
                           <div className="flex gap-2">
@@ -691,20 +676,20 @@ export default function CursoDetalhePage() {
                               title={paginaAmpliada ? t('reduceView') : t('expandView')}
                             >
                               {paginaAmpliada ? (
-                                <Minimize2 className="w-4 h-4" />
+                                <ArrowsInSimple className="w-4 h-4" />
                               ) : (
-                                <Maximize2 className="w-4 h-4" />
+                                <ArrowsOutSimple className="w-4 h-4" />
                               )}
                             </Button>
                             <Button
                               onClick={salvarPagina}
                               disabled={salvandoPagina}
-                              className="bg-[#178E96] hover:bg-[#117178] text-white rounded-xl"
+                              className="bg-brand hover:bg-brand-dark text-white rounded-xl"
                             >
                               {salvandoPagina ? (
-                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                <Spinner className="w-4 h-4 mr-2 animate-spin" />
                               ) : (
-                                <Save className="w-4 h-4 mr-2" />
+                                <FloppyDisk className="w-4 h-4 mr-2" />
                               )}
                               {salvandoPagina ? t('saving') : t('save')}
                             </Button>
@@ -724,13 +709,13 @@ export default function CursoDetalhePage() {
                       ) : (
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EFF4F8] border border-[#154F6D]/20 mb-3">
-                              <Sparkles className="w-3 h-3 text-[#117178]" />
-                              <span className="text-xs font-medium text-[#117178]">
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-soft border border-brand-blue/20 mb-3">
+                              <Sparkle className="w-3 h-3 text-brand-dark" />
+                              <span className="text-xs font-medium text-brand-dark">
                                 {t('courseContentBadge')}
                               </span>
                             </div>
-                            <h1 className="text-4xl font-bold text-[#0E2A3F] mb-2">
+                            <h1 className="text-4xl font-bold text-ink mb-2">
                               {paginaSelecionada.titulo}
                             </h1>
                           </div>
@@ -742,16 +727,16 @@ export default function CursoDetalhePage() {
                               title={paginaAmpliada ? t('reduceView') : t('expandView')}
                             >
                               {paginaAmpliada ? (
-                                <Minimize2 className="w-4 h-4" />
+                                <ArrowsInSimple className="w-4 h-4" />
                               ) : (
-                                <Maximize2 className="w-4 h-4" />
+                                <ArrowsOutSimple className="w-4 h-4" />
                               )}
                             </Button>
                             <Button
                               onClick={() => setEditandoPagina(true)}
-                              className="bg-[#178E96] hover:bg-[#117178] text-white rounded-xl"
+                              className="bg-brand hover:bg-brand-dark text-white rounded-xl"
                             >
-                              <Edit className="w-4 h-4 mr-2" />
+                              <PencilSimple className="w-4 h-4 mr-2" />
                               {t('edit')}
                             </Button>
                           </div>
@@ -759,7 +744,7 @@ export default function CursoDetalhePage() {
                       )}
                     </div>
 
-                    <div className="bg-white rounded-2xl border border-[#E9E7DC] shadow-sm p-8">
+                    <div className="bg-surface rounded-2xl border border-line shadow-sm p-8">
                       {editandoPagina ? (
                         <RichTextEditor
                           content={paginaSelecionada.conteudo}
@@ -801,11 +786,11 @@ export default function CursoDetalhePage() {
                             }
 
                             .prose ul li {
-                              color: #44586a;
+                              color: var(--ink-soft);
                             }
 
                             .prose ul li::marker {
-                              color: #178e96;
+                              color: var(--brand);
                             }
 
                             .prose ol {
@@ -815,7 +800,7 @@ export default function CursoDetalhePage() {
                             }
 
                             .prose ol li::marker {
-                              color: #178e96;
+                              color: var(--brand);
                             }
 
                             /* Listas aninhadas */
@@ -839,7 +824,7 @@ export default function CursoDetalhePage() {
                             }
                           `}</style>
                           <div
-                            className="prose max-w-none prose-headings:text-[#0E2A3F] prose-p:text-[#44586A] prose-strong:text-[#0E2A3F] prose-a:text-[#117178]"
+                            className="prose max-w-none prose-headings:text-ink prose-p:text-ink-soft prose-strong:text-ink prose-a:text-brand-dark"
                             dangerouslySetInnerHTML={{ __html: paginaSelecionada.conteudo }}
                           />
                         </>
@@ -849,13 +834,13 @@ export default function CursoDetalhePage() {
                 ) : (
                   <div className="flex items-center justify-center h-full">
                     <div className="text-center">
-                      <div className="w-24 h-24 rounded-2xl bg-[#F4F3EC] flex items-center justify-center mx-auto mb-6">
-                        <FileText className="w-12 h-12 text-[#8395A5]" />
+                      <div className="w-24 h-24 rounded-2xl bg-surface-hover flex items-center justify-center mx-auto mb-6">
+                        <FileText className="w-12 h-12 text-ink-faint" />
                       </div>
-                      <h3 className="text-xl font-bold text-[#0E2A3F] mb-2">
+                      <h3 className="text-xl font-bold text-ink mb-2">
                         {t('selectPage')}
                       </h3>
-                      <p className="text-[#8395A5]">{t('selectPageToView')}</p>
+                      <p className="text-ink-faint">{t('selectPageToView')}</p>
                     </div>
                   </div>
                 )}
@@ -864,11 +849,11 @@ export default function CursoDetalhePage() {
           ) : (
             <div className="flex-1 flex items-center justify-center">
               <div className="text-center">
-                <div className="w-24 h-24 rounded-2xl bg-[#E5F1F1] flex items-center justify-center mx-auto mb-6 border border-[#178E96]/20">
-                  <FolderOpen className="w-12 h-12 text-[#117178]" />
+                <div className="w-24 h-24 rounded-2xl bg-brand-soft flex items-center justify-center mx-auto mb-6 border border-brand/20">
+                  <FolderOpen className="w-12 h-12 text-brand-dark" />
                 </div>
-                <h3 className="text-xl font-bold text-[#0E2A3F] mb-2">{t('selectModule')}</h3>
-                <p className="text-[#8395A5]">{t('selectModuleToStudy')}</p>
+                <h3 className="text-xl font-bold text-ink mb-2">{t('selectModule')}</h3>
+                <p className="text-ink-faint">{t('selectModuleToStudy')}</p>
               </div>
             </div>
           )}
@@ -877,32 +862,32 @@ export default function CursoDetalhePage() {
 
       {/* Modal Novo Módulo */}
       <Dialog open={modalModuloAberto} onOpenChange={handleFecharModalModulo}>
-        <DialogContent className="bg-white border-[#E9E7DC] rounded-2xl">
+        <DialogContent className="bg-surface border-line rounded-2xl">
           <DialogHeader>
-            <DialogTitle className="text-[#0E2A3F] text-xl">Criar Novo Módulo</DialogTitle>
+            <DialogTitle className="text-ink text-xl">Criar Novo Módulo</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="nome-modulo" className="text-[#44586A] font-medium">
+              <Label htmlFor="nome-modulo" className="text-ink-soft font-medium">
                 Nome do Módulo
               </Label>
               <Input
                 id="nome-modulo"
                 value={novoModulo.nome}
                 onChange={(e) => setNovoModulo({ ...novoModulo, nome: e.target.value })}
-                className="bg-white border-[#D9D7CB] text-[#0E2A3F] mt-2 h-11 rounded-xl"
+                className="bg-surface border-line-strong text-ink mt-2 h-11 rounded-xl"
                 placeholder="Ex: Introdução ao JavaScript"
               />
             </div>
             <div>
-              <Label htmlFor="descricao-modulo" className="text-[#44586A] font-medium">
+              <Label htmlFor="descricao-modulo" className="text-ink-soft font-medium">
                 Descrição (opcional)
               </Label>
               <Input
                 id="descricao-modulo"
                 value={novoModulo.descricao}
                 onChange={(e) => setNovoModulo({ ...novoModulo, descricao: e.target.value })}
-                className="bg-white border-[#D9D7CB] text-[#0E2A3F] mt-2 h-11 rounded-xl"
+                className="bg-surface border-line-strong text-ink mt-2 h-11 rounded-xl"
                 placeholder="Ex: Conceitos básicos da linguagem"
               />
             </div>
@@ -910,18 +895,18 @@ export default function CursoDetalhePage() {
               <Button
                 variant="default"
                 onClick={() => handleFecharModalModulo(false)}
-                className="flex-1 border-[#D9D7CB] hover:bg-[#F4F3EC] rounded-xl h-11"
+                className="flex-1 border-line-strong hover:bg-surface-hover rounded-xl h-11"
               >
                 {t('cancel')}
               </Button>
               <Button
                 onClick={criarModulo}
                 disabled={!novoModulo.nome || criandoModulo}
-                className="flex-1 bg-[#178E96] hover:bg-[#117178] text-white rounded-xl h-11"
+                className="flex-1 bg-brand hover:bg-brand-dark text-white rounded-xl h-11"
               >
                 {criandoModulo ? (
                   <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    <Spinner className="w-4 h-4 mr-2 animate-spin" />
                     {t('saving')}
                   </>
                 ) : (
@@ -935,20 +920,20 @@ export default function CursoDetalhePage() {
 
       {/* Modal Nova Página */}
       <Dialog open={modalPaginaAberto} onOpenChange={handleFecharModalPagina}>
-        <DialogContent className="bg-white border-[#E9E7DC] rounded-2xl">
+        <DialogContent className="bg-surface border-line rounded-2xl">
           <DialogHeader>
-            <DialogTitle className="text-[#0E2A3F] text-xl">Criar Nova Página</DialogTitle>
+            <DialogTitle className="text-ink text-xl">Criar Nova Página</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="titulo-pagina" className="text-[#44586A] font-medium">
+              <Label htmlFor="titulo-pagina" className="text-ink-soft font-medium">
                 Título da Página
               </Label>
               <Input
                 id="titulo-pagina"
                 value={novaPagina.titulo}
                 onChange={(e) => setNovaPagina({ ...novaPagina, titulo: e.target.value })}
-                className="bg-white border-[#D9D7CB] text-[#0E2A3F] mt-2 h-11 rounded-xl"
+                className="bg-surface border-line-strong text-ink mt-2 h-11 rounded-xl"
                 placeholder="Ex: Variáveis e Tipos de Dados"
               />
             </div>
@@ -956,7 +941,7 @@ export default function CursoDetalhePage() {
               <Button
                 variant="default"
                 onClick={() => handleFecharModalPagina(false)}
-                className="flex-1 border-[#D9D7CB] hover:bg-[#F4F3EC] rounded-xl h-11"
+                className="flex-1 border-line-strong hover:bg-surface-hover rounded-xl h-11"
               >
                 {t('cancel')}
               </Button>
@@ -967,7 +952,7 @@ export default function CursoDetalhePage() {
               >
                 {criandoPagina ? (
                   <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    <Spinner className="w-4 h-4 mr-2 animate-spin" />
                     {t('saving')}
                   </>
                 ) : (

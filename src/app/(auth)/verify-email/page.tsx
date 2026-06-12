@@ -3,7 +3,7 @@
 import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { CheckCircle, XCircle, Loader2 } from 'lucide-react';
+import { CheckCircle, XCircle, Spinner } from '@phosphor-icons/react';
 
 function VerifyEmailContent() {
   const searchParams = useSearchParams();
@@ -47,37 +47,37 @@ function VerifyEmailContent() {
   }, [token, router]);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#F2F1E9] p-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-background p-4">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-6">
           <Link href="/">
-            <span className="text-3xl font-extrabold tracking-tight text-[#178E96]">Aura</span>
+            <span className="text-3xl font-extrabold tracking-tight text-brand">Aura</span>
           </Link>
         </div>
 
-        <div className="bg-white border border-[#E9E7DC] rounded-2xl shadow-sm p-8">
+        <div className="bg-surface border border-line rounded-2xl shadow-sm p-8">
           <div className="text-center">
             {status === 'loading' && (
               <>
-                <Loader2 className="w-16 h-16 text-[#178E96] animate-spin mx-auto mb-4" />
-                <h1 className="text-2xl font-bold text-[#0E2A3F] mb-2">
+                <Spinner className="w-16 h-16 text-brand animate-spin mx-auto mb-4" />
+                <h1 className="text-2xl font-bold text-ink mb-2">
                   Verificando seu email...
                 </h1>
-                <p className="text-[#5E7081]">Aguarde um momento</p>
+                <p className="text-ink-soft">Aguarde um momento</p>
               </>
             )}
 
             {status === 'success' && (
               <>
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-50 border border-green-200 mb-4">
-                  <CheckCircle className="w-8 h-8 text-green-600" />
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-500/30 mb-4">
+                  <CheckCircle className="w-8 h-8 text-green-600 dark:text-green-400" />
                 </div>
-                <h1 className="text-2xl font-bold text-[#0E2A3F] mb-2">
+                <h1 className="text-2xl font-bold text-ink mb-2">
                   Email verificado!
                 </h1>
-                <p className="text-[#5E7081] mb-4">{message}</p>
-                <p className="text-sm text-[#8395A5]">
+                <p className="text-ink-soft mb-4">{message}</p>
+                <p className="text-sm text-ink-faint">
                   Redirecionando para o login...
                 </p>
               </>
@@ -85,16 +85,16 @@ function VerifyEmailContent() {
 
             {status === 'error' && (
               <>
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-50 border border-red-200 mb-4">
-                  <XCircle className="w-8 h-8 text-red-600" />
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30 mb-4">
+                  <XCircle className="w-8 h-8 text-red-600 dark:text-red-400" />
                 </div>
-                <h1 className="text-2xl font-bold text-[#0E2A3F] mb-2">
+                <h1 className="text-2xl font-bold text-ink mb-2">
                   Erro na verificação
                 </h1>
-                <p className="text-[#5E7081] mb-6">{message}</p>
+                <p className="text-ink-soft mb-6">{message}</p>
                 <button
                   onClick={() => router.push('/login')}
-                  className="w-full bg-[#178E96] hover:bg-[#117178] text-white font-semibold h-11 rounded-lg transition-colors duration-150 uppercase tracking-wide text-sm"
+                  className="w-full bg-brand hover:bg-brand-dark text-white font-semibold h-11 rounded-lg transition-colors duration-150 uppercase tracking-wide text-sm"
                 >
                   Voltar para o login
                 </button>
@@ -110,15 +110,15 @@ function VerifyEmailContent() {
 export default function VerifyEmailPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#F2F1E9] p-4">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-background p-4">
         <div className="w-full max-w-md">
           <div className="text-center mb-6">
-            <span className="text-3xl font-extrabold tracking-tight text-[#178E96]">Aura</span>
+            <span className="text-3xl font-extrabold tracking-tight text-brand">Aura</span>
           </div>
-          <div className="bg-white border border-[#E9E7DC] rounded-2xl shadow-sm p-8">
+          <div className="bg-surface border border-line rounded-2xl shadow-sm p-8">
             <div className="text-center">
-              <Loader2 className="w-16 h-16 text-[#178E96] animate-spin mx-auto mb-4" />
-              <h1 className="text-2xl font-bold text-[#0E2A3F] mb-2">
+              <Spinner className="w-16 h-16 text-brand animate-spin mx-auto mb-4" />
+              <h1 className="text-2xl font-bold text-ink mb-2">
                 Carregando...
               </h1>
             </div>

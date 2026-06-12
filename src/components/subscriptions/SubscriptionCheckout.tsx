@@ -3,9 +3,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
+import { useTheme } from 'next-themes';
 import { CheckoutForm } from './CheckoutForm';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2 } from 'lucide-react';
+import { Spinner } from '@phosphor-icons/react';
 import { toast } from 'sonner';
 
 const stripePromise = loadStripe(
@@ -23,6 +24,8 @@ export function SubscriptionCheckout({
   planName,
   onSuccess,
 }: SubscriptionCheckoutProps) {
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === 'dark';
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [intentType, setIntentType] = useState<'payment' | 'setup'>('payment');
   const [isLoading, setIsLoading] = useState(false);
@@ -91,9 +94,9 @@ export function SubscriptionCheckout({
 
   if (isLoading) {
     return (
-      <Card className="bg-zinc-900/50 border-gray-800">
+      <Card>
         <CardContent className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-purple-500" />
+          <Spinner className="h-8 w-8 animate-spin text-brand" />
         </CardContent>
       </Card>
     );
@@ -101,9 +104,9 @@ export function SubscriptionCheckout({
 
   if (error) {
     return (
-      <Card className="bg-zinc-900/50 border-gray-800">
+      <Card>
         <CardContent className="py-12 text-center">
-          <p className="text-red-400">{error}</p>
+          <p className="text-red-600 dark:text-red-400">{error}</p>
         </CardContent>
       </Card>
     );
@@ -111,39 +114,49 @@ export function SubscriptionCheckout({
 
   if (!clientSecret) {
     return (
-      <Card className="bg-zinc-900/50 border-gray-800">
+      <Card>
         <CardContent className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-purple-500" />
+          <Spinner className="h-8 w-8 animate-spin text-brand" />
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <Card className="bg-zinc-900/50 border-gray-800">
+    <Card>
       <CardHeader>
-        <CardTitle className="text-white">Finalizar Assinatura</CardTitle>
-        <CardDescription className="text-gray-400">
-          Você está assinando o plano: <strong className="text-purple-400">{planName}</strong>
+        <CardTitle className="text-ink">Finalizar Assinatura</CardTitle>
+        <CardDescription className="text-ink-soft">
+          Você está assinando o plano: <strong className="text-brand-dark">{planName}</strong>
         </CardDescription>
       </CardHeader>
       <CardContent>
         <Elements
-          key={priceId}
+          key={`${priceId}-${isDark ? 'dark' : 'light'}`}
           stripe={stripePromise}
           options={{
             clientSecret,
             appearance: {
-              theme: 'night',
-              variables: {
-                colorPrimary: '#8B5CF6',
-                colorBackground: '#18181b',
-                colorText: '#ffffff',
-                colorDanger: '#ef4444',
-                fontFamily: 'system-ui, sans-serif',
-                spacingUnit: '4px',
-                borderRadius: '8px',
-              },
+              theme: isDark ? 'night' : 'stripe',
+              variables: isDark
+                ? {
+                    colorPrimary: '#2FB0B8',
+                    colorBackground: '#12283A',
+                    colorText: '#E6EEF4',
+                    colorDanger: '#EF4444',
+                    fontFamily: 'system-ui, sans-serif',
+                    spacingUnit: '4px',
+                    borderRadius: '8px',
+                  }
+                : {
+                    colorPrimary: '#178E96',
+                    colorBackground: '#FFFFFF',
+                    colorText: '#0E2A3F',
+                    colorDanger: '#DC2626',
+                    fontFamily: 'system-ui, sans-serif',
+                    spacingUnit: '4px',
+                    borderRadius: '8px',
+                  },
             },
           }}
         >

@@ -40,8 +40,19 @@
   --color-brand: var(--brand);
   --color-brand-dark: var(--brand-dark);
   --color-brand-blue: var(--brand-blue);
+  --color-brand-soft: var(--brand-soft);
   --color-navy: var(--navy);
   --color-cream: var(--cream);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-surface: var(--surface);
+  --color-surface-soft: var(--surface-soft);
+  --color-surface-hover: var(--surface-hover);
+  --color-gold: var(--gold);
+  --color-blue-soft: var(--blue-soft);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -98,6 +109,75 @@
   --sidebar-accent-foreground: #0F6A71;
   --sidebar-border: #E9E7DC;
   --sidebar-ring: #178E96;
+
+  /* Tokens semânticos (paleta clara) */
+  --brand-soft: #E5F1F1;
+  --ink: #0E2A3F;
+  --ink-soft: #44586A;
+  --ink-faint: #8395A5;
+  --line: #E9E7DC;
+  --line-strong: #D9D7CB;
+  --surface: #FFFFFF;
+  --surface-soft: #FAF9F4;
+  --surface-hover: #F4F3EC;
+  --gold: #D9A441;
+  --blue-soft: #EFF4F8;
+}
+
+/*
+  Tema escuro (2026): navy profundo com acento teal mais claro.
+  Mantém a leveza do design claro — superfícies suaves, sem preto puro.
+*/
+.dark {
+  --brand: #2FB0B8;
+  --brand-dark: #4DC2CA; /* papel de hover: no escuro, clareia em vez de escurecer */
+  --brand-blue: #6BA8CC;
+  --navy: #0E2A3F;
+  --cream: #0C1B27;
+
+  --background: #0C1B27;
+  --foreground: #E6EEF4;
+  --card: #12283A;
+  --card-foreground: #E6EEF4;
+  --popover: #122839;
+  --popover-foreground: #E6EEF4;
+  --primary: #2FB0B8;
+  --primary-foreground: #FFFFFF;
+  --secondary: #3E7CA8;
+  --secondary-foreground: #FFFFFF;
+  --muted: #142C3E;
+  --muted-foreground: #8FA6B8;
+  --accent: rgba(47, 176, 184, 0.14);
+  --accent-foreground: #7FD8DE;
+  --destructive: #EF4444;
+  --border: #21384A;
+  --input: #2D4860;
+  --ring: #2FB0B8;
+  --chart-1: #2FB0B8;
+  --chart-2: #6BA8CC;
+  --chart-3: #9FB9CB;
+  --chart-4: #E0B25C;
+  --chart-5: #D9706A;
+  --sidebar: #0F2231;
+  --sidebar-foreground: #A6B8C7;
+  --sidebar-primary: #2FB0B8;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: rgba(47, 176, 184, 0.14);
+  --sidebar-accent-foreground: #7FD8DE;
+  --sidebar-border: #1D3445;
+  --sidebar-ring: #2FB0B8;
+
+  --brand-soft: rgba(47, 176, 184, 0.13);
+  --ink: #E6EEF4;
+  --ink-soft: #A6B8C7;
+  --ink-faint: #71899C;
+  --line: #21384A;
+  --line-strong: #2D4860;
+  --surface: #12283A;
+  --surface-soft: #142C3E;
+  --surface-hover: #183246;
+  --gold: #E0B25C;
+  --blue-soft: rgba(107, 168, 204, 0.12);
 }
 
 @layer base {
@@ -122,21 +202,21 @@
   font-size: 2em;
   font-weight: bold;
   margin: 0.75em 0;
-  color: #0E2A3F;
+  color: var(--ink);
 }
 
 .ProseMirror h2 {
   font-size: 1.5em;
   font-weight: bold;
   margin: 0.75em 0;
-  color: #0E2A3F;
+  color: var(--ink);
 }
 
 .ProseMirror h3 {
   font-size: 1.25em;
   font-weight: bold;
   margin: 0.75em 0;
-  color: #0E2A3F;
+  color: var(--ink);
 }
 
 .ProseMirror ul,
@@ -172,26 +252,26 @@
 
 /* Estilos para visualização de conteúdo */
 .prose {
-  color: #44586A;
+  color: var(--ink-soft);
   max-width: none;
 }
 
 .prose h1 {
-  color: #0E2A3F;
+  color: var(--ink);
   font-size: 2em;
   font-weight: bold;
   margin: 0.75em 0;
 }
 
 .prose h2 {
-  color: #0E2A3F;
+  color: var(--ink);
   font-size: 1.5em;
   font-weight: bold;
   margin: 0.75em 0;
 }
 
 .prose h3 {
-  color: #0E2A3F;
+  color: var(--ink);
   font-size: 1.25em;
   font-weight: bold;
   margin: 0.75em 0;
@@ -214,7 +294,7 @@
 
 .prose strong {
   font-weight: bold;
-  color: #0E2A3F;
+  color: var(--ink);
 }
 
 .prose em {
@@ -236,9 +316,9 @@
 
 /* Estilos para Toast Notifications (Sonner) */
 [data-sonner-toast] {
-  background: #FFFFFF !important;
-  border: 1px solid #E3E1D6 !important;
-  color: #0E2A3F !important;
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--ink) !important;
   box-shadow: 0 4px 12px rgba(14, 42, 63, 0.08) !important;
 }
 
@@ -260,6 +340,30 @@
 [data-sonner-toast][data-type="info"] {
   background: #EFF4F8 !important;
   border-color: rgba(21, 79, 109, 0.3) !important;
+}
+
+.dark [data-sonner-toast] {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+}
+
+.dark [data-sonner-toast][data-type="success"] {
+  background: #11302B !important;
+  border-color: rgba(34, 197, 94, 0.35) !important;
+}
+
+.dark [data-sonner-toast][data-type="error"] {
+  background: #321D22 !important;
+  border-color: rgba(239, 68, 68, 0.35) !important;
+}
+
+.dark [data-sonner-toast][data-type="loading"] {
+  background: #11303A !important;
+  border-color: rgba(47, 176, 184, 0.35) !important;
+}
+
+.dark [data-sonner-toast][data-type="info"] {
+  background: #122B3D !important;
+  border-color: rgba(107, 168, 204, 0.35) !important;
 }
 
 /* Animações personalizadas para página Coming Soon */
@@ -396,7 +500,7 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Custom scrollbar (tema claro) */
+/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -415,7 +519,15 @@ html {
   background: #B5B3A6;
 }
 
-/* Glass morphism utility (tema claro) */
+.dark ::-webkit-scrollbar-thumb {
+  background: #2D4860;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #3A5872;
+}
+
+/* Glass morphism utility */
 .glass {
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(10px);
@@ -423,9 +535,14 @@ html {
   border: 1px solid rgba(14, 42, 63, 0.08);
 }
 
+.dark .glass {
+  background: rgba(18, 40, 58, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
 /* Text gradient utility */
 .text-gradient {
-  background: linear-gradient(135deg, #178E96 0%, #154F6D 100%);
+  background: linear-gradient(135deg, var(--brand) 0%, var(--brand-blue) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -510,10 +627,14 @@ html {
   }
 }
 
-/* Card padrão do novo design (estilo Next Fit: branco, raio suave, sombra leve) */
+/* Card padrão do novo design (estilo Next Fit: raio suave, sombra leve) */
 .surface-card {
-  background: #FFFFFF;
-  border: 1px solid #E9E7DC;
+  background: var(--surface);
+  border: 1px solid var(--line);
   border-radius: 0.75rem;
   box-shadow: 0 1px 3px rgba(14, 42, 63, 0.06);
+}
+
+.dark .surface-card {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }

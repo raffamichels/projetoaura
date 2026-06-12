@@ -2,22 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-  Plus,
-  Plane,
-  MapPin,
-  Calendar,
-  DollarSign,
-  Clock,
-  Globe,
-  Sparkles,
-  TrendingUp,
-  Briefcase,
-  GraduationCap,
-  Heart,
-  Crown,
-  Search,
-} from 'lucide-react';
+import { Plus, Airplane, MapPin, Calendar, CurrencyDollar, Clock, Globe, Sparkle, TrendUp, Briefcase, GraduationCap, Heart, Crown, MagnifyingGlass } from '@phosphor-icons/react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -38,10 +23,10 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 
 const statusColors = {
-  PLANEJADA: { bg: 'bg-[#EFF4F8]', text: 'text-[#154F6D]', border: 'border-[#154F6D]/20' },
-  EM_ANDAMENTO: { bg: 'bg-green-50', text: 'text-green-700', border: 'border-green-200' },
-  CONCLUIDA: { bg: 'bg-[#F4F3EC]', text: 'text-[#8395A5]', border: 'border-[#E9E7DC]' },
-  CANCELADA: { bg: 'bg-red-50', text: 'text-red-600', border: 'border-red-200' },
+  PLANEJADA: { bg: 'bg-blue-soft', text: 'text-brand-blue', border: 'border-brand-blue/20' },
+  EM_ANDAMENTO: { bg: 'bg-green-50 dark:bg-green-500/10', text: 'text-green-700 dark:text-green-400', border: 'border-green-200 dark:border-green-500/30' },
+  CONCLUIDA: { bg: 'bg-surface-hover', text: 'text-ink-faint', border: 'border-line' },
+  CANCELADA: { bg: 'bg-red-50 dark:bg-red-500/10', text: 'text-red-600 dark:text-red-400', border: 'border-red-200 dark:border-red-500/30' },
 };
 
 const statusLabels = {
@@ -211,11 +196,11 @@ export default function ViagensPage() {
   if (!isPremium) {
     return (
       <div className="min-h-screen flex items-center justify-center p-6">
-        <Card className="max-w-2xl w-full p-8 bg-[#0E2A3F] border-[#0E2A3F] text-white rounded-xl">
+        <Card className="max-w-2xl w-full p-8 bg-navy border-navy text-white rounded-xl">
           <div className="text-center space-y-6">
             <div className="flex justify-center">
-              <div className="p-4 bg-[#D9A441]/15 rounded-full">
-                <Crown className="w-12 h-12 text-[#D9A441]" />
+              <div className="p-4 bg-gold/15 rounded-full">
+                <Crown className="w-12 h-12 text-gold" />
               </div>
             </div>
             <div>
@@ -232,7 +217,7 @@ export default function ViagensPage() {
                   <span className="text-white/80">Planejamento completo de viagens com múltiplos destinos</span>
                 </div>
                 <div className="flex items-start gap-3">
-                  <Plane className="w-5 h-5 text-[#5BB5BC] mt-0.5 flex-shrink-0" />
+                  <Airplane className="w-5 h-5 text-[#5BB5BC] mt-0.5 flex-shrink-0" />
                   <span className="text-white/80">Gerenciamento de transportes, voos e hospedagens</span>
                 </div>
                 <div className="flex items-start gap-3">
@@ -240,14 +225,14 @@ export default function ViagensPage() {
                   <span className="text-white/80">Roteiro detalhado com atividades dia a dia</span>
                 </div>
                 <div className="flex items-start gap-3">
-                  <DollarSign className="w-5 h-5 text-[#5BB5BC] mt-0.5 flex-shrink-0" />
+                  <CurrencyDollar className="w-5 h-5 text-[#5BB5BC] mt-0.5 flex-shrink-0" />
                   <span className="text-white/80">Controle financeiro completo com conversão de moedas</span>
                 </div>
               </div>
             </div>
             <Button
               onClick={() => router.push('/premium')}
-              className="w-full bg-[#178E96] hover:bg-[#117178] text-white font-medium py-6 text-lg duration-150"
+              className="w-full bg-brand hover:bg-brand-dark text-white font-medium py-6 text-lg duration-150"
             >
               <Crown className="w-5 h-5 mr-2" />
               Fazer Upgrade para Premium
@@ -261,7 +246,7 @@ export default function ViagensPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#178E96]"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand"></div>
       </div>
     );
   }
@@ -273,20 +258,20 @@ export default function ViagensPage() {
         <div className="flex justify-between items-start mb-6">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <div className="p-3 bg-[#E5F1F1] rounded-xl">
-                <Plane className="w-8 h-8 text-[#117178]" />
+              <div className="p-3 bg-brand-soft rounded-xl">
+                <Airplane className="w-8 h-8 text-brand-dark" />
               </div>
               <div>
-                <h1 className="text-4xl font-bold text-[#0E2A3F]">
+                <h1 className="text-4xl font-bold text-ink">
                   Minhas Viagens
                 </h1>
-                <p className="text-[#44586A]">Planeje e gerencie suas aventuras</p>
+                <p className="text-ink-soft">Planeje e gerencie suas aventuras</p>
               </div>
             </div>
           </div>
           <Button
             onClick={() => setIsModalOpen(true)}
-            className="bg-[#178E96] hover:bg-[#117178] text-white duration-150"
+            className="bg-brand hover:bg-brand-dark text-white duration-150"
             size="lg"
           >
             <Plus className="w-5 h-5 mr-2" />
@@ -296,59 +281,59 @@ export default function ViagensPage() {
 
         {/* Cards de Estatísticas */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card className="relative overflow-hidden bg-white border-[#E9E7DC] shadow-sm hover:border-[#178E96]/40 transition-all duration-150">
+          <Card className="relative overflow-hidden bg-surface border-line shadow-sm hover:border-brand/40 transition-all duration-150">
             <div className="relative p-6">
               <div className="flex items-center gap-3 mb-3">
-                <div className="p-2 bg-[#E5F1F1] rounded-lg">
-                  <Sparkles className="w-5 h-5 text-[#117178]" />
+                <div className="p-2 bg-brand-soft rounded-lg">
+                  <Sparkle className="w-5 h-5 text-brand-dark" />
                 </div>
-                <span className="text-sm text-[#44586A]">Viagens Ativas</span>
+                <span className="text-sm text-ink-soft">Viagens Ativas</span>
               </div>
-              <div className="text-3xl font-bold text-[#117178] mb-1">
+              <div className="text-3xl font-bold text-brand-dark mb-1">
                 {viagensAtivas.length}
               </div>
-              <p className="text-xs text-[#8395A5]">
+              <p className="text-xs text-ink-faint">
                 {viagens.length - viagensAtivas.length} concluídas ou canceladas
               </p>
             </div>
           </Card>
 
-          <Card className="relative overflow-hidden bg-white border-[#E9E7DC] shadow-sm hover:border-green-200 transition-all duration-150">
+          <Card className="relative overflow-hidden bg-surface border-line shadow-sm hover:border-green-200 dark:hover:border-green-500/30 transition-all duration-150">
             <div className="relative p-6">
               <div className="flex items-center gap-3 mb-3">
-                <div className="p-2 bg-green-50 rounded-lg">
-                  <DollarSign className="w-5 h-5 text-green-700" />
+                <div className="p-2 bg-green-50 dark:bg-green-500/10 rounded-lg">
+                  <CurrencyDollar className="w-5 h-5 text-green-700 dark:text-green-400" />
                 </div>
-                <span className="text-sm text-[#44586A]">Total Investido</span>
+                <span className="text-sm text-ink-soft">Total Investido</span>
               </div>
-              <div className="text-3xl font-bold text-green-700 mb-1">
+              <div className="text-3xl font-bold text-green-700 dark:text-green-400 mb-1">
                 R$ {totalGasto.toFixed(2)}
               </div>
-              <p className="text-xs text-[#8395A5]">Em todas as viagens</p>
+              <p className="text-xs text-ink-faint">Em todas as viagens</p>
             </div>
           </Card>
 
-          <Card className="relative overflow-hidden bg-white border-[#E9E7DC] shadow-sm hover:border-[#154F6D]/30 transition-all duration-150">
+          <Card className="relative overflow-hidden bg-surface border-line shadow-sm hover:border-brand-blue/30 transition-all duration-150">
             <div className="relative p-6">
               <div className="flex items-center gap-3 mb-3">
-                <div className="p-2 bg-[#EFF4F8] rounded-lg">
-                  <Clock className="w-5 h-5 text-[#154F6D]" />
+                <div className="p-2 bg-blue-soft rounded-lg">
+                  <Clock className="w-5 h-5 text-brand-blue" />
                 </div>
-                <span className="text-sm text-[#44586A]">Próxima Viagem</span>
+                <span className="text-sm text-ink-soft">Próxima Viagem</span>
               </div>
               {proximaViagem ? (
                 <>
-                  <div className="text-xl font-bold text-[#154F6D] mb-1 truncate">
+                  <div className="text-xl font-bold text-brand-blue mb-1 truncate">
                     {proximaViagem.nome}
                   </div>
-                  <p className="text-xs text-[#8395A5]">
+                  <p className="text-xs text-ink-faint">
                     {getCountdownText(proximaViagem.diasRestantes, proximaViagem.status)}
                   </p>
                 </>
               ) : (
                 <>
-                  <div className="text-2xl font-bold text-[#8395A5] mb-1">—</div>
-                  <p className="text-xs text-[#8395A5]">Nenhuma viagem planejada</p>
+                  <div className="text-2xl font-bold text-ink-faint mb-1">—</div>
+                  <p className="text-xs text-ink-faint">Nenhuma viagem planejada</p>
                 </>
               )}
             </div>
@@ -357,19 +342,19 @@ export default function ViagensPage() {
       </div>
 
       {/* Filtros */}
-      <Card className="p-4 bg-white border-[#E9E7DC] shadow-sm">
+      <Card className="p-4 bg-surface border-line shadow-sm">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#8395A5] w-4 h-4" />
+            <MagnifyingGlass className="absolute left-3 top-1/2 transform -translate-y-1/2 text-ink-faint w-4 h-4" />
             <Input
               placeholder="Buscar viagens..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 bg-white border-[#D9D7CB] text-[#0E2A3F] placeholder:text-[#8395A5] focus:border-[#178E96] focus:ring-[#178E96]/20"
+              className="pl-10 bg-surface border-line-strong text-ink placeholder:text-ink-faint focus:border-brand focus:ring-brand/20"
             />
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-full md:w-48 bg-white border-[#D9D7CB] text-[#0E2A3F]">
+            <SelectTrigger className="w-full md:w-48 bg-surface border-line-strong text-ink">
               <SelectValue placeholder="Filtrar por status" />
             </SelectTrigger>
             <SelectContent>
@@ -385,15 +370,15 @@ export default function ViagensPage() {
 
       {/* Lista de Viagens */}
       {filteredViagens.length === 0 ? (
-        <Card className="bg-white border-[#E9E7DC] shadow-sm p-12">
+        <Card className="bg-surface border-line shadow-sm p-12">
           <div className="text-center">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-[#F4F3EC] rounded-full mb-4">
-              <Plane className="w-10 h-10 text-[#117178]" />
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-surface-hover rounded-full mb-4">
+              <Airplane className="w-10 h-10 text-brand-dark" />
             </div>
-            <h3 className="text-2xl font-semibold text-[#0E2A3F] mb-2">
+            <h3 className="text-2xl font-semibold text-ink mb-2">
               {viagens.length === 0 ? 'Comece a planejar suas aventuras!' : 'Nenhuma viagem encontrada'}
             </h3>
-            <p className="text-[#8395A5] mb-6 max-w-md mx-auto">
+            <p className="text-ink-faint mb-6 max-w-md mx-auto">
               {viagens.length === 0
                 ? 'Crie sua primeira viagem e comece a organizar todos os detalhes da sua próxima aventura'
                 : 'Nenhuma viagem corresponde aos filtros aplicados.'}
@@ -401,7 +386,7 @@ export default function ViagensPage() {
             {viagens.length === 0 && (
               <Button
                 onClick={() => setIsModalOpen(true)}
-                className="bg-[#178E96] hover:bg-[#117178] text-white duration-150"
+                className="bg-brand hover:bg-brand-dark text-white duration-150"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Criar Primeira Viagem
@@ -421,7 +406,7 @@ export default function ViagensPage() {
             return (
               <Card
                 key={viagem.id}
-                className="relative overflow-hidden bg-white border-[#E9E7DC] shadow-sm hover:border-[#178E96]/40 transition-all duration-150 group hover:shadow-md cursor-pointer"
+                className="relative overflow-hidden bg-surface border-line shadow-sm hover:border-brand/40 transition-all duration-150 group hover:shadow-md cursor-pointer"
                 onClick={() => router.push(`/dashboard/viagens/${viagem.id}`)}
               >
                 {/* Barra de status no topo */}
@@ -429,7 +414,7 @@ export default function ViagensPage() {
                   className={`absolute top-0 left-0 right-0 h-1 ${
                     viagem.status === 'PLANEJADA' ? 'bg-blue-500' :
                     viagem.status === 'EM_ANDAMENTO' ? 'bg-green-500' :
-                    viagem.status === 'CONCLUIDA' ? 'bg-[#8395A5]' : 'bg-red-500'
+                    viagem.status === 'CONCLUIDA' ? 'bg-ink-faint' : 'bg-red-500'
                   }`}
                 />
 
@@ -437,15 +422,15 @@ export default function ViagensPage() {
                   {/* Header */}
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3 flex-1">
-                      <div className="p-3 bg-[#E5F1F1] rounded-xl">
-                        <PropostoIcon className="w-6 h-6 text-[#117178]" />
+                      <div className="p-3 bg-brand-soft rounded-xl">
+                        <PropostoIcon className="w-6 h-6 text-brand-dark" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-lg text-[#0E2A3F] group-hover:text-[#117178] transition-colors duration-150 truncate">
+                        <h3 className="font-bold text-lg text-ink group-hover:text-brand-dark transition-colors duration-150 truncate">
                           {viagem.nome}
                         </h3>
                         {viagem.descricao && (
-                          <p className="text-sm text-[#44586A] line-clamp-1">{viagem.descricao}</p>
+                          <p className="text-sm text-ink-soft line-clamp-1">{viagem.descricao}</p>
                         )}
                       </div>
                     </div>
@@ -456,7 +441,7 @@ export default function ViagensPage() {
                     <Badge className={`${statusColors[viagem.status].bg} ${statusColors[viagem.status].text} border ${statusColors[viagem.status].border}`}>
                       {statusLabels[viagem.status]}
                     </Badge>
-                    <Badge className="bg-[#F4F3EC] text-[#44586A] border border-[#E9E7DC]">
+                    <Badge className="bg-surface-hover text-ink-soft border border-line">
                       {propostoLabels[viagem.proposito]}
                     </Badge>
                   </div>
@@ -464,7 +449,7 @@ export default function ViagensPage() {
                   {/* Informações */}
                   <div className="space-y-3 mb-4">
                     {/* Datas */}
-                    <div className="flex items-center gap-2 text-sm text-[#44586A]">
+                    <div className="flex items-center gap-2 text-sm text-ink-soft">
                       <Calendar className="w-4 h-4 flex-shrink-0" />
                       <span>
                         {format(new Date(viagem.dataInicio), 'dd MMM', { locale: ptBR })} -{' '}
@@ -475,14 +460,14 @@ export default function ViagensPage() {
                     {/* Countdown */}
                     {countdownText && (
                       <div className="flex items-center gap-2 text-sm">
-                        <Clock className="w-4 h-4 text-[#117178] flex-shrink-0" />
-                        <span className="text-[#117178] font-medium">{countdownText}</span>
+                        <Clock className="w-4 h-4 text-brand-dark flex-shrink-0" />
+                        <span className="text-brand-dark font-medium">{countdownText}</span>
                       </div>
                     )}
 
                     {/* Destinos */}
                     {viagem.destinos && viagem.destinos.length > 0 && (
-                      <div className="flex items-center gap-2 text-sm text-[#44586A]">
+                      <div className="flex items-center gap-2 text-sm text-ink-soft">
                         <MapPin className="w-4 h-4 flex-shrink-0" />
                         <span>{viagem.destinos.length} {viagem.destinos.length === 1 ? 'destino' : 'destinos'}</span>
                       </div>
@@ -491,14 +476,14 @@ export default function ViagensPage() {
 
                   {/* Orçamento */}
                   {viagem.orcamentoTotal && (
-                    <div className="pt-4 border-t border-[#E9E7DC]">
+                    <div className="pt-4 border-t border-line">
                       <div className="flex items-center justify-between text-sm mb-2">
-                        <span className="text-[#44586A]">Orçamento</span>
-                        <span className="font-medium text-[#0E2A3F]">
+                        <span className="text-ink-soft">Orçamento</span>
+                        <span className="font-medium text-ink">
                           R$ {viagem.totalGasto.toFixed(2)} / R$ {Number(viagem.orcamentoTotal).toFixed(2)}
                         </span>
                       </div>
-                      <div className="relative h-2 bg-[#E9E7DC] rounded-full overflow-hidden">
+                      <div className="relative h-2 bg-line rounded-full overflow-hidden">
                         <div
                           className={`absolute inset-y-0 left-0 rounded-full transition-all ${
                             percentGasto > 100
@@ -510,7 +495,7 @@ export default function ViagensPage() {
                           style={{ width: `${Math.min(percentGasto, 100)}%` }}
                         />
                       </div>
-                      <p className="text-xs text-[#8395A5] mt-1">
+                      <p className="text-xs text-ink-faint mt-1">
                         {percentGasto > 100
                           ? `${(percentGasto - 100).toFixed(0)}% acima do orçamento`
                           : `${(100 - percentGasto).toFixed(0)}% restante`}
@@ -526,48 +511,48 @@ export default function ViagensPage() {
 
       {/* Modal de Criação */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="max-w-2xl bg-white border-[#E3E1D6]">
+        <DialogContent className="max-w-2xl bg-surface border-line">
           <DialogHeader>
-            <DialogTitle className="text-[#0E2A3F]">Nova Viagem</DialogTitle>
-            <DialogDescription className="text-[#44586A]">
+            <DialogTitle className="text-ink">Nova Viagem</DialogTitle>
+            <DialogDescription className="text-ink-soft">
               Crie uma nova viagem e comece a planejar sua aventura
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleCreateViagem} className="space-y-4">
             <div>
-              <Label htmlFor="nome" className="text-[#0E2A3F]">Nome da Viagem *</Label>
+              <Label htmlFor="nome" className="text-ink">Nome da Viagem *</Label>
               <Input
                 id="nome"
                 value={formData.nome}
                 onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
                 placeholder="Ex: Viagem para Paris"
                 required
-                className="bg-white border-[#D9D7CB] text-[#0E2A3F] placeholder:text-[#8395A5] focus:border-[#178E96] focus:ring-[#178E96]/20"
+                className="bg-surface border-line-strong text-ink placeholder:text-ink-faint focus:border-brand focus:ring-brand/20"
               />
             </div>
 
             <div>
-              <Label htmlFor="descricao" className="text-[#0E2A3F]">Descrição</Label>
+              <Label htmlFor="descricao" className="text-ink">Descrição</Label>
               <Textarea
                 id="descricao"
                 value={formData.descricao}
                 onChange={(e) => setFormData({ ...formData, descricao: e.target.value })}
                 placeholder="Descreva sua viagem..."
-                className="bg-white border-[#D9D7CB] text-[#0E2A3F] placeholder:text-[#8395A5] focus:border-[#178E96] focus:ring-[#178E96]/20"
+                className="bg-surface border-line-strong text-ink placeholder:text-ink-faint focus:border-brand focus:ring-brand/20"
                 rows={3}
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="proposito" className="text-[#0E2A3F]">Propósito</Label>
+                <Label htmlFor="proposito" className="text-ink">Propósito</Label>
                 <Select
                   value={formData.proposito}
                   onValueChange={(value) =>
                     setFormData({ ...formData, proposito: value as PropostoViagem })
                   }
                 >
-                  <SelectTrigger className="bg-white border-[#D9D7CB] text-[#0E2A3F] focus:border-[#178E96] focus:ring-[#178E96]/20">
+                  <SelectTrigger className="bg-surface border-line-strong text-ink focus:border-brand focus:ring-brand/20">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -580,7 +565,7 @@ export default function ViagensPage() {
               </div>
 
               <div>
-                <Label htmlFor="orcamento" className="text-[#0E2A3F]">Orçamento Total</Label>
+                <Label htmlFor="orcamento" className="text-ink">Orçamento Total</Label>
                 <Input
                   id="orcamento"
                   type="number"
@@ -590,14 +575,14 @@ export default function ViagensPage() {
                     setFormData({ ...formData, orcamentoTotal: e.target.value })
                   }
                   placeholder="0.00"
-                  className="bg-white border-[#D9D7CB] text-[#0E2A3F] placeholder:text-[#8395A5] focus:border-[#178E96] focus:ring-[#178E96]/20"
+                  className="bg-surface border-line-strong text-ink placeholder:text-ink-faint focus:border-brand focus:ring-brand/20"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="dataInicio" className="text-[#0E2A3F]">Data de Início *</Label>
+                <Label htmlFor="dataInicio" className="text-ink">Data de Início *</Label>
                 <Input
                   id="dataInicio"
                   type="date"
@@ -606,31 +591,31 @@ export default function ViagensPage() {
                     setFormData({ ...formData, dataInicio: e.target.value })
                   }
                   required
-                  className="bg-white border-[#D9D7CB] text-[#0E2A3F] focus:border-[#178E96] focus:ring-[#178E96]/20"
+                  className="bg-surface border-line-strong text-ink focus:border-brand focus:ring-brand/20"
                 />
               </div>
 
               <div>
-                <Label htmlFor="dataFim" className="text-[#0E2A3F]">Data de Término *</Label>
+                <Label htmlFor="dataFim" className="text-ink">Data de Término *</Label>
                 <Input
                   id="dataFim"
                   type="date"
                   value={formData.dataFim}
                   onChange={(e) => setFormData({ ...formData, dataFim: e.target.value })}
                   required
-                  className="bg-white border-[#D9D7CB] text-[#0E2A3F] focus:border-[#178E96] focus:ring-[#178E96]/20"
+                  className="bg-surface border-line-strong text-ink focus:border-brand focus:ring-brand/20"
                 />
               </div>
             </div>
 
             <div>
-              <Label htmlFor="notas" className="text-[#0E2A3F]">Notas Gerais</Label>
+              <Label htmlFor="notas" className="text-ink">Notas Gerais</Label>
               <Textarea
                 id="notas"
                 value={formData.notasGerais}
                 onChange={(e) => setFormData({ ...formData, notasGerais: e.target.value })}
                 placeholder="Adicione notas ou observações sobre a viagem..."
-                className="bg-white border-[#D9D7CB] text-[#0E2A3F] placeholder:text-[#8395A5] focus:border-[#178E96] focus:ring-[#178E96]/20"
+                className="bg-surface border-line-strong text-ink placeholder:text-ink-faint focus:border-brand focus:ring-brand/20"
                 rows={3}
               />
             </div>
@@ -642,13 +627,13 @@ export default function ViagensPage() {
                   setIsModalOpen(false);
                   resetForm();
                 }}
-                className="bg-[#F4F3EC] hover:bg-[#E9E7DC] text-[#44586A] duration-150"
+                className="bg-surface-hover hover:bg-line text-ink-soft duration-150"
               >
                 Cancelar
               </Button>
               <Button
                 type="submit"
-                className="bg-[#178E96] hover:bg-[#117178] text-white duration-150"
+                className="bg-brand hover:bg-brand-dark text-white duration-150"
               >
                 Criar Viagem
               </Button>

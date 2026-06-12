@@ -4,7 +4,7 @@ import { useState, FormEvent } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Midia } from '@/types/midia';
-import { User, BookOpen, Star, Book, Clapperboard } from 'lucide-react';
+import { User, BookOpen, Star, Book, FilmSlate } from '@phosphor-icons/react';
 
 // --- Interfaces ---
 
@@ -45,75 +45,75 @@ export function NovaCitacaoForm({ onSubmit, midias, isSubmitting }: NovaCitacaoF
         onChange={(e) => setFormData({ ...formData, texto: e.target.value })}
         placeholder="Digite a citação aqui..."
         required
-        className="w-full bg-transparent border-none text-[#0E2A3F] text-lg font-medium placeholder:text-[#8395A5] focus:outline-none focus:ring-0 py-2 resize-none min-h-30"
+        className="w-full bg-transparent border-none text-ink text-lg font-medium placeholder:text-ink-faint focus:outline-none focus:ring-0 py-2 resize-none min-h-30"
         autoFocus
       />
 
-      <div className="border-t border-[#E9E7DC]" />
+      <div className="border-t border-line" />
 
       <div className="space-y-0.5">
-        <div className="flex items-center gap-3 py-2.5 px-1 hover:bg-[#F4F3EC] rounded-lg transition-colors">
-          <User className="w-5 h-5 text-[#44586A] shrink-0" />
+        <div className="flex items-center gap-3 py-2.5 px-1 hover:bg-surface-hover rounded-lg transition-colors">
+          <User className="w-5 h-5 text-ink-soft shrink-0" />
           <input
             type="text"
             value={formData.autor}
             onChange={(e) => setFormData({ ...formData, autor: e.target.value })}
             placeholder="Autor"
-            className="flex-1 bg-transparent border-none text-sm text-[#0E2A3F] placeholder:text-[#8395A5] focus:outline-none"
+            className="flex-1 bg-transparent border-none text-sm text-ink placeholder:text-ink-faint focus:outline-none"
           />
         </div>
 
-        <div className="flex items-center gap-3 py-2.5 px-1 hover:bg-[#F4F3EC] rounded-lg transition-colors">
-          <BookOpen className="w-5 h-5 text-[#44586A] shrink-0" />
+        <div className="flex items-center gap-3 py-2.5 px-1 hover:bg-surface-hover rounded-lg transition-colors">
+          <BookOpen className="w-5 h-5 text-ink-soft shrink-0" />
           <input
             type="text"
             value={formData.pagina}
             onChange={(e) => setFormData({ ...formData, pagina: e.target.value })}
             placeholder="Página (ex: 42)"
-            className="flex-1 bg-transparent border-none text-sm text-[#0E2A3F] placeholder:text-[#8395A5] focus:outline-none"
+            className="flex-1 bg-transparent border-none text-sm text-ink placeholder:text-ink-faint focus:outline-none"
           />
         </div>
 
-        <div className="flex items-center gap-3 py-2.5 px-1 hover:bg-[#F4F3EC] rounded-lg transition-colors">
+        <div className="flex items-center gap-3 py-2.5 px-1 hover:bg-surface-hover rounded-lg transition-colors">
           {(() => {
             const selectedMidia = midias.find(m => m.id === formData.midiaId);
             return selectedMidia?.tipo === 'LIVRO' ? 
-              <Book className="w-5 h-5 text-[#44586A] shrink-0" /> : 
-              <Clapperboard className="w-5 h-5 text-[#44586A] shrink-0" />;
+              <Book className="w-5 h-5 text-ink-soft shrink-0" /> : 
+              <FilmSlate className="w-5 h-5 text-ink-soft shrink-0" />;
           })()}
           <select
             value={formData.midiaId}
             onChange={(e) => setFormData({ ...formData, midiaId: e.target.value })}
-            className="flex-1 bg-transparent border-none text-sm text-[#0E2A3F] focus:outline-none appearance-none cursor-pointer"
+            className="flex-1 bg-transparent border-none text-sm text-ink focus:outline-none appearance-none cursor-pointer"
           >
-            <option value="" className="bg-white text-[#8395A5]">Associar a um livro/filme (opcional)</option>
+            <option value="" className="bg-surface text-ink-faint">Associar a um livro/filme (opcional)</option>
             {midias.map((midia) => (
-              <option key={midia.id} value={midia.id} className="bg-white text-[#0E2A3F]">
+              <option key={midia.id} value={midia.id} className="bg-surface text-ink">
                 {midia.titulo}
               </option>
             ))}
           </select>
         </div>
 
-        <div className="flex items-center gap-3 py-2.5 px-1 hover:bg-[#F4F3EC] rounded-lg transition-colors">
-          <Star className={`w-5 h-5 shrink-0 ${formData.destaque ? 'text-[#D9A441] fill-[#D9A441]' : 'text-[#44586A]'}`} />
+        <div className="flex items-center gap-3 py-2.5 px-1 hover:bg-surface-hover rounded-lg transition-colors">
+          <Star className={`w-5 h-5 shrink-0 ${formData.destaque ? 'text-gold fill-gold' : 'text-ink-soft'}`} />
           <div className="flex items-center justify-between flex-1">
-            <span className="text-sm text-[#44586A]">Adicionar aos destaques</span>
+            <span className="text-sm text-ink-soft">Adicionar aos destaques</span>
             <button
               type="button"
               onClick={() => setFormData({ ...formData, destaque: !formData.destaque })}
-              className={`relative w-9 h-5 rounded-full transition-colors ${formData.destaque ? 'bg-[#178E96]' : 'bg-[#D9D7CB]'}`}
+              className={`relative w-9 h-5 rounded-full transition-colors ${formData.destaque ? 'bg-brand' : 'bg-line-strong'}`}
             >
-              <span className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition-transform ${formData.destaque ? 'left-4.5' : 'left-0.5'}`} />
+              <span className={`absolute top-0.5 w-4 h-4 bg-surface rounded-full transition-transform ${formData.destaque ? 'left-4.5' : 'left-0.5'}`} />
             </button>
           </div>
         </div>
       </div>
 
-      <div className="flex justify-end pt-4 border-t border-[#E9E7DC] mt-4">
+      <div className="flex justify-end pt-4 border-t border-line mt-4">
         <Button
           type="submit"
-          className="px-6 h-9 text-sm bg-[#178E96] hover:bg-[#117178] text-white rounded-full font-medium"
+          className="px-6 h-9 text-sm bg-brand hover:bg-brand-dark text-white rounded-full font-medium"
           disabled={isSubmitting}
         >
           {isSubmitting ? 'Salvando...' : 'Salvar Citação'}
@@ -168,9 +168,9 @@ export function NovaCitacaoModal({
 
   return (
     <Dialog open={aberto} onOpenChange={onFechar}>
-      <DialogContent className="bg-white border-[#E9E7DC] text-[#0E2A3F] max-w-xl p-6">
+      <DialogContent className="bg-surface border-line text-ink max-w-xl p-6">
         <DialogHeader>
-          <DialogTitle className="text-[#0E2A3F]">Nova Citação</DialogTitle>
+          <DialogTitle className="text-ink">Nova Citação</DialogTitle>
         </DialogHeader>
 
         <NovaCitacaoForm

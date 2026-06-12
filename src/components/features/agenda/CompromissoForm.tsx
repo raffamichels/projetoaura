@@ -7,7 +7,7 @@ import { Compromisso, TipoRecorrencia } from '@/types/compromisso';
 import { UpgradeToPremiumModal } from '@/components/planos/UpgradeToPremiumModal';
 import { verificarAcessoRecurso } from '@/lib/planos-helper';
 import { RecursoPremium, PlanoUsuario } from '@/types/planos';
-import { Crown, Clock, Tag, AlignLeft, RefreshCw, Calendar } from 'lucide-react';
+import { Crown, Clock, Tag, TextAlignLeft, ArrowsClockwise, Calendar } from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
 
 interface CompromissoFormProps {
@@ -159,45 +159,45 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
         onChange={(e) => setTitulo(e.target.value)}
         placeholder={t('titlePlaceholder')}
         required
-        className="w-full bg-transparent border-none text-[#0E2A3F] text-lg font-medium placeholder:text-[#8395A5] focus:outline-none focus:ring-0 py-2"
+        className="w-full bg-transparent border-none text-ink text-lg font-medium placeholder:text-ink-faint focus:outline-none focus:ring-0 py-2"
         autoFocus
       />
 
-      <div className="border-t border-[#E9E7DC]" />
+      <div className="border-t border-line" />
 
       {/* Lista de campos com ícones */}
       <div className="space-y-0.5">
         {/* Data e Hora */}
-        <div className="flex items-center gap-3 py-2.5 px-1 hover:bg-[#F4F3EC] rounded-lg transition-colors">
-          <Clock className="w-5 h-5 text-[#44586A] flex-shrink-0" />
+        <div className="flex items-center gap-3 py-2.5 px-1 hover:bg-surface-hover rounded-lg transition-colors">
+          <Clock className="w-5 h-5 text-ink-soft flex-shrink-0" />
           <div className="flex items-center gap-2 flex-1 flex-wrap">
             <input
               type="date"
               value={data}
               onChange={(e) => setData(e.target.value)}
               required
-              className="bg-white border border-[#D9D7CB] rounded-md px-2 py-1 text-sm text-[#0E2A3F] focus:border-[#178E96] focus:outline-none"
+              className="bg-surface border border-line-strong rounded-md px-2 py-1 text-sm text-ink focus:border-brand focus:outline-none"
             />
             <input
               type="time"
               value={horaInicio}
               onChange={(e) => setHoraInicio(e.target.value)}
               required
-              className="bg-white border border-[#D9D7CB] rounded-md px-2 py-1 text-sm text-[#0E2A3F] focus:border-[#178E96] focus:outline-none w-24"
+              className="bg-surface border border-line-strong rounded-md px-2 py-1 text-sm text-ink focus:border-brand focus:outline-none w-24"
             />
-            <span className="text-[#8395A5]">-</span>
+            <span className="text-ink-faint">-</span>
             <input
               type="time"
               value={horaFim}
               onChange={(e) => setHoraFim(e.target.value)}
-              className="bg-white border border-[#D9D7CB] rounded-md px-2 py-1 text-sm text-[#0E2A3F] focus:border-[#178E96] focus:outline-none w-24"
+              className="bg-surface border border-line-strong rounded-md px-2 py-1 text-sm text-ink focus:border-brand focus:outline-none w-24"
             />
           </div>
         </div>
 
         {/* Categoria */}
-        <div className="flex items-center gap-3 py-2.5 px-1 hover:bg-[#F4F3EC] rounded-lg transition-colors">
-          <Tag className="w-5 h-5 text-[#44586A] flex-shrink-0" />
+        <div className="flex items-center gap-3 py-2.5 px-1 hover:bg-surface-hover rounded-lg transition-colors">
+          <Tag className="w-5 h-5 text-ink-soft flex-shrink-0" />
           <div className="flex items-center gap-1.5 flex-wrap">
             {categorias.map((cat) => (
               <button
@@ -207,7 +207,7 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
                 className={`
                   px-2.5 py-1 rounded-full text-xs font-medium transition-all
                   ${categoria === cat.value
-                    ? 'ring-2 ring-offset-1 ring-offset-white'
+                    ? 'ring-2 ring-offset-1 ring-offset-white dark:ring-offset-surface'
                     : 'opacity-60 hover:opacity-100'
                   }
                 `}
@@ -224,34 +224,34 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
         </div>
 
         {/* Descrição */}
-        <div className="flex items-start gap-3 py-2.5 px-1 hover:bg-[#F4F3EC] rounded-lg transition-colors">
-          <AlignLeft className="w-5 h-5 text-[#44586A] flex-shrink-0 mt-0.5" />
+        <div className="flex items-start gap-3 py-2.5 px-1 hover:bg-surface-hover rounded-lg transition-colors">
+          <TextAlignLeft className="w-5 h-5 text-ink-soft flex-shrink-0 mt-0.5" />
           <textarea
             value={descricao}
             onChange={(e) => setDescricao(e.target.value)}
             placeholder={t('descriptionPlaceholder')}
             rows={2}
-            className="flex-1 bg-transparent border-none text-sm text-[#0E2A3F] placeholder:text-[#8395A5] focus:outline-none resize-none"
+            className="flex-1 bg-transparent border-none text-sm text-ink placeholder:text-ink-faint focus:outline-none resize-none"
           />
         </div>
 
         {/* Recorrência */}
-        <div className="flex items-start gap-3 py-2.5 px-1 hover:bg-[#F4F3EC] rounded-lg transition-colors">
-          <RefreshCw className="w-5 h-5 text-[#44586A] flex-shrink-0 mt-0.5" />
+        <div className="flex items-start gap-3 py-2.5 px-1 hover:bg-surface-hover rounded-lg transition-colors">
+          <ArrowsClockwise className="w-5 h-5 text-ink-soft flex-shrink-0 mt-0.5" />
           <div className="flex-1 space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-[#0E2A3F]">{t('recurringAppointment')}</span>
+              <span className="text-sm text-ink">{t('recurringAppointment')}</span>
               <button
                 type="button"
                 onClick={() => setIsRecorrente(!isRecorrente)}
                 className={`
                   relative w-9 h-5 rounded-full transition-colors
-                  ${isRecorrente ? 'bg-[#178E96]' : 'bg-[#D9D7CB]'}
+                  ${isRecorrente ? 'bg-brand' : 'bg-line-strong'}
                 `}
               >
                 <span
                   className={`
-                    absolute top-0.5 w-4 h-4 bg-white rounded-full transition-transform
+                    absolute top-0.5 w-4 h-4 bg-surface rounded-full transition-transform
                     ${isRecorrente ? 'left-[18px]' : 'left-0.5'}
                   `}
                 />
@@ -269,8 +269,8 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
                       className={`
                         px-2.5 py-1 rounded-md text-xs font-medium transition-all border
                         ${tipoRecorrencia === tipo.value
-                          ? 'border-[#178E96] bg-[#E5F1F1] text-[#117178]'
-                          : 'border-[#E9E7DC] text-[#44586A] hover:border-[#D9D7CB]'
+                          ? 'border-brand bg-brand-soft text-brand-dark'
+                          : 'border-line text-ink-soft hover:border-line-strong'
                         }
                       `}
                     >
@@ -279,16 +279,16 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
                   ))}
                 </div>
                 <div className="flex items-center gap-2 text-sm">
-                  <span className="text-[#44586A]">{t('every')}</span>
+                  <span className="text-ink-soft">{t('every')}</span>
                   <input
                     type="number"
                     min="1"
                     max="365"
                     value={intervaloRecorrencia}
                     onChange={(e) => setIntervaloRecorrencia(parseInt(e.target.value) || 1)}
-                    className="w-14 bg-white border border-[#D9D7CB] rounded-md px-2 py-1 text-[#0E2A3F] text-center focus:border-[#178E96] focus:outline-none"
+                    className="w-14 bg-surface border border-line-strong rounded-md px-2 py-1 text-ink text-center focus:border-brand focus:outline-none"
                   />
-                  <span className="text-[#44586A]">
+                  <span className="text-ink-soft">
                     {tipoRecorrencia === 'diario' && t('daily').toLowerCase()}
                     {tipoRecorrencia === 'semanal' && t('weekly').toLowerCase()}
                     {tipoRecorrencia === 'mensal' && t('monthly').toLowerCase()}
@@ -296,13 +296,13 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
                   </span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
-                  <Calendar className="w-4 h-4 text-[#8395A5]" />
-                  <span className="text-[#44586A]">{t('endsOn')}</span>
+                  <Calendar className="w-4 h-4 text-ink-faint" />
+                  <span className="text-ink-soft">{t('endsOn')}</span>
                   <input
                     type="date"
                     value={dataFimRecorrencia}
                     onChange={(e) => setDataFimRecorrencia(e.target.value)}
-                    className="bg-white border border-[#D9D7CB] rounded-md px-2 py-1 text-[#0E2A3F] focus:border-[#178E96] focus:outline-none"
+                    className="bg-surface border border-line-strong rounded-md px-2 py-1 text-ink focus:border-brand focus:outline-none"
                   />
                 </div>
               </div>
@@ -312,16 +312,16 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
 
         {/* Google Calendar */}
         {hasGoogleAuth && (
-          <div className="flex items-center gap-3 py-2.5 px-1 hover:bg-[#F4F3EC] rounded-lg transition-colors">
-            <svg className="w-5 h-5 text-[#44586A] flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+          <div className="flex items-center gap-3 py-2.5 px-1 hover:bg-surface-hover rounded-lg transition-colors">
+            <svg className="w-5 h-5 text-ink-soft flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
               <path d="M19.5 3h-15A1.5 1.5 0 003 4.5v15A1.5 1.5 0 004.5 21h15a1.5 1.5 0 001.5-1.5v-15A1.5 1.5 0 0019.5 3zm-9 15H6v-4.5h4.5V18zm0-6H6v-4.5h4.5V12zm6 6h-4.5v-4.5H18V18zm0-6h-4.5v-4.5H18V12z"/>
             </svg>
             <div className="flex items-center justify-between flex-1">
               <div className="flex items-center gap-2">
-                <span className={`text-sm ${!canSyncGoogle ? 'text-[#8395A5]' : 'text-[#0E2A3F]'}`}>
+                <span className={`text-sm ${!canSyncGoogle ? 'text-ink-faint' : 'text-ink'}`}>
                   {t('sendToGoogleCalendar')}
                 </span>
-                {!canSyncGoogle && <Crown className="w-4 h-4 text-[#D9A441]" />}
+                {!canSyncGoogle && <Crown className="w-4 h-4 text-gold" />}
               </div>
               <button
                 type="button"
@@ -334,13 +334,13 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
                 }}
                 className={`
                   relative w-9 h-5 rounded-full transition-colors
-                  ${syncWithGoogle && canSyncGoogle ? 'bg-[#178E96]' : 'bg-[#D9D7CB]'}
+                  ${syncWithGoogle && canSyncGoogle ? 'bg-brand' : 'bg-line-strong'}
                   ${!canSyncGoogle && 'opacity-50 cursor-not-allowed'}
                 `}
               >
                 <span
                   className={`
-                    absolute top-0.5 w-4 h-4 bg-white rounded-full transition-transform
+                    absolute top-0.5 w-4 h-4 bg-surface rounded-full transition-transform
                     ${syncWithGoogle && canSyncGoogle ? 'left-[18px]' : 'left-0.5'}
                   `}
                 />
@@ -352,27 +352,27 @@ export function CompromissoForm({ onClose, onSave, initialDate, initialHour, ini
 
       {/* Aviso sobre recorrência ao editar */}
       {isEditMode && initialData?.isRecorrente && (
-        <div className="mx-1 p-2 bg-[#FFF7E6] border border-[#D9A441]/30 rounded-lg">
-          <p className="text-xs text-[#B8860B]">
+        <div className="mx-1 p-2 bg-[#FFF7E6] dark:bg-gold/10 border border-gold/30 rounded-lg">
+          <p className="text-xs text-[#B8860B] dark:text-gold">
             ⚠️ {t('recurringEditWarning')}
           </p>
         </div>
       )}
 
       {/* Botões */}
-      <div className="flex justify-end gap-2 pt-3 border-t border-[#E9E7DC] mt-3">
+      <div className="flex justify-end gap-2 pt-3 border-t border-line mt-3">
         <Button
           type="button"
           variant="ghost"
           onClick={onClose}
-          className="px-4 h-9 text-sm text-[#44586A] hover:text-[#0E2A3F]"
+          className="px-4 h-9 text-sm text-ink-soft hover:text-ink"
           disabled={loading}
         >
           {t('cancel')}
         </Button>
         <Button
           type="submit"
-          className="px-6 h-9 text-sm bg-[#178E96] hover:bg-[#117178] text-white rounded-full"
+          className="px-6 h-9 text-sm bg-brand hover:bg-brand-dark text-white rounded-full"
           disabled={loading}
         >
           {loading

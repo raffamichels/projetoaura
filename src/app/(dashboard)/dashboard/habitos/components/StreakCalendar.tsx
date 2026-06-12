@@ -59,12 +59,12 @@ export function StreakCalendar({ dados }: StreakCalendarProps) {
   const getNivelColor = (nivel: number) => {
     switch (nivel) {
       case -1: return 'bg-transparent';
-      case 0: return 'bg-[#E9E7DC]';
-      case 1: return 'bg-[#178E96]/25';
-      case 2: return 'bg-[#178E96]/50';
-      case 3: return 'bg-[#178E96]/75';
-      case 4: return 'bg-[#178E96]';
-      default: return 'bg-[#E9E7DC]';
+      case 0: return 'bg-line';
+      case 1: return 'bg-brand/25';
+      case 2: return 'bg-brand/50';
+      case 3: return 'bg-brand/75';
+      case 4: return 'bg-brand';
+      default: return 'bg-line';
     }
   };
 
@@ -87,7 +87,7 @@ export function StreakCalendar({ dados }: StreakCalendarProps) {
         {DIAS_SEMANA_CURTOS.map((dia, index) => (
           <div
             key={index}
-            className="w-3 h-3 text-[10px] text-[#8395A5] flex items-center justify-center"
+            className="w-3 h-3 text-[10px] text-ink-faint flex items-center justify-center"
           >
             {index % 2 === 0 ? dia : ''}
           </div>
@@ -106,9 +106,9 @@ export function StreakCalendar({ dados }: StreakCalendarProps) {
               >
                 {/* Tooltip */}
                 {dia.nivel >= 0 && (
-                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-white border border-[#E9E7DC] rounded shadow-sm text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
-                    <p className="font-medium text-[#0E2A3F]">{formatarData(dia.data)}</p>
-                    <p className="text-[#44586A]">
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-surface border border-line rounded shadow-sm text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                    <p className="font-medium text-ink">{formatarData(dia.data)}</p>
+                    <p className="text-ink-soft">
                       {dia.total === 0
                         ? t('noHabitsScheduled')
                         : `${dia.completados}/${dia.total} ${t('completed').toLowerCase()}`}
@@ -122,14 +122,14 @@ export function StreakCalendar({ dados }: StreakCalendarProps) {
       </div>
 
       {/* Legenda */}
-      <div className="flex items-center justify-end gap-2 text-xs text-[#8395A5]">
+      <div className="flex items-center justify-end gap-2 text-xs text-ink-faint">
         <span>{t('less')}</span>
         <div className="flex gap-[3px]">
-          <div className="w-3 h-3 rounded-sm bg-[#E9E7DC]" />
-          <div className="w-3 h-3 rounded-sm bg-[#178E96]/25" />
-          <div className="w-3 h-3 rounded-sm bg-[#178E96]/50" />
-          <div className="w-3 h-3 rounded-sm bg-[#178E96]/75" />
-          <div className="w-3 h-3 rounded-sm bg-[#178E96]" />
+          <div className="w-3 h-3 rounded-sm bg-line" />
+          <div className="w-3 h-3 rounded-sm bg-brand/25" />
+          <div className="w-3 h-3 rounded-sm bg-brand/50" />
+          <div className="w-3 h-3 rounded-sm bg-brand/75" />
+          <div className="w-3 h-3 rounded-sm bg-brand" />
         </div>
         <span>{t('more')}</span>
       </div>

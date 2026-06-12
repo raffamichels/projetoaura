@@ -51,17 +51,17 @@ export function CitacoesModal({ aberto, onFechar, onSucesso, midias }: CitacoesM
 
   return (
     <Dialog open={aberto} onOpenChange={onFechar}>
-      <DialogContent className="bg-white border-[#E9E7DC] text-[#0E2A3F] max-w-3xl w-[95vw] max-h-[80vh] overflow-hidden flex flex-col p-4 sm:p-6">
+      <DialogContent className="bg-surface border-line text-ink max-w-3xl w-[95vw] max-h-[80vh] overflow-hidden flex flex-col p-4 sm:p-6">
         <DialogHeader>
           <DialogTitle className="text-base sm:text-lg md:text-xl">Citações</DialogTitle>
         </DialogHeader>
 
         <Tabs value={abaAtiva} onValueChange={(value) => setAbaAtiva(value as 'nova' | 'gerenciar')} className="flex-1 flex flex-col min-h-0">
-          <TabsList className="grid w-full grid-cols-2 bg-[#F4F3EC]">
-            <TabsTrigger value="nova" className="data-[state=active]:bg-[#178E96] text-white text-xs sm:text-sm">
+          <TabsList className="grid w-full grid-cols-2 bg-surface-hover">
+            <TabsTrigger value="nova" className="data-[state=active]:bg-brand text-white text-xs sm:text-sm">
               Nova
             </TabsTrigger>
-            <TabsTrigger value="gerenciar" className="data-[state=active]:bg-[#178E96] text-white text-xs sm:text-sm">
+            <TabsTrigger value="gerenciar" className="data-[state=active]:bg-brand text-white text-xs sm:text-sm">
               Gerenciar
             </TabsTrigger>
           </TabsList>
@@ -84,11 +84,11 @@ export function CitacoesModal({ aberto, onFechar, onSucesso, midias }: CitacoesM
           </TabsContent>
         </Tabs>
 
-        <div className="flex justify-end gap-2 pt-3 sm:pt-4 border-t border-[#E9E7DC]">
+        <div className="flex justify-end gap-2 pt-3 sm:pt-4 border-t border-line">
           <Button
             variant="default"
             onClick={onFechar}
-            className="border-[#D9D7CB] hover:bg-[#F4F3EC] w-full sm:w-auto text-sm"
+            className="border-line-strong hover:bg-surface-hover w-full sm:w-auto text-sm"
           >
             Fechar
           </Button>

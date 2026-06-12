@@ -4,15 +4,7 @@ import { useEffect, useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR, enUS } from 'date-fns/locale';
 import { useTranslations, useLocale } from 'next-intl';
-import {
-  Calendar,
-  CalendarCheck,
-  CalendarX,
-  Edit3,
-  Activity,
-  Clock,
-  Sparkles
-} from 'lucide-react';
+import { Calendar, CalendarCheck, CalendarX, PencilSimple, Pulse, Clock, Sparkle } from '@phosphor-icons/react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
@@ -31,19 +23,19 @@ const getIcone = (icone: string) => {
     'calendar': Calendar,
     'calendar-check': CalendarCheck,
     'calendar-x': CalendarX,
-    'edit': Edit3,
-    'activity': Activity,
+    'edit': PencilSimple,
+    'activity': Pulse,
   };
-  return icones[icone] || Activity;
+  return icones[icone] || Pulse;
 };
 
 const getTipoTexto = (tipo: string, t: (key: string) => string) => {
   const tipos: Record<string, { texto: string; cor: string }> = {
-    'compromisso_criado': { texto: t('created'), cor: 'bg-green-50 text-green-700 border-green-200' },
-    'compromisso_editado': { texto: t('edited'), cor: 'bg-[#EFF4F8] text-[#154F6D] border-[#D5E2EC]' },
-    'compromisso_excluido': { texto: t('deleted'), cor: 'bg-red-50 text-red-600 border-red-200' },
+    'compromisso_criado': { texto: t('created'), cor: 'bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400 border-green-200 dark:border-green-500/30' },
+    'compromisso_editado': { texto: t('edited'), cor: 'bg-blue-soft text-brand-blue border-[#D5E2EC] dark:border-brand-blue/30' },
+    'compromisso_excluido': { texto: t('deleted'), cor: 'bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 border-red-200 dark:border-red-500/30' },
   };
-  return tipos[tipo] || { texto: t('action'), cor: 'bg-[#F4F3EC] text-[#8395A5] border-[#E9E7DC]' };
+  return tipos[tipo] || { texto: t('action'), cor: 'bg-surface-hover text-ink-faint border-line' };
 };
 
 export function AtividadesRecentes() {
@@ -87,17 +79,17 @@ export function AtividadesRecentes() {
     return (
       <Card className="lg:col-span-2">
         <CardHeader>
-          <CardTitle className="text-[#0E2A3F] flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-[#178E96]" />
+          <CardTitle className="text-ink flex items-center gap-2">
+            <Sparkle className="w-5 h-5 text-brand" />
             {t('recentActivities')}
           </CardTitle>
-          <CardDescription className="text-[#44586A]">
+          <CardDescription className="text-ink-soft">
             {t('yourTodayActions')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#178E96]"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand"></div>
           </div>
         </CardContent>
       </Card>
@@ -108,21 +100,21 @@ export function AtividadesRecentes() {
     return (
       <Card className="lg:col-span-2">
         <CardHeader>
-          <CardTitle className="text-[#0E2A3F] flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-[#178E96]" />
+          <CardTitle className="text-ink flex items-center gap-2">
+            <Sparkle className="w-5 h-5 text-brand" />
             {t('recentActivities')}
           </CardTitle>
-          <CardDescription className="text-[#44586A]">
+          <CardDescription className="text-ink-soft">
             {t('yourTodayActions')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col items-center justify-center py-12 text-center">
-            <div className="w-16 h-16 rounded-full bg-[#F4F3EC] flex items-center justify-center mb-4">
-              <Clock className="w-8 h-8 text-[#8395A5]" />
+            <div className="w-16 h-16 rounded-full bg-surface-hover flex items-center justify-center mb-4">
+              <Clock className="w-8 h-8 text-ink-faint" />
             </div>
-            <p className="text-[#44586A] mb-2 font-medium">{t('noActivityToday')}</p>
-            <p className="text-sm text-[#8395A5] max-w-sm">
+            <p className="text-ink-soft mb-2 font-medium">{t('noActivityToday')}</p>
+            <p className="text-sm text-ink-faint max-w-sm">
               {t('startCreatingAppointments')}
             </p>
           </div>
@@ -134,11 +126,11 @@ export function AtividadesRecentes() {
   return (
     <Card className="lg:col-span-2">
       <CardHeader>
-        <CardTitle className="text-[#0E2A3F] flex items-center gap-2 text-lg sm:text-xl">
-          <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-[#178E96]" />
+        <CardTitle className="text-ink flex items-center gap-2 text-lg sm:text-xl">
+          <Sparkle className="w-4 h-4 sm:w-5 sm:h-5 text-brand" />
           {t('recentActivities')}
         </CardTitle>
-        <CardDescription className="text-[#44586A] text-sm">
+        <CardDescription className="text-ink-soft text-sm">
           {t('yourTodayActions')}
         </CardDescription>
       </CardHeader>
@@ -152,7 +144,7 @@ export function AtividadesRecentes() {
             return (
               <div
                 key={atividade.id}
-                className="group relative flex items-start gap-3 sm:gap-4 p-3 sm:p-4 rounded-lg border border-[#E9E7DC] bg-white hover:bg-[#F4F3EC] hover:border-[#D9D7CB] transition-all duration-150 cursor-pointer"
+                className="group relative flex items-start gap-3 sm:gap-4 p-3 sm:p-4 rounded-lg border border-line bg-surface hover:bg-surface-hover hover:border-line-strong transition-all duration-150 cursor-pointer"
               >
                 {/* Ícone */}
                 <div className="relative flex-shrink-0">
@@ -170,7 +162,7 @@ export function AtividadesRecentes() {
                 {/* Conteúdo */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2 mb-1">
-                    <h4 className="font-semibold text-sm sm:text-base text-[#0E2A3F] truncate group-hover:text-[#117178] transition-colors duration-150">
+                    <h4 className="font-semibold text-sm sm:text-base text-ink truncate group-hover:text-brand-dark transition-colors duration-150">
                       {atividade.titulo}
                     </h4>
                     <Badge
@@ -182,12 +174,12 @@ export function AtividadesRecentes() {
                   </div>
 
                   {atividade.descricao && (
-                    <p className="text-xs sm:text-sm text-[#44586A] mb-2 line-clamp-1">
+                    <p className="text-xs sm:text-sm text-ink-soft mb-2 line-clamp-1">
                       {atividade.descricao}
                     </p>
                   )}
 
-                  <div className="flex items-center gap-1.5 sm:gap-2 text-xs text-[#8395A5]">
+                  <div className="flex items-center gap-1.5 sm:gap-2 text-xs text-ink-faint">
                     <Clock className="w-3 h-3" />
                     <span>
                       {formatDistanceToNow(new Date(atividade.createdAt), {
@@ -200,7 +192,7 @@ export function AtividadesRecentes() {
 
                 {/* Indicador de hover - oculto em mobile */}
                 <div className="hidden sm:block absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <div className="w-1.5 h-8 bg-[#178E96] rounded-full"></div>
+                  <div className="w-1.5 h-8 bg-brand rounded-full"></div>
                 </div>
               </div>
             );

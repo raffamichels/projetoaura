@@ -134,6 +134,11 @@ model User {
   stripePriceId               String?     // ID do plano (mensal ou anual)
   stripeCurrentPeriodEnd      DateTime?   // Fim do período de cobrança
 
+  // Gamificação
+  xpTotal            Int      @default(0)
+  nivel              Int      @default(1)
+  xpAtualNivel       Int      @default(0)
+
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 
@@ -155,6 +160,7 @@ model User {
   categoriasHabito   CategoriaHabito[]
   notificacoes       Notificacao[]
   preferenciaNotificacao PreferenciaNotificacao?
+  conquistas         Conquista[]
 
   @@map("users")
 }
@@ -949,4 +955,32 @@ model PreferenciaNotificacao {
   updatedAt DateTime @updatedAt
 
   @@map("preferencias_notificacao")
+}
+
+// ============================================
+// SISTEMA DE GAMIFICAÇÃO
+// ============================================
+
+model Conquista {
+  id              String    @id @default(cuid())
+  tipo            String    // ex: "streak_7_dias", "primeiro_habito", "nivel_5"
+  titulo          String
+  descricao       String
+  icone           String    // emoji ou nome do ícone
+  categoria       String    // habitos, estudos, financeiro, biblioteca, geral
+  xpReward        Int       @default(0)
+  desbloqueada    Boolean   @default(false)
+  desbloqueadaEm  DateTime?
+  progressoAtual  Int       @default(0)
+  progressoMeta   Int       @default(1)
+
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  criadaEm        DateTime  @default(now())
+
+  @@unique([userId, tipo])
+  @@index([userId, desbloqueada])
+  @@index([userId, categoria])
+  @@map("conquistas")
 }

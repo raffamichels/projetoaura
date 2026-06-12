@@ -11,7 +11,7 @@ export default function DashboardLayout({
 }) {
   return (
     <NotificationProvider>
-      <div className="h-screen flex flex-col overflow-hidden bg-[#F2F1E9] text-[#0E2A3F]">
+      <div className="h-screen flex flex-col overflow-hidden bg-background text-ink">
         {/* Topbar full-width */}
         <HeaderWrapper />
 
@@ -30,9 +30,9 @@ export default function DashboardLayout({
           position="bottom-right"
           toastOptions={{
             style: {
-              background: '#FFFFFF',
-              color: '#0E2A3F',
-              border: '1px solid #E3E1D6',
+              background: 'var(--surface)',
+              color: 'var(--ink)',
+              border: '1px solid var(--border)',
             },
             className: 'sonner-toast',
           }}

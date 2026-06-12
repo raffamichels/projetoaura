@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
-import { Loader2, Target, Shield } from 'lucide-react';
+import { Spinner, Target, Shield } from '@phosphor-icons/react';
 
 interface NovoObjetivoModalProps {
   aberto: boolean;
@@ -83,17 +83,17 @@ export default function NovoObjetivoModal({ aberto, onFechar, onSucesso }: NovoO
 
   return (
     <Dialog open={aberto} onOpenChange={onFechar}>
-      <DialogContent className="bg-white border-[#E3E1D6] max-w-md">
+      <DialogContent className="bg-surface border-line max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-[#0E2A3F] flex items-center gap-2">
+          <DialogTitle className="text-2xl font-bold text-ink flex items-center gap-2">
             {isReservaEmergencia ? (
               <>
-                <Shield className="w-6 h-6 text-[#154F6D]" />
+                <Shield className="w-6 h-6 text-brand-blue" />
                 Nova Reserva de Emergência
               </>
             ) : (
               <>
-                <Target className="w-6 h-6 text-[#D9A441]" />
+                <Target className="w-6 h-6 text-gold" />
                 Novo Objetivo Financeiro
               </>
             )}
@@ -102,10 +102,10 @@ export default function NovoObjetivoModal({ aberto, onFechar, onSucesso }: NovoO
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Tipo de Objetivo */}
-          <div className="flex items-center justify-between p-3 bg-[#F4F3EC] rounded-lg border border-[#E9E7DC]">
+          <div className="flex items-center justify-between p-3 bg-surface-hover rounded-lg border border-line">
             <div>
-              <Label className="text-[#0E2A3F]">Reserva de Emergência</Label>
-              <p className="text-xs text-[#8395A5]">Objetivo prioritário de segurança</p>
+              <Label className="text-ink">Reserva de Emergência</Label>
+              <p className="text-xs text-ink-faint">Objetivo prioritário de segurança</p>
             </div>
             <Switch
               checked={isReservaEmergencia}
@@ -115,31 +115,31 @@ export default function NovoObjetivoModal({ aberto, onFechar, onSucesso }: NovoO
 
           {/* Nome */}
           <div>
-            <Label className="text-[#44586A]">Nome do Objetivo *</Label>
+            <Label className="text-ink-soft">Nome do Objetivo *</Label>
             <Input
               value={nome}
               onChange={(e) => setNome(e.target.value)}
               placeholder={isReservaEmergencia ? "Ex: Fundo de Emergência" : "Ex: Viagem para Paris"}
               required
-              className="bg-white border-[#D9D7CB] text-[#0E2A3F] placeholder:text-[#8395A5] focus:border-[#178E96] focus:ring-[#178E96]/20"
+              className="bg-surface border-line-strong text-ink placeholder:text-ink-faint focus:border-brand focus:ring-brand/20"
             />
           </div>
 
           {/* Descrição */}
           <div>
-            <Label className="text-[#44586A]">Descrição</Label>
+            <Label className="text-ink-soft">Descrição</Label>
             <Textarea
               value={descricao}
               onChange={(e) => setDescricao(e.target.value)}
               placeholder="Descreva seu objetivo..."
               rows={3}
-              className="bg-white border-[#D9D7CB] text-[#0E2A3F] placeholder:text-[#8395A5] focus:border-[#178E96] focus:ring-[#178E96]/20 resize-none"
+              className="bg-surface border-line-strong text-ink placeholder:text-ink-faint focus:border-brand focus:ring-brand/20 resize-none"
             />
           </div>
 
           {/* Valor Meta */}
           <div>
-            <Label className="text-[#44586A]">Valor da Meta *</Label>
+            <Label className="text-ink-soft">Valor da Meta *</Label>
             <Input
               type="number"
               step="0.01"
@@ -147,10 +147,10 @@ export default function NovoObjetivoModal({ aberto, onFechar, onSucesso }: NovoO
               onChange={(e) => setValorMeta(e.target.value)}
               placeholder="0,00"
               required
-              className="bg-white border-[#D9D7CB] text-[#0E2A3F] placeholder:text-[#8395A5] focus:border-[#178E96] focus:ring-[#178E96]/20"
+              className="bg-surface border-line-strong text-ink placeholder:text-ink-faint focus:border-brand focus:ring-brand/20"
             />
             {isReservaEmergencia && valorMeta && (
-              <p className="text-xs text-[#8395A5] mt-1">
+              <p className="text-xs text-ink-faint mt-1">
                 💡 Recomendação: 6 meses de despesas mensais
               </p>
             )}
@@ -158,18 +158,18 @@ export default function NovoObjetivoModal({ aberto, onFechar, onSucesso }: NovoO
 
           {/* Data Meta */}
           <div>
-            <Label className="text-[#44586A]">Data da Meta</Label>
+            <Label className="text-ink-soft">Data da Meta</Label>
             <Input
               type="date"
               value={dataMeta}
               onChange={(e) => setDataMeta(e.target.value)}
-              className="bg-white border-[#D9D7CB] text-[#0E2A3F] placeholder:text-[#8395A5] focus:border-[#178E96] focus:ring-[#178E96]/20"
+              className="bg-surface border-line-strong text-ink placeholder:text-ink-faint focus:border-brand focus:ring-brand/20"
             />
           </div>
 
           {/* Cor */}
           <div>
-            <Label className="text-[#44586A]">Cor</Label>
+            <Label className="text-ink-soft">Cor</Label>
             <div className="grid grid-cols-4 gap-2 mt-2">
               {CORES_DISPONIVEIS.map((corOpt) => (
                 <button
@@ -177,7 +177,7 @@ export default function NovoObjetivoModal({ aberto, onFechar, onSucesso }: NovoO
                   type="button"
                   onClick={() => setCor(corOpt.valor)}
                   className={`h-10 rounded-lg transition-all ${
-                    cor === corOpt.valor ? 'ring-2 ring-[#0E2A3F] ring-offset-2 ring-offset-white' : ''
+                    cor === corOpt.valor ? 'ring-2 ring-navy ring-offset-2 ring-offset-white' : ''
                   }`}
                   style={{ backgroundColor: corOpt.valor }}
                   title={corOpt.nome}
@@ -192,7 +192,7 @@ export default function NovoObjetivoModal({ aberto, onFechar, onSucesso }: NovoO
               type="button"
               variant="default"
               onClick={onFechar}
-              className="flex-1 bg-white border border-[#E9E7DC] text-[#44586A] hover:bg-[#F4F3EC]"
+              className="flex-1 bg-surface border border-line text-ink-soft hover:bg-surface-hover"
               disabled={carregando}
             >
               Cancelar
@@ -200,11 +200,11 @@ export default function NovoObjetivoModal({ aberto, onFechar, onSucesso }: NovoO
             <Button
               type="submit"
               disabled={carregando}
-              className="flex-1 bg-[#178E96] hover:bg-[#117178] text-white"
+              className="flex-1 bg-brand hover:bg-brand-dark text-white"
             >
               {carregando ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <Spinner className="w-4 h-4 mr-2 animate-spin" />
                   Salvando...
                 </>
               ) : (

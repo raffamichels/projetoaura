@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Check, X, Loader2 } from 'lucide-react';
+import { Check, X, Spinner } from '@phosphor-icons/react';
 
 export default function ChooseUsernamePage() {
   const { data: session, update } = useSession();
@@ -143,42 +143,42 @@ export default function ChooseUsernamePage() {
   // Se session ainda está carregando
   if (session === undefined) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F2F1E9]">
-        <Loader2 className="w-8 h-8 text-[#178E96] animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Spinner className="w-8 h-8 text-brand animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#F2F1E9] p-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-background p-4">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-6">
           <Link href="/">
-            <span className="text-3xl font-extrabold tracking-tight text-[#178E96]">Aura</span>
+            <span className="text-3xl font-extrabold tracking-tight text-brand">Aura</span>
           </Link>
-          <h1 className="text-2xl font-bold text-[#0E2A3F] mt-4 mb-1">Escolha seu username</h1>
-          <p className="text-[#5E7081] text-sm">Este será seu identificador único no Aura</p>
+          <h1 className="text-2xl font-bold text-ink mt-4 mb-1">Escolha seu username</h1>
+          <p className="text-ink-soft text-sm">Este será seu identificador único no Aura</p>
         </div>
 
         {/* Card */}
-        <div className="bg-white border border-[#E9E7DC] rounded-2xl shadow-sm p-8">
+        <div className="bg-surface border border-line rounded-2xl shadow-sm p-8">
           {/* Boas-vindas */}
-          <div className="mb-6 p-4 bg-[#E5F1F1] rounded-lg border border-[#178E96]/20">
-            <p className="text-sm text-[#0E2A3F] font-semibold">
+          <div className="mb-6 p-4 bg-brand-soft rounded-lg border border-brand/20">
+            <p className="text-sm text-ink font-semibold">
               Bem-vindo, {session?.user?.name || 'usuário'}!
             </p>
-            <p className="text-xs text-[#5E7081]">Falta só mais um passo para começar</p>
+            <p className="text-xs text-ink-soft">Falta só mais um passo para começar</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Campo Username */}
             <div className="space-y-1.5">
-              <Label htmlFor="username" className="text-[#44586A] text-sm font-medium">
+              <Label htmlFor="username" className="text-ink-soft text-sm font-medium">
                 Username
               </Label>
               <div className="relative">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8395A5] text-sm">@</div>
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint text-sm">@</div>
                 <Input
                   id="username"
                   type="text"
@@ -187,33 +187,33 @@ export default function ChooseUsernamePage() {
                   onChange={(e) => handleUsernameChange(e.target.value)}
                   required
                   autoFocus
-                  className="pl-7 pr-10 bg-white border-[#D9D7CB] text-[#0E2A3F] placeholder:text-[#8395A5] focus:border-[#178E96] focus:ring-2 focus:ring-[#178E96]/20 h-11 rounded-lg transition-colors duration-150 text-sm"
+                  className="pl-7 pr-10 bg-surface border-line-strong text-ink placeholder:text-ink-faint focus:border-brand focus:ring-2 focus:ring-brand/20 h-11 rounded-lg transition-colors duration-150 text-sm"
                 />
                 <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                  {checkingUsername && <Loader2 className="w-5 h-5 text-[#8395A5] animate-spin" />}
-                  {!checkingUsername && usernameAvailable === true && <Check className="w-5 h-5 text-green-600" />}
-                  {!checkingUsername && usernameAvailable === false && <X className="w-5 h-5 text-red-600" />}
+                  {checkingUsername && <Spinner className="w-5 h-5 text-ink-faint animate-spin" />}
+                  {!checkingUsername && usernameAvailable === true && <Check className="w-5 h-5 text-green-600 dark:text-green-400" />}
+                  {!checkingUsername && usernameAvailable === false && <X className="w-5 h-5 text-red-600 dark:text-red-400" />}
                 </div>
               </div>
 
               {/* Feedback */}
               {usernameError && (
-                <p className="text-xs text-red-600">{usernameError}</p>
+                <p className="text-xs text-red-600 dark:text-red-400">{usernameError}</p>
               )}
               {!usernameError && usernameAvailable === true && (
-                <p className="text-xs text-green-600">Username disponível!</p>
+                <p className="text-xs text-green-600 dark:text-green-400">Username disponível!</p>
               )}
               {!usernameError && usernameAvailable === false && (
-                <p className="text-xs text-red-600">Este username já está em uso</p>
+                <p className="text-xs text-red-600 dark:text-red-400">Este username já está em uso</p>
               )}
               {!usernameError && username.length === 0 && (
-                <p className="text-xs text-[#8395A5]">Letras, números, _ e . (3-30 caracteres)</p>
+                <p className="text-xs text-ink-faint">Letras, números, _ e . (3-30 caracteres)</p>
               )}
             </div>
 
             {/* Erro geral */}
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
+              <div className="bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30 text-red-600 dark:text-red-400 px-4 py-3 rounded-lg text-sm">
                 {error}
               </div>
             )}
@@ -222,7 +222,7 @@ export default function ChooseUsernamePage() {
             <Button
               type="submit"
               disabled={loading || !usernameAvailable || !!usernameError}
-              className="w-full bg-[#178E96] hover:bg-[#117178] text-white font-semibold h-11 rounded-lg transition-colors duration-150 uppercase tracking-wide text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-brand hover:bg-brand-dark text-white font-semibold h-11 rounded-lg transition-colors duration-150 uppercase tracking-wide text-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <div className="flex items-center gap-2">
@@ -236,7 +236,7 @@ export default function ChooseUsernamePage() {
           </form>
 
           {/* Info */}
-          <p className="text-xs text-[#8395A5] text-center mt-4">
+          <p className="text-xs text-ink-faint text-center mt-4">
             Você poderá alterar seu username a cada 30 dias nas configurações.
           </p>
         </div>

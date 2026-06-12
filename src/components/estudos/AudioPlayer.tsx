@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Play, Pause, Volume2, VolumeX, RotateCcw, Mic } from 'lucide-react';
+import { Play, Pause, SpeakerHigh, SpeakerX, ArrowCounterClockwise, Microphone } from '@phosphor-icons/react';
 
 interface AudioPlayerProps {
   src: string;
@@ -163,13 +163,13 @@ export function AudioPlayer({
 
   if (compact) {
     return (
-      <div className={`flex items-center gap-2 p-2 bg-zinc-800/50 rounded-lg ${className}`}>
+      <div className={`flex items-center gap-2 p-2 bg-surface-hover rounded-lg ${className}`}>
         <audio ref={audioRef} src={src} preload="metadata" />
 
         <button
           onClick={togglePlay}
           disabled={isLoading}
-          className="w-8 h-8 rounded-full bg-purple-500 hover:bg-purple-600 disabled:bg-zinc-600 flex items-center justify-center transition-colors"
+          className="w-8 h-8 rounded-full bg-brand hover:bg-brand-dark disabled:bg-ink-faint flex items-center justify-center transition-colors"
         >
           {isPlaying ? (
             <Pause className="w-4 h-4 text-white" />
@@ -182,16 +182,16 @@ export function AudioPlayer({
           <div
             ref={progressRef}
             onClick={handleProgressClick}
-            className="h-1.5 bg-zinc-700 rounded-full cursor-pointer group"
+            className="h-1.5 bg-line-strong rounded-full cursor-pointer group"
           >
             <div
-              className="h-full bg-purple-500 rounded-full group-hover:bg-purple-400"
+              className="h-full bg-brand rounded-full group-hover:bg-brand-dark"
               style={{ width: `${progressPercent}%`, transition: 'background-color 0.2s' }}
             />
           </div>
         </div>
 
-        <span className="text-xs text-zinc-400 tabular-nums whitespace-nowrap">
+        <span className="text-xs text-ink-soft tabular-nums whitespace-nowrap">
           {formatTime(currentTime)} / {formatTime(duration)}
         </span>
       </div>
@@ -199,34 +199,34 @@ export function AudioPlayer({
   }
 
   return (
-    <div className={`bg-zinc-800/50 border border-zinc-700/50 rounded-xl p-4 ${className}`}>
+    <div className={`bg-surface-hover border border-line rounded-xl p-4 ${className}`}>
       <audio ref={audioRef} src={src} preload="metadata" />
 
       {/* Header com ícone */}
       <div className="flex items-center gap-2 mb-3">
-        <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center">
-          <Mic className="w-4 h-4 text-purple-400" />
+        <div className="w-8 h-8 rounded-full bg-brand-soft flex items-center justify-center">
+          <Microphone className="w-4 h-4 text-brand-dark" />
         </div>
-        <span className="text-sm text-zinc-400">Gravação de áudio</span>
+        <span className="text-sm text-ink-soft">Gravação de áudio</span>
       </div>
 
       {/* Progress bar */}
       <div
         ref={progressRef}
         onClick={handleProgressClick}
-        className="h-2 bg-zinc-700 rounded-full cursor-pointer group mb-3"
+        className="h-2 bg-line-strong rounded-full cursor-pointer group mb-3"
       >
         <div
-          className="h-full bg-purple-500 rounded-full relative group-hover:bg-purple-400"
+          className="h-full bg-brand rounded-full relative group-hover:bg-brand-dark"
           style={{ width: `${progressPercent}%`, transition: 'background-color 0.2s' }}
         >
           {/* Indicador de posição */}
-          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity" />
+          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-surface rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity" />
         </div>
       </div>
 
       {/* Tempo */}
-      <div className="flex justify-between text-xs text-zinc-500 mb-3">
+      <div className="flex justify-between text-xs text-ink-faint mb-3">
         <span className="tabular-nums">{formatTime(currentTime)}</span>
         <span className="tabular-nums">{formatTime(duration)}</span>
       </div>
@@ -235,16 +235,16 @@ export function AudioPlayer({
       <div className="flex items-center justify-center gap-3">
         <button
           onClick={restart}
-          className="w-10 h-10 rounded-full hover:bg-zinc-700 flex items-center justify-center transition-colors"
+          className="w-10 h-10 rounded-full hover:bg-line flex items-center justify-center transition-colors"
           title="Reiniciar"
         >
-          <RotateCcw className="w-5 h-5 text-zinc-400" />
+          <ArrowCounterClockwise className="w-5 h-5 text-ink-soft" />
         </button>
 
         <button
           onClick={togglePlay}
           disabled={isLoading}
-          className="w-14 h-14 rounded-full bg-purple-500 hover:bg-purple-600 disabled:bg-zinc-600 flex items-center justify-center transition-all hover:scale-105 active:scale-95"
+          className="w-14 h-14 rounded-full bg-brand hover:bg-brand-dark disabled:bg-ink-faint flex items-center justify-center transition-all hover:scale-105 active:scale-95"
         >
           {isLoading ? (
             <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -257,13 +257,13 @@ export function AudioPlayer({
 
         <button
           onClick={toggleMute}
-          className="w-10 h-10 rounded-full hover:bg-zinc-700 flex items-center justify-center transition-colors"
+          className="w-10 h-10 rounded-full hover:bg-line flex items-center justify-center transition-colors"
           title={isMuted ? 'Ativar som' : 'Silenciar'}
         >
           {isMuted ? (
-            <VolumeX className="w-5 h-5 text-zinc-400" />
+            <SpeakerX className="w-5 h-5 text-ink-soft" />
           ) : (
-            <Volume2 className="w-5 h-5 text-zinc-400" />
+            <SpeakerHigh className="w-5 h-5 text-ink-soft" />
           )}
         </button>
       </div>

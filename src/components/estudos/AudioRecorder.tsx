@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { Mic, Square, Pause, Play, Trash2, Loader2, AlertCircle } from 'lucide-react';
+import { Microphone, Stop, Pause, Play, Trash, Spinner, Warning } from '@phosphor-icons/react';
 import { Button } from '@/components/ui/button';
 
 interface AudioRecorderProps {
@@ -210,8 +210,8 @@ export function AudioRecorder({
     <div className="space-y-4">
       {/* Mensagem de erro */}
       {error && (
-        <div className="flex items-start gap-2 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
-          <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
+        <div className="flex items-start gap-2 p-3 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30 rounded-lg text-red-600 dark:text-red-400 text-sm">
+          <Warning className="w-4 h-4 mt-0.5 shrink-0" />
           <span>{error}</span>
         </div>
       )}
@@ -222,14 +222,14 @@ export function AudioRecorder({
           <button
             onClick={startRecording}
             disabled={disabled || permissionDenied}
-            className="w-20 h-20 rounded-full bg-red-500 hover:bg-red-600 disabled:bg-zinc-600 disabled:cursor-not-allowed flex items-center justify-center transition-all hover:scale-105 active:scale-95"
+            className="w-20 h-20 rounded-full bg-red-500 hover:bg-red-600 disabled:bg-ink-faint disabled:cursor-not-allowed flex items-center justify-center transition-all hover:scale-105 active:scale-95"
           >
-            <Mic className="w-8 h-8 text-white" />
+            <Microphone className="w-8 h-8 text-white" />
           </button>
-          <p className="text-sm text-zinc-400">
+          <p className="text-sm text-ink-soft">
             Clique para iniciar a gravação
           </p>
-          <p className="text-xs text-zinc-500">
+          <p className="text-xs text-ink-faint">
             Tempo máximo: {formatTime(maxDuration)}
           </p>
         </div>
@@ -241,25 +241,25 @@ export function AudioRecorder({
           {/* Indicador de gravação */}
           <div className="flex items-center gap-2">
             <div className={`w-3 h-3 rounded-full ${isPaused ? 'bg-yellow-500' : 'bg-red-500 animate-pulse'}`} />
-            <span className="text-sm text-zinc-400">
+            <span className="text-sm text-ink-soft">
               {isPaused ? 'Pausado' : 'Gravando...'}
             </span>
           </div>
 
           {/* Timer */}
-          <div className="text-4xl font-mono text-white">
+          <div className="text-4xl font-mono text-ink">
             {formatTime(duration)}
           </div>
 
           {/* Barra de progresso */}
           <div className="w-full max-w-xs">
-            <div className="h-1.5 bg-zinc-700 rounded-full overflow-hidden">
+            <div className="h-1.5 bg-line-strong rounded-full overflow-hidden">
               <div
-                className={`h-full transition-all ${isNearLimit ? 'bg-yellow-500' : 'bg-purple-500'}`}
+                className={`h-full transition-all ${isNearLimit ? 'bg-yellow-500' : 'bg-brand'}`}
                 style={{ width: `${Math.min(progressPercent, 100)}%` }}
               />
             </div>
-            <p className="text-xs text-zinc-500 mt-1 text-center">
+            <p className="text-xs text-ink-faint mt-1 text-center">
               {formatTime(maxDuration - duration)} restantes
             </p>
           </div>
@@ -293,7 +293,7 @@ export function AudioRecorder({
               size="lg"
               className="bg-red-600 hover:bg-red-700"
             >
-              <Square className="w-5 h-5 mr-2" />
+              <Stop className="w-5 h-5 mr-2" />
               Parar
             </Button>
           </div>
@@ -303,7 +303,7 @@ export function AudioRecorder({
       {/* Estado: Gravação finalizada */}
       {!isRecording && audioBlob && audioUrl && (
         <div className="flex flex-col items-center gap-4 py-6">
-          <p className="text-sm text-zinc-400">
+          <p className="text-sm text-ink-soft">
             Gravação finalizada - {formatTime(duration)}
           </p>
 
@@ -315,7 +315,7 @@ export function AudioRecorder({
           />
 
           {/* Tamanho do arquivo */}
-          <p className="text-xs text-zinc-500">
+          <p className="text-xs text-ink-faint">
             Tamanho: {(audioBlob.size / (1024 * 1024)).toFixed(2)} MB
           </p>
 
@@ -324,16 +324,16 @@ export function AudioRecorder({
             <Button
               onClick={discardRecording}
               variant="default"
-              className="border-zinc-700 hover:bg-red-500/20 hover:text-red-400"
+              className="border-line-strong hover:bg-red-50 dark:hover:bg-red-500/20 hover:text-red-600 dark:hover:text-red-400"
             >
-              <Trash2 className="w-4 h-4 mr-2" />
+              <Trash className="w-4 h-4 mr-2" />
               Descartar
             </Button>
             <Button
               onClick={confirmRecording}
-              className="bg-purple-600 hover:bg-purple-700"
+              className="bg-brand hover:bg-brand-dark"
             >
-              <Mic className="w-4 h-4 mr-2" />
+              <Microphone className="w-4 h-4 mr-2" />
               Usar gravação
             </Button>
           </div>

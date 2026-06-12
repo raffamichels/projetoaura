@@ -2,7 +2,7 @@
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { AlertTriangle, Trash2, X } from 'lucide-react';
+import { Warning, Trash, X } from '@phosphor-icons/react';
 
 interface ConfirmModalProps {
   open: boolean;
@@ -31,26 +31,26 @@ export function ConfirmModal({
     switch (variant) {
       case 'danger':
         return {
-          iconBg: 'bg-red-50 border border-red-200',
-          icon: <Trash2 className="w-6 h-6 text-red-600" />,
+          iconBg: 'bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30',
+          icon: <Trash className="w-6 h-6 text-red-600 dark:text-red-400" />,
           buttonBg: 'bg-red-600 hover:bg-red-700',
         };
       case 'warning':
         return {
-          iconBg: 'bg-amber-50 border border-amber-200',
-          icon: <AlertTriangle className="w-6 h-6 text-amber-600" />,
+          iconBg: 'bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30',
+          icon: <Warning className="w-6 h-6 text-amber-600 dark:text-amber-400" />,
           buttonBg: 'bg-amber-600 hover:bg-amber-700',
         };
       case 'info':
         return {
-          iconBg: 'bg-[#E5F1F1] border border-[#C9E2E3]',
-          icon: <AlertTriangle className="w-6 h-6 text-[#178E96]" />,
-          buttonBg: 'bg-[#178E96] hover:bg-[#117178]',
+          iconBg: 'bg-brand-soft border border-[#C9E2E3] dark:border-brand/30',
+          icon: <Warning className="w-6 h-6 text-brand" />,
+          buttonBg: 'bg-brand hover:bg-brand-dark',
         };
       default:
         return {
-          iconBg: 'bg-red-50 border border-red-200',
-          icon: <Trash2 className="w-6 h-6 text-red-600" />,
+          iconBg: 'bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30',
+          icon: <Trash className="w-6 h-6 text-red-600 dark:text-red-400" />,
           buttonBg: 'bg-red-600 hover:bg-red-700',
         };
     }
@@ -60,17 +60,17 @@ export function ConfirmModal({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[480px] bg-white border-[#E3E1D6] rounded-2xl">
+      <DialogContent className="sm:max-w-[480px] bg-surface border-line rounded-2xl">
         <DialogHeader>
           <div className="flex items-start gap-4 mb-2">
             <div className={`w-12 h-12 rounded-xl ${styles.iconBg} flex items-center justify-center shrink-0`}>
               {styles.icon}
             </div>
             <div className="flex-1">
-              <DialogTitle className="text-xl text-[#0E2A3F] mb-2">
+              <DialogTitle className="text-xl text-ink mb-2">
                 {title}
               </DialogTitle>
-              <DialogDescription className="text-[#44586A] text-sm leading-relaxed">
+              <DialogDescription className="text-ink-soft text-sm leading-relaxed">
                 {description}
               </DialogDescription>
             </div>
@@ -82,7 +82,7 @@ export function ConfirmModal({
             variant="default"
             onClick={onClose}
             disabled={isLoading}
-            className="flex-1 bg-white border border-[#D9D7CB] text-[#44586A] hover:bg-[#F4F3EC] hover:text-[#0E2A3F] rounded-xl h-11 duration-150"
+            className="flex-1 bg-surface border border-line-strong text-ink-soft hover:bg-surface-hover hover:text-ink rounded-xl h-11 duration-150"
           >
             <X className="w-4 h-4 mr-2" />
             {cancelText}
@@ -102,7 +102,7 @@ export function ConfirmModal({
               </div>
             ) : (
               <>
-                <Trash2 className="w-4 h-4 mr-2" />
+                <Trash className="w-4 h-4 mr-2" />
                 {confirmText}
               </>
             )}

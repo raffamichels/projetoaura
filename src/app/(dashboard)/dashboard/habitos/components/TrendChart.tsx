@@ -36,22 +36,22 @@ export function TrendChart({ dados }: TrendChartProps) {
         <AreaChart data={dados} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
           <defs>
             <linearGradient id="colorTaxa" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.4} />
-              <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0} />
+              <stop offset="5%" stopColor="#178E96" stopOpacity={0.4} />
+              <stop offset="95%" stopColor="#178E96" stopOpacity={0} />
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--line)" vertical={false} />
           <XAxis
             dataKey="semana"
             tickFormatter={formatarSemana}
-            stroke="#71717a"
+            stroke="var(--ink-faint)"
             fontSize={11}
             tickLine={false}
             axisLine={false}
           />
           <YAxis
             domain={[0, 100]}
-            stroke="#71717a"
+            stroke="var(--ink-faint)"
             fontSize={11}
             tickLine={false}
             axisLine={false}
@@ -59,10 +59,11 @@ export function TrendChart({ dados }: TrendChartProps) {
           />
           <Tooltip
             contentStyle={{
-              backgroundColor: '#18181b',
-              border: '1px solid #27272a',
+              backgroundColor: 'var(--surface)',
+              border: '1px solid var(--border)',
               borderRadius: '8px',
               fontSize: '12px',
+              color: 'var(--ink)',
             }}
             labelFormatter={(semana) => `${t('week')} ${semana}`}
             // Correção aplicada abaixo: aceita number | undefined e usa fallback
@@ -74,11 +75,11 @@ export function TrendChart({ dados }: TrendChartProps) {
           <Area
             type="monotone"
             dataKey="taxa"
-            stroke="#8B5CF6"
+            stroke="#178E96"
             strokeWidth={2}
             fill="url(#colorTaxa)"
-            dot={{ fill: '#8B5CF6', strokeWidth: 0, r: 3 }}
-            activeDot={{ r: 5, fill: '#8B5CF6' }}
+            dot={{ fill: '#178E96', strokeWidth: 0, r: 3 }}
+            activeDot={{ r: 5, fill: '#178E96' }}
           />
         </AreaChart>
       </ResponsiveContainer>

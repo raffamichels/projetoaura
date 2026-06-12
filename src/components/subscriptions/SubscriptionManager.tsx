@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, CheckCircle, XCircle, Calendar, CreditCard, AlertTriangle, RefreshCw } from 'lucide-react';
+import { Spinner, CheckCircle, XCircle, Calendar, CreditCard, Warning, ArrowsClockwise } from '@phosphor-icons/react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -113,9 +113,9 @@ export function SubscriptionManager() {
 
   if (isLoading) {
     return (
-      <Card className="bg-zinc-900/50 border-gray-800">
+      <Card>
         <CardContent className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-purple-500" />
+          <Spinner className="h-8 w-8 animate-spin text-brand" />
         </CardContent>
       </Card>
     );
@@ -123,9 +123,9 @@ export function SubscriptionManager() {
 
   if (!status) {
     return (
-      <Card className="bg-zinc-900/50 border-gray-800">
+      <Card>
         <CardContent className="py-12 text-center">
-          <p className="text-red-400">Erro ao carregar informações da assinatura</p>
+          <p className="text-red-600 dark:text-red-400">Erro ao carregar informações da assinatura</p>
         </CardContent>
       </Card>
     );
@@ -133,7 +133,7 @@ export function SubscriptionManager() {
 
   const getStatusBadge = () => {
     if (status.plano === 'FREE') {
-      return <Badge className="bg-gray-700 text-gray-300">Plano Gratuito</Badge>;
+      return <Badge className="bg-surface-hover text-ink-soft border border-line">Plano Gratuito</Badge>;
     }
 
     switch (status.status) {
@@ -142,24 +142,24 @@ export function SubscriptionManager() {
       case 'past_due':
         return <Badge className="bg-red-600 text-white">Pagamento Atrasado</Badge>;
       case 'canceled':
-        return <Badge className="bg-gray-700 text-gray-300">Cancelado</Badge>;
+        return <Badge className="bg-surface-hover text-ink-soft border border-line">Cancelado</Badge>;
       default:
-        return <Badge className="border-gray-700 text-gray-300">{status.status}</Badge>;
+        return <Badge className="border-line-strong text-ink-soft">{status.status}</Badge>;
     }
   };
 
   const isCanceled = status.status === 'canceled' || (status.status === 'active' && status.currentPeriodEnd);
 
   return (
-    <Card className="bg-zinc-900/50 border-gray-800">
+    <Card>
       <CardHeader>
         <div className="flex items-start justify-between">
           <div>
-            <CardTitle className="flex items-center gap-2 text-white">
+            <CardTitle className="flex items-center gap-2 text-ink">
               <CreditCard className="h-5 w-5" />
               Minha Assinatura
             </CardTitle>
-            <CardDescription className="text-gray-400">Gerencie sua assinatura e método de pagamento</CardDescription>
+            <CardDescription className="text-ink-soft">Gerencie sua assinatura e método de pagamento</CardDescription>
           </div>
           {getStatusBadge()}
         </div>
@@ -167,37 +167,37 @@ export function SubscriptionManager() {
       <CardContent className="space-y-6">
         {/* Informações do Plano */}
         <div className="space-y-4">
-          <div className="flex items-center justify-between p-4 border border-gray-800 rounded-lg bg-black/30">
+          <div className="flex items-center justify-between p-4 border border-line rounded-lg bg-surface-soft">
             <div>
-              <p className="font-semibold text-white">{status.planName}</p>
+              <p className="font-semibold text-ink">{status.planName}</p>
               {status.planInterval && (
-                <p className="text-sm text-gray-400">
+                <p className="text-sm text-ink-soft">
                   Cobrança {status.planInterval === 'month' ? 'mensal' : 'anual'}
                 </p>
               )}
             </div>
             <div className="text-right">
               {status.plano === 'PREMIUM' && status.planInterval === 'month' && (
-                <p className="text-lg font-bold text-white">R$ 12,90/mês</p>
+                <p className="text-lg font-bold text-ink">R$ 12,90/mês</p>
               )}
               {status.plano === 'PREMIUM' && status.planInterval === 'year' && (
-                <p className="text-lg font-bold text-white">R$ 129,00/ano</p>
+                <p className="text-lg font-bold text-ink">R$ 129,00/ano</p>
               )}
               {status.plano === 'FREE' && (
-                <p className="text-lg font-bold text-white">R$ 0,00</p>
+                <p className="text-lg font-bold text-ink">R$ 0,00</p>
               )}
             </div>
           </div>
 
           {/* Próxima Cobrança */}
           {status.hasActiveSubscription && status.currentPeriodEnd && (
-            <div className="flex items-center gap-2 p-4 bg-zinc-800/50 rounded-lg border border-gray-800">
-              <Calendar className="h-5 w-5 text-gray-400" />
+            <div className="flex items-center gap-2 p-4 bg-surface-hover rounded-lg border border-line">
+              <Calendar className="h-5 w-5 text-ink-soft" />
               <div>
-                <p className="text-sm font-medium text-white">
+                <p className="text-sm font-medium text-ink">
                   {status.status === 'canceled' ? 'Acesso até' : 'Próxima cobrança'}
                 </p>
-                <p className="text-sm text-gray-400">
+                <p className="text-sm text-ink-soft">
                   {format(new Date(status.currentPeriodEnd), "d 'de' MMMM 'de' yyyy", {
                     locale: ptBR,
                   })}
@@ -208,13 +208,13 @@ export function SubscriptionManager() {
 
           {/* Alerta de Pagamento Atrasado */}
           {status.status === 'past_due' && (
-            <div className="flex items-start gap-2 p-4 bg-red-900/20 border border-red-800/50 rounded-lg">
-              <AlertTriangle className="h-5 w-5 text-red-400 mt-0.5" />
+            <div className="flex items-start gap-2 p-4 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30 rounded-lg">
+              <Warning className="h-5 w-5 text-red-600 dark:text-red-400 mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-red-400">
+                <p className="text-sm font-medium text-red-600 dark:text-red-400">
                   Problema com o pagamento
                 </p>
-                <p className="text-sm text-gray-400">
+                <p className="text-sm text-ink-soft">
                   Houve um problema ao processar seu último pagamento. Atualize seu método de pagamento para continuar com acesso premium.
                 </p>
               </div>
@@ -225,7 +225,7 @@ export function SubscriptionManager() {
         {/* Ações */}
         <div className="flex flex-col gap-2">
           {status.plano === 'FREE' && (
-            <Button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white" onClick={() => window.location.href = '/premium'}>
+            <Button className="w-full bg-brand hover:bg-brand-dark text-white transition-colors duration-150" onClick={() => window.location.href = '/premium'}>
               Assinar Premium
             </Button>
           )}
@@ -240,7 +240,7 @@ export function SubscriptionManager() {
               >
                 {isProcessing ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Spinner className="mr-2 h-4 w-4 animate-spin" />
                     Processando...
                   </>
                 ) : (
@@ -252,13 +252,13 @@ export function SubscriptionManager() {
 
           {status.status === 'canceled' && (
             <Button
-              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
+              className="w-full bg-brand hover:bg-brand-dark text-white transition-colors duration-150"
               onClick={handleReactivateSubscription}
               disabled={isProcessing}
             >
               {isProcessing ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Spinner className="mr-2 h-4 w-4 animate-spin" />
                   Processando...
                 </>
               ) : (
@@ -270,18 +270,18 @@ export function SubscriptionManager() {
           {/* Botão de sincronização manual */}
           <Button
             variant="outline"
-            className="w-full border-gray-700 text-gray-300 hover:bg-gray-800"
+            className="w-full border-line-strong text-ink-soft hover:bg-surface-hover hover:text-ink"
             onClick={handleSyncWithStripe}
             disabled={isProcessing}
           >
             {isProcessing ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Spinner className="mr-2 h-4 w-4 animate-spin" />
                 Sincronizando...
               </>
             ) : (
               <>
-                <RefreshCw className="mr-2 h-4 w-4" />
+                <ArrowsClockwise className="mr-2 h-4 w-4" />
                 Sincronizar com Stripe
               </>
             )}

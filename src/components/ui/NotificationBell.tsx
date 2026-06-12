@@ -4,16 +4,7 @@ import { useState, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { useNotifications } from '@/contexts/NotificationContext';
-import {
-  Bell,
-  CheckCheck,
-  Flame,
-  Calendar,
-  AlertTriangle,
-  Award,
-  Info,
-  Loader2,
-} from 'lucide-react';
+import { Bell, CheckFat, Flame, Calendar, Warning, Medal, Info, Spinner } from '@phosphor-icons/react';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -21,28 +12,28 @@ import { ptBR } from 'date-fns/locale';
 const TIPO_CONFIG = {
   LEMBRETE_HABITO: {
     icon: Bell,
-    bgColor: 'bg-blue-100',
-    iconColor: 'text-blue-600',
+    bgColor: 'bg-blue-100 dark:bg-blue-500/15',
+    iconColor: 'text-blue-600 dark:text-blue-400',
   },
   RESUMO_DIARIO: {
     icon: Calendar,
-    bgColor: 'bg-[#E5F1F1]',
-    iconColor: 'text-[#178E96]',
+    bgColor: 'bg-brand-soft',
+    iconColor: 'text-brand',
   },
   SEQUENCIA_RISCO: {
-    icon: AlertTriangle,
-    bgColor: 'bg-orange-100',
-    iconColor: 'text-orange-600',
+    icon: Warning,
+    bgColor: 'bg-orange-100 dark:bg-orange-500/15',
+    iconColor: 'text-orange-600 dark:text-orange-400',
   },
   CONQUISTA: {
-    icon: Award,
-    bgColor: 'bg-green-100',
-    iconColor: 'text-green-600',
+    icon: Medal,
+    bgColor: 'bg-green-100 dark:bg-green-500/15',
+    iconColor: 'text-green-600 dark:text-green-400',
   },
   SISTEMA: {
     icon: Info,
-    bgColor: 'bg-[#F4F3EC]',
-    iconColor: 'text-[#8395A5]',
+    bgColor: 'bg-surface-hover',
+    iconColor: 'text-ink-faint',
   },
 };
 
@@ -100,17 +91,17 @@ export function NotificationBell() {
             className="fixed inset-0 z-40"
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute right-0 top-full mt-2 z-50 w-80 sm:w-96 bg-white border border-[#E3E1D6] text-[#0E2A3F] rounded-xl shadow-lg overflow-hidden">
+          <div className="absolute right-0 top-full mt-2 z-50 w-80 sm:w-96 bg-surface border border-line text-ink rounded-xl shadow-lg overflow-hidden">
             {/* Header */}
-            <div className="p-4 border-b border-[#E9E7DC]">
+            <div className="p-4 border-b border-line">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-[#E5F1F1] rounded-lg">
-                    <Bell className="w-5 h-5 text-[#178E96]" />
+                  <div className="p-2 bg-brand-soft rounded-lg">
+                    <Bell className="w-5 h-5 text-brand" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-semibold text-[#0E2A3F]">{t('title')}</h3>
-                    <p className="text-xs text-[#8395A5]">
+                    <h3 className="text-sm font-semibold text-ink">{t('title')}</h3>
+                    <p className="text-xs text-ink-faint">
                       {unreadCount > 0
                         ? t('unreadCount', { count: unreadCount })
                         : t('allRead')}
@@ -120,9 +111,9 @@ export function NotificationBell() {
                 {unreadCount > 0 && (
                   <button
                     onClick={handleMarkAllRead}
-                    className="flex items-center gap-1 text-xs text-[#117178] hover:text-[#178E96] transition-colors duration-150"
+                    className="flex items-center gap-1 text-xs text-brand-dark hover:text-brand transition-colors duration-150"
                   >
-                    <CheckCheck className="w-3.5 h-3.5" />
+                    <CheckFat className="w-3.5 h-3.5" />
                     {t('markAllRead')}
                   </button>
                 )}
@@ -133,18 +124,18 @@ export function NotificationBell() {
             <div className="max-h-[400px] overflow-y-auto">
               {isLoading ? (
                 <div className="flex items-center justify-center py-8">
-                  <Loader2 className="w-6 h-6 text-[#178E96] animate-spin" />
+                  <Spinner className="w-6 h-6 text-brand animate-spin" />
                 </div>
               ) : notificacoes.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-8 px-4">
-                  <div className="p-3 bg-[#F4F3EC] rounded-full mb-3">
-                    <Bell className="w-6 h-6 text-[#8395A5]" />
+                  <div className="p-3 bg-surface-hover rounded-full mb-3">
+                    <Bell className="w-6 h-6 text-ink-faint" />
                   </div>
-                  <p className="text-sm text-[#44586A] text-center">{t('noNotifications')}</p>
-                  <p className="text-xs text-[#8395A5] text-center mt-1">{t('noNotificationsDesc')}</p>
+                  <p className="text-sm text-ink-soft text-center">{t('noNotifications')}</p>
+                  <p className="text-xs text-ink-faint text-center mt-1">{t('noNotificationsDesc')}</p>
                 </div>
               ) : (
-                <div className="divide-y divide-[#E9E7DC]">
+                <div className="divide-y divide-line">
                   {notificacoes.map((notif) => {
                     const config = TIPO_CONFIG[notif.tipo] || TIPO_CONFIG.SISTEMA;
                     const Icon = config.icon;
@@ -153,9 +144,9 @@ export function NotificationBell() {
                       <button
                         key={notif.id}
                         onClick={() => handleNotificationClick(notif.id, notif.lida)}
-                        className={`w-full p-4 text-left transition-colors duration-150 hover:bg-[#F4F3EC] ${
+                        className={`w-full p-4 text-left transition-colors duration-150 hover:bg-surface-hover ${
                           !notif.lida
-                            ? 'bg-[#178E96]/5 border-l-2 border-l-[#178E96]'
+                            ? 'bg-brand/5 border-l-2 border-l-brand'
                             : 'opacity-70'
                         }`}
                       >
@@ -166,18 +157,18 @@ export function NotificationBell() {
                           <div className="flex-1 min-w-0">
                             <div className="flex items-start justify-between gap-2">
                               <p className={`text-sm font-medium truncate ${
-                                !notif.lida ? 'text-[#0E2A3F]' : 'text-[#5E7081]'
+                                !notif.lida ? 'text-ink' : 'text-ink-soft'
                               }`}>
                                 {notif.titulo}
                               </p>
                               {!notif.lida && (
-                                <span className="w-2 h-2 bg-[#178E96] rounded-full shrink-0 mt-1.5" />
+                                <span className="w-2 h-2 bg-brand rounded-full shrink-0 mt-1.5" />
                               )}
                             </div>
-                            <p className="text-xs text-[#5E7081] line-clamp-2 mt-0.5">
+                            <p className="text-xs text-ink-soft line-clamp-2 mt-0.5">
                               {notif.mensagem}
                             </p>
-                            <p className="text-[10px] text-[#8395A5] mt-1.5">
+                            <p className="text-[10px] text-ink-faint mt-1.5">
                               {formatTime(notif.createdAt)}
                             </p>
                           </div>
@@ -191,8 +182,8 @@ export function NotificationBell() {
 
             {/* Footer */}
             {notificacoes.length > 0 && (
-              <div className="p-3 border-t border-[#E9E7DC] bg-[#F4F3EC]">
-                <p className="text-[10px] text-[#8395A5] text-center">
+              <div className="p-3 border-t border-line bg-surface-hover">
+                <p className="text-[10px] text-ink-faint text-center">
                   {t('showingRecent', { count: notificacoes.length })}
                 </p>
               </div>

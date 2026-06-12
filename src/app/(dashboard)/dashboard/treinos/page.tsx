@@ -1,12 +1,12 @@
 'use client';
 
 import { ComingSoon } from '@/components/dashboard/ComingSoon';
-import { Dumbbell } from 'lucide-react';
+import { PersonSimpleRun } from '@phosphor-icons/react';
 
 export default function TreinosPage() {
   return (
     <ComingSoon
-      icon={Dumbbell}
+      icon={PersonSimpleRun}
       title="Treinos"
       description="Monte e acompanhe suas rotinas de exercícios com planos personalizados e registro de evolução física"
       features={[

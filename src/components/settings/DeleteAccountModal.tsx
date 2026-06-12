@@ -13,20 +13,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Loader2,
-  AlertTriangle,
-  Heart,
-  Gift,
-  Star,
-  ChevronRight,
-  ChevronLeft,
-  Sparkles,
-  BookOpen,
-  Target,
-  Calendar,
-  TrendingUp,
-} from 'lucide-react';
+import { Spinner, Warning, Heart, Gift, Star, CaretRight, CaretLeft, Sparkle, BookOpen, Target, Calendar, TrendUp } from '@phosphor-icons/react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
@@ -37,12 +24,12 @@ interface DeleteAccountModalProps {
 
 const CANCELLATION_REASONS = [
   { id: 'not_using', label: 'Não estou usando o suficiente', icon: Calendar },
-  { id: 'too_expensive', label: 'Achei caro demais', icon: TrendingUp },
+  { id: 'too_expensive', label: 'Achei caro demais', icon: TrendUp },
   { id: 'missing_features', label: 'Faltam funcionalidades que preciso', icon: Target },
   { id: 'found_alternative', label: 'Encontrei outra alternativa', icon: Star },
   { id: 'too_complex', label: 'Achei muito complexo de usar', icon: BookOpen },
   { id: 'temporary', label: 'É temporário, pretendo voltar', icon: Heart },
-  { id: 'other', label: 'Outro motivo', icon: Sparkles },
+  { id: 'other', label: 'Outro motivo', icon: Sparkle },
 ];
 
 const RANDOM_PHRASES = [
@@ -130,7 +117,7 @@ export function DeleteAccountModal({ isOpen, onClose }: DeleteAccountModalProps)
       <DialogContent className="bg-zinc-900 border-zinc-800 max-w-lg max-h-[90vh] overflow-hidden flex flex-col">
         <DialogHeader className="shrink-0">
           <DialogTitle className="text-zinc-100 flex items-center gap-2">
-            <AlertTriangle className="w-5 h-5 text-amber-500" />
+            <Warning className="w-5 h-5 text-amber-500" />
             {step === 1 ? 'Tem certeza que quer nos deixar?' : 'Confirmação Final'}
           </DialogTitle>
         </DialogHeader>
@@ -138,10 +125,10 @@ export function DeleteAccountModal({ isOpen, onClose }: DeleteAccountModalProps)
         {step === 1 ? (
           <div className="space-y-6 overflow-y-auto flex-1 pr-2">
             {/* Mensagem emocional */}
-            <div className="bg-gradient-to-br from-aura-500/10 to-purple-500/10 border border-aura-500/20 rounded-xl p-4">
+            <div className="bg-gradient-to-br from-brand/10 to-purple-500/10 border border-brand/20 rounded-xl p-4">
               <div className="flex items-start gap-3">
-                <div className="p-2 bg-aura-500/20 rounded-full">
-                  <Heart className="w-5 h-5 text-aura-400" />
+                <div className="p-2 bg-brand/20 rounded-full">
+                  <Heart className="w-5 h-5 text-brand" />
                 </div>
                 <div>
                   <h4 className="text-sm font-medium text-zinc-100 mb-1">
@@ -208,11 +195,11 @@ export function DeleteAccountModal({ isOpen, onClose }: DeleteAccountModalProps)
                       className={cn(
                         "flex items-center gap-3 p-3 rounded-lg border text-left transition-all",
                         isSelected
-                          ? "border-aura-500 bg-aura-500/10 text-zinc-100"
+                          ? "border-brand bg-brand/10 text-zinc-100"
                           : "border-zinc-800 bg-zinc-950/30 text-zinc-400 hover:border-zinc-700 hover:bg-zinc-900/50"
                       )}
                     >
-                      <Icon className={cn("w-4 h-4", isSelected ? "text-aura-400" : "text-zinc-500")} />
+                      <Icon className={cn("w-4 h-4", isSelected ? "text-brand" : "text-zinc-500")} />
                       <span className="text-sm">{reason.label}</span>
                     </button>
                   );
@@ -234,7 +221,7 @@ export function DeleteAccountModal({ isOpen, onClose }: DeleteAccountModalProps)
                 className="text-zinc-400 hover:text-zinc-100"
               >
                 Continuar
-                <ChevronRight className="w-4 h-4 ml-1" />
+                <CaretRight className="w-4 h-4 ml-1" />
               </Button>
             </DialogFooter>
           </div>
@@ -248,7 +235,7 @@ export function DeleteAccountModal({ isOpen, onClose }: DeleteAccountModalProps)
             {/* Última chance */}
             <div className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/20 rounded-xl p-4">
               <div className="flex items-center gap-3">
-                <Sparkles className="w-5 h-5 text-green-400" />
+                <Sparkle className="w-5 h-5 text-green-400" />
                 <div>
                   <p className="text-sm text-zinc-200">
                     <strong>Espere!</strong> Que tal conversar com nosso suporte antes?
@@ -299,7 +286,7 @@ export function DeleteAccountModal({ isOpen, onClose }: DeleteAccountModalProps)
                 disabled={isSubmitting}
                 className="text-zinc-400 hover:text-zinc-100"
               >
-                <ChevronLeft className="w-4 h-4 mr-1" />
+                <CaretLeft className="w-4 h-4 mr-1" />
                 Voltar
               </Button>
               <Button
@@ -320,7 +307,7 @@ export function DeleteAccountModal({ isOpen, onClose }: DeleteAccountModalProps)
               >
                 {isSubmitting ? (
                   <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    <Spinner className="w-4 h-4 mr-2 animate-spin" />
                     Excluindo...
                   </>
                 ) : (

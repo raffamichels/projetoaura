@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useSession } from "next-auth/react"
 import { Button } from "@/components/ui/button"
-import { Sparkles, Loader2, Crown } from "lucide-react"
+import { Sparkle, Spinner, Crown } from '@phosphor-icons/react'
 import { toast } from "sonner"
 import { UpgradeToPremiumModal } from "@/components/planos/UpgradeToPremiumModal"
 import { verificarAcessoRecurso } from "@/lib/planos-helper"
@@ -89,7 +89,7 @@ export function GenerateReviewButton({
       <div className="relative">
         {/* Coroa indicando recurso premium - aparece apenas para usuários FREE */}
         {!isGenerating && !isPremium && (
-          <Crown className="w-3 h-3 text-[#D9A441] absolute -top-1 -right-1 z-10" />
+          <Crown className="w-3 h-3 text-gold absolute -top-1 -right-1 z-10" />
         )}
 
         <Button
@@ -102,12 +102,12 @@ export function GenerateReviewButton({
         >
           {isGenerating ? (
             <>
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <Spinner className="h-4 w-4 animate-spin" />
               Gerando resenha...
             </>
           ) : (
             <>
-              <Sparkles className="h-4 w-4" />
+              <Sparkle className="h-4 w-4" />
               Gerar Resenha
             </>
           )}

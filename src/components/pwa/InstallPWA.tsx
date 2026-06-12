@@ -10,7 +10,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Download, Smartphone, X } from 'lucide-react';
+import { Download, DeviceMobile, X } from '@phosphor-icons/react';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -111,45 +111,45 @@ export function InstallPWA() {
 
   return (
     <Dialog open={showDialog} onOpenChange={setShowDialog}>
-      <DialogContent className="bg-white border-[#E3E1D6] text-[#0E2A3F] max-w-sm mx-auto">
+      <DialogContent className="bg-surface border-line text-ink max-w-sm mx-auto">
         <DialogHeader>
           <div className="flex justify-center mb-4">
-            <div className="w-16 h-16 bg-[#178E96] rounded-2xl flex items-center justify-center">
-              <Smartphone className="w-8 h-8 text-white" />
+            <div className="w-16 h-16 bg-brand rounded-2xl flex items-center justify-center">
+              <DeviceMobile className="w-8 h-8 text-white" />
             </div>
           </div>
-          <DialogTitle className="text-center text-xl text-[#0E2A3F]">
+          <DialogTitle className="text-center text-xl text-ink">
             Adicionar Aura na Tela Inicial
           </DialogTitle>
-          <DialogDescription className="text-center text-[#5E7081]">
+          <DialogDescription className="text-center text-ink-soft">
             Instale o app na sua tela inicial para acesso rápido e uma experiência sem barra de navegação.
           </DialogDescription>
         </DialogHeader>
 
         {isIOS ? (
           <div className="space-y-3 py-4">
-            <p className="text-sm text-[#44586A] text-center">
+            <p className="text-sm text-ink-soft text-center">
               Para instalar no seu iPhone/iPad:
             </p>
-            <ol className="text-sm text-[#5E7081] space-y-2 list-decimal list-inside">
-              <li>Toque no botão <span className="text-[#0E2A3F] font-medium">Compartilhar</span> na barra inferior</li>
-              <li>Role para baixo e toque em <span className="text-[#0E2A3F] font-medium">&quot;Adicionar à Tela de Início&quot;</span></li>
-              <li>Confirme tocando em <span className="text-[#0E2A3F] font-medium">Adicionar</span></li>
+            <ol className="text-sm text-ink-soft space-y-2 list-decimal list-inside">
+              <li>Toque no botão <span className="text-ink font-medium">Compartilhar</span> na barra inferior</li>
+              <li>Role para baixo e toque em <span className="text-ink font-medium">&quot;Adicionar à Tela de Início&quot;</span></li>
+              <li>Confirme tocando em <span className="text-ink font-medium">Adicionar</span></li>
             </ol>
           </div>
         ) : (
           <div className="py-2">
-            <ul className="text-sm text-[#5E7081] space-y-2">
+            <ul className="text-sm text-ink-soft space-y-2">
               <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 bg-[#178E96] rounded-full" />
+                <span className="w-1.5 h-1.5 bg-brand rounded-full" />
                 Acesso rápido direto da tela inicial
               </li>
               <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 bg-[#178E96] rounded-full" />
+                <span className="w-1.5 h-1.5 bg-brand rounded-full" />
                 Experiência em tela cheia, sem barra de URL
               </li>
               <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 bg-[#178E96] rounded-full" />
+                <span className="w-1.5 h-1.5 bg-brand rounded-full" />
                 Funciona como um aplicativo nativo
               </li>
             </ul>
@@ -160,7 +160,7 @@ export function InstallPWA() {
           {!isIOS && (
             <Button
               onClick={handleInstall}
-              className="w-full bg-[#178E96] hover:bg-[#117178] text-white duration-150"
+              className="w-full bg-brand hover:bg-brand-dark text-white duration-150"
             >
               <Download className="w-4 h-4 mr-2" />
               Instalar Agora
@@ -169,7 +169,7 @@ export function InstallPWA() {
           <Button
             variant="ghost"
             onClick={handleDismiss}
-            className="w-full text-[#5E7081] hover:text-[#0E2A3F] hover:bg-[#F4F3EC] duration-150"
+            className="w-full text-ink-soft hover:text-ink hover:bg-surface-hover duration-150"
           >
             <X className="w-4 h-4 mr-2" />
             {isIOS ? 'Fechar' : 'Agora Não'}

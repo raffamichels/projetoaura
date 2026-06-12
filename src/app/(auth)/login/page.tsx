@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowRight, CalendarCheck, TrendingUp, BookOpenCheck } from 'lucide-react';
+import Image from 'next/image';
+import { ArrowRight, CalendarCheck, TrendUp, BookBookmark } from '@phosphor-icons/react';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -43,28 +44,28 @@ export default function LoginPage() {
 };
 
   return (
-    <div className="min-h-screen flex bg-white">
+    <div className="min-h-screen flex bg-surface">
       {/* Coluna esquerda - Formulário */}
       <div className="w-full lg:w-1/2 flex flex-col px-6 sm:px-12 lg:px-20 xl:px-28 py-8">
-        {/* Logo */}
-        <div className="mb-10">
-          <Link href="/">
-            <span className="text-3xl font-extrabold tracking-tight text-[#178E96]">Aura</span>
-          </Link>
-        </div>
-
         <div className="flex-1 flex flex-col justify-center max-w-md w-full mx-auto lg:mx-0">
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#0E2A3F] mb-2">
+          {/* Logo */}
+          <div className="flex justify-center mb-8">
+            <Link href="/">
+              <Image src="/logo-aura.png" alt="Aura" width={120} height={120} className="drop-shadow-lg" />
+            </Link>
+          </div>
+
+          <h1 className="text-2xl sm:text-3xl font-bold text-ink mb-2 text-center">
             Que bom ter você por aqui! 👋
           </h1>
-          <p className="text-[#5E7081] text-sm sm:text-base mb-8">
-            Acesse sua conta <span className="font-semibold text-[#0E2A3F]">Aura</span> inserindo seus dados abaixo:
+          <p className="text-ink-soft text-sm sm:text-base mb-8">
+            Acesse sua conta <span className="font-semibold text-ink">Aura</span> inserindo seus dados abaixo:
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Email */}
             <div className="space-y-1.5">
-              <Label htmlFor="email" className="text-[#44586A] text-sm font-medium">
+              <Label htmlFor="email" className="text-ink-soft text-sm font-medium">
                 E-mail
               </Label>
               <Input
@@ -74,19 +75,19 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="bg-white border-[#D9D7CB] text-[#0E2A3F] placeholder:text-[#8395A5] focus:border-[#178E96] focus:ring-2 focus:ring-[#178E96]/20 h-11 rounded-lg transition-colors duration-150 text-sm"
+                className="bg-surface border-line-strong text-ink placeholder:text-ink-faint focus:border-brand focus:ring-2 focus:ring-brand/20 h-11 rounded-lg transition-colors duration-150 text-sm"
               />
             </div>
 
             {/* Senha */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <Label htmlFor="password" className="text-[#44586A] text-sm font-medium">
+                <Label htmlFor="password" className="text-ink-soft text-sm font-medium">
                   Senha
                 </Label>
                 <Link
                   href="/forgot-password"
-                  className="text-xs text-[#117178] hover:text-[#178E96] transition-colors duration-150 font-medium"
+                  className="text-xs text-brand-dark hover:text-brand transition-colors duration-150 font-medium"
                 >
                   Esqueceu a senha?
                 </Link>
@@ -98,13 +99,13 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="bg-white border-[#D9D7CB] text-[#0E2A3F] placeholder:text-[#8395A5] focus:border-[#178E96] focus:ring-2 focus:ring-[#178E96]/20 h-11 rounded-lg transition-colors duration-150 text-sm"
+                className="bg-surface border-line-strong text-ink placeholder:text-ink-faint focus:border-brand focus:ring-2 focus:ring-brand/20 h-11 rounded-lg transition-colors duration-150 text-sm"
               />
             </div>
 
             {/* Erro */}
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm flex items-center gap-2 animate-in slide-in-from-top-2 duration-300">
+              <div className="bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30 text-red-600 dark:text-red-400 px-4 py-3 rounded-lg text-sm flex items-center gap-2 animate-in slide-in-from-top-2 duration-300">
                 <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
@@ -115,7 +116,7 @@ export default function LoginPage() {
             {/* Botão */}
             <Button
               type="submit"
-              className="w-full bg-[#178E96] hover:bg-[#117178] text-white font-semibold h-11 rounded-lg transition-colors duration-150 uppercase tracking-wide text-sm"
+              className="w-full bg-brand hover:bg-brand-dark text-white font-semibold h-11 rounded-lg transition-colors duration-150 uppercase tracking-wide text-sm"
               disabled={loading}
             >
               {loading ? (
@@ -132,10 +133,10 @@ export default function LoginPage() {
           {/* Divider */}
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-[#E9E7DC]"></div>
+              <div className="w-full border-t border-line"></div>
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white px-3 text-[#8395A5] font-medium">ou continue com</span>
+              <span className="bg-surface px-3 text-ink-faint font-medium">ou continue com</span>
             </div>
           </div>
 
@@ -147,7 +148,7 @@ export default function LoginPage() {
               signIn('google', { callbackUrl: '/dashboard' });
             }}
             variant="outline"
-            className="w-full bg-white hover:bg-[#F4F3EC] border-[#D9D7CB] text-[#0E2A3F] font-semibold h-11 rounded-lg transition-colors duration-150 text-sm"
+            className="w-full bg-surface hover:bg-surface-hover border-line-strong text-ink font-semibold h-11 rounded-lg transition-colors duration-150 text-sm"
           >
             <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
               <path
@@ -172,11 +173,11 @@ export default function LoginPage() {
 
           {/* Link para Registro */}
           <div className="text-center mt-6">
-            <p className="text-sm text-[#5E7081]">
+            <p className="text-sm text-ink-soft">
               Novo por aqui?{' '}
               <Link
                 href="/register"
-                className="text-[#117178] hover:text-[#178E96] font-semibold transition-colors duration-150"
+                className="text-brand-dark hover:text-brand font-semibold transition-colors duration-150"
               >
                 Criar conta gratuita
               </Link>
@@ -185,23 +186,23 @@ export default function LoginPage() {
         </div>
 
         {/* Footer */}
-        <div className="mt-10 flex items-center justify-between text-xs text-[#8395A5]">
+        <div className="mt-10 flex items-center justify-between text-xs text-ink-faint">
           <div className="flex flex-col gap-1">
-            <Link href="/#faq" className="underline hover:text-[#117178] transition-colors duration-150">
+            <Link href="/#faq" className="underline hover:text-brand-dark transition-colors duration-150">
               Acessar central de ajuda
             </Link>
-            <Link href="/#contato" className="underline hover:text-[#117178] transition-colors duration-150">
+            <Link href="/#contato" className="underline hover:text-brand-dark transition-colors duration-150">
               Entrar em contato com suporte
             </Link>
           </div>
           <p>
-            Feito com <span className="text-[#178E96]">♥</span> por Aura
+            Feito com <span className="text-brand">♥</span> por Aura
           </p>
         </div>
       </div>
 
       {/* Coluna direita - Painel promocional */}
-      <div className="hidden lg:flex w-1/2 relative overflow-hidden bg-gradient-to-br from-[#178E96] via-[#154F6D] to-[#0E2A3F] items-center justify-center p-12">
+      <div className="hidden lg:flex w-1/2 relative overflow-hidden bg-gradient-to-br from-brand via-brand-blue to-navy items-center justify-center p-12">
         <div className="relative z-10 max-w-lg w-full">
           <h2 className="text-3xl xl:text-4xl font-bold text-white text-center leading-snug mb-10">
             Organize sua rotina, finanças e estudos em um só lugar ✨
@@ -209,9 +210,9 @@ export default function LoginPage() {
 
           {/* Stat cards */}
           <div className="flex justify-center gap-4 mb-10">
-            <div className="bg-white rounded-2xl px-6 py-4 shadow-xl flex items-center gap-3">
-              <span className="text-3xl font-extrabold text-[#178E96]">+10h</span>
-              <span className="text-sm text-[#44586A] leading-tight">
+            <div className="bg-surface rounded-2xl px-6 py-4 shadow-xl flex items-center gap-3">
+              <span className="text-3xl font-extrabold text-brand">+10h</span>
+              <span className="text-sm text-ink-soft leading-tight">
                 economizadas<br />por semana com o <span className="font-bold">Aura</span>
               </span>
             </div>
@@ -223,35 +224,35 @@ export default function LoginPage() {
 
           {/* Notificações do sistema (mockup) */}
           <div className="space-y-3">
-            <div className="bg-white rounded-xl px-5 py-4 shadow-xl flex items-center gap-4">
-              <div className="w-10 h-10 rounded-lg bg-[#E5F1F1] flex items-center justify-center shrink-0">
-                <CalendarCheck className="w-5 h-5 text-[#117178]" />
+            <div className="bg-surface rounded-xl px-5 py-4 shadow-xl flex items-center gap-4">
+              <div className="w-10 h-10 rounded-lg bg-brand-soft flex items-center justify-center shrink-0">
+                <CalendarCheck className="w-5 h-5 text-brand-dark" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-[#0E2A3F]">Aura</p>
-                <p className="text-sm text-[#44586A] truncate">Você tem 2 compromissos hoje</p>
+                <p className="text-sm font-semibold text-ink">Aura</p>
+                <p className="text-sm text-ink-soft truncate">Você tem 2 compromissos hoje</p>
               </div>
-              <span className="text-xs text-[#8395A5] shrink-0">9:41</span>
+              <span className="text-xs text-ink-faint shrink-0">9:41</span>
             </div>
-            <div className="bg-white/90 rounded-xl px-5 py-4 shadow-lg flex items-center gap-4 scale-[0.97]">
-              <div className="w-10 h-10 rounded-lg bg-[#E5F1F1] flex items-center justify-center shrink-0">
-                <TrendingUp className="w-5 h-5 text-[#117178]" />
+            <div className="bg-surface/90 rounded-xl px-5 py-4 shadow-lg flex items-center gap-4 scale-[0.97]">
+              <div className="w-10 h-10 rounded-lg bg-brand-soft flex items-center justify-center shrink-0">
+                <TrendUp className="w-5 h-5 text-brand-dark" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-[#0E2A3F]">Aura</p>
-                <p className="text-sm text-[#44586A] truncate">Resumo financeiro do mês disponível</p>
+                <p className="text-sm font-semibold text-ink">Aura</p>
+                <p className="text-sm text-ink-soft truncate">Resumo financeiro do mês disponível</p>
               </div>
-              <span className="text-xs text-[#8395A5] shrink-0">9:41</span>
+              <span className="text-xs text-ink-faint shrink-0">9:41</span>
             </div>
-            <div className="bg-white/75 rounded-xl px-5 py-4 shadow-md flex items-center gap-4 scale-[0.94]">
-              <div className="w-10 h-10 rounded-lg bg-[#E5F1F1] flex items-center justify-center shrink-0">
-                <BookOpenCheck className="w-5 h-5 text-[#117178]" />
+            <div className="bg-surface/75 rounded-xl px-5 py-4 shadow-md flex items-center gap-4 scale-[0.94]">
+              <div className="w-10 h-10 rounded-lg bg-brand-soft flex items-center justify-center shrink-0">
+                <BookBookmark className="w-5 h-5 text-brand-dark" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-[#0E2A3F]">Aura</p>
-                <p className="text-sm text-[#44586A] truncate">Meta de leitura da semana concluída 🎉</p>
+                <p className="text-sm font-semibold text-ink">Aura</p>
+                <p className="text-sm text-ink-soft truncate">Meta de leitura da semana concluída 🎉</p>
               </div>
-              <span className="text-xs text-[#8395A5] shrink-0">9:41</span>
+              <span className="text-xs text-ink-faint shrink-0">9:41</span>
             </div>
           </div>
 

@@ -2,30 +2,9 @@
 
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
+import { useTheme } from 'next-themes';
 import { useRouter, useSearchParams } from 'next/navigation';
-import {
-  User,
-  Bell,
-  Shield,
-  Palette,
-  ChevronLeft,
-  Moon,
-  Sun,
-  Monitor,
-  Mail,
-  Smartphone,
-  CheckCircle2,
-  AlertCircle,
-  Crown,
-  CreditCard,
-  Laptop,
-  Camera,
-  Loader2,
-  Trash2,
-  AtSign,
-  Check,
-  X
-} from 'lucide-react';
+import { User, Bell, Shield, Palette, CaretLeft, Moon, Sun, Monitor, Envelope, DeviceMobile, CheckCircle, Warning, Crown, CreditCard, Laptop, Camera, Spinner, Trash, At, Check, X } from '@phosphor-icons/react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
@@ -33,7 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { PlanoManager } from '@/components/planos/PlanoManager';
+
 import { cn } from '@/lib/utils';
 import { ImageCropModal } from '@/components/settings/ImageCropModal';
 import { ChangePasswordModal } from '@/components/settings/ChangePasswordModal';
@@ -61,14 +40,14 @@ const NAV_ITEMS: NavItem[] = [
 // --- Sub-components (Outside of render) ---
 const SectionHeader = ({ title, description }: { title: string; description: string }) => (
   <div className="mb-6">
-    <h2 className="text-xl font-semibold text-[#0E2A3F] tracking-tight">{title}</h2>
-    <p className="text-sm text-[#44586A] mt-1">{description}</p>
-    <Separator className="mt-4 bg-[#E9E7DC]" />
+    <h2 className="text-xl font-semibold text-ink tracking-tight">{title}</h2>
+    <p className="text-sm text-ink-soft mt-1">{description}</p>
+    <Separator className="mt-4 bg-line" />
   </div>
 );
 
 const SettingsCard = ({ children, className }: { children: React.ReactNode; className?: string }) => (
-  <div className={cn("bg-white border border-[#E9E7DC] rounded-xl p-6 shadow-sm", className)}>
+  <div className={cn("bg-surface border border-line rounded-xl p-6 shadow-sm", className)}>
     {children}
   </div>
 );
@@ -84,8 +63,8 @@ const SettingRow = ({
 }) => (
   <div className="flex flex-col sm:flex-row sm:items-center justify-between py-4 first:pt-0 last:pb-0 gap-4">
     <div className="space-y-0.5">
-      <label className="text-sm font-medium text-[#0E2A3F] block">{label}</label>
-      {desc && <p className="text-xs text-[#8395A5] max-w-[400px]">{desc}</p>}
+      <label className="text-sm font-medium text-ink block">{label}</label>
+      {desc && <p className="text-xs text-ink-faint max-w-[400px]">{desc}</p>}
     </div>
     <div className="shrink-0">{action}</div>
   </div>
@@ -110,8 +89,10 @@ export default function SettingsPage() {
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  // States
-  const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('dark');
+  // Tema (next-themes) — `mounted` evita mismatch de hidratação
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -355,7 +336,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="min-h-screen text-[#0E2A3F]">
+    <div className="min-h-screen text-ink">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
         {/* Page Header */}
@@ -364,14 +345,14 @@ export default function SettingsPage() {
             <Button
               variant="ghost"
               onClick={() => router.push('/dashboard/perfil')}
-              className="mb-4 text-[#44586A] hover:text-[#0E2A3F] hover:bg-[#F4F3EC] -ml-2"
+              className="mb-4 text-ink-soft hover:text-ink hover:bg-surface-hover -ml-2"
             >
-              <ChevronLeft className="w-4 h-4 mr-1" />
+              <CaretLeft className="w-4 h-4 mr-1" />
               Voltar ao Perfil
             </Button>
           )}
-          <h1 className="text-3xl font-bold tracking-tight text-[#0E2A3F]">Configurações</h1>
-          <p className="text-[#44586A] mt-2 text-lg">
+          <h1 className="text-3xl font-bold tracking-tight text-ink">Configurações</h1>
+          <p className="text-ink-soft mt-2 text-lg">
             Gerencie sua conta e preferências do sistema.
           </p>
         </div>
@@ -391,11 +372,11 @@ export default function SettingsPage() {
                     className={cn(
                       "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-150 whitespace-nowrap lg:whitespace-normal text-left",
                       isActive
-                        ? "bg-[#E5F1F1] text-[#117178] font-semibold"
-                        : "text-[#44586A] hover:text-[#0E2A3F] hover:bg-[#F4F3EC]"
+                        ? "bg-brand-soft text-brand-dark font-semibold"
+                        : "text-ink-soft hover:text-ink hover:bg-surface-hover"
                     )}
                   >
-                    <Icon className={cn("w-4 h-4 shrink-0", isActive ? "text-[#117178]" : "text-[#8395A5]")} />
+                    <Icon className={cn("w-4 h-4 shrink-0", isActive ? "text-brand-dark" : "text-ink-faint")} />
                     <span>{item.label}</span>
                   </button>
                 );
@@ -421,9 +402,9 @@ export default function SettingsPage() {
                       onChange={handleAvatarChange}
                       className="hidden"
                     />
-                    <Avatar className="w-24 h-24 border-4 border-white shadow-sm ring-2 ring-[#178E96]/20">
+                    <Avatar className="w-24 h-24 border-4 border-surface shadow-sm ring-2 ring-brand/20">
                       <AvatarImage src={session?.user?.image || undefined} />
-                      <AvatarFallback className="bg-[#178E96] text-white text-2xl font-bold">
+                      <AvatarFallback className="bg-brand text-white text-2xl font-bold">
                         {getInitials(session?.user?.name)}
                       </AvatarFallback>
                     </Avatar>
@@ -431,9 +412,9 @@ export default function SettingsPage() {
                       className="absolute inset-0 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-all cursor-pointer"
                       onClick={handleAvatarClick}
                     >
-                      <div className="absolute inset-0 bg-[#0E2A3F]/60 rounded-full"></div>
+                      <div className="absolute inset-0 bg-navy/60 rounded-full"></div>
                       {uploadingAvatar ? (
-                        <Loader2 className="w-6 h-6 text-white relative z-10 animate-spin" />
+                        <Spinner className="w-6 h-6 text-white relative z-10 animate-spin" />
                       ) : (
                         <Camera className="w-6 h-6 text-white relative z-10" />
                       )}
@@ -441,23 +422,23 @@ export default function SettingsPage() {
                   </div>
                   <div className="space-y-1 flex-1">
                     <div className="flex items-center gap-3">
-                      <h3 className="text-xl font-semibold text-[#0E2A3F]">{session?.user?.name}</h3>
-                      <Badge variant="outline" className="border-amber-200 text-amber-700 bg-amber-50 gap-1 px-2 py-0.5">
+                      <h3 className="text-xl font-semibold text-ink">{session?.user?.name}</h3>
+                      <Badge variant="outline" className="border-amber-200 dark:border-amber-500/30 text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10 gap-1 px-2 py-0.5">
                         <Crown className="w-3 h-3" />
                         {session?.user?.plano || 'Free'}
                       </Badge>
                     </div>
-                    <p className="text-[#44586A]">{session?.user?.email}</p>
+                    <p className="text-ink-soft">{session?.user?.email}</p>
                     <div className="pt-3 flex gap-3">
                       <Button
                         size="sm"
                         onClick={handleAvatarClick}
                         disabled={uploadingAvatar}
-                        className="border border-[#D9D7CB] bg-white hover:bg-[#F4F3EC] text-[#0E2A3F]"
+                        className="border border-line-strong bg-surface hover:bg-surface-hover text-ink"
                       >
                         {uploadingAvatar ? (
                           <>
-                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            <Spinner className="w-4 h-4 mr-2 animate-spin" />
                             Enviando...
                           </>
                         ) : (
@@ -470,9 +451,9 @@ export default function SettingsPage() {
                           variant="ghost"
                           onClick={handleRemoverAvatar}
                           disabled={uploadingAvatar}
-                          className="text-[#44586A] hover:text-red-600 hover:bg-red-50"
+                          className="text-ink-soft hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10"
                         >
-                          <Trash2 className="w-4 h-4 mr-1" />
+                          <Trash className="w-4 h-4 mr-1" />
                           Remover
                         </Button>
                       )}
@@ -484,43 +465,43 @@ export default function SettingsPage() {
                 <SettingsCard className="grid gap-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <Label htmlFor="fullname" className="text-[#44586A]">Nome Completo</Label>
+                      <Label htmlFor="fullname" className="text-ink-soft">Nome Completo</Label>
                       <Input
                         id="fullname"
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="bg-white border-[#D9D7CB] text-[#0E2A3F] placeholder:text-[#8395A5] focus-visible:border-[#178E96] focus-visible:ring-[#178E96]/20"
+                        className="bg-surface border-line-strong text-ink placeholder:text-ink-faint focus-visible:border-brand focus-visible:ring-brand/20"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="email" className="text-[#44586A]">Email Principal</Label>
+                      <Label htmlFor="email" className="text-ink-soft">Email Principal</Label>
                       <div className="relative">
-                        <Mail className="absolute left-3 top-2.5 h-4 w-4 text-[#8395A5]" />
+                        <Envelope className="absolute left-3 top-2.5 h-4 w-4 text-ink-faint" />
                         <Input
                           id="email"
                           value={formData.email}
                           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                          className="pl-9 bg-white border-[#D9D7CB] text-[#0E2A3F] placeholder:text-[#8395A5] focus-visible:border-[#178E96] focus-visible:ring-[#178E96]/20"
+                          className="pl-9 bg-surface border-line-strong text-ink placeholder:text-ink-faint focus-visible:border-brand focus-visible:ring-brand/20"
                         />
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="phone" className="text-[#44586A]">Telefone</Label>
+                      <Label htmlFor="phone" className="text-ink-soft">Telefone</Label>
                       <div className="relative">
-                        <Smartphone className="absolute left-3 top-2.5 h-4 w-4 text-[#8395A5]" />
+                        <DeviceMobile className="absolute left-3 top-2.5 h-4 w-4 text-ink-faint" />
                         <Input
                           id="phone"
                           placeholder="+55"
                           value={formData.phone}
                           onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                          className="pl-9 bg-white border-[#D9D7CB] text-[#0E2A3F] placeholder:text-[#8395A5] focus-visible:border-[#178E96] focus-visible:ring-[#178E96]/20"
+                          className="pl-9 bg-surface border-line-strong text-ink placeholder:text-ink-faint focus-visible:border-brand focus-visible:ring-brand/20"
                         />
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex justify-end pt-4 border-t border-[#E9E7DC]">
-                    <Button onClick={handleSave} disabled={isSaving} className="bg-[#178E96] hover:bg-[#117178] text-white font-medium transition-colors duration-150">
+                  <div className="flex justify-end pt-4 border-t border-line">
+                    <Button onClick={handleSave} disabled={isSaving} className="bg-brand hover:bg-brand-dark text-white font-medium transition-colors duration-150">
                       {isSaving ? 'Salvando...' : 'Salvar Alterações'}
                     </Button>
                   </div>
@@ -531,29 +512,29 @@ export default function SettingsPage() {
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <h3 className="text-lg font-medium text-[#0E2A3F] flex items-center gap-2">
-                          <AtSign className="w-5 h-5" />
+                        <h3 className="text-lg font-medium text-ink flex items-center gap-2">
+                          <At className="w-5 h-5" />
                           Username
                         </h3>
-                        <p className="text-sm text-[#44586A] mt-1">Seu identificador único no Aura</p>
+                        <p className="text-sm text-ink-soft mt-1">Seu identificador único no Aura</p>
                       </div>
                       {session?.user?.username && (
-                        <Badge variant="outline" className="border-[#D9D7CB] text-[#44586A] gap-1 px-3">
+                        <Badge variant="outline" className="border-line-strong text-ink-soft gap-1 px-3">
                           @{session.user.username}
                         </Badge>
                       )}
                     </div>
 
-                    <Separator className="bg-[#E9E7DC]" />
+                    <Separator className="bg-line" />
 
                     {!canChangeUsername ? (
-                      <div className="flex items-center gap-3 p-4 bg-amber-50 rounded-xl border border-amber-200">
-                        <AlertCircle className="w-5 h-5 text-amber-700 flex-shrink-0" />
+                      <div className="flex items-center gap-3 p-4 bg-amber-50 dark:bg-amber-500/10 rounded-xl border border-amber-200 dark:border-amber-500/30">
+                        <Warning className="w-5 h-5 text-amber-700 dark:text-amber-400 flex-shrink-0" />
                         <div>
-                          <p className="text-sm text-[#44586A]">
+                          <p className="text-sm text-ink-soft">
                             Você poderá alterar seu username novamente em:
                           </p>
-                          <p className="text-sm font-medium text-[#0E2A3F]">
+                          <p className="text-sm font-medium text-ink">
                             {nextChangeDate?.toLocaleDateString('pt-BR', {
                               day: '2-digit',
                               month: 'long',
@@ -564,18 +545,18 @@ export default function SettingsPage() {
                       </div>
                     ) : (
                       <div className="space-y-3">
-                        <Label className="text-[#44586A]">Novo username</Label>
+                        <Label className="text-ink-soft">Novo username</Label>
                         <div className="flex gap-3">
                           <div className="relative flex-1">
-                            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8395A5]">@</div>
+                            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint">@</div>
                             <Input
                               value={newUsername}
                               onChange={(e) => handleNewUsernameChange(e.target.value)}
                               placeholder="novo_username"
-                              className="pl-7 pr-10 bg-white border-[#D9D7CB] text-[#0E2A3F] placeholder:text-[#8395A5] focus-visible:border-[#178E96] focus-visible:ring-[#178E96]/20"
+                              className="pl-7 pr-10 bg-surface border-line-strong text-ink placeholder:text-ink-faint focus-visible:border-brand focus-visible:ring-brand/20"
                             />
                             <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                              {checkingUsername && <Loader2 className="w-4 h-4 text-[#8395A5] animate-spin" />}
+                              {checkingUsername && <Spinner className="w-4 h-4 text-ink-faint animate-spin" />}
                               {!checkingUsername && usernameAvailable === true && <Check className="w-4 h-4 text-green-500" />}
                               {!checkingUsername && usernameAvailable === false && <X className="w-4 h-4 text-red-500" />}
                             </div>
@@ -583,11 +564,11 @@ export default function SettingsPage() {
                           <Button
                             onClick={handleUpdateUsername}
                             disabled={updatingUsername || !usernameAvailable || !!usernameError}
-                            className="bg-[#178E96] hover:bg-[#117178] text-white transition-colors duration-150"
+                            className="bg-brand hover:bg-brand-dark text-white transition-colors duration-150"
                           >
                             {updatingUsername ? (
                               <>
-                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                <Spinner className="w-4 h-4 mr-2 animate-spin" />
                                 Salvando...
                               </>
                             ) : (
@@ -596,12 +577,12 @@ export default function SettingsPage() {
                           </Button>
                         </div>
                         {usernameError && (
-                          <p className="text-xs text-red-600">{usernameError}</p>
+                          <p className="text-xs text-red-600 dark:text-red-400">{usernameError}</p>
                         )}
                         {!usernameError && usernameAvailable === true && (
-                          <p className="text-xs text-green-700">Username disponível!</p>
+                          <p className="text-xs text-green-700 dark:text-green-400">Username disponível!</p>
                         )}
-                        <p className="text-xs text-[#8395A5]">
+                        <p className="text-xs text-ink-faint">
                           Atenção: Após alterar, você deverá aguardar 30 dias para alterar novamente.
                         </p>
                       </div>
@@ -617,41 +598,34 @@ export default function SettingsPage() {
                 <SectionHeader title="Aparência" description="Customize a interface do sistema." />
 
                 <SettingsCard>
-                  <Label className="text-base text-[#0E2A3F] mb-4 block">Tema da Interface</Label>
+                  <Label className="text-base text-ink mb-4 block">Tema da Interface</Label>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     {[
-                      { id: 'light', label: 'Claro', icon: Sun, comingSoon: true },
-                      { id: 'dark', label: 'Escuro', icon: Moon, comingSoon: false },
-                      { id: 'system', label: 'Sistema', icon: Monitor, comingSoon: true },
+                      { id: 'light', label: 'Claro', desc: 'Interface clara', icon: Sun },
+                      { id: 'dark', label: 'Escuro', desc: 'Interface escura', icon: Moon },
+                      { id: 'system', label: 'Sistema', desc: 'Segue o seu dispositivo', icon: Monitor },
                     ].map((t) => {
                       const Icon = t.icon;
-                      const isSelected = theme === t.id;
-                      const isDisabled = t.comingSoon;
+                      const isSelected = mounted && theme === t.id;
                       return (
                         <div
                           key={t.id}
-                          onClick={() => !isDisabled && setTheme(t.id as 'light' | 'dark' | 'system')}
+                          onClick={() => setTheme(t.id)}
                           className={cn(
-                            "rounded-xl border-2 p-4 transition-all duration-150",
-                            isDisabled
-                              ? "cursor-not-allowed opacity-60 border-[#E9E7DC]"
-                              : "cursor-pointer hover:bg-[#F4F3EC]",
-                            isSelected && !isDisabled
-                              ? "border-[#178E96] bg-[#E5F1F1] ring-1 ring-[#178E96]/20"
-                              : !isDisabled && "border-[#E9E7DC] hover:border-[#D9D7CB]"
+                            "rounded-xl border-2 p-4 transition-all duration-150 cursor-pointer hover:bg-surface-hover",
+                            isSelected
+                              ? "border-brand bg-brand-soft ring-1 ring-brand/20"
+                              : "border-line hover:border-line-strong"
                           )}
                         >
                           <div className="flex items-center justify-between mb-3">
-                            <div className={cn("p-2 rounded-full", isSelected && !isDisabled ? "bg-[#178E96]/15 text-[#117178]" : "bg-[#F4F3EC] text-[#44586A]")}>
+                            <div className={cn("p-2 rounded-full", isSelected ? "bg-brand/15 text-brand-dark" : "bg-surface-hover text-ink-soft")}>
                               <Icon className="w-5 h-5" />
                             </div>
-                            {isDisabled ? (
-                              <Badge variant="outline" className="bg-[#F4F3EC] border-[#D9D7CB] text-[#8395A5] text-xs">Em Breve</Badge>
-                            ) : (
-                              isSelected && <CheckCircle2 className="w-5 h-5 text-[#178E96]" />
-                            )}
+                            {isSelected && <CheckCircle className="w-5 h-5 text-brand" />}
                           </div>
-                          <span className={cn("font-medium", isSelected && !isDisabled ? "text-[#117178]" : "text-[#44586A]")}>{t.label}</span>
+                          <span className={cn("font-medium block", isSelected ? "text-brand-dark" : "text-ink-soft")}>{t.label}</span>
+                          <span className="text-xs text-ink-faint">{t.desc}</span>
                         </div>
                       )
                     })}
@@ -666,14 +640,14 @@ export default function SettingsPage() {
                 <SectionHeader title="Notificações" description="Escolha o que você quer receber." />
 
                 <SettingsCard className="flex flex-col items-center justify-center py-12 text-center">
-                  <div className="p-4 rounded-full bg-[#F4F3EC] mb-4">
-                    <Bell className="w-8 h-8 text-[#8395A5]" />
+                  <div className="p-4 rounded-full bg-surface-hover mb-4">
+                    <Bell className="w-8 h-8 text-ink-faint" />
                   </div>
-                  <h3 className="text-lg font-medium text-[#0E2A3F] mb-2">Em Breve</h3>
-                  <p className="text-sm text-[#8395A5] max-w-sm">
+                  <h3 className="text-lg font-medium text-ink mb-2">Em Breve</h3>
+                  <p className="text-sm text-ink-faint max-w-sm">
                     As configurações de notificações estarão disponíveis em uma atualização futura.
                   </p>
-                  <Badge variant="outline" className="mt-4 bg-[#F4F3EC] border-[#D9D7CB] text-[#8395A5]">
+                  <Badge variant="outline" className="mt-4 bg-surface-hover border-line-strong text-ink-faint">
                     Em Desenvolvimento
                   </Badge>
                 </SettingsCard>
@@ -693,30 +667,30 @@ export default function SettingsPage() {
                       <Button
                         variant="default"
                         size="sm"
-                        className="bg-[#178E96] hover:bg-[#117178] text-white transition-colors duration-150"
+                        className="bg-brand hover:bg-brand-dark text-white transition-colors duration-150"
                         onClick={() => setShowPasswordModal(true)}
                       >
                         Redefinir
                       </Button>
                     }
                    />
-                   <Separator className="bg-[#E9E7DC]" />
+                   <Separator className="bg-line" />
                    <SettingRow
                     label="Autenticação em Dois Fatores"
                     desc="Adicione uma camada extra de segurança à sua conta."
-                    action={<Badge variant="outline" className="bg-[#F4F3EC] border-[#D9D7CB] text-[#8395A5]">Em Breve</Badge>}
+                    action={<Badge variant="outline" className="bg-surface-hover border-line-strong text-ink-faint">Em Breve</Badge>}
                    />
                 </SettingsCard>
 
                 {/* Danger Zone - Discreto */}
                 <div className="pt-6">
-                  <div className="border border-red-200 bg-red-50 rounded-xl p-5">
+                  <div className="border border-red-200 dark:border-red-500/30 bg-red-50 dark:bg-red-500/10 rounded-xl p-5">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div>
-                        <h3 className="text-sm font-medium text-red-600 mb-1">
+                        <h3 className="text-sm font-medium text-red-600 dark:text-red-400 mb-1">
                           Encerrar conta
                         </h3>
-                        <p className="text-xs text-[#8395A5]">
+                        <p className="text-xs text-ink-faint">
                           Esta ação é permanente e não pode ser desfeita.
                         </p>
                       </div>
@@ -739,13 +713,10 @@ export default function SettingsPage() {
               <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                 <SectionHeader title="Planos e Faturamento" description="Gerencie sua assinatura e métodos de pagamento." />
 
-                {/* Embedded Original Component */}
-                <PlanoManager />
-
                 <SettingsCard>
-                   <div className="flex items-center gap-4 text-[#44586A] text-sm">
+                   <div className="flex items-center gap-4 text-ink-soft text-sm">
                       <Laptop className="w-4 h-4" />
-                      <span>Precisa de uma fatura empresarial? <a href="#" className="text-[#117178] hover:underline">Entre em contato</a>.</span>
+                      <span>Precisa de uma fatura empresarial? <a href="#" className="text-brand-dark hover:underline">Entre em contato</a>.</span>
                    </div>
                 </SettingsCard>
               </div>

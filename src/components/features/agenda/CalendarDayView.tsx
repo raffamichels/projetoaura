@@ -105,21 +105,21 @@ export function CalendarDayView({ compromissos, onSlotClick, onCompromissoClick,
   return (
     <div className="flex flex-col flex-1 min-h-0 max-h-full relative">
       {/* Header com o dia - FIXO e COMPACTO */}
-      <div className="grid grid-cols-[auto_1fr] border-b border-[#E9E7DC] bg-white z-20 flex-shrink-0">
+      <div className="grid grid-cols-[auto_1fr] border-b border-line bg-surface z-20 flex-shrink-0">
         {/* Coluna de horas (vazia) */}
-        <div className="w-12 sm:w-14 md:w-16 border-r border-[#E9E7DC]"></div>
+        <div className="w-12 sm:w-14 md:w-16 border-r border-line"></div>
 
         {/* Dia */}
         <div
           className={`p-2 sm:p-2.5 text-center transition-all ${
-            isToday ? 'bg-[#E5F1F1]' : ''
+            isToday ? 'bg-brand-soft' : ''
           }`}
         >
-          <div className="text-[10px] sm:text-xs text-[#8395A5] uppercase font-medium">
+          <div className="text-[10px] sm:text-xs text-ink-faint uppercase font-medium">
             {format(currentDate, 'EEEE', { locale: ptBR })}
           </div>
           <div className={`text-xl sm:text-2xl font-bold transition-colors ${
-            isToday ? 'text-[#178E96]' : 'text-[#0E2A3F]'
+            isToday ? 'text-brand' : 'text-ink'
           }`}>
             {format(currentDate, 'd')}
           </div>
@@ -134,13 +134,13 @@ export function CalendarDayView({ compromissos, onSlotClick, onCompromissoClick,
       >
         <div className="grid grid-cols-[auto_1fr] relative" style={{ height: '1440px' }}>
           {/* Coluna de horas */}
-          <div className="w-12 sm:w-14 md:w-16 relative border-r border-[#E9E7DC] bg-white">
+          <div className="w-12 sm:w-14 md:w-16 relative border-r border-line bg-surface">
             {hours.map(hour => (
               <div
                 key={hour}
-                className="h-[60px] border-b border-[#E9E7DC] flex items-start justify-end pr-1.5 sm:pr-2 pt-0"
+                className="h-[60px] border-b border-line flex items-start justify-end pr-1.5 sm:pr-2 pt-0"
               >
-                <span className="text-[10px] sm:text-xs text-[#8395A5] -translate-y-2 font-medium">
+                <span className="text-[10px] sm:text-xs text-ink-faint -translate-y-2 font-medium">
                   {String(hour).padStart(2, '0')}:00
                 </span>
               </div>
@@ -148,13 +148,13 @@ export function CalendarDayView({ compromissos, onSlotClick, onCompromissoClick,
           </div>
 
           {/* Coluna do dia */}
-          <div className="relative bg-[#FDFCFB]">
+          <div className="relative bg-surface-soft">
             {/* Grid de horas clicável */}
             {hours.map(hour => (
               <button
                 key={hour}
                 onClick={() => onSlotClick(currentDate, hour)}
-                className="w-full h-[60px] border-b border-[#E9E7DC] hover:bg-[#E5F1F1] active:bg-[#D4EDED] transition-colors text-left block touch-manipulation"
+                className="w-full h-[60px] border-b border-line hover:bg-brand-soft active:bg-brand-soft transition-colors text-left block touch-manipulation"
               />
             ))}
 
@@ -177,12 +177,12 @@ export function CalendarDayView({ compromissos, onSlotClick, onCompromissoClick,
                     {comp.titulo}
                   </div>
                   {comp.horaFim && (
-                    <div className="text-[#8395A5] text-[10px] sm:text-xs mt-0.5">
+                    <div className="text-ink-faint text-[10px] sm:text-xs mt-0.5">
                       {comp.horaInicio} - {comp.horaFim}
                     </div>
                   )}
                   {comp.descricao && (
-                    <div className="text-[#5E7081] text-[10px] mt-1 line-clamp-2 hidden sm:block">
+                    <div className="text-ink-soft text-[10px] mt-1 line-clamp-2 hidden sm:block">
                       {comp.descricao}
                     </div>
                   )}
@@ -197,7 +197,7 @@ export function CalendarDayView({ compromissos, onSlotClick, onCompromissoClick,
                 style={{ top: `${getCurrentTimePosition()}px` }}
               >
                 <div className="absolute -left-1.5 -top-1.5 w-3 h-3 bg-red-500 rounded-full shadow-lg shadow-red-500/50 animate-pulse"></div>
-                <div className="absolute -left-1 -top-1 w-2 h-2 bg-white rounded-full"></div>
+                <div className="absolute -left-1 -top-1 w-2 h-2 bg-surface rounded-full"></div>
               </div>
             )}
           </div>

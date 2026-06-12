@@ -12,7 +12,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2, Eye, EyeOff, Lock, CheckCircle2, XCircle } from 'lucide-react';
+import { Spinner, Eye, EyeSlash, Lock, CheckCircle, XCircle } from '@phosphor-icons/react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
@@ -82,7 +82,7 @@ export function ChangePasswordModal({ isOpen, onClose }: ChangePasswordModalProp
       <DialogContent className="bg-zinc-900 border-zinc-800 max-w-md">
         <DialogHeader>
           <DialogTitle className="text-zinc-100 flex items-center gap-2">
-            <Lock className="w-5 h-5 text-aura-400" />
+            <Lock className="w-5 h-5 text-brand" />
             Alterar Senha
           </DialogTitle>
           <DialogDescription className="text-zinc-400">
@@ -103,14 +103,14 @@ export function ChangePasswordModal({ isOpen, onClose }: ChangePasswordModalProp
                 value={senhaAtual}
                 onChange={(e) => setSenhaAtual(e.target.value)}
                 placeholder="Digite sua senha atual"
-                className="bg-zinc-950/50 border-zinc-800 focus-visible:ring-aura-500/50 text-zinc-100 pr-10"
+                className="bg-zinc-950/50 border-zinc-800 focus-visible:ring-brand/50 text-zinc-100 pr-10"
               />
               <button
                 type="button"
                 onClick={() => setShowSenhaAtual(!showSenhaAtual)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300"
               >
-                {showSenhaAtual ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                {showSenhaAtual ? <EyeSlash className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             </div>
           </div>
@@ -127,14 +127,14 @@ export function ChangePasswordModal({ isOpen, onClose }: ChangePasswordModalProp
                 value={novaSenha}
                 onChange={(e) => setNovaSenha(e.target.value)}
                 placeholder="Digite sua nova senha"
-                className="bg-zinc-950/50 border-zinc-800 focus-visible:ring-aura-500/50 text-zinc-100 pr-10"
+                className="bg-zinc-950/50 border-zinc-800 focus-visible:ring-brand/50 text-zinc-100 pr-10"
               />
               <button
                 type="button"
                 onClick={() => setShowNovaSenha(!showNovaSenha)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300"
               >
-                {showNovaSenha ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                {showNovaSenha ? <EyeSlash className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             </div>
             {novaSenha && (
@@ -143,28 +143,28 @@ export function ChangePasswordModal({ isOpen, onClose }: ChangePasswordModalProp
                   "flex items-center gap-1 text-xs",
                   senhaMinLength ? "text-green-500" : "text-zinc-500"
                 )}>
-                  {senhaMinLength ? <CheckCircle2 className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
+                  {senhaMinLength ? <CheckCircle className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
                   Mínimo 8 caracteres
                 </div>
                 <div className={cn(
                   "flex items-center gap-1 text-xs",
                   temMaiuscula ? "text-green-500" : "text-zinc-500"
                 )}>
-                  {temMaiuscula ? <CheckCircle2 className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
+                  {temMaiuscula ? <CheckCircle className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
                   Uma letra maiúscula
                 </div>
                 <div className={cn(
                   "flex items-center gap-1 text-xs",
                   temMinuscula ? "text-green-500" : "text-zinc-500"
                 )}>
-                  {temMinuscula ? <CheckCircle2 className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
+                  {temMinuscula ? <CheckCircle className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
                   Uma letra minúscula
                 </div>
                 <div className={cn(
                   "flex items-center gap-1 text-xs",
                   temNumero ? "text-green-500" : "text-zinc-500"
                 )}>
-                  {temNumero ? <CheckCircle2 className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
+                  {temNumero ? <CheckCircle className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
                   Um número
                 </div>
               </div>
@@ -183,14 +183,14 @@ export function ChangePasswordModal({ isOpen, onClose }: ChangePasswordModalProp
                 value={confirmarSenha}
                 onChange={(e) => setConfirmarSenha(e.target.value)}
                 placeholder="Confirme sua nova senha"
-                className="bg-zinc-950/50 border-zinc-800 focus-visible:ring-aura-500/50 text-zinc-100 pr-10"
+                className="bg-zinc-950/50 border-zinc-800 focus-visible:ring-brand/50 text-zinc-100 pr-10"
               />
               <button
                 type="button"
                 onClick={() => setShowConfirmarSenha(!showConfirmarSenha)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300"
               >
-                {showConfirmarSenha ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                {showConfirmarSenha ? <EyeSlash className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             </div>
             {confirmarSenha && (
@@ -200,7 +200,7 @@ export function ChangePasswordModal({ isOpen, onClose }: ChangePasswordModalProp
               )}>
                 {senhasMatch ? (
                   <>
-                    <CheckCircle2 className="w-3 h-3" />
+                    <CheckCircle className="w-3 h-3" />
                     Senhas coincidem
                   </>
                 ) : (
@@ -230,7 +230,7 @@ export function ChangePasswordModal({ isOpen, onClose }: ChangePasswordModalProp
           >
             {isSubmitting ? (
               <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                <Spinner className="w-4 h-4 mr-2 animate-spin" />
                 Alterando...
               </>
             ) : (
