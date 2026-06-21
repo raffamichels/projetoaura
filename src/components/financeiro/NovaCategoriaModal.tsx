@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,6 +18,12 @@ interface NovaCategoriaModalProps {
   aberto: boolean;
   onFechar: () => void;
   onSucesso: () => void;
+  categoria?: {
+    id: string;
+    nome: string;
+    tipo: 'RECEITA' | 'DESPESA';
+    cor: string;
+  } | null;
 }
 
 const CORES_DISPONIVEIS = [
@@ -31,11 +37,18 @@ const CORES_DISPONIVEIS = [
   { nome: 'Amarelo', valor: '#F59E0B' },
 ];
 
-export default function NovaCategoriaModal({ aberto, onFechar, onSucesso }: NovaCategoriaModalProps) {
+export default function NovaCategoriaModal({ aberto, onFechar, onSucesso, categoria }: NovaCategoriaModalProps) {
   const [carregando, setCarregando] = useState(false);
   const [nome, setNome] = useState('');
   const [tipo, setTipo] = useState<'RECEITA' | 'DESPESA'>('DESPESA');
   const [cor, setCor] = useState('#8B5CF6');
+
+  useEffect(() => {
+    if (!aberto) return;
+    setNome(categoria?.nome || '');
+    setTipo(categoria?.tipo || 'DESPESA');
+    setCor(categoria?.cor || '#8B5CF6');
+  }, [aberto, categoria]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,8 +62,8 @@ export default function NovaCategoriaModal({ aberto, onFechar, onSucesso }: Nova
         icone: 'tag',
       };
 
-      const response = await fetch('/api/v1/financeiro/categorias', {
-        method: 'POST',
+      const response = await fetch(categoria ? `/api/v1/financeiro/categorias/${categoria.id}` : '/api/v1/financeiro/categorias', {
+        method: categoria ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       });
@@ -61,11 +74,11 @@ export default function NovaCategoriaModal({ aberto, onFechar, onSucesso }: Nova
         onFechar();
       } else {
         const error = await response.json();
-        alert(error.error || 'Erro ao criar categoria');
+        alert(error.error || `Erro ao ${categoria ? 'editar' : 'criar'} categoria`);
       }
     } catch (error) {
       console.error('Erro:', error);
-      alert('Erro ao criar categoria');
+      alert(`Erro ao ${categoria ? 'editar' : 'criar'} categoria`);
     } finally {
       setCarregando(false);
     }
@@ -82,7 +95,7 @@ export default function NovaCategoriaModal({ aberto, onFechar, onSucesso }: Nova
       <DialogContent className="bg-surface border-line max-w-md">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-ink">
-            Nova Categoria
+            {categoria ? 'Editar Categoria' : 'Nova Categoria'}
           </DialogTitle>
         </DialogHeader>
 
@@ -203,7 +216,7 @@ export default function NovaCategoriaModal({ aberto, onFechar, onSucesso }: Nova
                   Salvando...
                 </>
               ) : (
-                'Criar Categoria'
+                categoria ? 'Salvar Alterações' : 'Criar Categoria'
               )}
             </Button>
           </div>

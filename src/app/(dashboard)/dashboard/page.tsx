@@ -11,6 +11,7 @@ import { startOfDay, endOfDay, parseISO, isWithinInterval } from 'date-fns';
 import { AtividadesRecentes } from '@/components/dashboard/AtividadesRecentes';
 import { useTranslations } from 'next-intl';
 import { usePlano } from '@/hooks/usePlano';
+import { formatarMoeda } from '@/lib/financeiro-helper';
 
 export default function DashboardPage() {
   const t = useTranslations('dashboard');
@@ -20,12 +21,16 @@ export default function DashboardPage() {
   const router = useRouter();
   const [compromissosHoje, setCompromissosHoje] = useState(0);
   const [loadingCompromissos, setLoadingCompromissos] = useState(true);
+  const [saldoMes, setSaldoMes] = useState(0);
+  const [transacoesMes, setTransacoesMes] = useState(0);
+  const [loadingFinanceiro, setLoadingFinanceiro] = useState(true);
   const { ehFree } = usePlano();
 
   // Buscar compromissos de hoje
   useEffect(() => {
     if (session) {
       fetchCompromissosHoje();
+      fetchResumoFinanceiro();
     }
   }, [session]);
 
@@ -108,6 +113,21 @@ export default function DashboardPage() {
     router.push('/dashboard/biblioteca');
   };
 
+  const fetchResumoFinanceiro = async () => {
+    try {
+      const response = await fetch('/api/v1/financeiro/dashboard');
+      if (response.ok) {
+        const data = await response.json();
+        setSaldoMes(Number(data.data?.resumoMensal?.saldo) || 0);
+        setTransacoesMes(Number(data.data?.estatisticas?.totalTransacoesMes) || 0);
+      }
+    } catch (error) {
+      console.error('Erro ao buscar resumo financeiro:', error);
+    } finally {
+      setLoadingFinanceiro(false);
+    }
+  };
+
   // Função para ir para metas
   const handleIrParaMetas = () => {
     router.push('/dashboard/metas');
@@ -188,10 +208,16 @@ export default function DashboardPage() {
             <Wallet className="w-4 h-4 text-green-600 dark:text-green-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-ink">R$ 0,00</div>
+            {loadingFinanceiro ? (
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-brand" />
+            ) : (
+              <div className={`text-2xl font-bold ${saldoMes < 0 ? 'text-red-600 dark:text-red-400' : 'text-ink'}`}>
+                {formatarMoeda(saldoMes)}
+              </div>
+            )}
             <p className="text-xs text-green-600 dark:text-green-400 mt-1 flex items-center gap-1">
               <TrendUp className="w-3 h-3" />
-              {t('configureFinances')}
+              {transacoesMes === 0 ? t('configureFinances') : t('monthlyBalanceDescription')}
             </p>
           </CardContent>
         </Card>

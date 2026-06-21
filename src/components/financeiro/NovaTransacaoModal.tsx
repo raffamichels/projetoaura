@@ -64,6 +64,16 @@ export default function NovaTransacaoModal({ aberto, onFechar, onSucesso }: Nova
   const [contas, setContas] = useState<Conta[]>([]);
   const [cartoes, setCartoes] = useState<Cartao[]>([]);
 
+  const handleMensalChange = (checked: boolean) => {
+    setIsFixa(checked);
+    if (checked) setIsParcela(false);
+  };
+
+  const handleParcelaChange = (checked: boolean) => {
+    setIsParcela(checked);
+    if (checked) setIsFixa(false);
+  };
+
   useEffect(() => {
     if (aberto) {
       carregarDados();
@@ -328,19 +338,22 @@ export default function NovaTransacaoModal({ aberto, onFechar, onSucesso }: Nova
 
           {/* Opções Especiais */}
           <div className="space-y-4 p-4 bg-surface-hover rounded-lg border border-line">
-            {/* Despesa Fixa */}
-            {tipo === 'DESPESA' && (
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label className="text-ink-soft">Despesa Fixa (Mensal)</Label>
-                  <p className="text-xs text-ink-faint">Repete todo mês automaticamente</p>
-                </div>
-                <Switch
-                  checked={isFixa}
-                  onCheckedChange={setIsFixa}
-                />
+            {/* Movimentação mensal */}
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <Label className="text-ink-soft">
+                  {tipo === 'RECEITA' ? 'Receita Mensal' : 'Despesa Mensal'}
+                </Label>
+                <p className="text-xs text-ink-faint">
+                  Marcar como {tipo === 'RECEITA' ? 'entrada' : 'saída'} recorrente mensal
+                </p>
               </div>
-            )}
+              <Switch
+                checked={isFixa}
+                onCheckedChange={handleMensalChange}
+                aria-label={tipo === 'RECEITA' ? 'Receita mensal' : 'Despesa mensal'}
+              />
+            </div>
 
             {/* Parcelamento */}
             <div className="space-y-3">
@@ -351,7 +364,7 @@ export default function NovaTransacaoModal({ aberto, onFechar, onSucesso }: Nova
                 </div>
                 <Switch
                   checked={isParcela}
-                  onCheckedChange={setIsParcela}
+                  onCheckedChange={handleParcelaChange}
                 />
               </div>
               {isParcela && (

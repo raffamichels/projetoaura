@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,6 +19,14 @@ interface NovaContaModalProps {
   aberto: boolean;
   onFechar: () => void;
   onSucesso: () => void;
+  conta?: {
+    id: string;
+    nome: string;
+    tipo: 'CORRENTE' | 'POUPANCA' | 'INVESTIMENTO';
+    banco?: string;
+    cor: string;
+    ativa: boolean;
+  } | null;
 }
 
 const CORES_DISPONIVEIS = [
@@ -32,13 +40,22 @@ const CORES_DISPONIVEIS = [
   { nome: 'Índigo', valor: '#6366F1' },
 ];
 
-export default function NovaContaModal({ aberto, onFechar, onSucesso }: NovaContaModalProps) {
+export default function NovaContaModal({ aberto, onFechar, onSucesso, conta }: NovaContaModalProps) {
   const [carregando, setCarregando] = useState(false);
   const [nome, setNome] = useState('');
   const [tipo, setTipo] = useState<'CORRENTE' | 'POUPANCA' | 'INVESTIMENTO'>('CORRENTE');
   const [banco, setBanco] = useState('');
   const [saldoInicial, setSaldoInicial] = useState('');
   const [cor, setCor] = useState('#10B981');
+
+  useEffect(() => {
+    if (!aberto) return;
+    setNome(conta?.nome || '');
+    setTipo(conta?.tipo || 'CORRENTE');
+    setBanco(conta?.banco || '');
+    setSaldoInicial('');
+    setCor(conta?.cor || '#10B981');
+  }, [aberto, conta]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,8 +71,8 @@ export default function NovaContaModal({ aberto, onFechar, onSucesso }: NovaCont
         icone: 'wallet',
       };
 
-      const response = await fetch('/api/v1/financeiro/contas', {
-        method: 'POST',
+      const response = await fetch(conta ? `/api/v1/financeiro/contas/${conta.id}` : '/api/v1/financeiro/contas', {
+        method: conta ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       });
@@ -66,11 +83,11 @@ export default function NovaContaModal({ aberto, onFechar, onSucesso }: NovaCont
         onFechar();
       } else {
         const error = await response.json();
-        alert(error.error || 'Erro ao criar conta');
+        alert(error.error || `Erro ao ${conta ? 'editar' : 'criar'} conta`);
       }
     } catch (error) {
       console.error('Erro:', error);
-      alert('Erro ao criar conta');
+      alert(`Erro ao ${conta ? 'editar' : 'criar'} conta`);
     } finally {
       setCarregando(false);
     }
@@ -89,7 +106,7 @@ export default function NovaContaModal({ aberto, onFechar, onSucesso }: NovaCont
       <DialogContent className="bg-surface border-line max-w-md">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-ink">
-            Nova Conta Bancária
+            {conta ? 'Editar Conta Bancária' : 'Nova Conta Bancária'}
           </DialogTitle>
         </DialogHeader>
 
@@ -139,7 +156,7 @@ export default function NovaContaModal({ aberto, onFechar, onSucesso }: NovaCont
           </div>
 
           {/* Saldo Inicial */}
-          <div>
+          {!conta && <div>
             <Label className="text-ink-soft">Saldo Inicial</Label>
             <Input
               type="number"
@@ -149,7 +166,7 @@ export default function NovaContaModal({ aberto, onFechar, onSucesso }: NovaCont
               placeholder="0,00"
               className="bg-surface border-line-strong text-ink placeholder:text-ink-faint focus:border-brand focus:ring-brand/20"
             />
-          </div>
+          </div>}
 
           {/* Cor */}
           <div>
@@ -192,7 +209,7 @@ export default function NovaContaModal({ aberto, onFechar, onSucesso }: NovaCont
                   Salvando...
                 </>
               ) : (
-                'Criar Conta'
+                conta ? 'Salvar Alterações' : 'Criar Conta'
               )}
             </Button>
           </div>

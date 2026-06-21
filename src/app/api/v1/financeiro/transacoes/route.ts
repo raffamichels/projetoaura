@@ -299,7 +299,7 @@ export async function POST(req: NextRequest) {
       await registrarAtividade({
         userId: user.id,
         tipo: 'financeiro_transacao_criada',
-        titulo: `${tipo === 'RECEITA' ? 'Receita' : 'Despesa'} fixa: ${descricao}`,
+        titulo: `${tipo === 'RECEITA' ? 'Receita' : 'Despesa'} mensal: ${descricao}`,
         descricao: `R$ ${valor.toFixed(2)} • Mensal`,
         metadata: {
           transacaoId: transacao.id,
@@ -309,7 +309,7 @@ export async function POST(req: NextRequest) {
       });
 
       return NextResponse.json(
-        { message: 'Despesa fixa criada com sucesso', data: transacao },
+        { message: `${tipo === 'RECEITA' ? 'Receita' : 'Despesa'} mensal criada com sucesso`, data: transacao },
         { status: 201 }
       );
     }

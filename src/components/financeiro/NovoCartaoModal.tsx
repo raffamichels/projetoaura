@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,6 +12,17 @@ interface NovoCartaoModalProps {
   aberto: boolean;
   onFechar: () => void;
   onSucesso: () => void;
+  cartao?: {
+    id: string;
+    nome: string;
+    bandeira?: string;
+    ultimosDigitos?: string;
+    limite?: number;
+    diaVencimento?: number;
+    diaFechamento?: number;
+    cor: string;
+    ativo: boolean;
+  } | null;
 }
 
 const CORES_DISPONIVEIS = [
@@ -25,7 +36,7 @@ const CORES_DISPONIVEIS = [
   { nome: 'Índigo', valor: '#6366F1' },
 ];
 
-export default function NovoCartaoModal({ aberto, onFechar, onSucesso }: NovoCartaoModalProps) {
+export default function NovoCartaoModal({ aberto, onFechar, onSucesso, cartao }: NovoCartaoModalProps) {
   const [carregando, setCarregando] = useState(false);
   const [nome, setNome] = useState('');
   const [bandeira, setBandeira] = useState('');
@@ -34,6 +45,17 @@ export default function NovoCartaoModal({ aberto, onFechar, onSucesso }: NovoCar
   const [diaVencimento, setDiaVencimento] = useState('');
   const [diaFechamento, setDiaFechamento] = useState('');
   const [cor, setCor] = useState('#3B82F6');
+
+  useEffect(() => {
+    if (!aberto) return;
+    setNome(cartao?.nome || '');
+    setBandeira(cartao?.bandeira || '');
+    setUltimosDigitos(cartao?.ultimosDigitos || '');
+    setLimite(cartao?.limite?.toString() || '');
+    setDiaVencimento(cartao?.diaVencimento?.toString() || '');
+    setDiaFechamento(cartao?.diaFechamento?.toString() || '');
+    setCor(cartao?.cor || '#3B82F6');
+  }, [aberto, cartao]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,8 +73,8 @@ export default function NovoCartaoModal({ aberto, onFechar, onSucesso }: NovoCar
         icone: 'credit-card',
       };
 
-      const response = await fetch('/api/v1/financeiro/cartoes', {
-        method: 'POST',
+      const response = await fetch(cartao ? `/api/v1/financeiro/cartoes/${cartao.id}` : '/api/v1/financeiro/cartoes', {
+        method: cartao ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       });
@@ -63,11 +85,11 @@ export default function NovoCartaoModal({ aberto, onFechar, onSucesso }: NovoCar
         onFechar();
       } else {
         const error = await response.json();
-        alert(error.error || 'Erro ao criar cartão');
+        alert(error.error || `Erro ao ${cartao ? 'editar' : 'criar'} cartão`);
       }
     } catch (error) {
       console.error('Erro:', error);
-      alert('Erro ao criar cartão');
+      alert(`Erro ao ${cartao ? 'editar' : 'criar'} cartão`);
     } finally {
       setCarregando(false);
     }
@@ -88,7 +110,7 @@ export default function NovoCartaoModal({ aberto, onFechar, onSucesso }: NovoCar
       <DialogContent className="bg-surface border-line max-w-md">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-ink">
-            Novo Cartão de Crédito
+            {cartao ? 'Editar Cartão de Crédito' : 'Novo Cartão de Crédito'}
           </DialogTitle>
         </DialogHeader>
 
@@ -210,7 +232,7 @@ export default function NovoCartaoModal({ aberto, onFechar, onSucesso }: NovoCar
                   Salvando...
                 </>
               ) : (
-                'Criar Cartão'
+                cartao ? 'Salvar Alterações' : 'Criar Cartão'
               )}
             </Button>
           </div>

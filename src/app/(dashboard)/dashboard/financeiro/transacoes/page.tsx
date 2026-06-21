@@ -1,10 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Plus, TrendUp, TrendDown, Calendar, MagnifyingGlass, Funnel, CreditCard, Wallet, Tag, DotsThreeVertical, PencilSimple, Trash, ArrowsDownUp } from '@phosphor-icons/react';
+import { ArrowLeft, Plus, TrendUp, TrendDown, Calendar, MagnifyingGlass, Funnel, CreditCard, Wallet, Tag, DotsThreeVertical, PencilSimple, Trash, ArrowsDownUp } from '@phosphor-icons/react';
 import { formatarDataFinanceira, formatarMoeda } from '@/lib/financeiro-helper';
 import NovaTransacaoModal from '@/components/financeiro/NovaTransacaoModal';
 
@@ -32,6 +33,7 @@ interface Transacao {
 }
 
 export default function TransacoesPage() {
+  const router = useRouter();
   const [transacoes, setTransacoes] = useState<Transacao[]>([]);
   const [loading, setLoading] = useState(true);
   const [filtroTipo, setFiltroTipo] = useState<'TODOS' | 'RECEITA' | 'DESPESA'>('TODOS');
@@ -79,6 +81,9 @@ export default function TransacoesPage() {
 
   return (
     <div className="p-4 lg:p-6 space-y-4 sm:space-y-6">
+      <Button variant="ghost" onClick={() => router.push('/dashboard/financeiro')} className="text-ink-soft">
+        <ArrowLeft className="w-4 h-4 mr-2" /> Voltar ao Financeiro
+      </Button>
       <div className="relative mb-8">
         <div className="relative">
           <div className="flex justify-between items-start mb-6">
@@ -260,7 +265,7 @@ export default function TransacoesPage() {
                     </h3>
                     {transacao.isFixa && (
                       <span className="px-2 py-0.5 bg-brand-soft text-brand-dark text-xs rounded-full">
-                        Fixa
+                        Mensal
                       </span>
                     )}
                     {transacao.isParcela && (

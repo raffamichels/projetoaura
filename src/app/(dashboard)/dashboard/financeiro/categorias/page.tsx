@@ -1,10 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Plus, Tag, TrendUp, TrendDown, GridFour, ListBullets, PencilSimple, Trash, DotsThreeVertical } from '@phosphor-icons/react';
+import { ArrowLeft, Plus, Tag, TrendUp, TrendDown, GridFour, ListBullets, PencilSimple, Trash, DotsThreeVertical } from '@phosphor-icons/react';
 import NovaCategoriaModal from '@/components/financeiro/NovaCategoriaModal';
+import { toast } from 'sonner';
 
 interface Categoria {
   id: string;
@@ -16,12 +18,14 @@ interface Categoria {
 }
 
 export default function CategoriasPage() {
+  const router = useRouter();
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [loading, setLoading] = useState(true);
   const [visualizacao, setVisualizacao] = useState<'grid' | 'lista'>('grid');
   const [filtroTipo, setFiltroTipo] = useState<'TODOS' | 'RECEITA' | 'DESPESA'>('TODOS');
   const [menuAberto, setMenuAberto] = useState<string | null>(null);
   const [modalAberto, setModalAberto] = useState(false);
+  const [categoriaSelecionada, setCategoriaSelecionada] = useState<Categoria | null>(null);
 
   useEffect(() => {
     carregarCategorias();
@@ -50,8 +54,31 @@ export default function CategoriasPage() {
   const categoriasReceita = categorias.filter((c) => c.tipo === 'RECEITA');
   const categoriasDespesa = categorias.filter((c) => c.tipo === 'DESPESA');
 
+  const editarCategoria = (categoria: Categoria) => {
+    setCategoriaSelecionada(categoria);
+    setModalAberto(true);
+    setMenuAberto(null);
+  };
+
+  const excluirCategoria = async (categoria: Categoria) => {
+    if (!window.confirm(`Excluir a categoria "${categoria.nome}" permanentemente?`)) return;
+    try {
+      const response = await fetch(`/api/v1/financeiro/categorias/${categoria.id}`, { method: 'DELETE' });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'Erro ao excluir categoria');
+      toast.success('Categoria excluída');
+      setMenuAberto(null);
+      await carregarCategorias();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Erro ao excluir categoria');
+    }
+  };
+
   return (
     <div className="p-4 lg:p-6 space-y-4 sm:space-y-6">
+      <Button variant="ghost" onClick={() => router.push('/dashboard/financeiro')} className="text-ink-soft">
+        <ArrowLeft className="w-4 h-4 mr-2" /> Voltar ao Financeiro
+      </Button>
       <div className="relative mb-8">
         <div className="relative">
           <div className="flex justify-between items-start mb-6">
@@ -62,7 +89,7 @@ export default function CategoriasPage() {
               <p className="text-ink-soft mt-2">Organize suas transações por categorias</p>
             </div>
             <Button
-              onClick={() => setModalAberto(true)}
+              onClick={() => { setCategoriaSelecionada(null); setModalAberto(true); }}
               className="bg-brand hover:bg-brand-dark text-white transition-colors duration-150"
               size="lg"
             >
@@ -154,7 +181,7 @@ export default function CategoriasPage() {
             <p className="text-ink-soft mb-6">
               Crie categorias para organizar suas transações
             </p>
-            <Button className="bg-brand hover:bg-brand-dark text-white">
+            <Button onClick={() => { setCategoriaSelecionada(null); setModalAberto(true); }} className="bg-brand hover:bg-brand-dark text-white">
               <Plus className="w-4 h-4 mr-2" />
               Criar Primeira Categoria
             </Button>
@@ -222,11 +249,11 @@ export default function CategoriasPage() {
 
                         {menuAberto === categoria.id && (
                           <div className="absolute right-2 top-10 w-40 bg-surface border border-line rounded-lg shadow-lg z-10">
-                            <button className="w-full px-3 py-2 text-left text-sm text-ink-soft hover:bg-surface-hover flex items-center gap-2">
+                            <button onClick={() => editarCategoria(categoria)} className="w-full px-3 py-2 text-left text-sm text-ink-soft hover:bg-surface-hover flex items-center gap-2">
                               <PencilSimple className="w-3.5 h-3.5" />
                               Editar
                             </button>
-                            <button className="w-full px-3 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-surface-hover flex items-center gap-2">
+                            <button onClick={() => void excluirCategoria(categoria)} className="w-full px-3 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-surface-hover flex items-center gap-2">
                               <Trash className="w-3.5 h-3.5" />
                               Excluir
                             </button>
@@ -279,11 +306,11 @@ export default function CategoriasPage() {
 
                         {menuAberto === categoria.id && (
                           <div className="absolute right-4 top-14 w-40 bg-surface border border-line rounded-lg shadow-lg z-10">
-                            <button className="w-full px-3 py-2 text-left text-sm text-ink-soft hover:bg-surface-hover flex items-center gap-2">
+                            <button onClick={() => editarCategoria(categoria)} className="w-full px-3 py-2 text-left text-sm text-ink-soft hover:bg-surface-hover flex items-center gap-2">
                               <PencilSimple className="w-3.5 h-3.5" />
                               Editar
                             </button>
-                            <button className="w-full px-3 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-surface-hover flex items-center gap-2">
+                            <button onClick={() => void excluirCategoria(categoria)} className="w-full px-3 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-surface-hover flex items-center gap-2">
                               <Trash className="w-3.5 h-3.5" />
                               Excluir
                             </button>
@@ -352,11 +379,11 @@ export default function CategoriasPage() {
 
                         {menuAberto === categoria.id && (
                           <div className="absolute right-2 top-10 w-40 bg-surface border border-line rounded-lg shadow-lg z-10">
-                            <button className="w-full px-3 py-2 text-left text-sm text-ink-soft hover:bg-surface-hover flex items-center gap-2">
+                            <button onClick={() => editarCategoria(categoria)} className="w-full px-3 py-2 text-left text-sm text-ink-soft hover:bg-surface-hover flex items-center gap-2">
                               <PencilSimple className="w-3.5 h-3.5" />
                               Editar
                             </button>
-                            <button className="w-full px-3 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-surface-hover flex items-center gap-2">
+                            <button onClick={() => void excluirCategoria(categoria)} className="w-full px-3 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-surface-hover flex items-center gap-2">
                               <Trash className="w-3.5 h-3.5" />
                               Excluir
                             </button>
@@ -405,11 +432,11 @@ export default function CategoriasPage() {
 
                         {menuAberto === categoria.id && (
                           <div className="absolute right-4 top-14 w-40 bg-surface border border-line rounded-lg shadow-lg z-10">
-                            <button className="w-full px-3 py-2 text-left text-sm text-ink-soft hover:bg-surface-hover flex items-center gap-2">
+                            <button onClick={() => editarCategoria(categoria)} className="w-full px-3 py-2 text-left text-sm text-ink-soft hover:bg-surface-hover flex items-center gap-2">
                               <PencilSimple className="w-3.5 h-3.5" />
                               Editar
                             </button>
-                            <button className="w-full px-3 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-surface-hover flex items-center gap-2">
+                            <button onClick={() => void excluirCategoria(categoria)} className="w-full px-3 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-surface-hover flex items-center gap-2">
                               <Trash className="w-3.5 h-3.5" />
                               Excluir
                             </button>
@@ -428,7 +455,8 @@ export default function CategoriasPage() {
       {/* Modal de Nova Categoria */}
       <NovaCategoriaModal
         aberto={modalAberto}
-        onFechar={() => setModalAberto(false)}
+        categoria={categoriaSelecionada}
+        onFechar={() => { setModalAberto(false); setCategoriaSelecionada(null); }}
         onSucesso={() => {
           carregarCategorias();
         }}

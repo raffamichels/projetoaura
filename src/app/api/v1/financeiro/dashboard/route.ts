@@ -81,12 +81,32 @@ export async function GET(req: NextRequest) {
       where: { 
         userId: user.id,
         ativa: true,
+        createdAt: { lt: dataFim },
       },
     });
 
-    const saldoContas = contas.reduce((acc, conta) => {
-      return acc + decimalParaNumero(conta.saldoAtual);
+    // Reconstruir o saldo no fim do mês selecionado. Usar saldoAtual faria
+    // uma conta criada em junho aparecer indevidamente ao consultar maio.
+    const transacoesAteOFimDoMes = contas.length > 0
+      ? await prisma.transacao.findMany({
+          where: {
+            userId: user.id,
+            contaBancariaId: { in: contas.map((conta) => conta.id) },
+            data: { lt: dataFim },
+          },
+          select: { valor: true, tipo: true },
+        })
+      : [];
+
+    const saldoInicialContas = contas.reduce(
+      (acc, conta) => acc + decimalParaNumero(conta.saldoInicial),
+      0
+    );
+    const movimentacaoAteOFimDoMes = transacoesAteOFimDoMes.reduce((acc, transacao) => {
+      const valor = decimalParaNumero(transacao.valor);
+      return acc + (transacao.tipo === 'RECEITA' ? valor : -valor);
     }, 0);
+    const saldoContas = saldoInicialContas + movimentacaoAteOFimDoMes;
 
     // Buscar objetivos ativos
     const objetivos = await prisma.objetivoFinanceiro.findMany({

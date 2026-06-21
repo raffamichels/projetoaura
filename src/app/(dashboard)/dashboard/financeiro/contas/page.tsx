@@ -1,12 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Plus, Wallet, CreditCard, TrendUp, TrendDown, Buildings, Eye, EyeSlash, DotsThreeVertical, PencilSimple, Trash, Archive } from '@phosphor-icons/react';
+import { ArrowLeft, Plus, Wallet, CreditCard, TrendUp, TrendDown, Buildings, Eye, EyeSlash, DotsThreeVertical, PencilSimple, Trash, Archive } from '@phosphor-icons/react';
 import { formatarMoeda } from '@/lib/financeiro-helper';
 import NovaContaModal from '@/components/financeiro/NovaContaModal';
 import NovoCartaoModal from '@/components/financeiro/NovoCartaoModal';
+import { toast } from 'sonner';
 
 interface ContaBancaria {
   id: string;
@@ -32,6 +34,7 @@ interface Cartao {
 }
 
 export default function ContasPage() {
+  const router = useRouter();
   const [contas, setContas] = useState<ContaBancaria[]>([]);
   const [cartoes, setCartoes] = useState<Cartao[]>([]);
   const [loading, setLoading] = useState(true);
@@ -39,6 +42,8 @@ export default function ContasPage() {
   const [menuAberto, setMenuAberto] = useState<string | null>(null);
   const [modalContaAberto, setModalContaAberto] = useState(false);
   const [modalCartaoAberto, setModalCartaoAberto] = useState(false);
+  const [contaSelecionada, setContaSelecionada] = useState<ContaBancaria | null>(null);
+  const [cartaoSelecionado, setCartaoSelecionado] = useState<Cartao | null>(null);
 
   useEffect(() => {
     carregarDados();
@@ -83,8 +88,63 @@ export default function ContasPage() {
     return labels[tipo] || tipo;
   };
 
+  const atualizarConta = async (conta: ContaBancaria, ativa: boolean) => {
+    const response = await fetch(`/api/v1/financeiro/contas/${conta.id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...conta, ativa, icone: 'wallet' }),
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || 'Erro ao atualizar conta');
+  };
+
+  const arquivarConta = async (conta: ContaBancaria) => {
+    try {
+      await atualizarConta(conta, false);
+      toast.success('Conta arquivada');
+      setMenuAberto(null);
+      await carregarDados();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Erro ao arquivar conta');
+    }
+  };
+
+  const excluirItem = async (tipo: 'contas' | 'cartoes', id: string, nome: string) => {
+    if (!window.confirm(`Excluir "${nome}" permanentemente?`)) return;
+    try {
+      const response = await fetch(`/api/v1/financeiro/${tipo}/${id}`, { method: 'DELETE' });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'Erro ao excluir');
+      toast.success(tipo === 'contas' ? 'Conta excluída' : 'Cartão excluído');
+      setMenuAberto(null);
+      await carregarDados();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Erro ao excluir');
+    }
+  };
+
+  const desativarCartao = async (cartao: Cartao) => {
+    try {
+      const response = await fetch(`/api/v1/financeiro/cartoes/${cartao.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...cartao, ativo: false, icone: 'credit-card' }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'Erro ao desativar cartão');
+      toast.success('Cartão desativado');
+      setMenuAberto(null);
+      await carregarDados();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Erro ao desativar cartão');
+    }
+  };
+
   return (
     <div className="p-4 lg:p-6 space-y-4 sm:space-y-6">
+      <Button variant="ghost" onClick={() => router.push('/dashboard/financeiro')} className="text-ink-soft">
+        <ArrowLeft className="w-4 h-4 mr-2" /> Voltar ao Financeiro
+      </Button>
       <div className="relative mb-8">
         <div className="relative">
           <div className="flex justify-between items-start mb-6">
@@ -108,7 +168,7 @@ export default function ContasPage() {
                 {ocultarSaldos ? 'Mostrar' : 'Ocultar'}
               </Button>
               <Button
-                onClick={() => setModalContaAberto(true)}
+                onClick={() => { setContaSelecionada(null); setModalContaAberto(true); }}
                 className="bg-brand hover:bg-brand-dark text-white transition-colors duration-150"
                 size="lg"
               >
@@ -166,7 +226,7 @@ export default function ContasPage() {
                 Contas Bancárias
               </h2>
               <Button
-                onClick={() => setModalContaAberto(true)}
+                onClick={() => { setContaSelecionada(null); setModalContaAberto(true); }}
                 variant="default"
                 className="bg-surface border border-line text-ink-soft hover:bg-surface-hover duration-150"
               >
@@ -188,7 +248,7 @@ export default function ContasPage() {
                     Adicione suas contas bancárias para começar
                   </p>
                   <Button
-                    onClick={() => setModalContaAberto(true)}
+                    onClick={() => { setContaSelecionada(null); setModalContaAberto(true); }}
                     className="bg-brand hover:bg-brand-dark text-white"
                   >
                     <Plus className="w-4 h-4 mr-2" />
@@ -268,15 +328,15 @@ export default function ContasPage() {
                       {/* Menu */}
                       {menuAberto === conta.id && (
                         <div className="absolute right-4 top-16 w-48 bg-surface border border-line rounded-lg shadow-lg z-10">
-                          <button className="w-full px-4 py-2 text-left text-sm text-ink-soft hover:bg-surface-hover flex items-center gap-2">
+                          <button onClick={() => { setContaSelecionada(conta); setModalContaAberto(true); setMenuAberto(null); }} className="w-full px-4 py-2 text-left text-sm text-ink-soft hover:bg-surface-hover flex items-center gap-2">
                             <PencilSimple className="w-4 h-4" />
                             Editar
                           </button>
-                          <button className="w-full px-4 py-2 text-left text-sm text-ink-soft hover:bg-surface-hover flex items-center gap-2">
+                          <button onClick={() => void arquivarConta(conta)} className="w-full px-4 py-2 text-left text-sm text-ink-soft hover:bg-surface-hover flex items-center gap-2">
                             <Archive className="w-4 h-4" />
                             Arquivar
                           </button>
-                          <button className="w-full px-4 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-surface-hover flex items-center gap-2">
+                          <button onClick={() => void excluirItem('contas', conta.id, conta.nome)} className="w-full px-4 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-surface-hover flex items-center gap-2">
                             <Trash className="w-4 h-4" />
                             Excluir
                           </button>
@@ -297,7 +357,7 @@ export default function ContasPage() {
                 Cartões de Crédito
               </h2>
               <Button
-                onClick={() => setModalCartaoAberto(true)}
+                onClick={() => { setCartaoSelecionado(null); setModalCartaoAberto(true); }}
                 variant="default"
                 className="bg-surface border border-line text-ink-soft hover:bg-surface-hover duration-150"
               >
@@ -319,7 +379,7 @@ export default function ContasPage() {
                     Adicione seus cartões de crédito para controlar gastos
                   </p>
                   <Button
-                    onClick={() => setModalCartaoAberto(true)}
+                    onClick={() => { setCartaoSelecionado(null); setModalCartaoAberto(true); }}
                     className="bg-brand hover:bg-brand-dark text-white"
                   >
                     <Plus className="w-4 h-4 mr-2" />
@@ -405,15 +465,15 @@ export default function ContasPage() {
                       {/* Menu */}
                       {menuAberto === cartao.id && (
                         <div className="absolute right-4 top-16 w-48 bg-surface border border-line rounded-lg shadow-lg z-10">
-                          <button className="w-full px-4 py-2 text-left text-sm text-ink-soft hover:bg-surface-hover flex items-center gap-2">
+                          <button onClick={() => { setCartaoSelecionado(cartao); setModalCartaoAberto(true); setMenuAberto(null); }} className="w-full px-4 py-2 text-left text-sm text-ink-soft hover:bg-surface-hover flex items-center gap-2">
                             <PencilSimple className="w-4 h-4" />
                             Editar
                           </button>
-                          <button className="w-full px-4 py-2 text-left text-sm text-ink-soft hover:bg-surface-hover flex items-center gap-2">
+                          <button onClick={() => void desativarCartao(cartao)} className="w-full px-4 py-2 text-left text-sm text-ink-soft hover:bg-surface-hover flex items-center gap-2">
                             <Archive className="w-4 h-4" />
                             Desativar
                           </button>
-                          <button className="w-full px-4 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-surface-hover flex items-center gap-2">
+                          <button onClick={() => void excluirItem('cartoes', cartao.id, cartao.nome)} className="w-full px-4 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-surface-hover flex items-center gap-2">
                             <Trash className="w-4 h-4" />
                             Excluir
                           </button>
@@ -431,7 +491,8 @@ export default function ContasPage() {
       {/* Modais */}
       <NovaContaModal
         aberto={modalContaAberto}
-        onFechar={() => setModalContaAberto(false)}
+        conta={contaSelecionada}
+        onFechar={() => { setModalContaAberto(false); setContaSelecionada(null); }}
         onSucesso={() => {
           carregarDados();
         }}
@@ -439,7 +500,8 @@ export default function ContasPage() {
 
       <NovoCartaoModal
         aberto={modalCartaoAberto}
-        onFechar={() => setModalCartaoAberto(false)}
+        cartao={cartaoSelecionado}
+        onFechar={() => { setModalCartaoAberto(false); setCartaoSelecionado(null); }}
         onSucesso={() => {
           carregarDados();
         }}

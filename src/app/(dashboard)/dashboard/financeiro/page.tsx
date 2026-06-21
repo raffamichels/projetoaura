@@ -180,7 +180,9 @@ export default function FinanceiroDashboardPage() {
         <CardContent className="p-5 text-white sm:p-7">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="text-sm text-white/75">Saldo em contas</p>
+              <p className="text-sm text-white/75">
+                {mesSelecionado === mesCorrente ? 'Saldo em contas' : 'Saldo ao fim do mês'}
+              </p>
               <p className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">{exibirValor(dashboard.saldoContas)}</p>
               <p className="mt-2 text-xs text-white/70">
                 {dashboard.estatisticas.totalContas} {dashboard.estatisticas.totalContas === 1 ? 'conta conectada' : 'contas conectadas'}

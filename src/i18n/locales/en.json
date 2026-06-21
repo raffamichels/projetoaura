@@ -50,6 +50,7 @@
     "oneAppointment": "1 scheduled appointment",
     "manyAppointments": "{count} scheduled appointments",
     "configureFinances": "Configure your finances",
+    "monthlyBalanceDescription": "Income minus expenses this month",
     "startStudies": "Start your studies",
     "defineGoals": "Define your goals",
     "quickActions": "Quick Actions",
