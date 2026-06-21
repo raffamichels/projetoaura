@@ -320,7 +320,7 @@ export default function NovaTransacaoModal({ aberto, onFechar, onSucesso }: Nova
                   </SelectContent>
                 </Select>
               </div>
-              <div>
+              {tipo === 'DESPESA' && <div>
                 <Label className="text-ink-soft">Cartão de Crédito (Opcional)</Label>
                 <Select value={cartaoId} onValueChange={handleCartaoChange}>
                   <SelectTrigger className="bg-surface border-line-strong text-ink">
@@ -334,7 +334,7 @@ export default function NovaTransacaoModal({ aberto, onFechar, onSucesso }: Nova
                     ))}
                   </SelectContent>
                 </Select>
-              </div>
+              </div>}
             </div>
             {!contaBancariaId && (
               <p className="text-xs text-red-600 dark:text-red-400">
@@ -352,14 +352,14 @@ export default function NovaTransacaoModal({ aberto, onFechar, onSucesso }: Nova
           <div className="space-y-4 p-4 bg-surface-hover rounded-lg border border-line">
             {/* Movimentação mensal */}
             <div className="flex items-center justify-between gap-4">
-              {tipo === 'DESPESA' && <div>
+              <div>
                 <Label className="text-ink-soft">
                   {tipo === 'RECEITA' ? 'Receita Mensal' : 'Despesa Mensal'}
                 </Label>
                 <p className="text-xs text-ink-faint">
                   Marcar como {tipo === 'RECEITA' ? 'entrada' : 'saída'} recorrente mensal
                 </p>
-              </div>}
+              </div>
               <Switch
                 checked={isFixa}
                 onCheckedChange={handleMensalChange}

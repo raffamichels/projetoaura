@@ -108,6 +108,16 @@ export async function GET(req: NextRequest) {
         updatedAt: t.categoria.updatedAt.toISOString(),
         categoriaPaiId: t.categoria.categoriaPaiId ?? undefined,
       } : undefined,
+      cartao: t.cartao ? {
+        ...t.cartao,
+        bandeira: t.cartao.bandeira ?? undefined,
+        ultimosDigitos: t.cartao.ultimosDigitos ?? undefined,
+        limite: t.cartao.limite === null ? undefined : decimalParaNumero(t.cartao.limite),
+        diaVencimento: t.cartao.diaVencimento ?? undefined,
+        diaFechamento: t.cartao.diaFechamento ?? undefined,
+        createdAt: t.cartao.createdAt.toISOString(),
+        updatedAt: t.cartao.updatedAt.toISOString(),
+      } : undefined,
     }));
 
     // Calcular resumo mensal
