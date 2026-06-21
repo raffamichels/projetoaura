@@ -3,7 +3,7 @@ import { auth } from '@/lib/auth/auth';
 import { prisma } from '@/lib/prisma';
 
 // GET - Buscar atividades recentes do usuário
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
     const session = await auth();
     
@@ -19,11 +19,27 @@ export async function GET() {
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 });
     }
 
-    // Buscar últimas 10 atividades
+    const { searchParams } = new URL(req.url);
+    const somenteExclusoesFinanceiras = searchParams.get('exclusoesFinanceiras') === 'true';
+    const limiteSolicitado = Number(searchParams.get('limite') || 10);
+    const limite = Math.min(Math.max(limiteSolicitado, 1), 100);
+
     const atividades = await prisma.atividade.findMany({
-      where: { userId: user.id },
+      where: {
+        userId: user.id,
+        ...(somenteExclusoesFinanceiras && {
+          tipo: {
+            in: [
+              'financeiro_conta_excluida',
+              'financeiro_cartao_excluido',
+              'financeiro_transacao_excluida',
+              'financeiro_categoria_excluida',
+            ],
+          },
+        }),
+      },
       orderBy: { createdAt: 'desc' },
-      take: 10,
+      take: limite,
     });
 
     return NextResponse.json({ data: atividades }, { status: 200 });

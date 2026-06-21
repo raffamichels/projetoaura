@@ -8,6 +8,7 @@ import {
   CaretLeft,
   CaretRight,
   ChartDonut,
+  ClockCounterClockwise,
   CreditCard,
   Eye,
   EyeSlash,
@@ -59,6 +60,20 @@ interface DashboardData {
   totalObjetivos: number;
   saldoLivre: number;
   transacoesRecentes: TransacaoRecente[];
+  faturasCartao: Array<{
+    cartaoId: string;
+    cartaoNome: string;
+    total: number;
+    quantidade: number;
+  }>;
+  totalFaturasCartao: number;
+  proximasFaturasCartao: Array<{
+    cartaoId: string;
+    cartaoNome: string;
+    total: number;
+    quantidade: number;
+  }>;
+  totalProximasFaturasCartao: number;
   estatisticas: {
     totalContas: number;
     totalCategorias: number;
@@ -301,6 +316,32 @@ export default function FinanceiroDashboardPage() {
         </Card>
       </section>
 
+      <Card className="border-line bg-surface shadow-sm">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
+            <CardTitle className="text-lg text-ink">Faturas de cartão</CardTitle>
+            <p className="mt-1 text-sm text-ink-faint">Acompanhe o que vence agora e o que está sendo acumulado</p>
+          </div>
+          <CreditCard className="h-6 w-6 text-brand" />
+        </CardHeader>
+        <CardContent className="grid gap-5 lg:grid-cols-2">
+          <ResumoFaturas
+            titulo="Fatura deste mês"
+            descricao="Compras realizadas no mês anterior"
+            faturas={dashboard.faturasCartao || []}
+            vazio="Nenhuma fatura prevista para este mês."
+            exibirValor={exibirValor}
+          />
+          <ResumoFaturas
+            titulo="Próxima fatura"
+            descricao="Compras feitas durante o mês selecionado"
+            faturas={dashboard.proximasFaturasCartao || []}
+            vazio="Nenhuma compra no cartão formando a próxima fatura."
+            exibirValor={exibirValor}
+          />
+        </CardContent>
+      </Card>
+
       <section className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Card className="border-line bg-surface shadow-sm lg:col-span-2">
           <CardHeader className="flex flex-row items-center justify-between">
@@ -354,6 +395,7 @@ export default function FinanceiroDashboardPage() {
             <Atalho icone={<Receipt />} titulo="Transações" detalhe="Histórico de entradas e saídas" onClick={() => router.push('/dashboard/financeiro/transacoes')} />
             <Atalho icone={<Target />} titulo="Objetivos" detalhe="Metas e reserva financeira" onClick={() => router.push('/dashboard/financeiro/objetivos')} />
             <Atalho icone={<CreditCard />} titulo="Categorias" detalhe="Organize seus lançamentos" onClick={() => router.push('/dashboard/financeiro/categorias')} />
+            <Atalho icone={<ClockCounterClockwise />} titulo="Histórico e inativos" detalhe="Exclusões, arquivados e desativados" onClick={() => router.push('/dashboard/financeiro/historico')} />
           </CardContent>
         </Card>
       </section>
@@ -408,6 +450,53 @@ function EstadoVazio({ texto }: { texto: string }) {
   return (
     <div className="rounded-xl border border-dashed border-line p-8 text-center text-sm text-ink-faint">
       {texto}
+    </div>
+  );
+}
+
+function ResumoFaturas({
+  titulo,
+  descricao,
+  faturas,
+  vazio,
+  exibirValor,
+}: {
+  titulo: string;
+  descricao: string;
+  faturas: Array<{ cartaoId: string; cartaoNome: string; total: number; quantidade: number }>;
+  vazio: string;
+  exibirValor: (valor: number) => string;
+}) {
+  return (
+    <div>
+      <h3 className="font-semibold text-ink">{titulo}</h3>
+      <p className="mb-3 text-xs text-ink-faint">{descricao}</p>
+      {faturas.length === 0 ? (
+        <EstadoVazio texto={vazio} />
+      ) : (
+        <div className="space-y-3">
+          {faturas.map((fatura) => (
+            <div key={fatura.cartaoId} className="rounded-xl border border-line bg-surface-hover p-4">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex min-w-0 items-center gap-3">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-soft text-brand-dark">
+                    <CreditCard className="h-5 w-5" />
+                  </span>
+                  <div className="min-w-0">
+                    <p className="truncate font-medium text-ink">{fatura.cartaoNome}</p>
+                    <p className="text-xs text-ink-faint">
+                      {fatura.quantidade} {fatura.quantidade === 1 ? 'lançamento' : 'lançamentos'}
+                    </p>
+                  </div>
+                </div>
+                <p className="whitespace-nowrap font-bold text-red-600 dark:text-red-400">
+                  {exibirValor(fatura.total)}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

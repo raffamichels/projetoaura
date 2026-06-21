@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth/auth';
 import { prisma } from '@/lib/prisma';
+import { registrarAtividade } from '@/lib/atividades-helper';
 
 // GET - Buscar categoria específica
 export async function GET(
@@ -152,6 +153,14 @@ export async function DELETE(
 
     await prisma.categoria.delete({
       where: { id },
+    });
+
+    await registrarAtividade({
+      userId: user.id,
+      tipo: 'financeiro_categoria_excluida',
+      titulo: `Categoria excluída: ${categoria.nome}`,
+      descricao: categoria.tipo === 'RECEITA' ? 'Receita' : 'Despesa',
+      metadata: { categoriaId: id },
     });
 
     return NextResponse.json(

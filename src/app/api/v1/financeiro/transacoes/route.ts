@@ -224,16 +224,18 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      // Atualizar saldo da conta (sempre, pois conta é obrigatória)
-      const operacao = tipo === 'DESPESA' ? 'decrement' : 'increment';
-      await prisma.contaBancaria.update({
-        where: { id: contaBancariaId },
-        data: {
-          saldoAtual: {
-            [operacao]: valor,
+      // Compras no cartão só afetam a conta quando entram na fatura do mês seguinte.
+      if (!cartaoId) {
+        const operacao = tipo === 'DESPESA' ? 'decrement' : 'increment';
+        await prisma.contaBancaria.update({
+          where: { id: contaBancariaId },
+          data: {
+            saldoAtual: {
+              [operacao]: valor,
+            },
           },
-        },
-      });
+        });
+      }
 
       // Atualizar objetivo se fornecido
       if (objetivoId) {
@@ -284,16 +286,17 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      // Atualizar saldo da conta (sempre, pois conta é obrigatória)
-      const operacao = tipo === 'DESPESA' ? 'decrement' : 'increment';
-      await prisma.contaBancaria.update({
-        where: { id: contaBancariaId },
-        data: {
-          saldoAtual: {
-            [operacao]: valor,
+      if (!cartaoId) {
+        const operacao = tipo === 'DESPESA' ? 'decrement' : 'increment';
+        await prisma.contaBancaria.update({
+          where: { id: contaBancariaId },
+          data: {
+            saldoAtual: {
+              [operacao]: valor,
+            },
           },
-        },
-      });
+        });
+      }
 
       // Registrar atividade
       await registrarAtividade({
@@ -345,16 +348,18 @@ export async function POST(req: NextRequest) {
         )
       );
 
-      // Atualizar saldo da conta com a primeira parcela
-      const operacao = tipo === 'DESPESA' ? 'decrement' : 'increment';
-      await prisma.contaBancaria.update({
-        where: { id: contaBancariaId },
-        data: {
-          saldoAtual: {
-            [operacao]: valorParcela,
+      // Parcelas no cartão compõem as faturas futuras sem baixar a conta agora.
+      if (!cartaoId) {
+        const operacao = tipo === 'DESPESA' ? 'decrement' : 'increment';
+        await prisma.contaBancaria.update({
+          where: { id: contaBancariaId },
+          data: {
+            saldoAtual: {
+              [operacao]: valorParcela,
+            },
           },
-        },
-      });
+        });
+      }
 
       // Registrar atividade
       await registrarAtividade({

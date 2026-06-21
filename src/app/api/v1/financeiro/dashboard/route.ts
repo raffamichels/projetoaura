@@ -7,6 +7,7 @@ import {
   decimalParaNumero,
 } from '@/lib/financeiro-helper';
 import { format } from 'date-fns';
+import { getDataAtualNoTimezone, getTimezoneDefault } from '@/lib/timezone';
 
 // GET - Dashboard financeiro com resumos
 export async function GET(req: NextRequest) {
@@ -26,26 +27,65 @@ export async function GET(req: NextRequest) {
     }
 
     const { searchParams } = new URL(req.url);
-    const mes = searchParams.get('mes') || format(new Date(), 'yyyy-MM');
+    const mes = searchParams.get('mes') || format(
+      getDataAtualNoTimezone(getTimezoneDefault()),
+      'yyyy-MM'
+    );
 
     // Parse mês
     const [ano, mesNum] = mes.split('-');
     const dataInicio = new Date(Date.UTC(Number(ano), Number(mesNum) - 1, 1));
     const dataFim = new Date(Date.UTC(Number(ano), Number(mesNum), 1));
+    const dataInicioFatura = new Date(Date.UTC(Number(ano), Number(mesNum) - 2, 1));
 
-    // Buscar transações do mês
-    const transacoes = await prisma.transacao.findMany({
-      where: {
-        userId: user.id,
-        data: {
-          gte: dataInicio,
-          lt: dataFim,
+    // Compras no cartão entram no orçamento como fatura no mês seguinte.
+    const [transacoesRegistradasNoMes, comprasDaFatura] = await Promise.all([
+      prisma.transacao.findMany({
+        where: {
+          userId: user.id,
+          data: { gte: dataInicio, lt: dataFim },
         },
-      },
-      include: {
-        categoria: true,
-      },
-    });
+        include: { categoria: true, cartao: true },
+      }),
+      prisma.transacao.findMany({
+        where: {
+          userId: user.id,
+          tipo: 'DESPESA',
+          cartaoId: { not: null },
+          data: { gte: dataInicioFatura, lt: dataInicio },
+        },
+        include: { categoria: true, cartao: true },
+      }),
+    ]);
+
+    const comprasCartaoDoMes = transacoesRegistradasNoMes.filter(
+      (transacao) => transacao.tipo === 'DESPESA' && transacao.cartaoId
+    );
+    const transacoes = [
+      ...transacoesRegistradasNoMes.filter(
+        (transacao) => !(transacao.tipo === 'DESPESA' && transacao.cartaoId)
+      ),
+      ...comprasDaFatura,
+    ];
+
+    const agruparFaturas = (compras: typeof comprasDaFatura) => Array.from(
+      compras.reduce((faturas, compra) => {
+        if (!compra.cartaoId || !compra.cartao) return faturas;
+        const atual = faturas.get(compra.cartaoId) || {
+          cartaoId: compra.cartaoId,
+          cartaoNome: compra.cartao.nome,
+          total: 0,
+          quantidade: 0,
+        };
+        atual.total += decimalParaNumero(compra.valor);
+        atual.quantidade += 1;
+        faturas.set(compra.cartaoId, atual);
+        return faturas;
+      }, new Map<string, { cartaoId: string; cartaoNome: string; total: number; quantidade: number }>())
+        .values()
+    );
+    const faturasPorCartao = agruparFaturas(comprasDaFatura);
+    const proximasFaturasPorCartao = agruparFaturas(comprasCartaoDoMes);
 
     // Converter Decimal para número e Date para string
     const transacoesConvertidas = transacoes.map((t) => ({
@@ -94,7 +134,7 @@ export async function GET(req: NextRequest) {
             contaBancariaId: { in: contas.map((conta) => conta.id) },
             data: { lt: dataFim },
           },
-          select: { valor: true, tipo: true },
+          select: { valor: true, tipo: true, data: true, cartaoId: true },
         })
       : [];
 
@@ -104,6 +144,9 @@ export async function GET(req: NextRequest) {
     );
     const movimentacaoAteOFimDoMes = transacoesAteOFimDoMes.reduce((acc, transacao) => {
       const valor = decimalParaNumero(transacao.valor);
+      if (transacao.tipo === 'DESPESA' && transacao.cartaoId && transacao.data >= dataInicio) {
+        return acc;
+      }
       return acc + (transacao.tipo === 'RECEITA' ? valor : -valor);
     }, 0);
     const saldoContas = saldoInicialContas + movimentacaoAteOFimDoMes;
@@ -190,6 +233,10 @@ export async function GET(req: NextRequest) {
         totalObjetivos,
         saldoLivre: saldoContas - totalObjetivos,
         transacoesRecentes: transacoesRecentesConvertidas,
+        faturasCartao: faturasPorCartao,
+        totalFaturasCartao: faturasPorCartao.reduce((total, fatura) => total + fatura.total, 0),
+        proximasFaturasCartao: proximasFaturasPorCartao,
+        totalProximasFaturasCartao: proximasFaturasPorCartao.reduce((total, fatura) => total + fatura.total, 0),
         estatisticas: {
           totalContas: contas.length,
           totalCategorias: gastosPorCategoria.length,

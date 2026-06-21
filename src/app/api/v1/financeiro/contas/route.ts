@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth/auth';
 import { prisma } from '@/lib/prisma';
 import { registrarAtividade } from '@/lib/atividades-helper';
 import { decimalParaNumero } from '@/lib/financeiro-helper';
+import { getDataAtualNoTimezone, getTimezoneDefault } from '@/lib/timezone';
 
 // GET - Listar contas bancárias do usuário
 export async function GET() {
@@ -26,10 +27,33 @@ export async function GET() {
       orderBy: { createdAt: 'desc' },
     });
 
+    const agora = new Date();
+    const referenciaLocal = getDataAtualNoTimezone(getTimezoneDefault());
+    const inicioMesAtual = new Date(Date.UTC(referenciaLocal.getFullYear(), referenciaLocal.getMonth(), 1));
+    const transacoes = contas.length > 0
+      ? await prisma.transacao.findMany({
+          where: {
+            userId: user.id,
+            contaBancariaId: { in: contas.map((conta) => conta.id) },
+            data: { lte: agora },
+          },
+          select: { contaBancariaId: true, valor: true, tipo: true, cartaoId: true, data: true },
+        })
+      : [];
+
     const contasConvertidas = contas.map((conta) => ({
       ...conta,
       saldoInicial: decimalParaNumero(conta.saldoInicial),
-      saldoAtual: decimalParaNumero(conta.saldoAtual),
+      saldoAtual: decimalParaNumero(conta.saldoInicial) + transacoes
+        .filter((transacao) => transacao.contaBancariaId === conta.id)
+        .reduce((saldo, transacao) => {
+          // Compra do mês corrente no cartão entra somente na próxima fatura.
+          if (transacao.tipo === 'DESPESA' && transacao.cartaoId && transacao.data >= inicioMesAtual) {
+            return saldo;
+          }
+          const valor = decimalParaNumero(transacao.valor);
+          return saldo + (transacao.tipo === 'RECEITA' ? valor : -valor);
+        }, 0),
     }));
 
     return NextResponse.json({ data: contasConvertidas }, { status: 200 });

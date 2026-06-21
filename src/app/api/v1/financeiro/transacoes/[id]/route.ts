@@ -127,16 +127,17 @@ export async function PUT(
       }
     }
 
-    // Reverter saldo anterior (sempre tem conta, pois é obrigatória)
-    const operacaoReversa = transacaoExistente.tipo === 'DESPESA' ? 'increment' : 'decrement';
-    await prisma.contaBancaria.update({
-      where: { id: transacaoExistente.contaBancariaId },
-      data: {
-        saldoAtual: {
-          [operacaoReversa]: Number(transacaoExistente.valor),
+    if (!transacaoExistente.cartaoId) {
+      const operacaoReversa = transacaoExistente.tipo === 'DESPESA' ? 'increment' : 'decrement';
+      await prisma.contaBancaria.update({
+        where: { id: transacaoExistente.contaBancariaId },
+        data: {
+          saldoAtual: {
+            [operacaoReversa]: Number(transacaoExistente.valor),
+          },
         },
-      },
-    });
+      });
+    }
 
     // Atualizar transação
     const transacao = await prisma.transacao.update({
@@ -153,16 +154,17 @@ export async function PUT(
       },
     });
 
-    // Aplicar novo saldo (sempre, pois conta é obrigatória)
-    const operacao = tipo === 'DESPESA' ? 'decrement' : 'increment';
-    await prisma.contaBancaria.update({
-      where: { id: contaBancariaId },
-      data: {
-        saldoAtual: {
-          [operacao]: valor,
+    if (!cartaoId) {
+      const operacao = tipo === 'DESPESA' ? 'decrement' : 'increment';
+      await prisma.contaBancaria.update({
+        where: { id: contaBancariaId },
+        data: {
+          saldoAtual: {
+            [operacao]: valor,
+          },
         },
-      },
-    });
+      });
+    }
 
     // Registrar atividade
     await registrarAtividade({
@@ -238,16 +240,17 @@ export async function DELETE(
         },
       });
 
-      // Reverter saldo da primeira parcela (sempre tem conta, pois é obrigatória)
-      const operacaoReversa = transacao.tipo === 'DESPESA' ? 'increment' : 'decrement';
-      await prisma.contaBancaria.update({
-        where: { id: transacao.contaBancariaId },
-        data: {
-          saldoAtual: {
-            [operacaoReversa]: Number(transacao.valor),
+      if (!transacao.cartaoId) {
+        const operacaoReversa = transacao.tipo === 'DESPESA' ? 'increment' : 'decrement';
+        await prisma.contaBancaria.update({
+          where: { id: transacao.contaBancariaId },
+          data: {
+            saldoAtual: {
+              [operacaoReversa]: Number(transacao.valor),
+            },
           },
-        },
-      });
+        });
+      }
 
       // Registrar atividade
       await registrarAtividade({
@@ -275,16 +278,17 @@ export async function DELETE(
       where: { id },
     });
 
-    // Reverter saldo (sempre, pois conta é obrigatória)
-    const operacaoReversa = transacao.tipo === 'DESPESA' ? 'increment' : 'decrement';
-    await prisma.contaBancaria.update({
-      where: { id: transacao.contaBancariaId },
-      data: {
-        saldoAtual: {
-          [operacaoReversa]: Number(transacao.valor),
+    if (!transacao.cartaoId) {
+      const operacaoReversa = transacao.tipo === 'DESPESA' ? 'increment' : 'decrement';
+      await prisma.contaBancaria.update({
+        where: { id: transacao.contaBancariaId },
+        data: {
+          saldoAtual: {
+            [operacaoReversa]: Number(transacao.valor),
+          },
         },
-      },
-    });
+      });
+    }
 
     // Reverter objetivo se tiver
     if (transacao.objetivoId) {

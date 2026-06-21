@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Plus, Wallet, CreditCard, TrendUp, TrendDown, Buildings, Eye, EyeSlash, DotsThreeVertical, PencilSimple, Trash, Archive } from '@phosphor-icons/react';
+import { ArrowCounterClockwise, ArrowLeft, Plus, Wallet, CreditCard, TrendUp, TrendDown, Buildings, Eye, EyeSlash, DotsThreeVertical, PencilSimple, Trash, Archive } from '@phosphor-icons/react';
 import { formatarMoeda } from '@/lib/financeiro-helper';
 import NovaContaModal from '@/components/financeiro/NovaContaModal';
 import NovoCartaoModal from '@/components/financeiro/NovoCartaoModal';
@@ -31,6 +31,10 @@ interface Cartao {
   diaFechamento?: number;
   cor: string;
   ativo: boolean;
+  faturaAtual?: number;
+  proximaFatura?: number;
+  limiteComprometido?: number;
+  limiteDisponivel?: number | null;
 }
 
 export default function ContasPage() {
@@ -76,6 +80,8 @@ export default function ContasPage() {
 
   const contasAtivas = contas.filter((c) => c.ativa);
   const cartoesAtivos = cartoes.filter((c) => c.ativo);
+  const contasArquivadas = contas.filter((c) => !c.ativa);
+  const cartoesDesativados = cartoes.filter((c) => !c.ativo);
   
   const saldoTotal = contasAtivas.reduce((acc, conta) => acc + conta.saldoAtual, 0);
 
@@ -137,6 +143,32 @@ export default function ContasPage() {
       await carregarDados();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Erro ao desativar cartão');
+    }
+  };
+
+  const restaurarConta = async (conta: ContaBancaria) => {
+    try {
+      await atualizarConta(conta, true);
+      toast.success('Conta restaurada');
+      await carregarDados();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Erro ao restaurar conta');
+    }
+  };
+
+  const restaurarCartao = async (cartao: Cartao) => {
+    try {
+      const response = await fetch(`/api/v1/financeiro/cartoes/${cartao.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...cartao, ativo: true, icone: 'credit-card' }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'Erro ao restaurar cartão');
+      toast.success('Cartão restaurado');
+      await carregarDados();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Erro ao restaurar cartão');
     }
   };
 
@@ -438,10 +470,31 @@ export default function ContasPage() {
 
                       {/* Limite */}
                       {cartao.limite && (
-                        <div className="pt-4 border-t border-line mb-3">
-                          <p className="text-xs text-ink-faint mb-1">Limite</p>
-                          <div className="text-xl font-bold text-ink">
-                            {ocultarSaldos ? '••••••' : formatarMoeda(cartao.limite)}
+                        <div className="pt-4 border-t border-line mb-4 space-y-3">
+                          <div className="flex items-end justify-between gap-3">
+                            <div>
+                              <p className="text-xs text-ink-faint mb-1">Limite disponível</p>
+                              <div className="text-xl font-bold text-ink">
+                                {ocultarSaldos ? '••••••' : formatarMoeda(cartao.limiteDisponivel ?? cartao.limite)}
+                              </div>
+                            </div>
+                            <p className="text-xs text-ink-faint">de {ocultarSaldos ? '•••' : formatarMoeda(cartao.limite)}</p>
+                          </div>
+                          <div className="h-2 overflow-hidden rounded-full bg-line">
+                            <div
+                              className="h-full rounded-full bg-brand transition-all"
+                              style={{ width: `${Math.min(((cartao.limiteComprometido || 0) / cartao.limite) * 100, 100)}%` }}
+                            />
+                          </div>
+                          <div className="grid grid-cols-2 gap-2 text-xs">
+                            <div className="rounded-lg bg-surface-hover p-2">
+                              <p className="text-ink-faint">Fatura atual</p>
+                              <p className="font-semibold text-ink">{ocultarSaldos ? '•••' : formatarMoeda(cartao.faturaAtual || 0)}</p>
+                            </div>
+                            <div className="rounded-lg bg-surface-hover p-2">
+                              <p className="text-ink-faint">Próxima fatura</p>
+                              <p className="font-semibold text-ink">{ocultarSaldos ? '•••' : formatarMoeda(cartao.proximaFatura || 0)}</p>
+                            </div>
                           </div>
                         </div>
                       )}
@@ -485,6 +538,51 @@ export default function ContasPage() {
               </div>
             )}
           </div>
+
+          <div id="inativos">
+              <div className="mb-4">
+                <h2 className="flex items-center gap-2 text-2xl font-bold text-ink">
+                  <Archive className="h-6 w-6 text-ink-soft" /> Itens inativos
+                </h2>
+                <p className="mt-1 text-sm text-ink-faint">
+                  Contas arquivadas e cartões desativados podem ser restaurados. Exclusões permanentes não aparecem aqui.
+                </p>
+              </div>
+              {contasArquivadas.length === 0 && cartoesDesativados.length === 0 ? (
+                <Card className="border-dashed border-line bg-surface p-6 text-center text-sm text-ink-faint">
+                  Nenhuma conta arquivada ou cartão desativado.
+                </Card>
+              ) : <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                {contasArquivadas.map((conta) => (
+                  <Card key={conta.id} className="border-line bg-surface p-4 opacity-80">
+                    <div className="flex items-center gap-3">
+                      <Wallet className="h-5 w-5 text-ink-faint" />
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate font-medium text-ink">{conta.nome}</p>
+                        <p className="text-xs text-ink-faint">Conta arquivada</p>
+                      </div>
+                      <Button size="sm" variant="outline" onClick={() => void restaurarConta(conta)}>
+                        <ArrowCounterClockwise className="h-4 w-4" /> Restaurar
+                      </Button>
+                    </div>
+                  </Card>
+                ))}
+                {cartoesDesativados.map((cartao) => (
+                  <Card key={cartao.id} className="border-line bg-surface p-4 opacity-80">
+                    <div className="flex items-center gap-3">
+                      <CreditCard className="h-5 w-5 text-ink-faint" />
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate font-medium text-ink">{cartao.nome}</p>
+                        <p className="text-xs text-ink-faint">Cartão desativado</p>
+                      </div>
+                      <Button size="sm" variant="outline" onClick={() => void restaurarCartao(cartao)}>
+                        <ArrowCounterClockwise className="h-4 w-4" /> Restaurar
+                      </Button>
+                    </div>
+                  </Card>
+                ))}
+              </div>}
+            </div>
         </div>
       )}
 

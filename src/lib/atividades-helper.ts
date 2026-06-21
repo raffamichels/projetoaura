@@ -10,6 +10,7 @@ interface RegistrarAtividadeParams {
         'financeiro_conta_criada' | 'financeiro_conta_editada' | 'financeiro_conta_excluida' |
         'financeiro_cartao_criado' | 'financeiro_cartao_editado' | 'financeiro_cartao_excluido' |
         'financeiro_transacao_criada' | 'financeiro_transacao_editada' | 'financeiro_transacao_excluida' |
+        'financeiro_categoria_excluida' |
         'financeiro_objetivo_criado' | 'financeiro_objetivo_concluido' |
         'leitura_livro_criado' | 'leitura_livro_editado' | 'leitura_livro_excluido' |
         'leitura_filme_criado' | 'leitura_filme_editado' | 'leitura_filme_excluido' |
@@ -76,6 +77,10 @@ export async function registrarAtividade({
       financeiro_transacao_excluida: {
         icone: 'trending-down',
         cor: '#EF4444', // vermelho
+      },
+      financeiro_categoria_excluida: {
+        icone: 'tag',
+        cor: '#EF4444',
       },
       financeiro_objetivo_criado: {
         icone: 'target',

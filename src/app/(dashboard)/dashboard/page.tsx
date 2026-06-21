@@ -21,7 +21,7 @@ export default function DashboardPage() {
   const router = useRouter();
   const [compromissosHoje, setCompromissosHoje] = useState(0);
   const [loadingCompromissos, setLoadingCompromissos] = useState(true);
-  const [saldoMes, setSaldoMes] = useState(0);
+  const [saldoContas, setSaldoContas] = useState(0);
   const [transacoesMes, setTransacoesMes] = useState(0);
   const [loadingFinanceiro, setLoadingFinanceiro] = useState(true);
   const { ehFree } = usePlano();
@@ -118,7 +118,7 @@ export default function DashboardPage() {
       const response = await fetch('/api/v1/financeiro/dashboard');
       if (response.ok) {
         const data = await response.json();
-        setSaldoMes(Number(data.data?.resumoMensal?.saldo) || 0);
+        setSaldoContas(Number(data.data?.saldoContas) || 0);
         setTransacoesMes(Number(data.data?.estatisticas?.totalTransacoesMes) || 0);
       }
     } catch (error) {
@@ -203,7 +203,7 @@ export default function DashboardPage() {
         >
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-ink-soft">
-              {t('monthlyBalance')}
+              {t('accountBalance')}
             </CardTitle>
             <Wallet className="w-4 h-4 text-green-600 dark:text-green-400" />
           </CardHeader>
@@ -211,13 +211,13 @@ export default function DashboardPage() {
             {loadingFinanceiro ? (
               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-brand" />
             ) : (
-              <div className={`text-2xl font-bold ${saldoMes < 0 ? 'text-red-600 dark:text-red-400' : 'text-ink'}`}>
-                {formatarMoeda(saldoMes)}
+              <div className={`text-2xl font-bold ${saldoContas < 0 ? 'text-red-600 dark:text-red-400' : 'text-ink'}`}>
+                {formatarMoeda(saldoContas)}
               </div>
             )}
             <p className="text-xs text-green-600 dark:text-green-400 mt-1 flex items-center gap-1">
               <TrendUp className="w-3 h-3" />
-              {transacoesMes === 0 ? t('configureFinances') : t('monthlyBalanceDescription')}
+              {transacoesMes === 0 ? t('configureFinances') : t('accountBalanceDescription')}
             </p>
           </CardContent>
         </Card>

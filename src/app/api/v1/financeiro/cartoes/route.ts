@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth/auth';
 import { prisma } from '@/lib/prisma';
 import { registrarAtividade } from '@/lib/atividades-helper';
 import { decimalParaNumero } from '@/lib/financeiro-helper';
+import { getDataAtualNoTimezone, getTimezoneDefault } from '@/lib/timezone';
 
 // GET - Listar cartões do usuário
 export async function GET() {
@@ -26,10 +27,45 @@ export async function GET() {
       orderBy: { createdAt: 'desc' },
     });
 
-    const cartoesConvertidos = cartoes.map((cartao) => ({
-      ...cartao,
-      limite: cartao.limite === null ? null : decimalParaNumero(cartao.limite),
-    }));
+    const agora = new Date();
+    const referenciaLocal = getDataAtualNoTimezone(getTimezoneDefault());
+    const inicioMesAtual = new Date(Date.UTC(referenciaLocal.getFullYear(), referenciaLocal.getMonth(), 1));
+    const inicioProximoMes = new Date(Date.UTC(referenciaLocal.getFullYear(), referenciaLocal.getMonth() + 1, 1));
+    const inicioMesAnterior = new Date(Date.UTC(referenciaLocal.getFullYear(), referenciaLocal.getMonth() - 1, 1));
+    const despesasCartao = cartoes.length > 0
+      ? await prisma.transacao.findMany({
+          where: {
+            userId: user.id,
+            tipo: 'DESPESA',
+            cartaoId: { in: cartoes.map((cartao) => cartao.id) },
+            data: { gte: inicioMesAnterior },
+          },
+          select: { cartaoId: true, valor: true, data: true },
+        })
+      : [];
+
+    const cartoesConvertidos = cartoes.map((cartao) => {
+      const limite = cartao.limite === null ? null : decimalParaNumero(cartao.limite);
+      const transacoesDoCartao = despesasCartao.filter((transacao) => transacao.cartaoId === cartao.id);
+      const faturaAtual = transacoesDoCartao
+        .filter((transacao) => transacao.data >= inicioMesAnterior && transacao.data < inicioMesAtual)
+        .reduce((total, transacao) => total + decimalParaNumero(transacao.valor), 0);
+      const proximaFatura = transacoesDoCartao
+        .filter((transacao) => transacao.data >= inicioMesAtual && transacao.data < inicioProximoMes)
+        .reduce((total, transacao) => total + decimalParaNumero(transacao.valor), 0);
+      const limiteComprometido = transacoesDoCartao
+        .filter((transacao) => transacao.data >= inicioMesAtual)
+        .reduce((total, transacao) => total + decimalParaNumero(transacao.valor), 0);
+
+      return {
+        ...cartao,
+        limite,
+        faturaAtual,
+        proximaFatura,
+        limiteComprometido,
+        limiteDisponivel: limite === null ? null : Math.max(limite - limiteComprometido, 0),
+      };
+    });
 
     return NextResponse.json({ data: cartoesConvertidos }, { status: 200 });
   } catch (error) {

@@ -306,8 +306,8 @@ model Transacao {
   categoriaId       String?
   categoria         Categoria?     @relation(fields: [categoriaId], references: [id], onDelete: SetNull)
 
-  // IMPORTANTE: Conta bancária é OBRIGATÓRIA em toda transação
-  // Cartão é apenas informação adicional opcional (ex: compra no cartão será debitada da conta)
+  // A conta indica onde a movimentação ocorre ou onde a fatura será paga.
+  // Compras no cartão afetam a conta somente no mês seguinte, via fatura calculada.
   contaBancariaId   String
   contaBancaria     ContaBancaria  @relation(fields: [contaBancariaId], references: [id], onDelete: Restrict)
 

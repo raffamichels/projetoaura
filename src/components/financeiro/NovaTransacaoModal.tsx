@@ -74,6 +74,12 @@ export default function NovaTransacaoModal({ aberto, onFechar, onSucesso }: Nova
     if (checked) setIsFixa(false);
   };
 
+  const handleTipoChange = (novoTipo: 'RECEITA' | 'DESPESA') => {
+    setTipo(novoTipo);
+    setCategoriaId('');
+    if (novoTipo === 'RECEITA') setCartaoId('');
+  };
+
   useEffect(() => {
     if (aberto) {
       carregarDados();
@@ -199,7 +205,7 @@ export default function NovaTransacaoModal({ aberto, onFechar, onSucesso }: Nova
           <div className="grid grid-cols-2 gap-3">
             <button
               type="button"
-              onClick={() => setTipo('RECEITA')}
+              onClick={() => handleTipoChange('RECEITA')}
               className={`p-4 rounded-lg border-2 transition-all ${
                 tipo === 'RECEITA'
                   ? 'border-green-600 bg-green-50 dark:bg-green-500/10'
@@ -213,7 +219,7 @@ export default function NovaTransacaoModal({ aberto, onFechar, onSucesso }: Nova
             </button>
             <button
               type="button"
-              onClick={() => setTipo('DESPESA')}
+              onClick={() => handleTipoChange('DESPESA')}
               className={`p-4 rounded-lg border-2 transition-all ${
                 tipo === 'DESPESA'
                   ? 'border-red-600 bg-red-50 dark:bg-red-500/10'
@@ -289,12 +295,18 @@ export default function NovaTransacaoModal({ aberto, onFechar, onSucesso }: Nova
           <div className="space-y-3">
             <div className="flex items-center gap-2 text-sm text-ink-soft bg-brand-soft border border-brand/30 rounded-lg p-3">
               <Warning className="w-4 h-4 text-brand-dark shrink-0" />
-              <p>Toda transação deve estar vinculada a uma <strong>conta bancária</strong>. O cartão é opcional para registro adicional.</p>
+              <p>
+                {tipo === 'RECEITA'
+                  ? <>A receita será adicionada à <strong>conta bancária</strong> selecionada.</>
+                  : <>Se usar cartão, a compra entrará na <strong>fatura do próximo mês</strong> sem reduzir a conta agora.</>}
+              </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className={`grid gap-4 ${tipo === 'DESPESA' ? 'grid-cols-2' : 'grid-cols-1'}`}>
               <div>
-                <Label className="text-ink-soft">Conta Bancária *</Label>
+                <Label className="text-ink-soft">
+                  {cartaoId ? 'Conta para Pagamento da Fatura *' : 'Conta Bancária *'}
+                </Label>
                 <Select value={contaBancariaId} onValueChange={handleContaChange}>
                   <SelectTrigger className={`bg-surface border-line-strong text-ink ${!contaBancariaId ? 'border-red-300 dark:border-red-500/50' : ''}`}>
                     <SelectValue placeholder="Selecionar conta" />
@@ -340,14 +352,14 @@ export default function NovaTransacaoModal({ aberto, onFechar, onSucesso }: Nova
           <div className="space-y-4 p-4 bg-surface-hover rounded-lg border border-line">
             {/* Movimentação mensal */}
             <div className="flex items-center justify-between gap-4">
-              <div>
+              {tipo === 'DESPESA' && <div>
                 <Label className="text-ink-soft">
                   {tipo === 'RECEITA' ? 'Receita Mensal' : 'Despesa Mensal'}
                 </Label>
                 <p className="text-xs text-ink-faint">
                   Marcar como {tipo === 'RECEITA' ? 'entrada' : 'saída'} recorrente mensal
                 </p>
-              </div>
+              </div>}
               <Switch
                 checked={isFixa}
                 onCheckedChange={handleMensalChange}
