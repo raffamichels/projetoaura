@@ -42,10 +42,10 @@ export const transacaoSchema = z.object({
     .max(48, 'Máximo de 48 parcelas')
     .optional()
     .nullable(),
-  categoriaId: z.string().uuid('ID de categoria inválido').optional().nullable(),
-  contaBancariaId: z.string().uuid('ID de conta bancária inválido'),
-  cartaoId: z.string().uuid('ID de cartão inválido').optional().nullable(),
-  objetivoId: z.string().uuid('ID de objetivo inválido').optional().nullable(),
+  categoriaId: z.string().cuid('ID de categoria inválido').optional().nullable(),
+  contaBancariaId: z.string().cuid('ID de conta bancária inválido'),
+  cartaoId: z.string().cuid('ID de cartão inválido').optional().nullable(),
+  objetivoId: z.string().cuid('ID de objetivo inválido').optional().nullable(),
 });
 
 export type TransacaoInput = z.infer<typeof transacaoSchema>;
@@ -75,9 +75,9 @@ export const transacaoUpdateSchema = z.object({
     .max(1000, 'Observações devem ter no máximo 1000 caracteres')
     .optional()
     .nullable(),
-  categoriaId: z.string().uuid('ID de categoria inválido').optional().nullable(),
-  contaBancariaId: z.string().uuid('ID de conta bancária inválido'),
-  cartaoId: z.string().uuid('ID de cartão inválido').optional().nullable(),
+  categoriaId: z.string().cuid('ID de categoria inválido').optional().nullable(),
+  contaBancariaId: z.string().cuid('ID de conta bancária inválido'),
+  cartaoId: z.string().cuid('ID de cartão inválido').optional().nullable(),
 });
 
 export type TransacaoUpdateInput = z.infer<typeof transacaoUpdateSchema>;

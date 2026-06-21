@@ -148,7 +148,8 @@ export default function NovaTransacaoModal({ aberto, onFechar, onSucesso }: Nova
         onSucesso();
         onFechar();
       } else {
-        toast.error(result.error || 'Erro ao criar transação', { id: loadingToast });
+        const detalheValidacao = result.details?.[0]?.message;
+        toast.error(detalheValidacao || result.error || 'Erro ao criar transação', { id: loadingToast });
       }
     } catch (error) {
       console.error('Erro:', error);
