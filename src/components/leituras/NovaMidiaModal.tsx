@@ -11,6 +11,7 @@ import {
   GENEROS_FILME,
   CORES_MIDIA,
 } from '@/types/midia';
+import type { SugestaoMidia } from '@/types/midia';
 import { ImageSearchSelector } from './ImageSearchSelector';
 import { StarRating } from '@/components/ui/star-rating';
 import { Book, FilmSlate, User, Building, Globe, Calendar, Clock, Tag, Palette } from '@phosphor-icons/react';
@@ -170,6 +171,31 @@ export function NovaMidiaModal({ aberto, onFechar, onSucesso }: NovaMidiaModalPr
   };
 
   const generos = formData.tipo === TipoMidia.LIVRO ? GENEROS_LIVRO : GENEROS_FILME;
+
+  const preencherComSugestao = (sugestao: SugestaoMidia) => {
+    setFormData((atual) => ({
+      ...atual,
+      titulo: sugestao.titulo || atual.titulo,
+      capa: sugestao.capa || atual.capa,
+      autor: atual.tipo === TipoMidia.LIVRO
+        ? sugestao.autor || atual.autor
+        : atual.autor,
+      editora: atual.tipo === TipoMidia.LIVRO
+        ? sugestao.editora || atual.editora
+        : atual.editora,
+      diretor: atual.tipo === TipoMidia.FILME
+        ? sugestao.diretor || atual.diretor
+        : atual.diretor,
+      duracao: atual.tipo === TipoMidia.FILME && sugestao.duracao
+        ? sugestao.duracao.toString()
+        : atual.duracao,
+      anoLancamento: atual.tipo === TipoMidia.FILME && sugestao.ano
+        ? sugestao.ano.toString()
+        : atual.anoLancamento,
+      genero: sugestao.genero || atual.genero,
+      idioma: sugestao.idioma || atual.idioma,
+    }));
+  };
 
   return (
     <Dialog open={aberto} onOpenChange={onFechar}>
@@ -432,7 +458,8 @@ export function NovaMidiaModal({ aberto, onFechar, onSucesso }: NovaMidiaModalPr
                 tipo={formData.tipo === TipoMidia.LIVRO ? 'livro' : 'filme'}
                 titulo={formData.titulo}
                 capaAtual={formData.capa}
-                onSelecionarCapa={(url) => setFormData({ ...formData, capa: url })}
+                onSelecionar={preencherComSugestao}
+                onRemoverCapa={() => setFormData((atual) => ({ ...atual, capa: '' }))}
               />
             </div>
           </div>

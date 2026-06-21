@@ -13,6 +13,8 @@ interface GoogleBooksVolume {
       smallThumbnail?: string;
     };
     publishedDate?: string;
+    categories?: string[];
+    language?: string;
   };
 }
 
@@ -23,6 +25,8 @@ interface OpenLibraryDoc {
   cover_i?: number;
   publisher?: string[];
   first_publish_year?: number;
+  language?: string[];
+  subject?: string[];
 }
 
 interface TMDBMovie {
@@ -32,6 +36,16 @@ interface TMDBMovie {
   backdrop_path: string | null;
   release_date?: string;
   overview?: string;
+  original_language?: string;
+}
+
+interface TMDBMovieDetails {
+  runtime?: number;
+  genres?: Array<{ id: number; name: string }>;
+  original_language?: string;
+  credits?: {
+    crew?: Array<{ job: string; name: string }>;
+  };
 }
 
 interface CapaSugestao {
@@ -40,8 +54,84 @@ interface CapaSugestao {
   capa: string;
   autor?: string;
   editora?: string;
+  diretor?: string;
+  duracao?: number;
   ano?: number;
+  genero?: string;
+  idioma?: string;
   descricao?: string;
+}
+
+const IDIOMAS: Record<string, string> = {
+  pt: 'Português',
+  en: 'Inglês',
+  es: 'Espanhol',
+  fr: 'Francês',
+  de: 'Alemão',
+  it: 'Italiano',
+  ja: 'Japonês',
+  ko: 'Coreano',
+  zh: 'Chinês',
+  ru: 'Russo',
+};
+
+const GENEROS_FILME_TMDB: Record<number, string> = {
+  28: 'Ação',
+  12: 'Aventura',
+  16: 'Animação',
+  35: 'Comédia',
+  80: 'Policial',
+  99: 'Documentário',
+  18: 'Drama',
+  10751: 'Família',
+  14: 'Fantasia',
+  27: 'Terror',
+  10402: 'Musical',
+  9648: 'Mistério',
+  10749: 'Romance',
+  878: 'Ficção Científica',
+  53: 'Suspense',
+  10752: 'Guerra',
+  37: 'Western',
+};
+
+function normalizarIdioma(codigo?: string): string | undefined {
+  if (!codigo) return undefined;
+  const idiomaBase = codigo.toLowerCase().split(/[-_]/)[0];
+  return IDIOMAS[idiomaBase] || codigo.toUpperCase();
+}
+
+function normalizarGeneroLivro(categorias?: string[]): string | undefined {
+  if (!categorias?.length) return undefined;
+
+  const texto = categorias.join(' ').toLowerCase();
+  const correspondencias: Array<[string[], string]> = [
+    [['science fiction'], 'Ficção Científica'],
+    [['young adult'], 'Jovem Adulto'],
+    [['self-help', 'self help'], 'Autoajuda'],
+    [['personal development'], 'Desenvolvimento Pessoal'],
+    [['biography'], 'Biografia'],
+    [['autobiography'], 'Autobiografia'],
+    [['business'], 'Negócios'],
+    [['technology', 'computers'], 'Tecnologia'],
+    [['philosophy'], 'Filosofia'],
+    [['history'], 'História'],
+    [['poetry'], 'Poesia'],
+    [['religion'], 'Religião'],
+    [['horror'], 'Terror'],
+    [['thriller', 'suspense'], 'Suspense'],
+    [['mystery', 'detective'], 'Policial'],
+    [['fantasy'], 'Fantasia'],
+    [['romance'], 'Romance'],
+    [['adventure'], 'Aventura'],
+    [['humor', 'comics'], 'Humor'],
+    [['juvenile', 'children'], 'Infantil'],
+    [['drama'], 'Drama'],
+    [['science'], 'Ciência'],
+    [['fiction'], 'Ficção'],
+  ];
+
+  return correspondencias.find(([termos]) => termos.some((termo) => texto.includes(termo)))?.[1];
 }
 
 export async function GET(request: NextRequest) {
@@ -106,6 +196,8 @@ async function buscarCapasGoogleBooks(query: string): Promise<CapaSugestao[]> {
         autor: item.volumeInfo.authors?.[0],
         editora: item.volumeInfo.publisher,
         ano: item.volumeInfo.publishedDate ? parseInt(item.volumeInfo.publishedDate) : undefined,
+        genero: normalizarGeneroLivro(item.volumeInfo.categories),
+        idioma: normalizarIdioma(item.volumeInfo.language),
       }));
   } catch {
     clearTimeout(timeout);
@@ -114,7 +206,7 @@ async function buscarCapasGoogleBooks(query: string): Promise<CapaSugestao[]> {
 }
 
 async function buscarCapasOpenLibrary(query: string): Promise<CapaSugestao[]> {
-  const url = `https://openlibrary.org/search.json?q=${encodeURIComponent(query)}&limit=6&fields=key,title,author_name,cover_i,publisher,first_publish_year`;
+  const url = `https://openlibrary.org/search.json?q=${encodeURIComponent(query)}&limit=6&fields=key,title,author_name,cover_i,publisher,first_publish_year,language,subject`;
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 8000);
@@ -143,6 +235,8 @@ async function buscarCapasOpenLibrary(query: string): Promise<CapaSugestao[]> {
         autor: doc.author_name?.[0],
         editora: doc.publisher?.[0],
         ano: doc.first_publish_year,
+        genero: normalizarGeneroLivro(doc.subject),
+        idioma: normalizarIdioma(doc.language?.[0]),
       }));
   } catch {
     clearTimeout(timeout);
@@ -190,16 +284,38 @@ async function buscarCapasFilmes(query: string): Promise<NextResponse> {
 
     const data = await response.json();
 
-    const sugestoes: CapaSugestao[] = (data.results || [])
+    const filmes: TMDBMovie[] = (data.results || [])
       .filter((movie: TMDBMovie) => movie.poster_path)
-      .slice(0, 6)
-      .map((movie: TMDBMovie) => ({
+      .slice(0, 6);
+
+    const sugestoes: CapaSugestao[] = await Promise.all(filmes.map(async (movie) => {
+      let detalhes: TMDBMovieDetails | undefined;
+
+      try {
+        const detalhesResponse = await fetch(
+          `https://api.themoviedb.org/3/movie/${movie.id}?api_key=${apiKey}&language=pt-BR&append_to_response=credits`,
+          { headers: { 'Accept': 'application/json' } }
+        );
+
+        if (detalhesResponse.ok) {
+          detalhes = await detalhesResponse.json();
+        }
+      } catch {
+        // A sugestão básica continua disponível caso os detalhes falhem.
+      }
+
+      return {
         id: movie.id.toString(),
         titulo: movie.title,
         capa: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
         ano: movie.release_date ? new Date(movie.release_date).getFullYear() : undefined,
+        diretor: detalhes?.credits?.crew?.find((pessoa) => pessoa.job === 'Director')?.name,
+        duracao: detalhes?.runtime,
+        genero: detalhes?.genres?.map((genero) => GENEROS_FILME_TMDB[genero.id]).find(Boolean),
+        idioma: normalizarIdioma(detalhes?.original_language || movie.original_language),
         descricao: movie.overview,
-      }));
+      };
+    }));
 
     return NextResponse.json({ sugestoes });
   } catch (error) {

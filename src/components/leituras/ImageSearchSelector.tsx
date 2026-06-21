@@ -4,31 +4,24 @@ import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Spinner, X } from '@phosphor-icons/react';
-
-interface CapaSugestao {
-  id: string;
-  titulo: string;
-  capa: string;
-  autor?: string;
-  editora?: string;
-  ano?: number;
-  descricao?: string;
-}
+import type { SugestaoMidia } from '@/types/midia';
 
 interface ImageSearchSelectorProps {
   tipo: 'livro' | 'filme';
   titulo: string;
   capaAtual: string;
-  onSelecionarCapa: (url: string) => void;
+  onSelecionar: (sugestao: SugestaoMidia) => void;
+  onRemoverCapa: () => void;
 }
 
 export function ImageSearchSelector({
   tipo,
   titulo,
   capaAtual,
-  onSelecionarCapa,
+  onSelecionar,
+  onRemoverCapa,
 }: ImageSearchSelectorProps) {
-  const [sugestoes, setSugestoes] = useState<CapaSugestao[]>([]);
+  const [sugestoes, setSugestoes] = useState<SugestaoMidia[]>([]);
   const [buscando, setBuscando] = useState(false);
   const [mostrarSugestoes, setMostrarSugestoes] = useState(false);
   const ultimaBuscaRef = useRef('');
@@ -93,8 +86,10 @@ export function ImageSearchSelector({
     }
   };
 
-  const handleSelecionarCapa = (url: string) => {
-    onSelecionarCapa(url);
+  const handleSelecionar = (sugestao: SugestaoMidia) => {
+    // Evita disparar outra busca caso a API normalize o título selecionado.
+    ultimaBuscaRef.current = sugestao.titulo.trim();
+    onSelecionar(sugestao);
     setMostrarSugestoes(false);
   };
 
@@ -103,7 +98,7 @@ export function ImageSearchSelector({
       {buscando && (
         <div className="flex items-center gap-2 text-[#44586A] text-sm">
           <Spinner className="w-4 h-4 animate-spin" />
-          <span>Buscando capas para "{titulo}"...</span>
+          <span>Buscando {tipo === 'livro' ? 'livros' : 'filmes'} para "{titulo}"...</span>
         </div>
       )}
 
@@ -111,7 +106,7 @@ export function ImageSearchSelector({
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
             <Label className="text-ink-soft">
-              Selecione uma capa ({sugestoes.length} {sugestoes.length === 1 ? 'resultado' : 'resultados'})
+              Selecione {tipo === 'livro' ? 'o livro' : 'o filme'} ({sugestoes.length} {sugestoes.length === 1 ? 'resultado' : 'resultados'})
             </Label>
             <Button
               type="button"
@@ -126,7 +121,7 @@ export function ImageSearchSelector({
 
           {sugestoes.length === 0 ? (
             <div className="bg-surface-hover border border-line-strong rounded-lg p-6 text-center">
-              <p className="text-ink-soft">Nenhuma capa encontrada para "{titulo}"</p>
+              <p className="text-ink-soft">Nenhum resultado encontrado para "{titulo}"</p>
               <p className="text-xs text-ink-faint mt-1">Tente um termo de busca diferente</p>
             </div>
           ) : (
@@ -135,7 +130,7 @@ export function ImageSearchSelector({
                 <button
                   key={sugestao.id}
                   type="button"
-                  onClick={() => handleSelecionarCapa(sugestao.capa)}
+                  onClick={() => handleSelecionar(sugestao)}
                   className={`group relative rounded-lg overflow-hidden transition-all hover:ring-2 hover:ring-brand ${
                     capaAtual === sugestao.capa ? 'ring-2 ring-brand' : 'ring-1 ring-zinc-700'
                   }`}
@@ -191,7 +186,7 @@ export function ImageSearchSelector({
               type="button"
               size="sm"
               variant="destructive"
-              onClick={() => onSelecionarCapa('')}
+              onClick={onRemoverCapa}
               className="absolute -top-2 -right-2 h-6 w-6 p-0 rounded-full"
               title="Remover capa"
             >

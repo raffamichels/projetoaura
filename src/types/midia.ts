@@ -60,6 +60,20 @@ export interface Midia {
   citacoes?: Citacao[];
 }
 
+export interface SugestaoMidia {
+  id: string;
+  titulo: string;
+  capa: string;
+  autor?: string;
+  editora?: string;
+  diretor?: string;
+  duracao?: number;
+  ano?: number;
+  genero?: string;
+  idioma?: string;
+  descricao?: string;
+}
+
 export interface Citacao {
   id: string;
   texto: string;
