@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Spinner } from '@phosphor-icons/react';
+import { parseValorMonetario } from '@/lib/financeiro-helper';
 
 interface NovaContaModalProps {
   aberto: boolean;
@@ -48,7 +49,7 @@ export default function NovaContaModal({ aberto, onFechar, onSucesso }: NovaCont
         nome,
         tipo,
         banco: banco || undefined,
-        saldoInicial: parseFloat(saldoInicial.replace(',', '.')) || 0,
+        saldoInicial: parseValorMonetario(saldoInicial),
         cor,
         icone: 'wallet',
       };

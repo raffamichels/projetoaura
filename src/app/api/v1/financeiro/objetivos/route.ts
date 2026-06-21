@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth/auth';
 import { prisma } from '@/lib/prisma';
 import { registrarAtividade } from '@/lib/atividades-helper';
-import { calcularProgressoObjetivo, calcularFaltaObjetivo } from '@/lib/financeiro-helper';
+import { calcularProgressoObjetivo, calcularFaltaObjetivo, parseDataFinanceira } from '@/lib/financeiro-helper';
 
 // GET - Listar objetivos do usuário
 export async function GET(req: NextRequest) {
@@ -93,7 +93,7 @@ export async function POST(req: NextRequest) {
         nome,
         descricao,
         valorMeta,
-        dataMeta: dataMeta ? new Date(dataMeta) : null,
+        dataMeta: dataMeta ? parseDataFinanceira(dataMeta) : null,
         isReservaEmergencia: isReservaEmergencia || false,
         cor: cor || '#F59E0B',
         icone: icone || 'target',

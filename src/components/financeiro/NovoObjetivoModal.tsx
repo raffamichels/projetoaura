@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Spinner, Target, Shield } from '@phosphor-icons/react';
+import { parseValorMonetario } from '@/lib/financeiro-helper';
 
 interface NovoObjetivoModalProps {
   aberto: boolean;
@@ -43,7 +44,7 @@ export default function NovoObjetivoModal({ aberto, onFechar, onSucesso }: NovoO
       const body = {
         nome,
         descricao: descricao || undefined,
-        valorMeta: parseFloat(valorMeta.replace(',', '.')),
+        valorMeta: parseValorMonetario(valorMeta),
         dataMeta: dataMeta || undefined,
         isReservaEmergencia,
         cor,

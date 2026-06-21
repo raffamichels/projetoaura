@@ -5,9 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Plus, TrendUp, TrendDown, Calendar, MagnifyingGlass, Funnel, CreditCard, Wallet, Tag, DotsThreeVertical, PencilSimple, Trash, ArrowsDownUp } from '@phosphor-icons/react';
-import { formatarMoeda } from '@/lib/financeiro-helper';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { formatarDataFinanceira, formatarMoeda } from '@/lib/financeiro-helper';
 import NovaTransacaoModal from '@/components/financeiro/NovaTransacaoModal';
 
 interface Transacao {
@@ -274,7 +272,7 @@ export default function TransacoesPage() {
                   <div className="flex items-center gap-3 text-sm text-ink-soft">
                     <div className="flex items-center gap-1">
                       <Calendar className="w-3.5 h-3.5" />
-                      {format(new Date(transacao.data), "dd 'de' MMM", { locale: ptBR })}
+                      {formatarDataFinanceira(transacao.data, { day: '2-digit', month: 'short' })}
                     </div>
                     {transacao.categoria && (
                       <div className="flex items-center gap-1">

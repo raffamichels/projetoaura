@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth/auth';
 import { prisma } from '@/lib/prisma';
 import { registrarAtividade } from '@/lib/atividades-helper';
+import { parseDataFinanceira } from '@/lib/financeiro-helper';
 
 // GET - Buscar transação específica
 export async function GET(
@@ -143,7 +144,7 @@ export async function PUT(
       data: {
         descricao,
         valor,
-        data: data ? new Date(data) : undefined,
+        data: data ? parseDataFinanceira(data) : undefined,
         tipo,
         observacoes,
         categoriaId,

@@ -1,11 +1,42 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Wallet, TrendUp, TrendDown, Target, Plus } from '@phosphor-icons/react';
+import {
+  ArrowRight,
+  CaretLeft,
+  CaretRight,
+  ChartDonut,
+  CreditCard,
+  Eye,
+  EyeSlash,
+  Plus,
+  Receipt,
+  Target,
+  TrendDown,
+  TrendUp,
+  Wallet,
+} from '@phosphor-icons/react';
 import { Button } from '@/components/ui/button';
-import { formatarMoeda } from '@/lib/financeiro-helper';
+import {
+  dataHojeParaInput,
+  formatarDataFinanceira,
+  formatarMesFinanceiro,
+  formatarMoeda,
+} from '@/lib/financeiro-helper';
 import NovaTransacaoModal from '@/components/financeiro/NovaTransacaoModal';
+
+interface TransacaoRecente {
+  id: string;
+  descricao: string;
+  valor: number;
+  data: string;
+  tipo: 'RECEITA' | 'DESPESA';
+  categoria?: { nome: string; cor: string };
+  contaBancaria?: { nome: string };
+  cartao?: { nome: string };
+}
 
 interface DashboardData {
   mes: string;
@@ -27,6 +58,7 @@ interface DashboardData {
   saldoContas: number;
   totalObjetivos: number;
   saldoLivre: number;
+  transacoesRecentes: TransacaoRecente[];
   estatisticas: {
     totalContas: number;
     totalCategorias: number;
@@ -35,58 +67,65 @@ interface DashboardData {
   };
 }
 
+const mesCorrente = dataHojeParaInput().slice(0, 7);
+
 export default function FinanceiroDashboardPage() {
+  const router = useRouter();
   const [dashboard, setDashboard] = useState<DashboardData | null>(null);
+  const [mesSelecionado, setMesSelecionado] = useState(mesCorrente);
   const [loading, setLoading] = useState(true);
-  const [inicializando, setInicializando] = useState(false);
+  const [erro, setErro] = useState('');
+  const [categoriasProntas, setCategoriasProntas] = useState(false);
   const [modalTransacaoAberto, setModalTransacaoAberto] = useState(false);
+  const [ocultarValores, setOcultarValores] = useState(false);
 
   useEffect(() => {
-    inicializarCategorias();
+    const inicializarCategorias = async () => {
+      await fetch('/api/v1/financeiro/categorias/inicializar', { method: 'POST' }).catch(() => null);
+      setCategoriasProntas(true);
+    };
+
+    void inicializarCategorias();
   }, []);
 
-  const inicializarCategorias = async () => {
-    try {
-      setInicializando(true);
-      
-      // Tentar inicializar categorias padrão (se já existir, a API retorna erro que ignoramos)
-      await fetch('/api/v1/financeiro/categorias/inicializar', {
-        method: 'POST',
-      }).catch(() => {
-        // Ignorar erro se categorias já existem
-      });
+  useEffect(() => {
+    if (categoriasProntas) void carregarDashboard(mesSelecionado);
+  }, [categoriasProntas, mesSelecionado]);
 
-      // Carregar dashboard
-      await carregarDashboard();
-    } finally {
-      setInicializando(false);
-    }
-  };
-
-  const carregarDashboard = async () => {
+  const carregarDashboard = async (mes: string) => {
     try {
       setLoading(true);
-      const response = await fetch('/api/v1/financeiro/dashboard');
-      
-      if (response.ok) {
-        const data = await response.json();
-        setDashboard(data.data);
-      }
+      setErro('');
+      const response = await fetch(`/api/v1/financeiro/dashboard?mes=${mes}`);
+      if (!response.ok) throw new Error('Falha ao carregar dados financeiros');
+      const data = await response.json();
+      setDashboard(data.data);
     } catch (error) {
       console.error('Erro ao carregar dashboard:', error);
+      setErro('Não foi possível carregar suas finanças. Tente novamente.');
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading || inicializando) {
+  const navegarMes = (direcao: number) => {
+    const [ano, mes] = mesSelecionado.split('-').map(Number);
+    const novaData = new Date(ano, mes - 1 + direcao, 1);
+    const novoMes = `${novaData.getFullYear()}-${String(novaData.getMonth() + 1).padStart(2, '0')}`;
+    setMesSelecionado(novoMes);
+  };
+
+  const exibirValor = (valor: number) => (ocultarValores ? '••••••' : formatarMoeda(valor));
+  const percentualComprometido = dashboard?.resumoMensal.receitas
+    ? Math.min((dashboard.resumoMensal.despesas / dashboard.resumoMensal.receitas) * 100, 100)
+    : 0;
+
+  if (!dashboard && (loading || !categoriasProntas)) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex min-h-[60vh] items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand mx-auto mb-4"></div>
-          <p className="text-ink-soft">
-            {inicializando ? 'Preparando seu módulo financeiro...' : 'Carregando...'}
-          </p>
+          <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-b-2 border-brand" />
+          <p className="text-ink-soft">Organizando sua visão financeira...</p>
         </div>
       </div>
     );
@@ -94,143 +133,138 @@ export default function FinanceiroDashboardPage() {
 
   if (!dashboard) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p className="text-ink-soft">Erro ao carregar dados</p>
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 p-6 text-center">
+        <p className="text-ink-soft">{erro || 'Não foi possível carregar os dados.'}</p>
+        <Button onClick={() => carregarDashboard(mesSelecionado)}>Tentar novamente</Button>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4 sm:space-y-6 p-4 lg:p-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
+    <div className={`space-y-5 p-4 transition-opacity lg:p-6 ${loading ? 'opacity-60' : 'opacity-100'}`}>
+      <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-ink">Financeiro</h1>
-          <p className="text-sm sm:text-base text-ink-soft">Visão geral das suas finanças</p>
+          <p className="mb-1 text-xs font-semibold uppercase tracking-[0.18em] text-brand-dark">Meu dinheiro</p>
+          <h1 className="text-2xl font-bold text-ink sm:text-3xl">Visão financeira</h1>
+          <p className="mt-1 text-sm text-ink-soft">Entenda o mês e decida seu próximo passo.</p>
         </div>
-        <div className="flex gap-2 sm:gap-3 w-full sm:w-auto">
-          <Button
-            onClick={() => setModalTransacaoAberto(true)}
-            className="flex-1 sm:flex-none bg-brand hover:bg-brand-dark text-white h-auto py-2.5 text-sm sm:text-base"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Nova Transação
-          </Button>
+        <Button
+          onClick={() => setModalTransacaoAberto(true)}
+          className="h-11 w-full bg-brand text-white hover:bg-brand-dark sm:w-auto"
+        >
+          <Plus className="mr-2 h-5 w-5" />
+          Nova transação
+        </Button>
+      </header>
+
+      <div className="flex items-center justify-between rounded-xl border border-line bg-surface p-2 shadow-sm">
+        <Button variant="ghost" size="icon" onClick={() => navegarMes(-1)} aria-label="Mês anterior">
+          <CaretLeft className="h-5 w-5" />
+        </Button>
+        <div className="text-center">
+          <p className="font-semibold text-ink">{formatarMesFinanceiro(mesSelecionado)}</p>
+          {mesSelecionado === mesCorrente && <p className="text-xs text-ink-faint">Mês atual</p>}
         </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => navegarMes(1)}
+          disabled={mesSelecionado >= mesCorrente}
+          aria-label="Próximo mês"
+        >
+          <CaretRight className="h-5 w-5" />
+        </Button>
       </div>
 
-      {/* Cards de Resumo */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        {/* Saldo Total */}
-        <Card className="bg-surface border-line shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-ink-soft">
-              Saldo Total
-            </CardTitle>
-            <Wallet className="w-4 h-4 text-green-600 dark:text-green-400" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-ink">
-              {formatarMoeda(dashboard.saldoContas)}
+      <Card className="overflow-hidden border-0 bg-gradient-to-br from-brand-dark to-brand shadow-lg">
+        <CardContent className="p-5 text-white sm:p-7">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-sm text-white/75">Saldo em contas</p>
+              <p className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">{exibirValor(dashboard.saldoContas)}</p>
+              <p className="mt-2 text-xs text-white/70">
+                {dashboard.estatisticas.totalContas} {dashboard.estatisticas.totalContas === 1 ? 'conta conectada' : 'contas conectadas'}
+              </p>
             </div>
-            <p className="text-xs text-ink-faint mt-1">
-              {dashboard.estatisticas.totalContas} conta(s)
-            </p>
-          </CardContent>
-        </Card>
+            <button
+              type="button"
+              onClick={() => setOcultarValores((valor) => !valor)}
+              className="rounded-lg bg-white/10 p-2.5 transition-colors hover:bg-white/20"
+              aria-label={ocultarValores ? 'Mostrar valores' : 'Ocultar valores'}
+            >
+              {ocultarValores ? <Eye className="h-5 w-5" /> : <EyeSlash className="h-5 w-5" />}
+            </button>
+          </div>
 
-        {/* Receitas do Mês */}
-        <Card className="bg-surface border-line shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-ink-soft">
-              Receitas
-            </CardTitle>
-            <TrendUp className="w-4 h-4 text-green-600 dark:text-green-400" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600 dark:text-green-400">
-              {formatarMoeda(dashboard.resumoMensal.receitas)}
+          <div className="mt-6 grid grid-cols-2 gap-3 border-t border-white/15 pt-5 sm:grid-cols-3">
+            <div>
+              <div className="flex items-center gap-1.5 text-xs text-white/70"><TrendUp /> Entradas</div>
+              <p className="mt-1 font-semibold">{exibirValor(dashboard.resumoMensal.receitas)}</p>
             </div>
-            <p className="text-xs text-ink-faint mt-1">
-              Mês atual
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Despesas do Mês */}
-        <Card className="bg-surface border-line shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-ink-soft">
-              Despesas
-            </CardTitle>
-            <TrendDown className="w-4 h-4 text-red-600 dark:text-red-400" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-red-600 dark:text-red-400">
-              {formatarMoeda(dashboard.resumoMensal.despesas)}
+            <div>
+              <div className="flex items-center gap-1.5 text-xs text-white/70"><TrendDown /> Saídas</div>
+              <p className="mt-1 font-semibold">{exibirValor(dashboard.resumoMensal.despesas)}</p>
             </div>
-            <p className="text-xs text-ink-faint mt-1">
-              {dashboard.estatisticas.totalTransacoesMes} transações
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Sobra Mensal */}
-        <Card className="bg-surface border-line shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-ink-soft">
-              Sobra Mensal
-            </CardTitle>
-            <Target className="w-4 h-4 text-brand-dark" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-ink">
-              {formatarMoeda(dashboard.resumoMensal.sobra)}
+            <div className="col-span-2 sm:col-span-1">
+              <div className="flex items-center gap-1.5 text-xs text-white/70"><Wallet /> Balanço do mês</div>
+              <p className="mt-1 font-semibold">{exibirValor(dashboard.resumoMensal.saldo)}</p>
             </div>
-            <p className="text-xs text-ink-faint mt-1">
-              Após despesas fixas
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </CardContent>
+      </Card>
 
-      {/* Grid Principal */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-        {/* Gastos por Categoria */}
-        <Card className="bg-surface border-line shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-ink">Gastos por Categoria</CardTitle>
+      <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <ResumoCard
+          titulo="Entradas"
+          valor={exibirValor(dashboard.resumoMensal.receitas)}
+          detalhe={`${dashboard.estatisticas.totalTransacoesMes} movimentações no mês`}
+          icone={<TrendUp className="h-5 w-5 text-green-600 dark:text-green-400" />}
+          cor="bg-green-50 dark:bg-green-500/10"
+        />
+        <ResumoCard
+          titulo="Saídas"
+          valor={exibirValor(dashboard.resumoMensal.despesas)}
+          detalhe={`${percentualComprometido.toFixed(0)}% das entradas`}
+          icone={<TrendDown className="h-5 w-5 text-red-600 dark:text-red-400" />}
+          cor="bg-red-50 dark:bg-red-500/10"
+        />
+        <ResumoCard
+          titulo="Livre para usar"
+          valor={exibirValor(dashboard.saldoLivre)}
+          detalhe={`${dashboard.estatisticas.totalObjetivosAtivos} objetivos ativos`}
+          icone={<Target className="h-5 w-5 text-brand-dark" />}
+          cor="bg-brand-soft"
+        />
+      </section>
+
+      <section className="grid grid-cols-1 gap-4 lg:grid-cols-5">
+        <Card className="border-line bg-surface shadow-sm lg:col-span-3">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <div>
+              <CardTitle className="text-lg text-ink">Para onde foi seu dinheiro</CardTitle>
+              <p className="mt-1 text-sm text-ink-faint">Maiores categorias de despesas do mês</p>
+            </div>
+            <ChartDonut className="h-6 w-6 text-brand" />
           </CardHeader>
           <CardContent>
             {dashboard.gastosPorCategoria.length === 0 ? (
-              <div className="text-center py-8 text-ink-faint">
-                Nenhuma despesa registrada este mês
-              </div>
+              <EstadoVazio texto="Nenhuma despesa registrada neste mês." />
             ) : (
               <div className="space-y-4">
-                {dashboard.gastosPorCategoria.slice(0, 5).map((cat) => (
-                  <div key={cat.categoriaId} className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div
-                          className="w-3 h-3 rounded-full"
-                          style={{ backgroundColor: cat.cor }}
-                        />
-                        <span className="text-sm text-ink-soft">
-                          {cat.categoriaNome}
-                        </span>
+                {dashboard.gastosPorCategoria.slice(0, 5).map((categoria) => (
+                  <div key={categoria.categoriaId}>
+                    <div className="mb-2 flex items-center justify-between gap-3 text-sm">
+                      <div className="flex min-w-0 items-center gap-2">
+                        <span className="h-3 w-3 shrink-0 rounded-full" style={{ backgroundColor: categoria.cor }} />
+                        <span className="truncate text-ink-soft">{categoria.categoriaNome}</span>
+                        <span className="text-xs text-ink-faint">{categoria.porcentagem.toFixed(0)}%</span>
                       </div>
-                      <span className="text-sm font-medium text-ink">
-                        {formatarMoeda(cat.total)}
-                      </span>
+                      <span className="font-semibold text-ink">{exibirValor(categoria.total)}</span>
                     </div>
-                    <div className="w-full bg-line rounded-full h-2">
+                    <div className="h-2 overflow-hidden rounded-full bg-line">
                       <div
-                        className="h-2 rounded-full transition-all"
-                        style={{
-                          width: `${cat.porcentagem}%`,
-                          backgroundColor: cat.cor,
-                        }}
+                        className="h-full rounded-full transition-all"
+                        style={{ width: `${Math.min(categoria.porcentagem, 100)}%`, backgroundColor: categoria.cor }}
                       />
                     </div>
                   </div>
@@ -240,87 +274,138 @@ export default function FinanceiroDashboardPage() {
           </CardContent>
         </Card>
 
-        {/* Resumo Financeiro */}
-        <Card className="bg-surface border-line shadow-sm">
+        <Card className="border-line bg-surface shadow-sm lg:col-span-2">
           <CardHeader>
-            <CardTitle className="text-ink">Resumo Financeiro</CardTitle>
+            <CardTitle className="text-lg text-ink">Composição das saídas</CardTitle>
+            <p className="text-sm text-ink-faint">O que é recorrente e o que varia</p>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex justify-between items-center py-3 border-b border-line">
-              <span className="text-ink-soft">Receitas</span>
-              <span className="text-green-600 dark:text-green-400 font-medium">
-                {formatarMoeda(dashboard.resumoMensal.receitas)}
-              </span>
-            </div>
-            <div className="flex justify-between items-center py-3 border-b border-line">
-              <span className="text-ink-soft">Despesas Fixas</span>
-              <span className="text-red-600 dark:text-red-400 font-medium">
-                {formatarMoeda(dashboard.resumoMensal.despesasFixas)}
-              </span>
-            </div>
-            <div className="flex justify-between items-center py-3 border-b border-line">
-              <span className="text-ink-soft">Despesas Variáveis</span>
-              <span className="text-red-600 dark:text-red-400 font-medium">
-                {formatarMoeda(dashboard.resumoMensal.despesasVariaveis)}
-              </span>
-            </div>
-            <div className="flex justify-between items-center py-3 border-b border-line">
-              <span className="text-ink-soft">Total em Objetivos</span>
-              <span className="text-brand-dark font-medium">
-                {formatarMoeda(dashboard.totalObjetivos)}
-              </span>
-            </div>
-            <div className="flex justify-between items-center py-3 pt-4">
-              <span className="text-ink font-semibold">Saldo Livre</span>
-              <span className="text-xl font-bold text-ink">
-                {formatarMoeda(dashboard.saldoLivre)}
-              </span>
+          <CardContent className="space-y-5">
+            <LinhaResumo label="Despesas fixas" valor={exibirValor(dashboard.resumoMensal.despesasFixas)} />
+            <LinhaResumo label="Despesas variáveis" valor={exibirValor(dashboard.resumoMensal.despesasVariaveis)} />
+            <LinhaResumo label="Guardado em objetivos" valor={exibirValor(dashboard.totalObjetivos)} />
+            <div className="rounded-xl bg-surface-hover p-4">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-ink-soft">Comprometimento da renda</span>
+                <span className="font-semibold text-ink">{percentualComprometido.toFixed(0)}%</span>
+              </div>
+              <div className="mt-3 h-2 overflow-hidden rounded-full bg-line">
+                <div
+                  className={`h-full rounded-full ${percentualComprometido > 80 ? 'bg-red-500' : 'bg-brand'}`}
+                  style={{ width: `${percentualComprometido}%` }}
+                />
+              </div>
             </div>
           </CardContent>
         </Card>
-      </div>
+      </section>
 
-      {/* Links Rápidos */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
-        <Button
-          className="h-16 sm:h-20 bg-surface border border-line shadow-sm hover:bg-surface-hover text-ink-soft duration-150"
-          onClick={() => window.location.href = '/dashboard/financeiro/contas'}
-        >
-          <div className="text-center">
-            <Wallet className="w-5 h-5 sm:w-6 sm:h-6 mx-auto mb-1 sm:mb-2 text-green-600 dark:text-green-400" />
-            <div className="text-xs sm:text-sm text-ink-soft">Contas e Cartões</div>
-          </div>
-        </Button>
+      <section className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        <Card className="border-line bg-surface shadow-sm lg:col-span-2">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <div>
+              <CardTitle className="text-lg text-ink">Movimentações recentes</CardTitle>
+              <p className="mt-1 text-sm text-ink-faint">Seus últimos lançamentos</p>
+            </div>
+            <Button variant="ghost" onClick={() => router.push('/dashboard/financeiro/transacoes')}>
+              Ver todas <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </CardHeader>
+          <CardContent>
+            {dashboard.transacoesRecentes.length === 0 ? (
+              <EstadoVazio texto="Sua primeira transação aparecerá aqui." />
+            ) : (
+              <div className="divide-y divide-line">
+                {dashboard.transacoesRecentes.slice(0, 5).map((transacao) => (
+                  <div key={transacao.id} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
+                    <div
+                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${
+                        transacao.tipo === 'RECEITA' ? 'bg-green-50 dark:bg-green-500/10' : 'bg-red-50 dark:bg-red-500/10'
+                      }`}
+                    >
+                      {transacao.tipo === 'RECEITA'
+                        ? <TrendUp className="h-5 w-5 text-green-600 dark:text-green-400" />
+                        : <TrendDown className="h-5 w-5 text-red-600 dark:text-red-400" />}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate font-medium text-ink">{transacao.descricao}</p>
+                      <p className="truncate text-xs text-ink-faint">
+                        {transacao.categoria?.nome || 'Sem categoria'} · {formatarDataFinanceira(transacao.data, { day: '2-digit', month: 'short' })}
+                      </p>
+                    </div>
+                    <p className={`whitespace-nowrap font-semibold ${transacao.tipo === 'RECEITA' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                      {ocultarValores ? '••••••' : `${transacao.tipo === 'RECEITA' ? '+' : '−'} ${formatarMoeda(transacao.valor)}`}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
-        <Button
-          className="h-16 sm:h-20 bg-surface border border-line shadow-sm hover:bg-surface-hover text-ink-soft duration-150"
-          onClick={() => window.location.href = '/dashboard/financeiro/transacoes'}
-        >
-          <div className="text-center">
-            <TrendUp className="w-5 h-5 sm:w-6 sm:h-6 mx-auto mb-1 sm:mb-2 text-blue-500" />
-            <div className="text-xs sm:text-sm text-ink-soft">Transações</div>
-          </div>
-        </Button>
+        <Card className="border-line bg-surface shadow-sm">
+          <CardHeader>
+            <CardTitle className="text-lg text-ink">Acessos rápidos</CardTitle>
+            <p className="text-sm text-ink-faint">Tudo no lugar certo</p>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <Atalho icone={<Wallet />} titulo="Contas e cartões" detalhe="Saldos, limites e bancos" onClick={() => router.push('/dashboard/financeiro/contas')} />
+            <Atalho icone={<Receipt />} titulo="Transações" detalhe="Histórico de entradas e saídas" onClick={() => router.push('/dashboard/financeiro/transacoes')} />
+            <Atalho icone={<Target />} titulo="Objetivos" detalhe="Metas e reserva financeira" onClick={() => router.push('/dashboard/financeiro/objetivos')} />
+            <Atalho icone={<CreditCard />} titulo="Categorias" detalhe="Organize seus lançamentos" onClick={() => router.push('/dashboard/financeiro/categorias')} />
+          </CardContent>
+        </Card>
+      </section>
 
-        <Button
-          className="h-16 sm:h-20 bg-surface border border-line shadow-sm hover:bg-surface-hover text-ink-soft duration-150"
-          onClick={() => window.location.href = '/dashboard/financeiro/objetivos'}
-        >
-          <div className="text-center">
-            <Target className="w-5 h-5 sm:w-6 sm:h-6 mx-auto mb-1 sm:mb-2 text-brand-dark" />
-            <div className="text-xs sm:text-sm text-ink-soft">Objetivos</div>
-          </div>
-        </Button>
-      </div>
-
-      {/* Modal de Nova Transação */}
       <NovaTransacaoModal
         aberto={modalTransacaoAberto}
         onFechar={() => setModalTransacaoAberto(false)}
-        onSucesso={() => {
-          carregarDashboard();
-        }}
+        onSucesso={() => carregarDashboard(mesSelecionado)}
       />
+    </div>
+  );
+}
+
+function ResumoCard({ titulo, valor, detalhe, icone, cor }: { titulo: string; valor: string; detalhe: string; icone: React.ReactNode; cor: string }) {
+  return (
+    <Card className="border-line bg-surface shadow-sm">
+      <CardContent className="flex items-center gap-4 p-5">
+        <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${cor}`}>{icone}</div>
+        <div className="min-w-0">
+          <p className="text-sm text-ink-soft">{titulo}</p>
+          <p className="truncate text-xl font-bold text-ink">{valor}</p>
+          <p className="truncate text-xs text-ink-faint">{detalhe}</p>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function LinhaResumo({ label, valor }: { label: string; valor: string }) {
+  return (
+    <div className="flex items-center justify-between gap-4 border-b border-line pb-4 last:border-0 last:pb-0">
+      <span className="text-sm text-ink-soft">{label}</span>
+      <span className="font-semibold text-ink">{valor}</span>
+    </div>
+  );
+}
+
+function Atalho({ icone, titulo, detalhe, onClick }: { icone: React.ReactNode; titulo: string; detalhe: string; onClick: () => void }) {
+  return (
+    <button type="button" onClick={onClick} className="group flex w-full items-center gap-3 rounded-xl p-3 text-left transition-colors hover:bg-surface-hover">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-soft text-brand-dark">{icone}</span>
+      <span className="min-w-0 flex-1">
+        <span className="block font-medium text-ink">{titulo}</span>
+        <span className="block truncate text-xs text-ink-faint">{detalhe}</span>
+      </span>
+      <CaretRight className="h-4 w-4 text-ink-faint transition-transform group-hover:translate-x-0.5" />
+    </button>
+  );
+}
+
+function EstadoVazio({ texto }: { texto: string }) {
+  return (
+    <div className="rounded-xl border border-dashed border-line p-8 text-center text-sm text-ink-faint">
+      {texto}
     </div>
   );
 }

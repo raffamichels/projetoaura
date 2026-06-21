@@ -2,16 +2,79 @@
 // Funções auxiliares para cálculos financeiros
 
 import { format, addMonths } from 'date-fns';
+import { formatarDataString, parseDataString } from '@/lib/timezone';
 import type { Transacao, ResumoMensal, GastosPorCategoria } from '@/types/financeiro';
 
 /**
  * Formata valor monetário para exibição
  */
 export function formatarMoeda(valor: number): string {
+  const valorSeguro = Number.isFinite(valor) ? valor : 0;
+
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',
-  }).format(valor);
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(valorSeguro);
+}
+
+/**
+ * Converte valores digitados no padrão brasileiro ou internacional.
+ * Exemplos aceitos: 1234.56, 1234,56 e 1.234,56.
+ */
+export function parseValorMonetario(valor: string | number): number {
+  if (typeof valor === 'number') return Number.isFinite(valor) ? valor : 0;
+
+  const limpo = valor.trim().replace(/R\$\s?/g, '').replace(/\s/g, '');
+  if (!limpo) return 0;
+
+  const normalizado = limpo.includes(',')
+    ? limpo.replace(/\./g, '').replace(',', '.')
+    : limpo;
+  const numero = Number(normalizado);
+
+  return Number.isFinite(numero) ? numero : 0;
+}
+
+/** Retorna a data local no formato esperado por inputs type="date". */
+export function dataHojeParaInput(): string {
+  return formatarDataString(new Date());
+}
+
+/**
+ * Interpreta datas financeiras como datas civis, sem deslocamento de fuso.
+ * Para strings ISO, o trecho YYYY-MM-DD é mantido como a data registrada.
+ */
+export function parseDataFinanceira(data: string | Date): Date {
+  if (data instanceof Date) return new Date(data);
+
+  const dataCivil = data.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (dataCivil) return parseDataString(`${dataCivil[1]}-${dataCivil[2]}-${dataCivil[3]}`);
+
+  return new Date(data);
+}
+
+export function formatarDataFinanceira(
+  data: string | Date,
+  opcoes: Intl.DateTimeFormatOptions = { day: '2-digit', month: '2-digit', year: 'numeric' }
+): string {
+  const dataNormalizada = parseDataFinanceira(data);
+  if (Number.isNaN(dataNormalizada.getTime())) return '—';
+
+  return new Intl.DateTimeFormat('pt-BR', opcoes).format(dataNormalizada);
+}
+
+export function formatarMesFinanceiro(mes: string): string {
+  const [ano, numeroMes] = mes.split('-').map(Number);
+  if (!ano || !numeroMes) return mes;
+
+  const rotulo = new Intl.DateTimeFormat('pt-BR', {
+    month: 'long',
+    year: 'numeric',
+  }).format(new Date(ano, numeroMes - 1, 1));
+
+  return rotulo.charAt(0).toUpperCase() + rotulo.slice(1);
 }
 
 /**
@@ -167,7 +230,9 @@ export function calcularFaltaObjetivo(valorAtual: number, valorMeta: number): nu
  * Valida se valor é numérico e positivo
  */
 export function validarValor(valor: unknown): boolean {
-  const num = typeof valor === 'string' ? parseFloat(valor) : typeof valor === 'number' ? valor : NaN;
+  const num = typeof valor === 'string' || typeof valor === 'number'
+    ? parseValorMonetario(valor)
+    : NaN;
   return !isNaN(num) && num > 0;
 }
 
@@ -193,7 +258,7 @@ export function identificarDuplicadas(transacoes: Transacao[]): string[] {
   const seen = new Map<string, Transacao>();
 
   transacoes.forEach((t) => {
-    const key = `${t.descricao.toLowerCase()}_${t.valor}_${format(new Date(t.data), 'yyyy-MM-dd')}`;
+    const key = `${t.descricao.toLowerCase()}_${t.valor}_${format(parseDataFinanceira(t.data), 'yyyy-MM-dd')}`;
     
     if (seen.has(key)) {
       duplicadas.push(t.id);

@@ -6,7 +6,9 @@ import {
   gerarGrupoParcelaId,
   gerarDatasParcelas,
   calcularValorParcela,
+  decimalParaNumero,
   formatarDescricaoParcela,
+  parseDataFinanceira,
   sugerirCategoria,
 } from '@/lib/financeiro-helper';
 import { transacaoSchema } from '@/lib/validations/financeiro';
@@ -45,9 +47,8 @@ export async function GET(req: NextRequest) {
     // Filtrar por mês
     if (mes) {
       const [ano, mesNum] = mes.split('-');
-      const dataInicio = new Date(`${ano}-${mesNum}-01`);
-      const dataFim = new Date(dataInicio);
-      dataFim.setMonth(dataFim.getMonth() + 1);
+      const dataInicio = new Date(Date.UTC(Number(ano), Number(mesNum) - 1, 1));
+      const dataFim = new Date(Date.UTC(Number(ano), Number(mesNum), 1));
       
       where.data = {
         gte: dataInicio,
@@ -65,7 +66,21 @@ export async function GET(req: NextRequest) {
       orderBy: { data: 'desc' },
     });
 
-    return NextResponse.json({ data: transacoes }, { status: 200 });
+    const transacoesConvertidas = transacoes.map((transacao) => ({
+      ...transacao,
+      valor: decimalParaNumero(transacao.valor),
+      contaBancaria: transacao.contaBancaria ? {
+        ...transacao.contaBancaria,
+        saldoInicial: decimalParaNumero(transacao.contaBancaria.saldoInicial),
+        saldoAtual: decimalParaNumero(transacao.contaBancaria.saldoAtual),
+      } : null,
+      cartao: transacao.cartao ? {
+        ...transacao.cartao,
+        limite: transacao.cartao.limite === null ? null : decimalParaNumero(transacao.cartao.limite),
+      } : null,
+    }));
+
+    return NextResponse.json({ data: transacoesConvertidas }, { status: 200 });
   } catch (error) {
     logger.error('Erro ao buscar transações', error, { endpoint: '/api/v1/financeiro/transacoes' });
     return NextResponse.json({ error: 'Erro interno' }, { status: 500 });
@@ -196,7 +211,7 @@ export async function POST(req: NextRequest) {
         data: {
           descricao,
           valor,
-          data: new Date(data),
+          data: parseDataFinanceira(data),
           tipo,
           observacoes,
           isFixa: false,
@@ -257,7 +272,7 @@ export async function POST(req: NextRequest) {
         data: {
           descricao,
           valor,
-          data: new Date(data),
+          data: parseDataFinanceira(data),
           tipo,
           observacoes,
           isFixa: true,
@@ -302,7 +317,7 @@ export async function POST(req: NextRequest) {
     // SE FOR TRANSAÇÃO PARCELADA
     if (isParcela && parcelaTotais) {
       const grupoId = gerarGrupoParcelaId();
-      const dataInicial = new Date(data);
+      const dataInicial = parseDataFinanceira(data);
       const datas = gerarDatasParcelas(dataInicial, parcelaTotais);
       const valorParcela = calcularValorParcela(valor, parcelaTotais);
 

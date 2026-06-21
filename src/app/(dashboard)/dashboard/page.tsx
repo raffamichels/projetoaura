@@ -108,6 +108,21 @@ export default function DashboardPage() {
     router.push('/dashboard/biblioteca');
   };
 
+  // Função para ir para metas
+  const handleIrParaMetas = () => {
+    router.push('/dashboard/metas');
+  };
+
+  const handleCardKeyDown = (
+    event: React.KeyboardEvent<HTMLDivElement>,
+    navigate: () => void
+  ) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      navigate();
+    }
+  };
+
   return (
     <div className="space-y-4 sm:space-y-6 p-4 lg:p-6">
       {/* Welcome Section */}
@@ -126,6 +141,9 @@ export default function DashboardPage() {
         <Card
           className="cursor-pointer hover:border-brand/50 transition-all duration-150"
           onClick={handleIrParaAgenda}
+          onKeyDown={(event) => handleCardKeyDown(event, handleIrParaAgenda)}
+          role="link"
+          tabIndex={0}
         >
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-ink-soft">
@@ -156,7 +174,13 @@ export default function DashboardPage() {
         </Card>
 
         {/* Card 2 - Saldo Mensal */}
-        <Card>
+        <Card
+          className="cursor-pointer hover:border-brand/50 transition-all duration-150"
+          onClick={handleIrParaFinanceiro}
+          onKeyDown={(event) => handleCardKeyDown(event, handleIrParaFinanceiro)}
+          role="link"
+          tabIndex={0}
+        >
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-ink-soft">
               {t('monthlyBalance')}
@@ -173,7 +197,13 @@ export default function DashboardPage() {
         </Card>
 
         {/* Card 3 - Cursos Ativos */}
-        <Card>
+        <Card
+          className="cursor-pointer hover:border-brand/50 transition-all duration-150"
+          onClick={handleIrParaEstudos}
+          onKeyDown={(event) => handleCardKeyDown(event, handleIrParaEstudos)}
+          role="link"
+          tabIndex={0}
+        >
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-ink-soft">
               {t('activeCourses')}
@@ -189,7 +219,13 @@ export default function DashboardPage() {
         </Card>
 
         {/* Card 4 - Metas do Mês */}
-        <Card>
+        <Card
+          className="cursor-pointer hover:border-brand/50 transition-all duration-150"
+          onClick={handleIrParaMetas}
+          onKeyDown={(event) => handleCardKeyDown(event, handleIrParaMetas)}
+          role="link"
+          tabIndex={0}
+        >
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-ink-soft">
               {t('monthlyGoals')}

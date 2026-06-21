@@ -30,9 +30,8 @@ export async function GET(req: NextRequest) {
 
     // Parse mês
     const [ano, mesNum] = mes.split('-');
-    const dataInicio = new Date(`${ano}-${mesNum}-01`);
-    const dataFim = new Date(dataInicio);
-    dataFim.setMonth(dataFim.getMonth() + 1);
+    const dataInicio = new Date(Date.UTC(Number(ano), Number(mesNum) - 1, 1));
+    const dataFim = new Date(Date.UTC(Number(ano), Number(mesNum), 1));
 
     // Buscar transações do mês
     const transacoes = await prisma.transacao.findMany({
@@ -109,7 +108,10 @@ export async function GET(req: NextRequest) {
 
     // Buscar transações recentes (últimas 10)
     const transacoesRecentes = await prisma.transacao.findMany({
-      where: { userId: user.id },
+      where: {
+        userId: user.id,
+        data: { gte: dataInicio, lt: dataFim },
+      },
       include: {
         categoria: true,
         contaBancaria: true,

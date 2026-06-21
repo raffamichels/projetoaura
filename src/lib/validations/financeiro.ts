@@ -1,5 +1,16 @@
 import { z } from 'zod';
 
+const dataFinanceiraSchema = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}$/, 'Data deve estar no formato AAAA-MM-DD')
+  .refine((valor) => {
+    const [ano, mes, dia] = valor.split('-').map(Number);
+    const data = new Date(Date.UTC(ano, mes - 1, dia));
+    return data.getUTCFullYear() === ano
+      && data.getUTCMonth() === mes - 1
+      && data.getUTCDate() === dia;
+  }, 'Data inválida');
+
 /**
  * Schema de validação para criação de transações
  * Previne Mass Assignment e valida ranges de valores
@@ -13,9 +24,7 @@ export const transacaoSchema = z.object({
     .number()
     .positive('Valor deve ser positivo')
     .max(999999999.99, 'Valor máximo excedido'),
-  data: z.string().refine((val) => !isNaN(Date.parse(val)), {
-    message: 'Data inválida',
-  }),
+  data: dataFinanceiraSchema,
   tipo: z.enum(['RECEITA', 'DESPESA'] as const, {
     message: 'Tipo deve ser RECEITA ou DESPESA',
   }),
@@ -55,12 +64,7 @@ export const transacaoUpdateSchema = z.object({
     .positive('Valor deve ser positivo')
     .max(999999999.99, 'Valor máximo excedido')
     .optional(),
-  data: z
-    .string()
-    .refine((val) => !isNaN(Date.parse(val)), {
-      message: 'Data inválida',
-    })
-    .optional(),
+  data: dataFinanceiraSchema.optional(),
   tipo: z
     .enum(['RECEITA', 'DESPESA'] as const, {
       message: 'Tipo deve ser RECEITA ou DESPESA',

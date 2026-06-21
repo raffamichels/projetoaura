@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { dataHojeParaInput, formatarMoeda, parseValorMonetario } from '@/lib/financeiro-helper';
 import { Switch } from '@/components/ui/switch';
 import {
   Select,
@@ -47,7 +48,7 @@ export default function NovaTransacaoModal({ aberto, onFechar, onSucesso }: Nova
   // Dados do formulário
   const [descricao, setDescricao] = useState('');
   const [valor, setValor] = useState('');
-  const [data, setData] = useState(new Date().toISOString().split('T')[0]);
+  const [data, setData] = useState(dataHojeParaInput());
   const [observacoes, setObservacoes] = useState('');
   const [categoriaId, setCategoriaId] = useState('');
   const [contaBancariaId, setContaBancariaId] = useState('');
@@ -117,7 +118,7 @@ export default function NovaTransacaoModal({ aberto, onFechar, onSucesso }: Nova
     const loadingToast = toast.loading('Criando transação...');
 
     try {
-      const valorNumerico = parseFloat(valor.replace(',', '.'));
+      const valorNumerico = parseValorMonetario(valor);
 
       const body = {
         descricao,
@@ -160,7 +161,7 @@ export default function NovaTransacaoModal({ aberto, onFechar, onSucesso }: Nova
   const limparFormulario = () => {
     setDescricao('');
     setValor('');
-    setData(new Date().toISOString().split('T')[0]);
+    setData(dataHojeParaInput());
     setObservacoes('');
     setCategoriaId('');
     setContaBancariaId('');
@@ -365,7 +366,7 @@ export default function NovaTransacaoModal({ aberto, onFechar, onSucesso }: Nova
                   />
                   {valor && (
                     <p className="text-xs text-ink-faint mt-1">
-                      {parcelaTotais}x de R$ {(parseFloat(valor.replace(',', '.')) / parseInt(parcelaTotais || '1')).toFixed(2)}
+                      {parcelaTotais}x de {formatarMoeda(parseValorMonetario(valor) / parseInt(parcelaTotais || '1'))}
                     </p>
                   )}
                 </div>

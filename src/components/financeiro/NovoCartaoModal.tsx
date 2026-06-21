@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@phosphor-icons/react';
+import { parseValorMonetario } from '@/lib/financeiro-helper';
 
 interface NovoCartaoModalProps {
   aberto: boolean;
@@ -43,7 +44,7 @@ export default function NovoCartaoModal({ aberto, onFechar, onSucesso }: NovoCar
         nome,
         bandeira: bandeira || undefined,
         ultimosDigitos: ultimosDigitos || undefined,
-        limite: limite ? parseFloat(limite.replace(',', '.')) : undefined,
+        limite: limite ? parseValorMonetario(limite) : undefined,
         diaVencimento: diaVencimento ? parseInt(diaVencimento) : undefined,
         diaFechamento: diaFechamento ? parseInt(diaFechamento) : undefined,
         cor,

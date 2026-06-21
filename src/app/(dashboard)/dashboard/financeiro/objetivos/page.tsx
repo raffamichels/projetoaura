@@ -5,9 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Plus, Target, TrendUp, Calendar, CurrencyDollar, CheckCircle, Sparkle, Lightning, Shield } from '@phosphor-icons/react';
-import { formatarMoeda } from '@/lib/financeiro-helper';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { formatarDataFinanceira, formatarMoeda } from '@/lib/financeiro-helper';
 import NovoObjetivoModal from '@/components/financeiro/NovoObjetivoModal';
 import ContribuirObjetivoModal from '@/components/financeiro/ContribuirObjetivoModal';
 
@@ -257,7 +255,7 @@ export default function ObjetivosPage() {
                   {objetivo.dataMeta && (
                     <div className="flex items-center gap-2 text-sm text-ink-soft">
                       <Calendar className="w-4 h-4" />
-                      {format(new Date(objetivo.dataMeta), "dd/MM/yyyy", { locale: ptBR })}
+                      {formatarDataFinanceira(objetivo.dataMeta)}
                     </div>
                   )}
                 </div>

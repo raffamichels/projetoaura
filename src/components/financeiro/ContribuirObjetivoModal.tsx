@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Spinner, Target, TrendUp } from '@phosphor-icons/react';
-import { formatarMoeda } from '@/lib/financeiro-helper';
+import { formatarMoeda, parseValorMonetario } from '@/lib/financeiro-helper';
 
 interface ContribuirObjetivoModalProps {
   aberto: boolean;
@@ -47,12 +47,14 @@ export default function ContribuirObjetivoModal({
   const [contas, setContas] = useState<Conta[]>([]);
 
   // Carregar contas quando o modal abrir
-  useState(() => {
+  useEffect(() => {
     if (aberto) {
-      carregarContas();
+      void carregarContas();
       setDescricao(objetivo ? `Contribuição para ${objetivo.nome}` : '');
     }
-  });
+    // O carregamento deve ocorrer somente ao abrir ou trocar o objetivo.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [aberto, objetivo]);
 
   const carregarContas = async () => {
     try {
@@ -73,7 +75,7 @@ export default function ContribuirObjetivoModal({
     setCarregando(true);
 
     try {
-      const valorNumerico = parseFloat(valor.replace(',', '.'));
+      const valorNumerico = parseValorMonetario(valor);
       
       const body = {
         valor: valorNumerico,
@@ -117,7 +119,7 @@ export default function ContribuirObjetivoModal({
 
   if (!objetivo) return null;
 
-  const valorNumerico = valor ? parseFloat(valor.replace(',', '.')) : 0;
+  const valorNumerico = parseValorMonetario(valor);
   const novoTotal = objetivo.valorAtual + valorNumerico;
   const porcentagemAtual = (objetivo.valorAtual / objetivo.valorMeta) * 100;
   const novaPorcentagem = (novoTotal / objetivo.valorMeta) * 100;
@@ -251,11 +253,11 @@ export default function ContribuirObjetivoModal({
             </Button>
             <Button
               type="submit"
-              disabled={carregando || !valor || parseFloat(valor) <= 0}
+              disabled={carregando || valorNumerico <= 0}
               className="flex-1"
               style={{ 
                 backgroundColor: objetivo.cor,
-                opacity: (!valor || parseFloat(valor) <= 0) ? 0.5 : 1
+                opacity: valorNumerico <= 0 ? 0.5 : 1
               }}
             >
               {carregando ? (

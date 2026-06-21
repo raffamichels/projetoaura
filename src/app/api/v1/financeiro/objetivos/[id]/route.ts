@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth/auth';
 import { prisma } from '@/lib/prisma';
 import { registrarAtividade } from '@/lib/atividades-helper';
-import { calcularProgressoObjetivo, calcularFaltaObjetivo } from '@/lib/financeiro-helper';
+import { calcularProgressoObjetivo, calcularFaltaObjetivo, parseDataFinanceira } from '@/lib/financeiro-helper';
 
 // GET - Buscar objetivo específico
 export async function GET(
@@ -110,7 +110,7 @@ export async function PUT(
         nome,
         descricao,
         valorMeta,
-        dataMeta: dataMeta ? new Date(dataMeta) : null,
+        dataMeta: dataMeta ? parseDataFinanceira(dataMeta) : null,
         cor,
         icone,
         status,

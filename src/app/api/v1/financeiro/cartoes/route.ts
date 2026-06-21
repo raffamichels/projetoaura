@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth/auth';
 import { prisma } from '@/lib/prisma';
 import { registrarAtividade } from '@/lib/atividades-helper';
+import { decimalParaNumero } from '@/lib/financeiro-helper';
 
 // GET - Listar cartões do usuário
 export async function GET() {
@@ -25,7 +26,12 @@ export async function GET() {
       orderBy: { createdAt: 'desc' },
     });
 
-    return NextResponse.json({ data: cartoes }, { status: 200 });
+    const cartoesConvertidos = cartoes.map((cartao) => ({
+      ...cartao,
+      limite: cartao.limite === null ? null : decimalParaNumero(cartao.limite),
+    }));
+
+    return NextResponse.json({ data: cartoesConvertidos }, { status: 200 });
   } catch (error) {
     console.error('Erro ao buscar cartões:', error);
     return NextResponse.json({ error: 'Erro interno' }, { status: 500 });
