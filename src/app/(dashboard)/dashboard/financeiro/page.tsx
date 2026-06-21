@@ -145,7 +145,7 @@ export default function FinanceiroDashboardPage() {
       <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="mb-1 text-xs font-semibold uppercase tracking-[0.18em] text-brand-dark">Meu dinheiro</p>
-          <h1 className="text-2xl font-bold text-ink sm:text-3xl">Visão financeira</h1>
+          <h1 className="text-2xl font-bold text-ink sm:text-3xl">Financeiro</h1>
           <p className="mt-1 text-sm text-ink-soft">Entenda o mês e decida seu próximo passo.</p>
         </div>
         <Button
