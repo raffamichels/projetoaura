@@ -53,6 +53,14 @@ export default function ContasPage() {
     carregarDados();
   }, []);
 
+  useEffect(() => {
+    if (window.location.hash === '#novo-cartao') {
+      setCartaoSelecionado(null);
+      setModalCartaoAberto(true);
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+  }, []);
+
   const carregarDados = async () => {
     try {
       setLoading(true);

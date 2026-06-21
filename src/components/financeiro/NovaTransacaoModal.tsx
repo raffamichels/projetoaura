@@ -22,6 +22,7 @@ interface NovaTransacaoModalProps {
   aberto: boolean;
   onFechar: () => void;
   onSucesso: () => void;
+  modoCartao?: boolean;
 }
 
 interface Categoria {
@@ -41,7 +42,7 @@ interface Cartao {
   nome: string;
 }
 
-export default function NovaTransacaoModal({ aberto, onFechar, onSucesso }: NovaTransacaoModalProps) {
+export default function NovaTransacaoModal({ aberto, onFechar, onSucesso, modoCartao = false }: NovaTransacaoModalProps) {
   const [carregando, setCarregando] = useState(false);
   const [tipo, setTipo] = useState<'RECEITA' | 'DESPESA'>('DESPESA');
 
@@ -82,10 +83,11 @@ export default function NovaTransacaoModal({ aberto, onFechar, onSucesso }: Nova
 
   useEffect(() => {
     if (aberto) {
+      if (modoCartao) setTipo('DESPESA');
       carregarDados();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [aberto, tipo]);
+  }, [aberto, tipo, modoCartao]);
 
   const carregarDados = async () => {
     try {
@@ -106,6 +108,9 @@ export default function NovaTransacaoModal({ aberto, onFechar, onSucesso }: Nova
       if (cartoesRes.ok) {
         const data = await cartoesRes.json();
         setCartoes(data.data);
+        if (modoCartao && data.data?.length > 0) {
+          setCartaoId((cartaoAtual) => cartaoAtual || data.data[0].id);
+        }
       }
     } catch (error) {
       console.error('Erro ao carregar dados:', error);

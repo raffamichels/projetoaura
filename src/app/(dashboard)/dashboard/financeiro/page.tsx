@@ -92,6 +92,7 @@ export default function FinanceiroDashboardPage() {
   const [erro, setErro] = useState('');
   const [categoriasProntas, setCategoriasProntas] = useState(false);
   const [modalTransacaoAberto, setModalTransacaoAberto] = useState(false);
+  const [modoCompraCartao, setModoCompraCartao] = useState(false);
   const [ocultarValores, setOcultarValores] = useState(false);
 
   useEffect(() => {
@@ -131,6 +132,10 @@ export default function FinanceiroDashboardPage() {
   };
 
   const exibirValor = (valor: number) => (ocultarValores ? '••••••' : formatarMoeda(valor));
+  const abrirNovaTransacao = (compraCartao = false) => {
+    setModoCompraCartao(compraCartao);
+    setModalTransacaoAberto(true);
+  };
   const percentualComprometido = dashboard?.resumoMensal.receitas
     ? Math.min((dashboard.resumoMensal.despesas / dashboard.resumoMensal.receitas) * 100, 100)
     : 0;
@@ -164,7 +169,7 @@ export default function FinanceiroDashboardPage() {
           <p className="mt-1 text-sm text-ink-soft">Entenda o mês e decida seu próximo passo.</p>
         </div>
         <Button
-          onClick={() => setModalTransacaoAberto(true)}
+          onClick={() => abrirNovaTransacao(false)}
           className="h-11 w-full bg-brand text-white hover:bg-brand-dark sm:w-auto"
         >
           <Plus className="mr-2 h-5 w-5" />
@@ -317,12 +322,23 @@ export default function FinanceiroDashboardPage() {
       </section>
 
       <Card className="border-line bg-surface shadow-sm">
-        <CardHeader className="flex flex-row items-center justify-between">
+        <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <CardTitle className="text-lg text-ink">Faturas de cartão</CardTitle>
             <p className="mt-1 text-sm text-ink-faint">Acompanhe o que vence agora e o que está sendo acumulado</p>
           </div>
-          <CreditCard className="h-6 w-6 text-brand" />
+          <div className="flex w-full gap-2 sm:w-auto">
+            <Button
+              variant="outline"
+              className="flex-1 sm:flex-none"
+              onClick={() => router.push('/dashboard/financeiro/contas#novo-cartao')}
+            >
+              <Plus className="h-4 w-4" /> Cadastrar cartão
+            </Button>
+            <Button className="flex-1 bg-brand text-white hover:bg-brand-dark sm:flex-none" onClick={() => abrirNovaTransacao(true)}>
+              <CreditCard className="h-4 w-4" /> Lançar compra
+            </Button>
+          </div>
         </CardHeader>
         <CardContent className="grid gap-5 lg:grid-cols-2">
           <ResumoFaturas
@@ -331,6 +347,7 @@ export default function FinanceiroDashboardPage() {
             faturas={dashboard.faturasCartao || []}
             vazio="Nenhuma fatura prevista para este mês."
             exibirValor={exibirValor}
+            onVazioClick={() => abrirNovaTransacao(true)}
           />
           <ResumoFaturas
             titulo="Próxima fatura"
@@ -338,6 +355,7 @@ export default function FinanceiroDashboardPage() {
             faturas={dashboard.proximasFaturasCartao || []}
             vazio="Nenhuma compra no cartão formando a próxima fatura."
             exibirValor={exibirValor}
+            onVazioClick={() => abrirNovaTransacao(true)}
           />
         </CardContent>
       </Card>
@@ -402,7 +420,8 @@ export default function FinanceiroDashboardPage() {
 
       <NovaTransacaoModal
         aberto={modalTransacaoAberto}
-        onFechar={() => setModalTransacaoAberto(false)}
+        modoCartao={modoCompraCartao}
+        onFechar={() => { setModalTransacaoAberto(false); setModoCompraCartao(false); }}
         onSucesso={() => carregarDashboard(mesSelecionado)}
       />
     </div>
@@ -460,19 +479,30 @@ function ResumoFaturas({
   faturas,
   vazio,
   exibirValor,
+  onVazioClick,
 }: {
   titulo: string;
   descricao: string;
   faturas: Array<{ cartaoId: string; cartaoNome: string; total: number; quantidade: number }>;
   vazio: string;
   exibirValor: (valor: number) => string;
+  onVazioClick: () => void;
 }) {
   return (
     <div>
       <h3 className="font-semibold text-ink">{titulo}</h3>
       <p className="mb-3 text-xs text-ink-faint">{descricao}</p>
       {faturas.length === 0 ? (
-        <EstadoVazio texto={vazio} />
+        <button
+          type="button"
+          onClick={onVazioClick}
+          className="w-full rounded-xl border border-dashed border-line p-7 text-center text-sm text-ink-faint transition-colors hover:border-brand/50 hover:bg-brand-soft/40 hover:text-brand-dark"
+        >
+          <span className="block">{vazio}</span>
+          <span className="mt-2 inline-flex items-center gap-1 font-semibold text-brand-dark">
+            <Plus className="h-4 w-4" /> Lançar compra no cartão
+          </span>
+        </button>
       ) : (
         <div className="space-y-3">
           {faturas.map((fatura) => (
