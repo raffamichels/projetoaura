@@ -54,6 +54,8 @@
     "monthlyBalanceDescription": "Income minus expenses this month",
     "accountBalanceDescription": "Balance accumulated to date",
     "startStudies": "Start your studies",
+    "oneActiveCourse": "1 course in progress",
+    "manyActiveCourses": "{count} courses in progress",
     "defineGoals": "Define your goals",
     "quickActions": "Quick Actions",
     "accessQuickly": "Quick access",

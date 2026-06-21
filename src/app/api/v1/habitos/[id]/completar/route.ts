@@ -34,7 +34,7 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
     }
 
     // Rate limiting
-    const rateLimitResult = await apiCreateRateLimiter.limit(`${user.id}:create`);
+    const rateLimitResult = await apiCreateRateLimiter.limit(`${user.id}:habito:${id}:completar`);
     if (!rateLimitResult.success) {
       return rateLimitResponse(rateLimitResult.resetTime);
     }
@@ -69,41 +69,28 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
     // o servidor em UTC já considera o dia seguinte
     const dataRegistro = getInicioDoDiaNoTimezone(timezone);
 
-    // Verificar se já existe registro para este dia
-    const registroExistente = await prisma.registroHabito.findUnique({
+    // Atualizar ou criar de forma atômica para evitar conflito em cliques rápidos.
+    const registro = await prisma.registroHabito.upsert({
       where: {
         habitoId_data: {
           habitoId: id,
           data: dataRegistro,
         },
       },
+      create: {
+        habitoId: id,
+        userId: user.id,
+        data: dataRegistro,
+        completado,
+        horaCompleto: completado ? new Date() : null,
+        notas,
+      },
+      update: {
+        completado,
+        horaCompleto: completado ? new Date() : null,
+        notas,
+      },
     });
-
-    let registro;
-
-    if (registroExistente) {
-      // Atualizar registro existente
-      registro = await prisma.registroHabito.update({
-        where: { id: registroExistente.id },
-        data: {
-          completado,
-          horaCompleto: completado ? new Date() : null,
-          notas,
-        },
-      });
-    } else {
-      // Criar novo registro
-      registro = await prisma.registroHabito.create({
-        data: {
-          habitoId: id,
-          userId: user.id,
-          data: dataRegistro,
-          completado,
-          horaCompleto: completado ? new Date() : null,
-          notas,
-        },
-      });
-    }
 
     // Recalcular sequência (passando timezone para cálculos corretos)
     const { sequenciaAtual, maiorSequencia, totalCompletados } = await calcularSequencia(id, timezone);

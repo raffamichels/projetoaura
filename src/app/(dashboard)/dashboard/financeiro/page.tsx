@@ -65,6 +65,9 @@ interface DashboardData {
     cartaoNome: string;
     total: number;
     quantidade: number;
+    limiteTotal: number | null;
+    limiteComprometido: number;
+    limiteDisponivel: number | null;
   }>;
   totalFaturasCartao: number;
   proximasFaturasCartao: Array<{
@@ -72,6 +75,9 @@ interface DashboardData {
     cartaoNome: string;
     total: number;
     quantidade: number;
+    limiteTotal: number | null;
+    limiteComprometido: number;
+    limiteDisponivel: number | null;
   }>;
   totalProximasFaturasCartao: number;
   estatisticas: {
@@ -483,7 +489,15 @@ function ResumoFaturas({
 }: {
   titulo: string;
   descricao: string;
-  faturas: Array<{ cartaoId: string; cartaoNome: string; total: number; quantidade: number }>;
+  faturas: Array<{
+    cartaoId: string;
+    cartaoNome: string;
+    total: number;
+    quantidade: number;
+    limiteTotal: number | null;
+    limiteComprometido: number;
+    limiteDisponivel: number | null;
+  }>;
   vazio: string;
   exibirValor: (valor: number) => string;
   onVazioClick: () => void;
@@ -523,6 +537,27 @@ function ResumoFaturas({
                   {exibirValor(fatura.total)}
                 </p>
               </div>
+              {fatura.limiteTotal !== null && fatura.limiteTotal > 0 && fatura.limiteDisponivel !== null && (
+                <div className="mt-3 border-t border-line pt-3">
+                  <div className="mb-2 flex items-center justify-between gap-3 text-xs">
+                    <span className="text-ink-faint">Limite disponível</span>
+                    <span className="font-semibold text-green-600 dark:text-green-400">
+                      {exibirValor(fatura.limiteDisponivel)}
+                    </span>
+                  </div>
+                  <div className="h-1.5 overflow-hidden rounded-full bg-line">
+                    <div
+                      className="h-full rounded-full bg-brand transition-all"
+                      style={{
+                        width: `${Math.min((fatura.limiteComprometido / fatura.limiteTotal) * 100, 100)}%`,
+                      }}
+                    />
+                  </div>
+                  <p className="mt-1 text-right text-[11px] text-ink-faint">
+                    Total: {exibirValor(fatura.limiteTotal)}
+                  </p>
+                </div>
+              )}
             </div>
           ))}
         </div>

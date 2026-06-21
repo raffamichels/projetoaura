@@ -54,6 +54,8 @@
     "monthlyBalanceDescription": "Receitas menos despesas do mês",
     "accountBalanceDescription": "Saldo acumulado até hoje",
     "startStudies": "Comece seus estudos",
+    "oneActiveCourse": "1 curso em andamento",
+    "manyActiveCourses": "{count} cursos em andamento",
     "defineGoals": "Defina suas metas",
     "quickActions": "Ações Rápidas",
     "accessQuickly": "Acesse rapidamente",

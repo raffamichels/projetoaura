@@ -11,6 +11,7 @@ import { Plus, Target, Flame, CheckCircle, Circle, Spinner, Trash, Calendar, Tre
 import { StreakCalendar } from './components/StreakCalendar';
 import { TrendChart } from './components/TrendChart';
 import { WeekdayStats } from './components/WeekdayStats';
+import { toast } from 'sonner';
 
 interface CategoriaHabito {
   id: string;
@@ -241,23 +242,36 @@ export default function HabitosPage() {
   const completarHabito = async (habito: Habito) => {
     if (completandoHabito) return;
 
+    const novoEstado = !habito.completadoHoje;
     setCompletandoHabito(habito.id);
+    setHabitos((atuais) => atuais.map((item) =>
+      item.id === habito.id ? { ...item, completadoHoje: novoEstado } : item
+    ));
+
     try {
       const response = await fetch(`/api/v1/habitos/${habito.id}/completar`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           data: new Date().toISOString(),
-          completado: !habito.completadoHoje,
+          completado: novoEstado,
           timezone, // Enviar timezone do cliente
         }),
       });
 
-      if (response.ok) {
-        carregarDados();
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+        throw new Error(errorData?.error || 'Não foi possível atualizar o hábito');
       }
+
+      await carregarDados();
+      toast.success(novoEstado ? 'Hábito concluído!' : 'Hábito marcado como pendente');
     } catch (error) {
       console.error('Erro ao completar hábito:', error);
+      setHabitos((atuais) => atuais.map((item) =>
+        item.id === habito.id ? { ...item, completadoHoje: habito.completadoHoje } : item
+      ));
+      toast.error(error instanceof Error ? error.message : 'Erro ao atualizar o hábito');
     } finally {
       setCompletandoHabito(null);
     }
@@ -621,6 +635,7 @@ export default function HabitosPage() {
                       }`}
                     >
                       <button
+                        type="button"
                         onClick={() => isVisualizandoDiaAtual && completarHabito(habito)}
                         disabled={!isVisualizandoDiaAtual || completandoHabito === habito.id}
                         className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
@@ -683,6 +698,7 @@ export default function HabitosPage() {
                       }`}
                     >
                       <button
+                        type="button"
                         onClick={() => isVisualizandoDiaAtual && completarHabito(habito)}
                         disabled={!isVisualizandoDiaAtual || completandoHabito === habito.id}
                         className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center ${

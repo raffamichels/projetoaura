@@ -24,6 +24,8 @@ export default function DashboardPage() {
   const [saldoContas, setSaldoContas] = useState(0);
   const [transacoesMes, setTransacoesMes] = useState(0);
   const [loadingFinanceiro, setLoadingFinanceiro] = useState(true);
+  const [cursosAtivos, setCursosAtivos] = useState(0);
+  const [loadingCursos, setLoadingCursos] = useState(true);
   const { ehFree } = usePlano();
 
   // Buscar compromissos de hoje
@@ -31,6 +33,7 @@ export default function DashboardPage() {
     if (session) {
       fetchCompromissosHoje();
       fetchResumoFinanceiro();
+      fetchCursosAtivos();
     }
   }, [session]);
 
@@ -125,6 +128,21 @@ export default function DashboardPage() {
       console.error('Erro ao buscar resumo financeiro:', error);
     } finally {
       setLoadingFinanceiro(false);
+    }
+  };
+
+  const fetchCursosAtivos = async () => {
+    try {
+      const response = await fetch('/api/v1/estudos/cursos');
+      if (response.ok) {
+        const data = await response.json();
+        const cursos = Array.isArray(data.data) ? data.data : [];
+        setCursosAtivos(cursos.filter((curso: { ativo?: boolean }) => curso.ativo !== false).length);
+      }
+    } catch (error) {
+      console.error('Erro ao buscar cursos ativos:', error);
+    } finally {
+      setLoadingCursos(false);
     }
   };
 
@@ -237,10 +255,20 @@ export default function DashboardPage() {
             <BookOpen className="w-4 h-4 text-gold" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-ink">0</div>
-            <p className="text-xs text-ink-faint mt-1">
-              {t('startStudies')}
-            </p>
+            {loadingCursos ? (
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-brand" />
+            ) : (
+              <>
+                <div className="text-2xl font-bold text-ink">{cursosAtivos}</div>
+                <p className="text-xs text-ink-faint mt-1">
+                  {cursosAtivos === 0
+                    ? t('startStudies')
+                    : cursosAtivos === 1
+                      ? t('oneActiveCourse')
+                      : t('manyActiveCourses', { count: cursosAtivos })}
+                </p>
+              </>
+            )}
           </CardContent>
         </Card>
 

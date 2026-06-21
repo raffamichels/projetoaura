@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
     const dataInicioFatura = new Date(Date.UTC(Number(ano), Number(mesNum) - 2, 1));
 
     // Compras no cartão entram no orçamento como fatura no mês seguinte.
-    const [transacoesRegistradasNoMes, comprasDaFatura] = await Promise.all([
+    const [transacoesRegistradasNoMes, comprasDaFatura, comprasComprometendoLimite] = await Promise.all([
       prisma.transacao.findMany({
         where: {
           userId: user.id,
@@ -56,6 +56,15 @@ export async function GET(req: NextRequest) {
         },
         include: { categoria: true, cartao: true },
       }),
+      prisma.transacao.findMany({
+        where: {
+          userId: user.id,
+          tipo: 'DESPESA',
+          cartaoId: { not: null },
+          data: { gte: dataInicio },
+        },
+        include: { cartao: true },
+      }),
     ]);
 
     const comprasCartaoDoMes = transacoesRegistradasNoMes.filter(
@@ -68,20 +77,46 @@ export async function GET(req: NextRequest) {
       ...comprasDaFatura,
     ];
 
+    const limitesPorCartao = comprasComprometendoLimite.reduce((limites, compra) => {
+      if (!compra.cartaoId || !compra.cartao) return limites;
+      const atual = limites.get(compra.cartaoId) || {
+        limiteTotal: compra.cartao.limite === null ? null : decimalParaNumero(compra.cartao.limite),
+        limiteComprometido: 0,
+      };
+      atual.limiteComprometido += decimalParaNumero(compra.valor);
+      limites.set(compra.cartaoId, atual);
+      return limites;
+    }, new Map<string, { limiteTotal: number | null; limiteComprometido: number }>());
+
     const agruparFaturas = (compras: typeof comprasDaFatura) => Array.from(
       compras.reduce((faturas, compra) => {
         if (!compra.cartaoId || !compra.cartao) return faturas;
+        const limite = limitesPorCartao.get(compra.cartaoId);
+        const limiteTotal = limite?.limiteTotal
+          ?? (compra.cartao.limite === null ? null : decimalParaNumero(compra.cartao.limite));
+        const limiteComprometido = limite?.limiteComprometido || 0;
         const atual = faturas.get(compra.cartaoId) || {
           cartaoId: compra.cartaoId,
           cartaoNome: compra.cartao.nome,
           total: 0,
           quantidade: 0,
+          limiteTotal,
+          limiteComprometido,
+          limiteDisponivel: limiteTotal === null ? null : Math.max(limiteTotal - limiteComprometido, 0),
         };
         atual.total += decimalParaNumero(compra.valor);
         atual.quantidade += 1;
         faturas.set(compra.cartaoId, atual);
         return faturas;
-      }, new Map<string, { cartaoId: string; cartaoNome: string; total: number; quantidade: number }>())
+      }, new Map<string, {
+        cartaoId: string;
+        cartaoNome: string;
+        total: number;
+        quantidade: number;
+        limiteTotal: number | null;
+        limiteComprometido: number;
+        limiteDisponivel: number | null;
+      }>())
         .values()
     );
     const faturasPorCartao = agruparFaturas(comprasDaFatura);
